@@ -2,11 +2,11 @@
  * TypeScript Usage Example (v0.2.0+ with new pattern-based configuration)
  *
  * This example shows how to use the Image Gallery library in a TypeScript project.
- * Install: npm install @frybynite/image-gallery
+ * Install: npm install @frybynite/image-cloud
  */
 
-import { ImageGallery, type NewImageGalleryOptions } from '@frybynite/image-gallery';
-import '@frybynite/image-gallery/style.css';
+import { ImageGallery, type NewImageGalleryOptions } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/style.css';
 
 // Example 1: Basic usage with static images (NEW FORMAT)
 function basicExample() {

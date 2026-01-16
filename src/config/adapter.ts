@@ -268,7 +268,7 @@ export class LegacyOptionsAdapter {
     if (typeof console !== 'undefined') {
       console.warn(
         `[ImageGallery Deprecation Warning] ${message}\n` +
-        `See migration guide: https://github.com/frybynite/image-gallery#migration-guide`
+        `See migration guide: https://github.com/frybynite/image-cloud#migration-guide`
       );
     }
   }

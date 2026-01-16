@@ -1,7 +1,7 @@
 {
-  "name": "@frybynite/image-gallery",
+  "name": "@frybynite/image-cloud",
   "version": "0.1.0",
-  "description": "TypeScript image gallery library with animated layouts and zoom effects",
+  "description": "TypeScript image cloud library with animated scattered layouts and zoom effects",
   "type": "module",
   "main": "./dist/image-gallery.umd.js",
   "module": "./dist/image-gallery.js",
@@ -48,12 +48,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/frybynite/image-gallery.git"
+    "url": "https://github.com/frybynite/image-cloud.git"
   },
   "bugs": {
-    "url": "https://github.com/frybynite/image-gallery/issues"
+    "url": "https://github.com/frybynite/image-cloud/issues"
   },
-  "homepage": "https://github.com/frybynite/image-gallery#readme",
+  "homepage": "https://github.com/frybynite/image-cloud#readme",
   "devDependencies": {
     "typescript": "^5.3.3",
     "vite": "^5.0.11",

@@ -60,7 +60,7 @@ function autoInitialize(): void {
         console.warn(
           '[ImageGallery Deprecation Warning] Individual data attributes (data-loader-type, data-google-drive-api-key, etc.) are deprecated. ' +
           'Use data-gallery-config with JSON configuration instead.\n' +
-          'See migration guide: https://github.com/frybynite/image-gallery#migration-guide'
+          'See migration guide: https://github.com/frybynite/image-cloud#migration-guide'
         );
 
         const loaderType = (element.dataset.loaderType || 'googleDrive') as 'googleDrive' | 'static';

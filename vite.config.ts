@@ -9,8 +9,8 @@ export default defineConfig({
       name: 'ImageGallery',
       formats: ['es', 'umd'],
       fileName: (format) => {
-        if (format === 'es') return 'image-gallery.js';
-        return `image-gallery.${format}.js`;
+        if (format === 'es') return 'image-cloud.js';
+        return `image-cloud.${format}.js`;
       }
     },
     sourcemap: true,
