@@ -1,0 +1,154 @@
+/* CSS Custom Properties for Theming */
+:root {
+    --bg-primary: #05060F;
+    --bg-secondary: #1a1a2e;
+    --bg-glass: rgba(255, 255, 255, 0.05);
+    --border-glass: rgba(255, 255, 255, 0.1);
+
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8d1;
+    --text-muted: #6b6b8f;
+
+    --accent-primary: #6366f1;
+    --accent-secondary: #8b5cf6;
+    --accent-glow: rgba(99, 102, 241, 0.4);
+
+    --transition-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+    --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px var(--accent-glow);
+}
+
+/* Global Resets & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #05060F;
+    background-attachment: fixed;
+    color: var(--text-primary);
+    overflow: hidden;
+    /* Prevent scrolling */
+    min-height: 100vh;
+}
+
+/* Container */
+.container {
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Image Cloud Container */
+.image-cloud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    perspective: 1000px;
+    z-index: 1;
+}
+
+/* Cloud Images */
+.cloud-image {
+    position: absolute;
+    width: auto;
+    height: auto;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: transform 0.6s var(--transition-smooth),
+        box-shadow 0.6s var(--transition-smooth),
+        z-index 0s 0.6s;
+    will-change: transform;
+    user-select: none;
+}
+
+.cloud-image:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.cloud-image.focused {
+    z-index: 1000;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), var(--shadow-glow);
+    transition: transform 0.6s var(--transition-smooth),
+        box-shadow 0.6s var(--transition-smooth),
+        z-index 0s 0s;
+}
+
+/* Loading State */
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-secondary);
+    z-index: 100;
+    pointer-events: none;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    border: 4px solid var(--border-glass);
+    border-top: 4px solid var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error State */
+.error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    padding: 1.5rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    color: #fca5a5;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cloud-image {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cloud-image {
+        width: 120px;
+        height: 120px;
+    }
+}

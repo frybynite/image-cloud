@@ -1,0 +1,338 @@
+# Image Gallery Library
+
+A TypeScript image gallery library with animated layouts and zoom effects. Supports both Google Drive and static image sources with radial and random placement strategies.
+
+## Features
+
+- ✨ Animated image layouts with smooth transitions
+- 🎯 Radial and random placement algorithms
+- 🔍 Zoom/focus interactions
+- 📱 Responsive design with breakpoint support
+- 🖼️ Multiple image sources (Google Drive, static URLs, local paths)
+- 🎨 Fully customizable configuration
+- 📦 Zero runtime dependencies
+- 🔷 Full TypeScript support
+
+## Installation
+
+```bash
+npm install @keithfry/image-gallery
+```
+
+## Quick Start
+
+### TypeScript/JavaScript (Programmatic API)
+
+```typescript
+import { ImageGallery } from '@keithfry/image-gallery';
+import '@keithfry/image-gallery/style.css';
+
+const gallery = new ImageGallery({
+  containerId: 'myGallery',
+  loaderType: 'static',
+  staticLoader: {
+    sources: [
+      {
+        type: 'urls',
+        urls: [
+          'https://example.com/image1.jpg',
+          'https://example.com/image2.jpg',
+          'https://example.com/image3.jpg'
+        ]
+      }
+    ]
+  },
+  config: {
+    layout: { type: 'radial' }
+  }
+});
+
+await gallery.init();
+```
+
+### HTML (Auto-initialization)
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="node_modules/@keithfry/image-gallery/dist/style.css">
+</head>
+<body>
+  <div id="gallery"
+       data-image-gallery="true"
+       data-loader-type="static"
+       data-static-sources='[{"type":"urls","urls":["img1.jpg","img2.jpg"]}]'>
+  </div>
+
+  <script type="module">
+    import { autoInitialize } from '@keithfry/image-gallery/auto-init';
+  </script>
+</body>
+</html>
+```
+
+### CDN Usage
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/@keithfry/image-gallery/dist/style.css">
+</head>
+<body>
+  <div id="gallery"></div>
+
+  <script src="https://unpkg.com/@keithfry/image-gallery/dist/image-gallery.umd.js"></script>
+  <script>
+    const { ImageGallery } = window.ImageGallery;
+    const gallery = new ImageGallery({
+      containerId: 'gallery',
+      loaderType: 'static',
+      staticLoader: {
+        sources: [{ type: 'urls', urls: ['image1.jpg', 'image2.jpg'] }]
+      }
+    });
+    gallery.init();
+  </script>
+</body>
+</html>
+```
+
+## Usage Examples
+
+### Static Images from URLs
+
+```typescript
+const gallery = new ImageGallery({
+  containerId: 'gallery',
+  loaderType: 'static',
+  staticLoader: {
+    sources: [
+      {
+        type: 'urls',
+        urls: [
+          'https://picsum.photos/400/300',
+          'https://picsum.photos/500/350',
+          'https://picsum.photos/450/320'
+        ]
+      }
+    ]
+  }
+});
+
+await gallery.init();
+```
+
+### Static Images from Local Path
+
+```typescript
+const gallery = new ImageGallery({
+  containerId: 'gallery',
+  loaderType: 'static',
+  staticLoader: {
+    sources: [
+      {
+        type: 'path',
+        basePath: '/images',
+        files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
+      }
+    ]
+  }
+});
+
+await gallery.init();
+```
+
+### Google Drive Folder
+
+```typescript
+const gallery = new ImageGallery({
+  containerId: 'gallery',
+  loaderType: 'googleDrive',
+  folderUrl: 'https://drive.google.com/drive/folders/YOUR_FOLDER_ID',
+  googleDrive: {
+    apiKey: 'YOUR_GOOGLE_API_KEY'
+  }
+});
+
+await gallery.init();
+```
+
+### Custom Configuration
+
+```typescript
+const gallery = new ImageGallery({
+  containerId: 'gallery',
+  loaderType: 'static',
+  staticLoader: {
+    sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
+  },
+  config: {
+    layout: {
+      type: 'radial',  // or 'random'
+      baseImageSize: 250,
+      rotationRange: 20,
+      padding: 60
+    },
+    animation: {
+      duration: 800,
+      queueInterval: 200
+    },
+    zoom: {
+      focusScale: 3.0,
+      focusZIndex: 1000
+    }
+  }
+});
+
+await gallery.init();
+```
+
+## Configuration Options
+
+### ImageGalleryOptions
+
+```typescript
+interface ImageGalleryOptions {
+  containerId?: string;              // HTML element ID (default: 'imageCloud')
+  folderUrl?: string;                // Google Drive folder URL
+  loaderType?: 'googleDrive' | 'static';
+  googleDrive?: {
+    apiKey: string;
+  };
+  staticLoader?: {
+    sources: StaticSource[];
+  };
+  config?: Partial<GalleryConfig>;   // Custom configuration
+}
+```
+
+### Layout Configuration
+
+```typescript
+interface LayoutConfig {
+  type: 'random' | 'radial';        // Layout algorithm
+  baseImageSize: number;            // Base image height in pixels
+  rotationRange: number;            // Rotation variance (±degrees)
+  padding: number;                  // Padding from viewport edges
+  minSpacing: number;               // Minimum spacing between images
+  responsiveHeights: ResponsiveHeight[];
+}
+```
+
+### Animation Configuration
+
+```typescript
+interface AnimationConfig {
+  duration: number;                 // Animation duration (ms)
+  easing: string;                   // CSS easing function
+  queueInterval: number;            // Delay between image insertions (ms)
+}
+```
+
+### Zoom Configuration
+
+```typescript
+interface ZoomConfig {
+  focusScale: number;               // Scale factor when focused
+  mobileScale: number;              // Scale for mobile devices
+  focusZIndex: number;              // Z-index when focused
+}
+```
+
+## API Reference
+
+### ImageGallery Class
+
+#### Methods
+
+- `init(): Promise<void>` - Initialize the gallery and load images
+- `clearImageCloud(): void` - Clear all images and reset state
+- `destroy(): void` - Clean up resources and event listeners
+
+### Events & Interactions
+
+- **Click image**: Focus/zoom the image
+- **Click outside**: Unfocus current image
+- **ESC key**: Unfocus current image
+- **Window resize**: Responsive layout adjustment
+
+## Advanced Usage
+
+### Custom Placement Generator
+
+```typescript
+import { PlacementGenerator, ImageLayout, ContainerBounds } from '@keithfry/image-gallery';
+
+class CustomGenerator implements PlacementGenerator {
+  generate(count: number, bounds: ContainerBounds): ImageLayout[] {
+    // Your custom layout algorithm
+    return layouts;
+  }
+}
+```
+
+### React Integration
+
+```tsx
+import { useEffect, useRef } from 'react';
+import { ImageGallery } from '@keithfry/image-gallery';
+import '@keithfry/image-gallery/style.css';
+
+function GalleryComponent() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<ImageGallery | null>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      galleryRef.current = new ImageGallery({
+        containerId: containerRef.current.id,
+        loaderType: 'static',
+        staticLoader: {
+          sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
+        }
+      });
+
+      galleryRef.current.init();
+    }
+
+    return () => {
+      galleryRef.current?.destroy();
+    };
+  }, []);
+
+  return <div id="gallery" ref={containerRef} />;
+}
+```
+
+## Browser Support
+
+- Chrome/Edge: Latest 2 versions
+- Firefox: Latest 2 versions
+- Safari: Latest 2 versions
+- Mobile: iOS Safari 12+, Chrome Android
+
+## License
+
+MIT
+
+## Author
+
+Keith Fry
+
+## Examples
+
+Check out the `examples/` directory for various usage patterns:
+- `esm-example.html` - Modern ES module usage
+- `cdn-umd-example.html` - Traditional script tag / CDN usage
+- `typescript-example.ts` - TypeScript examples with React and Vue
+- See `examples/README.md` for detailed instructions
+
+Also see:
+- `index.html` - Production Google Drive gallery
+- `index-static.html` - Static image sources example
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.

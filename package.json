@@ -1,0 +1,43 @@
+{
+  "name": "@keithfry/image-gallery",
+  "version": "0.1.0",
+  "description": "TypeScript image gallery library with animated layouts and zoom effects",
+  "type": "module",
+  "main": "./dist/image-gallery.umd.js",
+  "module": "./dist/image-gallery.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/image-gallery.js",
+      "require": "./dist/image-gallery.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:types": "tsc --emitDeclarationOnly",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "image-gallery",
+    "typescript",
+    "animation",
+    "zoom",
+    "interactive",
+    "radial-layout",
+    "google-drive"
+  ],
+  "author": "Keith Fry",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vite-plugin-dts": "^3.7.1"
+  }
+}

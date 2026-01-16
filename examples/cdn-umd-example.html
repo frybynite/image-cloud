@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery - UMD/CDN Example</title>
+    <link rel="stylesheet" href="../dist/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .image-cloud {
+            width: 100%;
+            height: 80vh;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Gallery - UMD/CDN Example</h1>
+
+    <div id="gallery" class="image-cloud"></div>
+
+    <!-- Load library via UMD bundle (works without module system) -->
+    <script src="../dist/image-gallery.umd.js"></script>
+    <script>
+        // Access via global ImageGallery object
+        const { ImageGallery } = window.ImageGallery;
+
+        const gallery = new ImageGallery({
+            containerId: 'gallery',
+            loaderType: 'static',
+            staticLoader: {
+                sources: [
+                    {
+                        type: 'urls',
+                        urls: [
+                            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+                            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+                            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800'
+                        ]
+                    }
+                ]
+            },
+            config: {
+                layout: {
+                    type: 'radial',
+                    baseImageSize: 200
+                }
+            }
+        });
+
+        gallery.init().catch(error => {
+            console.error('Gallery initialization failed:', error);
+        });
+    </script>
+</body>
+</html>

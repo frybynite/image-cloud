@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Static image loader test gallery">
     <title>Static Loader Test Gallery</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dist/style.css">
 </head>
 <body>
     <div class="container">
@@ -40,7 +40,31 @@
         <div id="error" class="error hidden"></div>
     </div>
 
-    <!-- Load ImageGallery (dependencies will be loaded dynamically) -->
-    <script src="js/ImageGallery.js"></script>
+    <!-- Load ImageGallery with auto-initialization -->
+    <script type="module">
+        import { ImageGallery } from './dist/image-gallery.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const containers = document.querySelectorAll('[data-image-gallery]');
+
+            containers.forEach(container => {
+                if (!container.id) {
+                    console.error('Container with data-image-gallery must have an id');
+                    return;
+                }
+
+                const staticSources = container.dataset.staticSources ?
+                    JSON.parse(container.dataset.staticSources) : null;
+
+                const gallery = new ImageGallery({
+                    containerId: container.id,
+                    loaderType: 'static',
+                    staticLoader: { sources: staticSources }
+                });
+
+                gallery.init();
+            });
+        });
+    </script>
 </body>
 </html>
