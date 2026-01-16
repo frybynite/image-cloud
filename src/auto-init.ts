@@ -9,7 +9,7 @@
 import './styles/gallery.css';
 
 import { ImageGallery } from './ImageGallery';
-import type { ImageGalleryOptions } from './config/types';
+import type { ImageGalleryOptions, NewImageGalleryOptions } from './config/types';
 
 /**
  * Auto-initialize galleries from data attributes
@@ -39,30 +39,54 @@ function autoInitialize(): void {
         return;
       }
 
-      // Read configuration from data attributes
-      const loaderType = (element.dataset.loaderType || 'googleDrive') as 'googleDrive' | 'static';
+      // Check for new JSON-based config first
+      const jsonConfig = element.dataset.galleryConfig;
+      let options: ImageGalleryOptions | NewImageGalleryOptions;
 
-      // GoogleDrive specific attributes
-      const googleDriveApiKey = element.dataset.googleDriveApiKey || '';
-      const googleDriveFolderUrl = element.dataset.googleDriveFolderUrl || '';
-
-      // Static loader specific attributes
-      const staticSources = element.dataset.staticSources ?
-        JSON.parse(element.dataset.staticSources) : null;
-
-      // Build options
-      const options: ImageGalleryOptions = {
-        containerId: element.id,
-        folderUrl: googleDriveFolderUrl,
-        loaderType: loaderType,
-        googleDrive: {
-          apiKey: googleDriveApiKey
+      if (jsonConfig) {
+        // New format: JSON configuration
+        try {
+          const parsed = JSON.parse(jsonConfig);
+          options = {
+            container: element.id,
+            ...parsed
+          };
+        } catch (error) {
+          console.error('ImageGallery: Failed to parse data-gallery-config JSON:', error);
+          return;
         }
-      };
+      } else {
+        // Legacy format: individual data attributes (with deprecation warning)
+        console.warn(
+          '[ImageGallery Deprecation Warning] Individual data attributes (data-loader-type, data-google-drive-api-key, etc.) are deprecated. ' +
+          'Use data-gallery-config with JSON configuration instead.\n' +
+          'See migration guide: https://github.com/frybynite/image-gallery#migration-guide'
+        );
 
-      // Add static loader config if present
-      if (staticSources) {
-        options.staticLoader = { sources: staticSources };
+        const loaderType = (element.dataset.loaderType || 'googleDrive') as 'googleDrive' | 'static';
+
+        // GoogleDrive specific attributes
+        const googleDriveApiKey = element.dataset.googleDriveApiKey || '';
+        const googleDriveFolderUrl = element.dataset.googleDriveFolderUrl || '';
+
+        // Static loader specific attributes
+        const staticSources = element.dataset.staticSources ?
+          JSON.parse(element.dataset.staticSources) : null;
+
+        // Build legacy options (will be auto-converted by ImageGallery constructor)
+        options = {
+          containerId: element.id,
+          folderUrl: googleDriveFolderUrl,
+          loaderType: loaderType,
+          googleDrive: {
+            apiKey: googleDriveApiKey
+          }
+        } as ImageGalleryOptions;
+
+        // Add static loader config if present
+        if (staticSources) {
+          (options as ImageGalleryOptions).staticLoader = { sources: staticSources };
+        }
       }
 
       // Initialize gallery

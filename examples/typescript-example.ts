@@ -1,65 +1,82 @@
 /**
- * TypeScript Usage Example
+ * TypeScript Usage Example (v0.2.0+ with new pattern-based configuration)
  *
  * This example shows how to use the Image Gallery library in a TypeScript project.
  * Install: npm install @frybynite/image-gallery
  */
 
-import { ImageGallery, type ImageGalleryOptions } from '@frybynite/image-gallery';
+import { ImageGallery, type NewImageGalleryOptions } from '@frybynite/image-gallery';
 import '@frybynite/image-gallery/style.css';
 
-// Example 1: Basic usage with static images
+// Example 1: Basic usage with static images (NEW FORMAT)
 function basicExample() {
     const gallery = new ImageGallery({
-        containerId: 'gallery',
-        loaderType: 'static',
-        staticLoader: {
-            sources: [
-                {
-                    type: 'urls',
-                    urls: [
-                        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-                        'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800'
-                    ]
-                }
-            ]
+        container: 'gallery',
+        loader: {
+            type: 'static',
+            static: {
+                sources: [
+                    {
+                        type: 'urls',
+                        urls: [
+                            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+                            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800'
+                        ]
+                    }
+                ]
+            }
         }
     });
 
     gallery.init();
 }
 
-// Example 2: With full type safety
+// Example 2: With full type safety and pattern-based config (NEW FORMAT)
 function typedExample() {
-    const options: ImageGalleryOptions = {
-        containerId: 'gallery',
-        loaderType: 'static',
-        staticLoader: {
-            sources: [
-                {
-                    type: 'path',
-                    basePath: '/images',
-                    files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
-                }
-            ]
+    const options: NewImageGalleryOptions = {
+        container: 'gallery',
+        loader: {
+            type: 'static',
+            static: {
+                sources: [
+                    {
+                        type: 'path',
+                        basePath: '/images',
+                        files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
+                    }
+                ]
+            }
         },
-        config: {
-            layout: {
-                type: 'radial',
-                baseImageSize: 250,
-                rotationRange: 15,
+        layout: {
+            algorithm: 'radial',
+            sizing: {
+                base: 250
+            },
+            rotation: {
+                enabled: true,
+                range: { min: -15, max: 15 }
+            },
+            spacing: {
                 padding: 60
+            }
+        },
+        animation: {
+            duration: 800,
+            easing: {
+                default: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+                bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                focus: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
             },
-            animation: {
-                duration: 800,
-                easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
-                bounceEasing: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-                queueInterval: 150
-            },
-            zoom: {
-                focusScale: 3.0,
+            queue: {
+                enabled: true,
+                interval: 150
+            }
+        },
+        interaction: {
+            focus: {
+                scale: 3.0,
                 mobileScale: 2.0,
-                focusZIndex: 1000
+                zIndex: 1000
             }
         }
     };
@@ -68,17 +85,37 @@ function typedExample() {
     gallery.init();
 }
 
-// Example 3: Google Drive integration
+// Example 3: Google Drive integration with multiple sources (NEW FORMAT)
 async function googleDriveExample() {
     const gallery = new ImageGallery({
-        containerId: 'gallery',
-        loaderType: 'googleDrive',
-        folderUrl: 'https://drive.google.com/drive/folders/YOUR_FOLDER_ID',
-        googleDrive: {
-            apiKey: 'YOUR_GOOGLE_API_KEY'
+        container: 'gallery',
+        loader: {
+            type: 'googleDrive',
+            googleDrive: {
+                apiKey: 'YOUR_GOOGLE_API_KEY',
+                sources: [
+                    {
+                        type: 'folder',
+                        folders: ['https://drive.google.com/drive/folders/FOLDER_ID_1'],
+                        recursive: true
+                    },
+                    {
+                        type: 'folder',
+                        folders: ['https://drive.google.com/drive/folders/FOLDER_ID_2'],
+                        recursive: false  // Only images directly in this folder
+                    },
+                    {
+                        type: 'files',
+                        files: [
+                            'https://drive.google.com/file/d/FILE_ID_1/view',
+                            'https://drive.google.com/file/d/FILE_ID_2/view'
+                        ]
+                    }
+                ]
+            }
         },
-        config: {
-            layout: { type: 'radial' }
+        layout: {
+            algorithm: 'radial'
         }
     });
 
@@ -90,7 +127,7 @@ async function googleDriveExample() {
     }
 }
 
-// Example 4: React component
+// Example 4: React component (NEW FORMAT)
 import { useEffect, useRef } from 'react';
 
 function GalleryComponent() {
@@ -100,15 +137,17 @@ function GalleryComponent() {
     useEffect(() => {
         if (containerRef.current) {
             galleryRef.current = new ImageGallery({
-                containerId: containerRef.current.id,
-                loaderType: 'static',
-                staticLoader: {
-                    sources: [
-                        {
-                            type: 'urls',
-                            urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
-                        }
-                    ]
+                container: containerRef.current.id,
+                loader: {
+                    type: 'static',
+                    static: {
+                        sources: [
+                            {
+                                type: 'urls',
+                                urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
+                            }
+                        ]
+                    }
                 }
             });
 
@@ -123,15 +162,15 @@ function GalleryComponent() {
     return <div id="gallery" ref={containerRef} className="image-cloud" />;
 }
 
-// Example 5: Vue 3 Composition API
+// Example 5: Vue 3 Composition API (NEW FORMAT)
 import { onMounted, onUnmounted, ref } from 'vue';
 
-function useImageGallery(containerId: string, options: Omit<ImageGalleryOptions, 'containerId'>) {
+function useImageGallery(containerId: string, options: Omit<NewImageGalleryOptions, 'container'>) {
     const gallery = ref<ImageGallery | null>(null);
 
     onMounted(async () => {
         gallery.value = new ImageGallery({
-            containerId,
+            container: containerId,
             ...options
         });
 

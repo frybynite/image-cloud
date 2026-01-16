@@ -4,8 +4,9 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds } from './config/types';
-import { DEFAULT_CONFIG, mergeConfig, debugLog } from './config/defaults';
+import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds, NewImageGalleryOptions, NewGalleryConfig } from './config/types';
+import { mergeNewConfig } from './config/defaults';
+import { LegacyOptionsAdapter } from './config/adapter';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
@@ -14,12 +15,12 @@ import { StaticImageLoader } from './loaders/StaticImageLoader';
 import type { ImageLoader } from './config/types';
 
 export class ImageGallery {
-  private options: ImageGalleryOptions;
-  private apiKey: string;
+  private options: ImageGalleryOptions | NewImageGalleryOptions;
   private containerId: string;
 
   // Internal state
-  private fullConfig: GalleryConfig;
+  private fullConfig: GalleryConfig | NewGalleryConfig;
+  private isNewFormat: boolean;  // Track which config format we're using
   private imagesLoaded: boolean;
   private imageElements: HTMLImageElement[];
   private currentImageHeight: number;
@@ -37,15 +38,25 @@ export class ImageGallery {
   private loadingEl: HTMLElement | null;
   private errorEl: HTMLElement | null;
 
-  constructor(options: ImageGalleryOptions = {}) {
-    this.options = options;
+  constructor(options: ImageGalleryOptions | NewImageGalleryOptions = {}) {
+    // Detect format and convert if legacy
+    this.isNewFormat = !LegacyOptionsAdapter.isLegacyFormat(options);
 
-    // Default configuration overrides
-    this.apiKey = options.googleDrive?.apiKey || '';
-    this.containerId = options.containerId || 'imageCloud';
+    if (!this.isNewFormat) {
+      // Convert legacy options to new format
+      const convertedOptions = LegacyOptionsAdapter.convert(options as ImageGalleryOptions);
+      this.options = convertedOptions;
+      this.fullConfig = mergeNewConfig(convertedOptions as any);
+    } else {
+      // Use new format directly
+      this.options = options as NewImageGalleryOptions;
+      this.fullConfig = mergeNewConfig(options as any);
+    }
 
-    // Merge user config with defaults
-    this.fullConfig = mergeConfig(DEFAULT_CONFIG, options.config || {});
+    // Extract common properties
+    const newConfig = this.fullConfig as NewGalleryConfig;
+    const newOpts = this.options as NewImageGalleryOptions;
+    this.containerId = newOpts.container || 'imageCloud';
 
     // Internal state
     this.imagesLoaded = false;
@@ -54,35 +65,62 @@ export class ImageGallery {
     this.resizeTimeout = null;
     this.displayQueue = [];
 
-    // Initialize modules
-    this.animationEngine = new AnimationEngine(this.fullConfig.animation);
-    this.layoutEngine = new LayoutEngine(this.fullConfig.layout);
-    this.zoomEngine = new ZoomEngine(this.fullConfig.zoom, this.animationEngine);
+    // Create legacy-compatible config for engines (they expect old structure)
+    const legacyAnimationConfig = {
+      duration: newConfig.animation.duration,
+      easing: newConfig.animation.easing.default,
+      bounceEasing: newConfig.animation.easing.bounce,
+      queueInterval: newConfig.animation.queue.interval
+    };
 
-    // Initialize image loader based on type (factory pattern)
-    const loaderType = this.options.loaderType || this.fullConfig.loader?.type || 'googleDrive';
+    const legacyLayoutConfig = {
+      type: newConfig.layout.algorithm,
+      debugRadials: newConfig.layout.debugRadials || false,
+      rotationRange: newConfig.layout.rotation.range.max - newConfig.layout.rotation.range.min,
+      minRotation: newConfig.layout.rotation.range.min,
+      maxRotation: newConfig.layout.rotation.range.max,
+      sizeVarianceMin: newConfig.layout.sizing.variance.min,
+      sizeVarianceMax: newConfig.layout.sizing.variance.max,
+      baseImageSize: newConfig.layout.sizing.base,
+      responsiveHeights: newConfig.layout.sizing.responsive,
+      padding: newConfig.layout.spacing.padding,
+      minSpacing: newConfig.layout.spacing.minGap
+    };
 
-    if (loaderType === 'static') {
-      const staticConfig = {
-        ...this.fullConfig.loader?.static,
-        ...(this.options.staticLoader || {}),
-        debugLogging: this.fullConfig.debugLogging
-      };
-      this.imageLoader = new StaticImageLoader(staticConfig);
-    } else {
-      // Default to GoogleDrive loader
-      const driveConfig = {
-        ...this.fullConfig.googleDrive,
-        apiKey: this.apiKey || this.fullConfig.googleDrive.apiKey,
-        debugLogging: this.fullConfig.debugLogging
-      };
-      this.imageLoader = new GoogleDriveLoader(driveConfig);
-    }
+    const legacyZoomConfig = {
+      focusScale: newConfig.interaction.focus.scale,
+      mobileScale: newConfig.interaction.focus.mobileScale,
+      unfocusedOpacity: newConfig.interaction.focus.unfocusedOpacity,
+      focusZIndex: newConfig.interaction.focus.zIndex
+    };
+
+    this.animationEngine = new AnimationEngine(legacyAnimationConfig);
+    this.layoutEngine = new LayoutEngine(legacyLayoutConfig);
+    this.zoomEngine = new ZoomEngine(legacyZoomConfig, this.animationEngine);
+
+    // Initialize image loader based on type
+    this.imageLoader = this.createLoader();
 
     // DOM Elements (will be fetched on init)
     this.containerEl = null;
     this.loadingEl = null;
     this.errorEl = null;
+  }
+
+  /**
+   * Create appropriate image loader based on config
+   */
+  private createLoader(): ImageLoader {
+    const newConfig = this.fullConfig as NewGalleryConfig;
+    const loaderType = newConfig.loader.type;
+
+    if (loaderType === 'static') {
+      const staticConfig = newConfig.loader.static!;
+      return new StaticImageLoader(staticConfig);
+    } else {
+      const driveConfig = newConfig.loader.googleDrive!;
+      return new GoogleDriveLoader(driveConfig);
+    }
   }
 
   /**
@@ -103,21 +141,8 @@ export class ImageGallery {
       this.setupEventListeners();
 
       // 3. Load Images
-      debugLog(this.fullConfig, 'ImageGallery initialized');
-
-      // For static loader, sources are in config; for GoogleDrive, use folderUrl
-      const loaderType = this.options.loaderType || this.fullConfig.loader?.type || 'googleDrive';
-      if (loaderType === 'static') {
-        // Static loader uses sources from config, pass null as folderUrl
-        await this.handleLoadImages(null);
-      } else {
-        // GoogleDrive loader uses folderUrl
-        const folderUrl = this.options.folderUrl || '';
-        if (!folderUrl) {
-          throw new Error('Google Drive folder URL is required');
-        }
-        await this.handleLoadImages(folderUrl);
-      }
+      this.logDebug('ImageGallery initialized');
+      await this.loadImages();
 
     } catch (error) {
       console.error('Gallery initialization failed:', error);
@@ -160,26 +185,19 @@ export class ImageGallery {
       const newHeight = this.getImageHeight();
 
       if (newHeight !== this.currentImageHeight) {
-        debugLog(this.fullConfig, `Window resized to new breakpoint (height: ${newHeight}px). Reloading images...`);
-        // Reloading with current images would be ideal, but for now we re-fetch to reset layout
-        const loaderType = this.options.loaderType || this.fullConfig.loader?.type || 'googleDrive';
-        if (loaderType === 'static') {
-          this.handleLoadImages(null);
-        } else {
-          const folderUrl = this.options.folderUrl || '';
-          if (folderUrl) {
-            this.handleLoadImages(folderUrl);
-          }
-        }
+        this.logDebug(`Window resized to new breakpoint (height: ${newHeight}px). Reloading images...`);
+        // Reload images with new breakpoint
+        this.loadImages();
       } else {
-        debugLog(this.fullConfig, 'Window resized (no breakpoint change)');
+        this.logDebug('Window resized (no breakpoint change)');
       }
     }, 500);
   }
 
   private getImageHeight(): number {
     const width = window.innerWidth;
-    const heights = this.fullConfig.layout.responsiveHeights || [];
+    const newConfig = this.fullConfig as NewGalleryConfig;
+    const heights = newConfig.layout.sizing.responsive || [];
     for (const bh of heights) {
       if (width >= bh.minWidth) {
         return bh.height;
@@ -188,30 +206,35 @@ export class ImageGallery {
     return 120; // Fallback
   }
 
-  private async handleLoadImages(folderUrl: string | null): Promise<void> {
-    // For static loader, folderUrl is null (sources are in config)
-    // For GoogleDrive loader, folderUrl is required
-    const loaderType = this.options.loaderType || this.fullConfig.loader?.type || 'googleDrive';
-    if (!folderUrl && loaderType !== 'static') {
-      this.showError('No folder URL provided');
-      return;
-    }
-
+  /**
+   * Load images based on configured loader type
+   */
+  private async loadImages(): Promise<void> {
     try {
       this.showLoading(true);
       this.hideError();
       this.clearImageCloud();
 
-      // Load images using configured loader
-      const imageUrls = await this.imageLoader.loadImagesFromFolder(folderUrl || '');
+      const newConfig = this.fullConfig as NewGalleryConfig;
+      const loaderType = newConfig.loader.type;
+
+      let imageUrls: string[] = [];
+
+      if (loaderType === 'googleDrive') {
+        // Load from Google Drive sources (folders and/or files)
+        imageUrls = await this.loadGoogleDriveSources();
+      } else {
+        // Load from static sources
+        imageUrls = await this.imageLoader.loadImagesFromFolder(newConfig.loader.static!.sources);
+      }
 
       if (imageUrls.length === 0) {
-        this.showError('No images found in the folder.');
+        this.showError('No images found.');
         this.showLoading(false);
         return;
       }
 
-      debugLog(this.fullConfig, `Loaded ${imageUrls.length} images`);
+      this.logDebug(`Loaded ${imageUrls.length} images`);
 
       await this.createImageCloud(imageUrls);
 
@@ -224,6 +247,48 @@ export class ImageGallery {
         this.showError(error.message || 'Failed to load images.');
       }
       this.showLoading(false);
+    }
+  }
+
+  /**
+   * Load images from multiple Google Drive sources (folders and files)
+   */
+  private async loadGoogleDriveSources(): Promise<string[]> {
+    const newConfig = this.fullConfig as NewGalleryConfig;
+    const sources = newConfig.loader.googleDrive!.sources;
+
+    if (sources.length === 0) {
+      throw new Error('No Google Drive sources configured');
+    }
+
+    const loader = this.imageLoader as GoogleDriveLoader;
+    const allImageUrls: string[] = [];
+
+    for (const source of sources) {
+      if (source.type === 'folder') {
+        // Load from folder(s)
+        for (const folderUrl of source.folders) {
+          const recursive = source.recursive !== undefined ? source.recursive : true;
+          const urls = await loader.loadImagesFromFolder(folderUrl, recursive);
+          allImageUrls.push(...urls);
+        }
+      } else if (source.type === 'files') {
+        // Load specific files
+        const urls = await loader.loadFiles(source.files);
+        allImageUrls.push(...urls);
+      }
+    }
+
+    return allImageUrls;
+  }
+
+  /**
+   * Helper for debug logging (supports both old and new config)
+   */
+  private logDebug(...args: unknown[]): void {
+    const newConfig = this.fullConfig as NewGalleryConfig;
+    if (newConfig.debug && typeof console !== 'undefined') {
+      console.log(...args);
     }
   }
 
@@ -245,7 +310,8 @@ export class ImageGallery {
     let processedCount = 0;
 
     const startQueueProcessing = () => {
-      debugLog(this.fullConfig, 'Starting queue processing');
+      this.logDebug('Starting queue processing');
+      const newConfig = this.fullConfig as NewGalleryConfig;
       const queueInterval = setInterval(() => {
         if (this.displayQueue.length > 0 && this.containerEl) {
           const img = this.displayQueue.shift();
@@ -267,7 +333,7 @@ export class ImageGallery {
         if (processedCount >= imageUrls.length && this.displayQueue.length === 0) {
           if (processedCount === imageUrls.length) clearInterval(queueInterval);
         }
-      }, this.fullConfig.animation.queueInterval);
+      }, newConfig.animation.queue.interval);
     };
 
     // Visibility Check
@@ -381,7 +447,8 @@ export class ImageGallery {
   }
 
   private showLoading(show: boolean): void {
-    if (!this.fullConfig.ui.showLoadingSpinner || !this.loadingEl) return;
+    const newConfig = this.fullConfig as NewGalleryConfig;
+    if (!newConfig.rendering.ui.showLoadingSpinner || !this.loadingEl) return;
     if (show) {
       this.loadingEl.classList.remove('hidden');
     } else {

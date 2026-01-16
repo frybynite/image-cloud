@@ -9,26 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image gallery"
-             data-image-gallery="true"
-             data-loader-type="static"
-             data-static-sources='[
-               {
-                 "type": "urls",
-                 "urls": [
-                   "https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800",
-                   "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800",
-                   "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop",
-                   "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop",
-                   "https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800"
-                 ]
-               },
-               {
-                 "type": "path",
-                 "basePath": "/test-images/",
-                 "files": ["image1.jpg", "image2.jpg", "image3.jpg"]
-               }
-             ]'>
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image gallery">
             <!-- Images will be dynamically inserted here -->
         </div>
 
@@ -40,29 +21,35 @@
         <div id="error" class="error hidden"></div>
     </div>
 
-    <!-- Load ImageGallery with auto-initialization -->
+    <!-- Load ImageGallery with new format (v0.2.0+) -->
     <script type="module">
         import { ImageGallery } from './dist/image-gallery.js';
 
         document.addEventListener('DOMContentLoaded', () => {
-            const containers = document.querySelectorAll('[data-image-gallery]');
-
-            containers.forEach(container => {
-                if (!container.id) {
-                    console.error('Container with data-image-gallery must have an id');
-                    return;
+            // NEW FORMAT: Pattern-based configuration
+            const gallery = new ImageGallery({
+                container: 'imageCloud',
+                loader: {
+                    type: 'static',
+                    static: {
+                        sources: [
+                            {
+                                type: 'urls',
+                                urls: [
+                                    'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+                                    'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+                                    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+                                    'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+                                    'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800'
+                                ]
+                            }
+                        ]
+                    }
                 }
+            });
 
-                const staticSources = container.dataset.staticSources ?
-                    JSON.parse(container.dataset.staticSources) : null;
-
-                const gallery = new ImageGallery({
-                    containerId: container.id,
-                    loaderType: 'static',
-                    staticLoader: { sources: staticSources }
-                });
-
-                gallery.init();
+            gallery.init().catch(error => {
+                console.error('Gallery initialization failed:', error);
             });
         });
     </script>

@@ -9,11 +9,8 @@
 </head>
 <body>
     <div class="container">
-        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image gallery"
-             data-image-gallery="true"
-             data-loader-type="googleDrive"
-             data-google-drive-api-key="AIzaSyBKTCzznRaJt_Nyd9_9agTHDhFieMMe0u8"
-             data-google-drive-folder-url="https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t?usp=sharing">
+        <!-- Using JavaScript initialization (see script below) -->
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image gallery">
             <!-- Images will be dynamically inserted here -->
         </div>
 
@@ -25,33 +22,31 @@
         <div id="error" class="error hidden"></div>
     </div>
 
-    <!-- Load ImageGallery with auto-initialization -->
+    <!-- Load ImageGallery with new format (v0.2.0+) -->
     <script type="module">
         import { ImageGallery } from './dist/image-gallery.js';
 
         document.addEventListener('DOMContentLoaded', () => {
-            const containers = document.querySelectorAll('[data-image-gallery]');
-
-            containers.forEach(container => {
-                if (!container.id) {
-                    console.error('Container with data-image-gallery must have an id');
-                    return;
-                }
-
-                const loaderType = container.dataset.loaderType || 'googleDrive';
-                const googleDriveApiKey = container.dataset.googleDriveApiKey || '';
-                const googleDriveFolderUrl = container.dataset.googleDriveFolderUrl || '';
-
-                const gallery = new ImageGallery({
-                    containerId: container.id,
-                    folderUrl: googleDriveFolderUrl,
-                    loaderType: loaderType,
+            // NEW FORMAT: Pattern-based configuration
+            const gallery = new ImageGallery({
+                container: 'imageCloud',
+                loader: {
+                    type: 'googleDrive',
                     googleDrive: {
-                        apiKey: googleDriveApiKey
+                        apiKey: 'AIzaSyBKTCzznRaJt_Nyd9_9agTHDhFieMMe0u8',
+                        sources: [
+                            {
+                                type: 'folder',
+                                folders: ['https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t?usp=sharing'],
+                                recursive: true
+                            }
+                        ]
                     }
-                });
+                }
+            });
 
-                gallery.init();
+            gallery.init().catch(error => {
+                console.error('Gallery initialization failed:', error);
             });
         });
     </script>
