@@ -16,7 +16,7 @@ A TypeScript image gallery library with animated layouts and zoom effects. Suppo
 ## Installation
 
 ```bash
-npm install @keithfry/image-gallery
+npm install @frybynite/image-gallery
 ```
 
 ## Quick Start
@@ -24,8 +24,8 @@ npm install @keithfry/image-gallery
 ### TypeScript/JavaScript (Programmatic API)
 
 ```typescript
-import { ImageGallery } from '@keithfry/image-gallery';
-import '@keithfry/image-gallery/style.css';
+import { ImageGallery } from '@frybynite/image-gallery';
+import '@frybynite/image-gallery/style.css';
 
 const gallery = new ImageGallery({
   containerId: 'myGallery',
@@ -56,7 +56,7 @@ await gallery.init();
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="node_modules/@keithfry/image-gallery/dist/style.css">
+  <link rel="stylesheet" href="node_modules/@frybynite/image-gallery/dist/style.css">
 </head>
 <body>
   <div id="gallery"
@@ -66,7 +66,7 @@ await gallery.init();
   </div>
 
   <script type="module">
-    import { autoInitialize } from '@keithfry/image-gallery/auto-init';
+    import { autoInitialize } from '@frybynite/image-gallery/auto-init';
   </script>
 </body>
 </html>
@@ -78,12 +78,12 @@ await gallery.init();
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="https://unpkg.com/@keithfry/image-gallery/dist/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@frybynite/image-gallery/dist/style.css">
 </head>
 <body>
   <div id="gallery"></div>
 
-  <script src="https://unpkg.com/@keithfry/image-gallery/dist/image-gallery.umd.js"></script>
+  <script src="https://unpkg.com/@frybynite/image-gallery/dist/image-gallery.umd.js"></script>
   <script>
     const { ImageGallery } = window.ImageGallery;
     const gallery = new ImageGallery({
@@ -263,7 +263,7 @@ interface ZoomConfig {
 ### Custom Placement Generator
 
 ```typescript
-import { PlacementGenerator, ImageLayout, ContainerBounds } from '@keithfry/image-gallery';
+import { PlacementGenerator, ImageLayout, ContainerBounds } from '@frybynite/image-gallery';
 
 class CustomGenerator implements PlacementGenerator {
   generate(count: number, bounds: ContainerBounds): ImageLayout[] {
@@ -277,8 +277,8 @@ class CustomGenerator implements PlacementGenerator {
 
 ```tsx
 import { useEffect, useRef } from 'react';
-import { ImageGallery } from '@keithfry/image-gallery';
-import '@keithfry/image-gallery/style.css';
+import { ImageGallery } from '@frybynite/image-gallery';
+import '@frybynite/image-gallery/style.css';
 
 function GalleryComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -319,7 +319,7 @@ MIT
 
 ## Author
 
-Keith Fry
+[frybynite](https://github.com/frybynite)
 
 ## Build Scripts
 

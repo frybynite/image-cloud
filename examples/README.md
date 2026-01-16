@@ -51,8 +51,8 @@ Comprehensive TypeScript usage examples for various frameworks.
 
 **Usage:**
 ```typescript
-import { ImageGallery } from '@keithfry/image-gallery';
-import '@keithfry/image-gallery/style.css';
+import { ImageGallery } from '@frybynite/image-gallery';
+import '@frybynite/image-gallery/style.css';
 
 const gallery = new ImageGallery({
     containerId: 'gallery',

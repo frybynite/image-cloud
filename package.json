@@ -1,5 +1,5 @@
 {
-  "name": "@keithfry/image-gallery",
+  "name": "@frybynite/image-gallery",
   "version": "0.1.0",
   "description": "TypeScript image gallery library with animated layouts and zoom effects",
   "type": "module",
@@ -42,8 +42,16 @@
     "radial-layout",
     "google-drive"
   ],
-  "author": "Keith Fry",
+  "author": "frybynite",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frybynite/image-gallery.git"
+  },
+  "bugs": {
+    "url": "https://github.com/frybynite/image-gallery/issues"
+  },
+  "homepage": "https://github.com/frybynite/image-gallery#readme",
   "devDependencies": {
     "typescript": "^5.3.3",
     "vite": "^5.0.11",

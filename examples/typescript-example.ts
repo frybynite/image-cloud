@@ -2,11 +2,11 @@
  * TypeScript Usage Example
  *
  * This example shows how to use the Image Gallery library in a TypeScript project.
- * Install: npm install @keithfry/image-gallery
+ * Install: npm install @frybynite/image-gallery
  */
 
-import { ImageGallery, type ImageGalleryOptions } from '@keithfry/image-gallery';
-import '@keithfry/image-gallery/style.css';
+import { ImageGallery, type ImageGalleryOptions } from '@frybynite/image-gallery';
+import '@frybynite/image-gallery/style.css';
 
 // Example 1: Basic usage with static images
 function basicExample() {
