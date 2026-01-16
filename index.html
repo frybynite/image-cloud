@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive image cloud gallery with smooth zoom animations">
+    <title>Certifications Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image gallery"
+             data-image-gallery="true"
+             data-loader-type="googleDrive"
+             data-google-drive-api-key="AIzaSyBKTCzznRaJt_Nyd9_9agTHDhFieMMe0u8"
+             data-google-drive-folder-url="https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t?usp=sharing">
+            <!-- Images will be dynamically inserted here -->
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Loading images...</p>
+        </div>
+
+        <div id="error" class="error hidden"></div>
+    </div>
+
+    <!-- Load ImageGallery (dependencies will be loaded dynamically) -->
+    <script src="js/ImageGallery.js"></script>
+</body>
+</html>

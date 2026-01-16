@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe Visibility Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .spacer {
+            height: 1500px; /* Force scroll */
+            background: linear-gradient(to bottom, #fff, #ccc);
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Iframe Visibility Test</h1>
+    <p>Scroll down to see the iframe. The animation should verify that it only starts when visible.</p>
+    
+    <div class="spacer">
+        <p>Line 1</p>
+        <p>Line 2</p>
+        <p>...</p>
+        <p>Keep scrolling...</p>
+        <br><br><br>
+        <p>Middle of the page</p>
+        <br><br><br>
+        <p>Almost there...</p>
+    </div>
+
+    <h2>Certifications Gallery Iframe</h2>
+    <iframe src="index.html"></iframe>
+    
+    <div style="height: 500px;">
+        <p>Footer content</p>
+    </div>
+</body>
+</html>
