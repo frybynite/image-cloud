@@ -19,9 +19,18 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run clean && tsc && vite build",
+    "build:dev": "./scripts/build.sh",
+    "build:prod": "./scripts/build.sh --production",
+    "build:watch": "vite build --watch",
     "build:types": "tsc --emitDeclarationOnly",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
     "preview": "vite preview",
+    "serve": "python3 -m http.server 8080",
+    "release:patch": "./scripts/release.sh patch",
+    "release:minor": "./scripts/release.sh minor",
+    "release:major": "./scripts/release.sh major",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
