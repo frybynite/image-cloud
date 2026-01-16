@@ -28,6 +28,8 @@
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
     "serve": "python3 -m http.server 8080",
+    "test:package": "./scripts/test-package.sh",
+    "test:serve": "cd test-package && npx serve .",
     "release:patch": "./scripts/release.sh patch",
     "release:minor": "./scripts/release.sh minor",
     "release:major": "./scripts/release.sh major",
