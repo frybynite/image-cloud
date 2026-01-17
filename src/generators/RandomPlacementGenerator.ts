@@ -22,7 +22,12 @@ export class RandomPlacementGenerator implements PlacementGenerator {
   generate(imageCount: number, containerBounds: ContainerBounds, _options: Partial<LayoutConfig> = {}): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
-    const { padding, baseImageSize, rotationRange, sizeVarianceMin, sizeVarianceMax } = this.config;
+    
+    const padding = this.config.spacing.padding;
+    const baseImageSize = this.config.sizing.base;
+    const rotationRange = this.config.rotation.range.max;
+    const sizeVarianceMin = this.config.sizing.variance.min;
+    const sizeVarianceMax = this.config.sizing.variance.max;
 
     // Calculate safe bounds (accounting for image size and padding)
     const maxX = width - baseImageSize - padding;

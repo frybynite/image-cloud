@@ -388,3 +388,159 @@ Mark with `// STUB: Not implemented yet`:
 Successfully migrated ImageGallery (now ImageCloud) from scattered parameter structure to clean pattern-based architecture with full backward compatibility. Added multi-source Google Drive support, updated all examples, renamed repository to better reflect functionality, and verified all features work correctly in browser testing.
 
 **Ready for**: Production use, npm publish, future feature development
+
+---
+
+# Context Log: Playwright Test Suite Implementation
+
+**Date**: 2026-01-17
+**Status**: 🔄 IN PROGRESS - Task 4 of 12
+**Version Target**: v0.2.1
+
+## Summary
+
+Creating comprehensive E2E test coverage for ImageCloud using Playwright, validating all features including loaders, layout algorithms, animations, interactions, and backward compatibility.
+
+## Test Plan Created
+
+**Plan file**: `docs/plans/2026-01-16-playwright-test-suite.md`
+
+**56 E2E tests** across 9 categories:
+
+| Category | Tests | Status |
+|----------|-------|--------|
+| Initialization | 6 | ✅ Complete |
+| Static Loader | 7 | 🔄 In Progress (needs fix) |
+| Layout | 5 | ⏳ Pending |
+| Interactions | 10 | ⏳ Pending |
+| Animation | 5 | ⏳ Pending |
+| Responsive | 6 | ⏳ Pending |
+| Backward Compat | 7 | ⏳ Pending |
+| Auto-Init | 4 | ⏳ Pending |
+| Google Drive | 5 | ⏳ Pending (optional) |
+
+## Work Completed
+
+### Task 1: Setup Playwright Infrastructure ✅
+
+**Files Created:**
+- `test/playwright.config.ts` - Playwright configuration with chromium + mobile projects
+- `test/utils/test-helpers.ts` - 7 shared test helper functions
+- `test/README.md` - Test documentation
+- `test/e2e/` - Directory for test specs
+
+**Package.json updated with:**
+- `npm test` - Run all tests
+- `npm run test:ui` - Interactive UI mode
+- `npm run test:headed` - Headed browser mode
+- `npm run test:update-snapshots` - Update visual snapshots
+
+**Dependencies installed:**
+- `@playwright/test` v1.57.0
+- Chromium browser
+
+### Task 2: Create Test Fixtures ✅
+
+**Files Created:**
+- `test/fixtures/images/` - Moved from test-images/ (3 JPG files)
+- `test/fixtures/static-basic.html` - Basic URL-based loading
+- `test/fixtures/static-multiple.html` - Multiple source types
+- `test/fixtures/legacy-config.html` - Backward compatibility testing
+- `test/fixtures/auto-init.html` - HTML attribute initialization
+- `test/fixtures/interactions.html` - Focus/unfocus testing
+- `test/fixtures/responsive.html` - Breakpoint testing
+- `test/fixtures/animations.html` - Animation timing testing
+
+### Task 3: Write Initialization Tests ✅
+
+**File**: `test/e2e/initialization.spec.ts`
+
+**6 tests covering:**
+1. Container initialization
+2. Image loading (3 images)
+3. Container styles applied
+4. Gallery instance on window
+5. Error for missing container
+6. Config merging with defaults
+
+**Results**: 12/12 passing (6 tests × 2 browsers)
+
+### Task 4: Write Static Loader Tests 🔄
+
+**File**: `test/e2e/static-loader.spec.ts`
+
+**7 tests covering:**
+1. URL Sources (3 tests) - Loading, src attributes, visibility
+2. Multiple Sources (2 tests) - Mixed URL/path, basePath resolution
+3. Error Handling (2 tests) - Missing image, all images fail
+
+**Results**: 14/14 passing (7 tests × 2 browsers)
+
+**Issue identified**: `handles missing image gracefully` test has empty implementation (no-op). Code quality reviewer flagged this as Critical - needs fix before proceeding.
+
+## Test Infrastructure
+
+```
+test/
+├── fixtures/
+│   ├── images/           # 3 test images (moved from test-images/)
+│   ├── static-basic.html
+│   ├── static-multiple.html
+│   ├── legacy-config.html
+│   ├── auto-init.html
+│   ├── interactions.html
+│   ├── responsive.html
+│   └── animations.html
+├── e2e/
+│   ├── initialization.spec.ts  ✅
+│   └── static-loader.spec.ts   🔄 (needs fix)
+├── utils/
+│   └── test-helpers.ts
+├── playwright.config.ts
+└── README.md
+```
+
+## Commits
+
+- `feat: add Playwright test infrastructure`
+- `feat: add test fixtures for Playwright E2E tests`
+- `test: add initialization E2E tests`
+- `test: add static loader E2E tests`
+
+## Subagent-Driven Development Process
+
+Using two-stage review after each task:
+1. **Spec compliance review** - Verify implementation matches requirements
+2. **Code quality review** - Verify code is well-built
+
+All tasks 1-3 passed both reviews. Task 4 passed spec review but code quality review identified a critical issue with an empty test that needs fixing.
+
+## Next Steps
+
+1. **Fix Task 4** - Implement proper test for `handles missing image gracefully`
+2. **Task 5** - Write Layout Tests
+3. **Task 6** - Write Interaction Tests
+4. **Task 7** - Write Animation Tests
+5. **Task 8** - Write Responsive Tests
+6. **Task 9** - Write Backward Compatibility Tests
+7. **Task 10** - Write Auto-Init Tests
+8. **Task 11** - Write Google Drive Loader Tests (optional)
+9. **Task 12** - Final Integration and Cleanup
+
+## Code Quality Notes
+
+**Approved improvements (non-blocking):**
+- Replace `waitForTimeout` with condition-based waits
+- Add TypeScript type declarations for window extensions
+- Make error assertions more specific
+- Add comments explaining test purposes in fixtures
+
+**Critical (must fix):**
+- `handles missing image gracefully` test is empty - needs proper implementation
+
+---
+
+**Last Updated**: 2026-01-17
+**Implementation Status**: 🔄 IN PROGRESS - 3.5/12 tasks complete
+**Tests Passing**: 26/26 (initialization + static loader)
+**Framework**: Playwright with chromium + mobile projects

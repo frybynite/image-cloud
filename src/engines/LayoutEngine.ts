@@ -32,7 +32,7 @@ export class LayoutEngine {
    * @returns Initialized placement generator
    */
   private initGenerator(): PlacementGenerator {
-    switch (this.config.type) {
+    switch (this.config.algorithm) {
       case 'radial':
         return new RadialPlacementGenerator(this.config);
       case 'random':
@@ -80,9 +80,12 @@ export class LayoutEngine {
    * @param newConfig - Updated configuration
    */
   updateConfig(newConfig: Partial<LayoutConfig>): void {
+    // Deep merge not implemented here, assuming simplified updates for now
+    // or that newConfig is structurally compatible with specific overrides
     Object.assign(this.config, newConfig);
-    // Reinitialize generator if type changed
-    if (newConfig.type && newConfig.type !== this.config.type) {
+
+    // Reinitialize generator if algorithm changed
+    if (newConfig.algorithm && newConfig.algorithm !== this.config.algorithm) {
       this.generator = this.initGenerator();
     }
   }

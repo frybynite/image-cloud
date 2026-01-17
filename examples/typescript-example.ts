@@ -5,7 +5,7 @@
  * Install: npm install @frybynite/image-cloud
  */
 
-import { ImageGallery, type NewImageGalleryOptions } from '@frybynite/image-cloud';
+import { ImageGallery, type ImageGalleryOptions } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
 
 // Example 1: Basic usage with static images (NEW FORMAT)
@@ -33,7 +33,7 @@ function basicExample() {
 
 // Example 2: With full type safety and pattern-based config (NEW FORMAT)
 function typedExample() {
-    const options: NewImageGalleryOptions = {
+    const options: ImageGalleryOptions = {
         container: 'gallery',
         loader: {
             type: 'static',
@@ -165,7 +165,7 @@ function GalleryComponent() {
 // Example 5: Vue 3 Composition API (NEW FORMAT)
 import { onMounted, onUnmounted, ref } from 'vue';
 
-function useImageGallery(containerId: string, options: Omit<NewImageGalleryOptions, 'container'>) {
+function useImageGallery(containerId: string, options: Omit<ImageGalleryOptions, 'container'>) {
     const gallery = ref<ImageGallery | null>(null);
 
     onMounted(async () => {

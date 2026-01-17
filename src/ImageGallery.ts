@@ -4,9 +4,8 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds, NewImageGalleryOptions, NewGalleryConfig } from './config/types';
-import { mergeNewConfig } from './config/defaults';
-import { LegacyOptionsAdapter } from './config/adapter';
+import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds } from './config/types';
+import { mergeConfig } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
@@ -15,12 +14,10 @@ import { StaticImageLoader } from './loaders/StaticImageLoader';
 import type { ImageLoader } from './config/types';
 
 export class ImageGallery {
-  private options: ImageGalleryOptions | NewImageGalleryOptions;
   private containerId: string;
 
   // Internal state
-  private fullConfig: GalleryConfig | NewGalleryConfig;
-  private isNewFormat: boolean;  // Track which config format we're using
+  private fullConfig: GalleryConfig;
   private imagesLoaded: boolean;
   private imageElements: HTMLImageElement[];
   private currentImageHeight: number;
@@ -38,25 +35,9 @@ export class ImageGallery {
   private loadingEl: HTMLElement | null;
   private errorEl: HTMLElement | null;
 
-  constructor(options: ImageGalleryOptions | NewImageGalleryOptions = {}) {
-    // Detect format and convert if legacy
-    this.isNewFormat = !LegacyOptionsAdapter.isLegacyFormat(options);
-
-    if (!this.isNewFormat) {
-      // Convert legacy options to new format
-      const convertedOptions = LegacyOptionsAdapter.convert(options as ImageGalleryOptions);
-      this.options = convertedOptions;
-      this.fullConfig = mergeNewConfig(convertedOptions as any);
-    } else {
-      // Use new format directly
-      this.options = options as NewImageGalleryOptions;
-      this.fullConfig = mergeNewConfig(options as any);
-    }
-
-    // Extract common properties
-    const newConfig = this.fullConfig as NewGalleryConfig;
-    const newOpts = this.options as NewImageGalleryOptions;
-    this.containerId = newOpts.container || 'imageCloud';
+  constructor(options: ImageGalleryOptions = {}) {
+    this.fullConfig = mergeConfig(options);
+    this.containerId = options.container || 'imageCloud';
 
     // Internal state
     this.imagesLoaded = false;
@@ -65,38 +46,10 @@ export class ImageGallery {
     this.resizeTimeout = null;
     this.displayQueue = [];
 
-    // Create legacy-compatible config for engines (they expect old structure)
-    const legacyAnimationConfig = {
-      duration: newConfig.animation.duration,
-      easing: newConfig.animation.easing.default,
-      bounceEasing: newConfig.animation.easing.bounce,
-      queueInterval: newConfig.animation.queue.interval
-    };
-
-    const legacyLayoutConfig = {
-      type: newConfig.layout.algorithm,
-      debugRadials: newConfig.layout.debugRadials || false,
-      rotationRange: newConfig.layout.rotation.range.max - newConfig.layout.rotation.range.min,
-      minRotation: newConfig.layout.rotation.range.min,
-      maxRotation: newConfig.layout.rotation.range.max,
-      sizeVarianceMin: newConfig.layout.sizing.variance.min,
-      sizeVarianceMax: newConfig.layout.sizing.variance.max,
-      baseImageSize: newConfig.layout.sizing.base,
-      responsiveHeights: newConfig.layout.sizing.responsive,
-      padding: newConfig.layout.spacing.padding,
-      minSpacing: newConfig.layout.spacing.minGap
-    };
-
-    const legacyZoomConfig = {
-      focusScale: newConfig.interaction.focus.scale,
-      mobileScale: newConfig.interaction.focus.mobileScale,
-      unfocusedOpacity: newConfig.interaction.focus.unfocusedOpacity,
-      focusZIndex: newConfig.interaction.focus.zIndex
-    };
-
-    this.animationEngine = new AnimationEngine(legacyAnimationConfig);
-    this.layoutEngine = new LayoutEngine(legacyLayoutConfig);
-    this.zoomEngine = new ZoomEngine(legacyZoomConfig, this.animationEngine);
+    // Initialize engines with new config structure
+    this.animationEngine = new AnimationEngine(this.fullConfig.animation);
+    this.layoutEngine = new LayoutEngine(this.fullConfig.layout);
+    this.zoomEngine = new ZoomEngine(this.fullConfig.interaction.focus, this.animationEngine);
 
     // Initialize image loader based on type
     this.imageLoader = this.createLoader();
@@ -111,14 +64,13 @@ export class ImageGallery {
    * Create appropriate image loader based on config
    */
   private createLoader(): ImageLoader {
-    const newConfig = this.fullConfig as NewGalleryConfig;
-    const loaderType = newConfig.loader.type;
+    const loaderType = this.fullConfig.loader.type;
 
     if (loaderType === 'static') {
-      const staticConfig = newConfig.loader.static!;
+      const staticConfig = this.fullConfig.loader.static!;
       return new StaticImageLoader(staticConfig);
     } else {
-      const driveConfig = newConfig.loader.googleDrive!;
+      const driveConfig = this.fullConfig.loader.googleDrive!;
       return new GoogleDriveLoader(driveConfig);
     }
   }
@@ -196,8 +148,7 @@ export class ImageGallery {
 
   private getImageHeight(): number {
     const width = window.innerWidth;
-    const newConfig = this.fullConfig as NewGalleryConfig;
-    const heights = newConfig.layout.sizing.responsive || [];
+    const heights = this.fullConfig.layout.sizing.responsive || [];
     for (const bh of heights) {
       if (width >= bh.minWidth) {
         return bh.height;
@@ -215,8 +166,7 @@ export class ImageGallery {
       this.hideError();
       this.clearImageCloud();
 
-      const newConfig = this.fullConfig as NewGalleryConfig;
-      const loaderType = newConfig.loader.type;
+      const loaderType = this.fullConfig.loader.type;
 
       let imageUrls: string[] = [];
 
@@ -225,7 +175,7 @@ export class ImageGallery {
         imageUrls = await this.loadGoogleDriveSources();
       } else {
         // Load from static sources
-        imageUrls = await this.imageLoader.loadImagesFromFolder(newConfig.loader.static!.sources);
+        imageUrls = await this.imageLoader.loadImagesFromFolder(this.fullConfig.loader.static!.sources);
       }
 
       if (imageUrls.length === 0) {
@@ -254,8 +204,7 @@ export class ImageGallery {
    * Load images from multiple Google Drive sources (folders and files)
    */
   private async loadGoogleDriveSources(): Promise<string[]> {
-    const newConfig = this.fullConfig as NewGalleryConfig;
-    const sources = newConfig.loader.googleDrive!.sources;
+    const sources = this.fullConfig.loader.googleDrive!.sources;
 
     if (sources.length === 0) {
       throw new Error('No Google Drive sources configured');
@@ -283,11 +232,10 @@ export class ImageGallery {
   }
 
   /**
-   * Helper for debug logging (supports both old and new config)
+   * Helper for debug logging
    */
   private logDebug(...args: unknown[]): void {
-    const newConfig = this.fullConfig as NewGalleryConfig;
-    if (newConfig.debug && typeof console !== 'undefined') {
+    if (this.fullConfig.debug && typeof console !== 'undefined') {
       console.log(...args);
     }
   }
@@ -311,7 +259,6 @@ export class ImageGallery {
 
     const startQueueProcessing = () => {
       this.logDebug('Starting queue processing');
-      const newConfig = this.fullConfig as NewGalleryConfig;
       const queueInterval = setInterval(() => {
         if (this.displayQueue.length > 0 && this.containerEl) {
           const img = this.displayQueue.shift();
@@ -333,7 +280,7 @@ export class ImageGallery {
         if (processedCount >= imageUrls.length && this.displayQueue.length === 0) {
           if (processedCount === imageUrls.length) clearInterval(queueInterval);
         }
-      }, newConfig.animation.queue.interval);
+      }, this.fullConfig.animation.queue.interval);
     };
 
     // Visibility Check
@@ -447,8 +394,7 @@ export class ImageGallery {
   }
 
   private showLoading(show: boolean): void {
-    const newConfig = this.fullConfig as NewGalleryConfig;
-    if (!newConfig.rendering.ui.showLoadingSpinner || !this.loadingEl) return;
+    if (!this.fullConfig.rendering.ui.showLoadingSpinner || !this.loadingEl) return;
     if (show) {
       this.loadingEl.classList.remove('hidden');
     } else {

@@ -16,20 +16,18 @@ export type {
   GalleryConfig,
   AnimationConfig,
   LayoutConfig,
-  ZoomConfig,
-  GoogleDriveConfig,
+  GoogleDriveLoaderConfig,
   StaticLoaderConfig,
   LoaderConfig,
-  UIConfig,
-  BreakpointConfig,
+  UIRenderingConfig,
+  ResponsiveRenderingConfig,
   ImageLayout,
   ContainerBounds,
   ResponsiveHeight,
   StaticSource,
   PlacementGenerator,
   ImageLoader,
-  TransformParams,
-  AnimationOptions
+  TransformParams
 } from './config/types';
 
 // Default config export

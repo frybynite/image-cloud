@@ -9,7 +9,7 @@
 import './styles/gallery.css';
 
 import { ImageGallery } from './ImageGallery';
-import type { ImageGalleryOptions, NewImageGalleryOptions } from './config/types';
+import type { ImageGalleryOptions } from './config/types';
 
 /**
  * Auto-initialize galleries from data attributes
@@ -25,7 +25,7 @@ function autoInitialize(): void {
     const containers = document.querySelectorAll('[data-image-gallery]');
 
     if (containers.length === 0) {
-      console.warn('ImageGallery: No containers found with data-image-gallery attribute');
+      // Quietly return if no galleries found (normal case for some pages)
       return;
     }
 
@@ -39,12 +39,12 @@ function autoInitialize(): void {
         return;
       }
 
-      // Check for new JSON-based config first
-      const jsonConfig = element.dataset.galleryConfig;
-      let options: ImageGalleryOptions | NewImageGalleryOptions;
+      // Check for JSON configuration
+      // Supports data-config (preferred) or data-gallery-config (legacy alias)
+      const jsonConfig = element.dataset.config || element.dataset.galleryConfig;
+      let options: ImageGalleryOptions;
 
       if (jsonConfig) {
-        // New format: JSON configuration
         try {
           const parsed = JSON.parse(jsonConfig);
           options = {
@@ -52,41 +52,12 @@ function autoInitialize(): void {
             ...parsed
           };
         } catch (error) {
-          console.error('ImageGallery: Failed to parse data-gallery-config JSON:', error);
+          console.error(`ImageGallery: Failed to parse configuration JSON for #${element.id}:`, error);
           return;
         }
       } else {
-        // Legacy format: individual data attributes (with deprecation warning)
-        console.warn(
-          '[ImageGallery Deprecation Warning] Individual data attributes (data-loader-type, data-google-drive-api-key, etc.) are deprecated. ' +
-          'Use data-gallery-config with JSON configuration instead.\n' +
-          'See migration guide: https://github.com/frybynite/image-cloud#migration-guide'
-        );
-
-        const loaderType = (element.dataset.loaderType || 'googleDrive') as 'googleDrive' | 'static';
-
-        // GoogleDrive specific attributes
-        const googleDriveApiKey = element.dataset.googleDriveApiKey || '';
-        const googleDriveFolderUrl = element.dataset.googleDriveFolderUrl || '';
-
-        // Static loader specific attributes
-        const staticSources = element.dataset.staticSources ?
-          JSON.parse(element.dataset.staticSources) : null;
-
-        // Build legacy options (will be auto-converted by ImageGallery constructor)
-        options = {
-          containerId: element.id,
-          folderUrl: googleDriveFolderUrl,
-          loaderType: loaderType,
-          googleDrive: {
-            apiKey: googleDriveApiKey
-          }
-        } as ImageGalleryOptions;
-
-        // Add static loader config if present
-        if (staticSources) {
-          (options as ImageGalleryOptions).staticLoader = { sources: staticSources };
-        }
+        console.error(`ImageGallery: Missing configuration for #${element.id}. Add data-config='{...}' attribute.`);
+        return;
       }
 
       // Initialize gallery

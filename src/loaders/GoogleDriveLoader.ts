@@ -8,7 +8,7 @@
  * - manualImageUrls(imageIds)
  */
 
-import type { ImageLoader, GoogleDriveConfig, GoogleDriveResponse, GoogleDriveLoaderConfig } from '../config/types';
+import type { ImageLoader, GoogleDriveResponse, GoogleDriveLoaderConfig } from '../config/types';
 
 export class GoogleDriveLoader implements ImageLoader {
   private apiKey: string;
@@ -16,11 +16,11 @@ export class GoogleDriveLoader implements ImageLoader {
   private debugLogging: boolean;
   private allowedExtensions: string[];
 
-  constructor(config: Partial<GoogleDriveConfig & GoogleDriveLoaderConfig> & { debugLogging?: boolean } = {}) {
+  constructor(config: Partial<GoogleDriveLoaderConfig> = {}) {
     this.apiKey = config.apiKey ?? '';
     this.apiEndpoint = config.apiEndpoint ?? 'https://www.googleapis.com/drive/v3/files';
     this.debugLogging = config.debugLogging ?? false;
-    this.allowedExtensions = config.allowedExtensions || config.imageExtensions || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+    this.allowedExtensions = config.allowedExtensions || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
   }
 
   /**

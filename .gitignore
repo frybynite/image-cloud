@@ -3,3 +3,8 @@ node_modules
 dist
 build
 test-package
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

@@ -6,13 +6,13 @@
 
 import type {
   ImageGalleryOptions,
-  NewImageGalleryOptions,
+  LegacyImageGalleryOptions,
   GoogleDriveSource,
-  NewLoaderConfig,
-  NewLayoutConfig,
-  NewAnimationConfig,
-  NewInteractionConfig,
-  NewRenderingConfig
+  LoaderConfig,
+  LayoutConfig,
+  AnimationConfig,
+  InteractionConfig,
+  RenderingConfig
 } from './types';
 
 /**

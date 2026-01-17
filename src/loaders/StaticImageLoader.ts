@@ -4,7 +4,7 @@
  * Compatible with ImageGallery's loader interface
  */
 
-import type { ImageLoader, StaticSource, StaticLoaderConfig, NewStaticLoaderConfig } from '../config/types';
+import type { ImageLoader, StaticSource, StaticLoaderConfig } from '../config/types';
 
 export class StaticImageLoader implements ImageLoader {
   private validateUrls: boolean;
@@ -14,14 +14,14 @@ export class StaticImageLoader implements ImageLoader {
   private sources: StaticSource[];
   private debugLogging: boolean;
 
-  constructor(config: Partial<StaticLoaderConfig & NewStaticLoaderConfig> & { sources?: StaticSource[]; preserveOrder?: boolean; debugLogging?: boolean } = {}) {
+  constructor(config: Partial<StaticLoaderConfig> = {}) {
     this.validateUrls = config.validateUrls !== false;
     this.validationTimeout = config.validationTimeout ?? 5000;
     this.validationMethod = config.validationMethod ?? 'head';
     this.failOnAllMissing = config.failOnAllMissing !== false;
     this.sources = config.sources ?? [];
     this.debugLogging = config.debugLogging ?? false;
-    // Note: allowedExtensions/imageExtensions from config are accepted but not used yet
+    // Note: allowedExtensions from config are accepted but not used yet
     // Static sources are pre-vetted, so extension validation is not currently needed
 
     this.log('StaticImageLoader initialized with config:', config);

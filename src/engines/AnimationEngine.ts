@@ -12,12 +12,10 @@
 import type { AnimationConfig, TransformParams, ImageLayout } from '../config/types';
 
 export class AnimationEngine {
-  private duration: number;
-  private easing: string;
+  private config: AnimationConfig;
 
-  constructor(config: Partial<AnimationConfig> = {}) {
-    this.duration = config.duration ?? 600;
-    this.easing = config.easing ?? 'cubic-bezier(0.4, 0.0, 0.2, 1)';
+  constructor(config: AnimationConfig) {
+    this.config = config;
   }
 
   /**
@@ -35,8 +33,8 @@ export class AnimationEngine {
     easing: string | null = null
   ): Promise<void> {
     return new Promise((resolve) => {
-      const animDuration = duration ?? this.duration;
-      const animEasing = easing ?? this.easing;
+      const animDuration = duration ?? this.config.duration;
+      const animEasing = easing ?? this.config.easing.default;
 
       // Build transform string
       const transforms: string[] = [];

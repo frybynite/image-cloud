@@ -30,7 +30,9 @@ export class RadialPlacementGenerator implements PlacementGenerator {
   ): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
-    const { baseImageSize, rotationRange, debugRadials } = this.config;
+    const { debugRadials } = this.config;
+    const baseImageSize = this.config.sizing.base;
+    const rotationRange = this.config.rotation.range.max;
 
     // Debug color palette
     const debugPalette = ['green', 'blue', 'red', 'yellow', 'orange', 'purple'];
@@ -94,7 +96,7 @@ export class RadialPlacementGenerator implements PlacementGenerator {
         let y = centerY - (imageSize / 2);
 
         // Boundary Clamping
-        const padding = this.config.padding ?? 50;
+        const padding = this.config.spacing.padding ?? 50;
 
         // Clamp X
         if (x < padding) {

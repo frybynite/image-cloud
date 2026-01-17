@@ -3,83 +3,7 @@
  */
 
 // ============================================================================
-// Configuration Types
-// ============================================================================
-
-export interface AnimationConfig {
-  duration: number;
-  easing: string;
-  bounceEasing: string;
-  queueInterval: number;
-}
-
-export interface UIConfig {
-  showLoadingSpinner: boolean;
-}
-
-export interface ResponsiveHeight {
-  minWidth: number;
-  height: number;
-}
-
-export interface LayoutConfig {
-  type: 'random' | 'radial';
-  debugRadials: boolean;
-  rotationRange: number;
-  minRotation: number;
-  maxRotation: number;
-  sizeVarianceMin: number;
-  sizeVarianceMax: number;
-  baseImageSize: number;
-  responsiveHeights: ResponsiveHeight[];
-  padding: number;
-  minSpacing: number;
-}
-
-export interface ZoomConfig {
-  focusScale: number;
-  mobileScale: number;
-  unfocusedOpacity?: number;
-  focusZIndex: number;
-}
-
-export interface GoogleDriveConfig {
-  apiKey: string;
-  apiEndpoint: string;
-  imageExtensions: string[];
-}
-
-export interface BreakpointConfig {
-  mobile: number;
-}
-
-export interface StaticLoaderConfig {
-  validateUrls: boolean;
-  validationTimeout: number;
-  validationMethod: 'head' | 'simple' | 'none';
-  failOnAllMissing: boolean;
-  imageExtensions: string[];
-}
-
-export interface LoaderConfig {
-  type: 'googleDrive' | 'static';
-  static: StaticLoaderConfig;
-}
-
-export interface GalleryConfig {
-  animation: AnimationConfig;
-  ui: UIConfig;
-  layout: LayoutConfig;
-  zoom: ZoomConfig;
-  googleDrive: GoogleDriveConfig;
-  breakpoints: BreakpointConfig;
-  debugLogging: boolean;
-  loader: LoaderConfig;
-  isMobile: () => boolean;
-}
-
-// ============================================================================
-// Placement Generator Types
+// Core Data Types
 // ============================================================================
 
 export interface ImageLayout {
@@ -98,17 +22,44 @@ export interface ContainerBounds {
   height: number;
 }
 
-export interface PlacementGenerator {
-  generate(
-    imageCount: number,
-    containerBounds: ContainerBounds,
-    options?: Partial<LayoutConfig>
-  ): ImageLayout[];
+export interface ResponsiveHeight {
+  minWidth: number;
+  height: number;
+}
+
+export interface TransformParams {
+  x?: number;
+  y?: number;
+  rotation?: number;
+  scale?: number;
 }
 
 // ============================================================================
-// Image Loader Types
+// Loader Configuration
 // ============================================================================
+
+export type GoogleDriveSourceType = 'folder' | 'files';
+
+export interface GoogleDriveFolderSource {
+  type: 'folder';
+  folders: string[];
+  recursive?: boolean;
+}
+
+export interface GoogleDriveFilesSource {
+  type: 'files';
+  files: string[];
+}
+
+export type GoogleDriveSource = GoogleDriveFolderSource | GoogleDriveFilesSource;
+
+export interface GoogleDriveLoaderConfig {
+  apiKey: string;
+  sources: GoogleDriveSource[];
+  apiEndpoint?: string;
+  allowedExtensions?: string[];
+  debugLogging?: boolean;
+}
 
 export type StaticSourceType = 'urls' | 'path';
 
@@ -119,13 +70,251 @@ export interface StaticSource {
   files?: string[];
 }
 
-export interface ImageLoader {
-  loadImagesFromFolder(source: string | StaticSource[]): Promise<string[]>;
+export interface StaticLoaderConfig {
+  sources: StaticSource[];
+  validateUrls?: boolean;
+  validationTimeout?: number;
+  validationMethod?: 'head' | 'simple' | 'none';
+  failOnAllMissing?: boolean;
+  allowedExtensions?: string[];
+  debugLogging?: boolean;
+}
+
+export interface LoaderConfig {
+  type: 'googleDrive' | 'static';
+  googleDrive?: GoogleDriveLoaderConfig;
+  static?: StaticLoaderConfig;
 }
 
 // ============================================================================
-// Google Drive API Types
+// Layout Configuration
 // ============================================================================
+
+export interface LayoutSizingConfig {
+  base: number;
+  variance: {
+    min: number;
+    max: number;
+  };
+  responsive: ResponsiveHeight[];
+}
+
+export interface LayoutRotationConfig {
+  enabled: boolean;
+  range: {
+    min: number;
+    max: number;
+  };
+}
+
+export interface LayoutSpacingConfig {
+  padding: number;
+  minGap: number;
+}
+
+export interface LayoutConfig {
+  algorithm: 'random' | 'radial';
+  sizing: LayoutSizingConfig;
+  rotation: LayoutRotationConfig;
+  spacing: LayoutSpacingConfig;
+  debugRadials?: boolean;
+}
+
+// ============================================================================
+// Animation Configuration
+// ============================================================================
+
+export interface AnimationEasingConfig {
+  default: string;
+  bounce: string;
+  focus: string;
+}
+
+export interface AnimationQueueConfig {
+  enabled: boolean;
+  interval: number;
+  maxConcurrent?: number;
+}
+
+export interface AnimationPerformanceConfig {
+  useGPU?: boolean;
+  reduceMotion?: boolean;
+}
+
+export interface AnimationConfig {
+  duration: number;
+  easing: AnimationEasingConfig;
+  queue: AnimationQueueConfig;
+  performance?: AnimationPerformanceConfig;
+}
+
+// ============================================================================
+// Interaction Configuration
+// ============================================================================
+
+export interface FocusInteractionConfig {
+  scale: number;
+  mobileScale: number;
+  unfocusedOpacity?: number;
+  zIndex: number;
+  animationDuration?: number;
+}
+
+export interface NavigationInteractionConfig {
+  keyboard?: boolean;
+  swipe?: boolean;
+  mouseWheel?: boolean;
+}
+
+export interface GestureInteractionConfig {
+  pinchToZoom?: boolean;
+  doubleTapToFocus?: boolean;
+}
+
+export interface InteractionConfig {
+  focus: FocusInteractionConfig;
+  navigation?: NavigationInteractionConfig;
+  gestures?: GestureInteractionConfig;
+}
+
+// ============================================================================
+// Rendering Configuration
+// ============================================================================
+
+export interface ResponsiveRenderingConfig {
+  breakpoints: {
+    mobile: number;
+    tablet?: number;
+    desktop?: number;
+  };
+  mobileDetection: () => boolean;
+}
+
+export interface UIRenderingConfig {
+  showLoadingSpinner: boolean;
+  showImageCounter?: boolean;
+  showThumbnails?: boolean;
+  theme?: 'light' | 'dark' | 'auto';
+}
+
+export interface PerformanceRenderingConfig {
+  lazyLoad?: boolean;
+  preloadCount?: number;
+  imageQuality?: 'auto' | 'high' | 'medium' | 'low';
+}
+
+export interface RenderingConfig {
+  responsive: ResponsiveRenderingConfig;
+  ui: UIRenderingConfig;
+  performance?: PerformanceRenderingConfig;
+}
+
+// ============================================================================
+// Main Gallery Configuration
+// ============================================================================
+
+export interface GalleryConfig {
+  loader: LoaderConfig;
+  layout: LayoutConfig;
+  animation: AnimationConfig;
+  interaction: InteractionConfig;
+  rendering: RenderingConfig;
+  debug: boolean;
+}
+
+export interface ImageGalleryOptions {
+  container?: string;
+  loader?: Partial<LoaderConfig>;
+  layout?: Partial<LayoutConfig>;
+  animation?: Partial<AnimationConfig>;
+  interaction?: Partial<InteractionConfig>;
+  rendering?: Partial<RenderingConfig>;
+  debug?: boolean;
+}
+
+// ============================================================================
+// Legacy Configuration Types (for backward compatibility)
+// ============================================================================
+
+export interface LegacyLayoutConfig {
+  baseImageSize?: number;
+  rotationRange?: { min: number; max: number };
+  type?: 'random' | 'radial';
+  debugRadials?: boolean;
+  sizeVarianceMin?: number;
+  sizeVarianceMax?: number;
+  responsiveHeights?: ResponsiveHeight[];
+  padding?: number;
+  minSpacing?: number;
+  minRotation?: number;
+  maxRotation?: number;
+}
+
+export interface LegacyAnimationConfig {
+  duration?: number;
+  queueInterval?: number;
+  easing?: string;
+  bounceEasing?: string;
+}
+
+export interface LegacyZoomConfig {
+  focusScale?: number;
+  mobileScale?: number;
+  unfocusedOpacity?: number;
+  focusZIndex?: number;
+}
+
+export interface LegacyConfig {
+  layout?: LegacyLayoutConfig;
+  animation?: LegacyAnimationConfig;
+  zoom?: LegacyZoomConfig;
+  debugLogging?: boolean;
+  googleDrive?: {
+    apiKey?: string;
+    apiEndpoint?: string;
+    imageExtensions?: string[];
+  };
+  loader?: {
+    type?: 'googleDrive' | 'static';
+    static?: StaticLoaderConfig;
+  };
+  breakpoints?: {
+    mobile?: number;
+    tablet?: number;
+    desktop?: number;
+  };
+  isMobile?: () => boolean;
+  ui?: {
+    showLoadingSpinner?: boolean;
+  };
+}
+
+export interface LegacyImageGalleryOptions {
+  containerId?: string;
+  loaderType?: 'googleDrive' | 'static';
+  folderUrl?: string;
+  googleDrive?: {
+    apiKey?: string;
+  };
+  staticLoader?: StaticLoaderConfig;
+  config?: LegacyConfig;
+}
+
+// ============================================================================
+// Interface Dependencies
+// ============================================================================
+
+export interface PlacementGenerator {
+  generate(
+    imageCount: number,
+    containerBounds: ContainerBounds,
+    options?: Partial<LayoutConfig>
+  ): ImageLayout[];
+}
+
+export interface ImageLoader {
+  loadImagesFromFolder(source: string | StaticSource[]): Promise<string[]>;
+}
 
 export interface GoogleDriveFile {
   id: string;
@@ -139,311 +328,6 @@ export interface GoogleDriveResponse {
   nextPageToken?: string;
 }
 
-// ============================================================================
-// Public API Types
-// ============================================================================
-
-export interface ImageGalleryOptions {
-  containerId?: string;
-  folderUrl?: string;
-  loaderType?: 'googleDrive' | 'static';
-  googleDrive?: {
-    apiKey: string;
-  };
-  staticLoader?: {
-    sources: StaticSource[];
-  };
-  config?: Partial<GalleryConfig>;
-}
-
-// ============================================================================
-// Transform Types
-// ============================================================================
-
-export interface TransformParams {
-  x?: number;
-  y?: number;
-  rotation?: number;
-  scale?: number;
-}
-
-export interface AnimationOptions {
-  duration?: number;
-  easing?: string;
-}
-
-// ============================================================================
-// Deep Partial Type (for config merging)
-// ============================================================================
-
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
-
-// ============================================================================
-// NEW PATTERN-BASED CONFIGURATION (v0.2.0+)
-// ============================================================================
-
-// ----------------------------------------------------------------------------
-// Loader Configuration
-// ----------------------------------------------------------------------------
-
-/**
- * Google Drive source types for loading images
- */
-export type GoogleDriveSourceType = 'folder' | 'files';
-
-/**
- * Google Drive folder source configuration
- */
-export interface GoogleDriveFolderSource {
-  type: 'folder';
-  folders: string[];  // Array of folder URLs or IDs
-  recursive?: boolean;  // Whether to load images from subfolders (default: true)
-}
-
-/**
- * Google Drive files source configuration
- */
-export interface GoogleDriveFilesSource {
-  type: 'files';
-  files: string[];  // Array of file URLs or IDs
-}
-
-/**
- * Union type for Google Drive sources
- */
-export type GoogleDriveSource = GoogleDriveFolderSource | GoogleDriveFilesSource;
-
-/**
- * Google Drive loader configuration
- */
-export interface GoogleDriveLoaderConfig {
-  apiKey: string;
-  sources: GoogleDriveSource[];  // Array of folder and/or file sources
-  apiEndpoint?: string;
-  allowedExtensions?: string[];
-  debugLogging?: boolean;
-}
-
-/**
- * Static loader configuration (updated structure)
- */
-export interface NewStaticLoaderConfig {
-  sources: StaticSource[];  // Array of static sources
-  validateUrls?: boolean;
-  validationTimeout?: number;
-  validationMethod?: 'head' | 'simple' | 'none';
-  failOnAllMissing?: boolean;
-  allowedExtensions?: string[];
-  debugLogging?: boolean;
-}
-
-/**
- * Unified loader configuration
- */
-export interface NewLoaderConfig {
-  type: 'googleDrive' | 'static';
-  googleDrive?: GoogleDriveLoaderConfig;
-  static?: NewStaticLoaderConfig;
-}
-
-// ----------------------------------------------------------------------------
-// Layout Configuration
-// ----------------------------------------------------------------------------
-
-/**
- * Layout sizing configuration
- */
-export interface LayoutSizingConfig {
-  base: number;  // Base image size in pixels
-  variance: {
-    min: number;  // Minimum size variance multiplier
-    max: number;  // Maximum size variance multiplier
-  };
-  responsive: ResponsiveHeight[];  // Responsive height breakpoints
-}
-
-/**
- * Layout rotation configuration
- */
-export interface LayoutRotationConfig {
-  enabled: boolean;  // Whether rotation is enabled
-  range: {
-    min: number;  // Minimum rotation in degrees
-    max: number;  // Maximum rotation in degrees
-  };
-}
-
-/**
- * Layout spacing configuration
- */
-export interface LayoutSpacingConfig {
-  padding: number;  // Padding from viewport edges
-  minGap: number;  // Minimum spacing between images
-}
-
-/**
- * New pattern-based layout configuration
- */
-export interface NewLayoutConfig {
-  algorithm: 'random' | 'radial';  // Layout algorithm
-  sizing: LayoutSizingConfig;
-  rotation: LayoutRotationConfig;
-  spacing: LayoutSpacingConfig;
-  debugRadials?: boolean;  // Debug visualization for radial layout
-}
-
-// ----------------------------------------------------------------------------
-// Animation Configuration
-// ----------------------------------------------------------------------------
-
-/**
- * Animation easing configuration
- */
-export interface AnimationEasingConfig {
-  default: string;  // Default easing function
-  bounce: string;  // Bounce easing function
-  focus: string;  // Focus/zoom easing function
-}
-
-/**
- * Animation queue configuration
- */
-export interface AnimationQueueConfig {
-  enabled: boolean;  // Whether queue is enabled
-  interval: number;  // Interval between queue items (ms)
-  maxConcurrent?: number;  // STUB: Max concurrent animations
-}
-
-/**
- * Animation performance configuration
- */
-export interface AnimationPerformanceConfig {
-  useGPU?: boolean;  // STUB: Force GPU acceleration
-  reduceMotion?: boolean;  // STUB: Respect prefers-reduced-motion
-}
-
-/**
- * New pattern-based animation configuration
- */
-export interface NewAnimationConfig {
-  duration: number;  // Animation duration in milliseconds
-  easing: AnimationEasingConfig;
-  queue: AnimationQueueConfig;
-  performance?: AnimationPerformanceConfig;
-}
-
-// ----------------------------------------------------------------------------
-// Interaction Configuration
-// ----------------------------------------------------------------------------
-
-/**
- * Focus/zoom interaction configuration
- */
-export interface FocusInteractionConfig {
-  scale: number;  // Scale factor when focused
-  mobileScale: number;  // Scale factor on mobile devices
-  unfocusedOpacity?: number;  // Opacity of unfocused images
-  zIndex: number;  // Z-index for focused image
-  animationDuration?: number;  // Override animation duration for focus
-}
-
-/**
- * Navigation interaction configuration (STUB)
- */
-export interface NavigationInteractionConfig {
-  keyboard?: boolean;  // STUB: Keyboard navigation
-  swipe?: boolean;  // STUB: Swipe navigation
-  mouseWheel?: boolean;  // STUB: Mouse wheel navigation
-}
-
-/**
- * Gesture interaction configuration (STUB)
- */
-export interface GestureInteractionConfig {
-  pinchToZoom?: boolean;  // STUB: Pinch to zoom
-  doubleTapToFocus?: boolean;  // STUB: Double tap to focus
-}
-
-/**
- * New pattern-based interaction configuration
- */
-export interface NewInteractionConfig {
-  focus: FocusInteractionConfig;
-  navigation?: NavigationInteractionConfig;  // STUB
-  gestures?: GestureInteractionConfig;  // STUB
-}
-
-// ----------------------------------------------------------------------------
-// Rendering Configuration
-// ----------------------------------------------------------------------------
-
-/**
- * Responsive rendering configuration
- */
-export interface ResponsiveRenderingConfig {
-  breakpoints: {
-    mobile: number;  // Mobile breakpoint in pixels
-    tablet?: number;  // STUB: Tablet breakpoint
-    desktop?: number;  // STUB: Desktop breakpoint
-  };
-  mobileDetection: () => boolean;  // Function to detect mobile
-}
-
-/**
- * UI rendering configuration
- */
-export interface UIRenderingConfig {
-  showLoadingSpinner: boolean;
-  showImageCounter?: boolean;  // STUB: Show image counter
-  showThumbnails?: boolean;  // STUB: Show thumbnails
-  theme?: 'light' | 'dark' | 'auto';  // STUB: UI theme
-}
-
-/**
- * Performance rendering configuration (STUB)
- */
-export interface PerformanceRenderingConfig {
-  lazyLoad?: boolean;  // STUB: Lazy load images
-  preloadCount?: number;  // STUB: Number of images to preload
-  imageQuality?: 'auto' | 'high' | 'medium' | 'low';  // STUB: Image quality
-}
-
-/**
- * New pattern-based rendering configuration
- */
-export interface NewRenderingConfig {
-  responsive: ResponsiveRenderingConfig;
-  ui: UIRenderingConfig;
-  performance?: PerformanceRenderingConfig;  // STUB
-}
-
-// ----------------------------------------------------------------------------
-// New Gallery Configuration
-// ----------------------------------------------------------------------------
-
-/**
- * New pattern-based gallery configuration
- */
-export interface NewGalleryConfig {
-  loader: NewLoaderConfig;
-  layout: NewLayoutConfig;
-  animation: NewAnimationConfig;
-  interaction: NewInteractionConfig;
-  rendering: NewRenderingConfig;
-  debug: boolean;
-}
-
-/**
- * New pattern-based options for ImageGallery initialization
- */
-export interface NewImageGalleryOptions {
-  container?: string;  // Container element ID (simplified from containerId)
-  loader?: Partial<NewLoaderConfig>;
-  layout?: Partial<NewLayoutConfig>;
-  animation?: Partial<NewAnimationConfig>;
-  interaction?: Partial<NewInteractionConfig>;
-  rendering?: Partial<NewRenderingConfig>;
-  debug?: boolean;
-}

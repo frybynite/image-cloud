@@ -28,22 +28,24 @@ import { ImageGallery } from '@frybynite/image-gallery';
 import '@frybynite/image-gallery/style.css';
 
 const gallery = new ImageGallery({
-  containerId: 'myGallery',
-  loaderType: 'static',
-  staticLoader: {
-    sources: [
-      {
-        type: 'urls',
-        urls: [
-          'https://example.com/image1.jpg',
-          'https://example.com/image2.jpg',
-          'https://example.com/image3.jpg'
-        ]
-      }
-    ]
+  container: 'myGallery',
+  loader: {
+    type: 'static',
+    static: {
+      sources: [
+        {
+          type: 'urls',
+          urls: [
+            'https://example.com/image1.jpg',
+            'https://example.com/image2.jpg',
+            'https://example.com/image3.jpg'
+          ]
+        }
+      ]
+    }
   },
-  config: {
-    layout: { type: 'radial' }
+  layout: {
+    algorithm: 'radial'
   }
 });
 
@@ -59,10 +61,10 @@ await gallery.init();
   <link rel="stylesheet" href="node_modules/@frybynite/image-gallery/dist/style.css">
 </head>
 <body>
+  <!-- Note: Data attributes for auto-init need to be updated to match new structure if using complex config -->
   <div id="gallery"
        data-image-gallery="true"
-       data-loader-type="static"
-       data-static-sources='[{"type":"urls","urls":["img1.jpg","img2.jpg"]}]'>
+       data-config='{"loader":{"type":"static","static":{"sources":[{"type":"urls","urls":["img1.jpg"]}]}}}'>
   </div>
 
   <script type="module">
@@ -87,10 +89,12 @@ await gallery.init();
   <script>
     const { ImageGallery } = window.ImageGallery;
     const gallery = new ImageGallery({
-      containerId: 'gallery',
-      loaderType: 'static',
-      staticLoader: {
-        sources: [{ type: 'urls', urls: ['image1.jpg', 'image2.jpg'] }]
+      container: 'gallery',
+      loader: {
+        type: 'static',
+        static: {
+          sources: [{ type: 'urls', urls: ['image1.jpg', 'image2.jpg'] }]
+        }
       }
     });
     gallery.init();
@@ -105,19 +109,21 @@ await gallery.init();
 
 ```typescript
 const gallery = new ImageGallery({
-  containerId: 'gallery',
-  loaderType: 'static',
-  staticLoader: {
-    sources: [
-      {
-        type: 'urls',
-        urls: [
-          'https://picsum.photos/400/300',
-          'https://picsum.photos/500/350',
-          'https://picsum.photos/450/320'
-        ]
-      }
-    ]
+  container: 'gallery',
+  loader: {
+    type: 'static',
+    static: {
+      sources: [
+        {
+          type: 'urls',
+          urls: [
+            'https://picsum.photos/400/300',
+            'https://picsum.photos/500/350',
+            'https://picsum.photos/450/320'
+          ]
+        }
+      ]
+    }
   }
 });
 
@@ -128,16 +134,18 @@ await gallery.init();
 
 ```typescript
 const gallery = new ImageGallery({
-  containerId: 'gallery',
-  loaderType: 'static',
-  staticLoader: {
-    sources: [
-      {
-        type: 'path',
-        basePath: '/images',
-        files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
-      }
-    ]
+  container: 'gallery',
+  loader: {
+    type: 'static',
+    static: {
+      sources: [
+        {
+          type: 'path',
+          basePath: '/images',
+          files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
+        }
+      ]
+    }
   }
 });
 
@@ -148,11 +156,18 @@ await gallery.init();
 
 ```typescript
 const gallery = new ImageGallery({
-  containerId: 'gallery',
-  loaderType: 'googleDrive',
-  folderUrl: 'https://drive.google.com/drive/folders/YOUR_FOLDER_ID',
-  googleDrive: {
-    apiKey: 'YOUR_GOOGLE_API_KEY'
+  container: 'gallery',
+  loader: {
+    type: 'googleDrive',
+    googleDrive: {
+      apiKey: 'YOUR_GOOGLE_API_KEY',
+      sources: [
+        {
+          type: 'folder',
+          folders: ['YOUR_FOLDER_ID']
+        }
+      ]
+    }
   }
 });
 
@@ -163,25 +178,35 @@ await gallery.init();
 
 ```typescript
 const gallery = new ImageGallery({
-  containerId: 'gallery',
-  loaderType: 'static',
-  staticLoader: {
-    sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
+  container: 'gallery',
+  loader: {
+    type: 'static',
+    static: {
+      sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
+    }
   },
-  config: {
-    layout: {
-      type: 'radial',  // or 'random'
-      baseImageSize: 250,
-      rotationRange: 20,
+  layout: {
+    algorithm: 'radial',  // or 'random'
+    sizing: {
+      base: 250
+    },
+    rotation: {
+      range: { max: 20, min: -20 }
+    },
+    spacing: {
       padding: 60
-    },
-    animation: {
-      duration: 800,
-      queueInterval: 200
-    },
-    zoom: {
-      focusScale: 3.0,
-      focusZIndex: 1000
+    }
+  },
+  animation: {
+    duration: 800,
+    queue: {
+      interval: 200
+    }
+  },
+  interaction: {
+    focus: {
+      scale: 3.0,
+      zIndex: 1000
     }
   }
 });
@@ -191,53 +216,19 @@ await gallery.init();
 
 ## Configuration Options
 
+See `PARAMETERS.md` for full documentation of the configuration object.
+
 ### ImageGalleryOptions
 
 ```typescript
 interface ImageGalleryOptions {
-  containerId?: string;              // HTML element ID (default: 'imageCloud')
-  folderUrl?: string;                // Google Drive folder URL
-  loaderType?: 'googleDrive' | 'static';
-  googleDrive?: {
-    apiKey: string;
-  };
-  staticLoader?: {
-    sources: StaticSource[];
-  };
-  config?: Partial<GalleryConfig>;   // Custom configuration
-}
-```
-
-### Layout Configuration
-
-```typescript
-interface LayoutConfig {
-  type: 'random' | 'radial';        // Layout algorithm
-  baseImageSize: number;            // Base image height in pixels
-  rotationRange: number;            // Rotation variance (±degrees)
-  padding: number;                  // Padding from viewport edges
-  minSpacing: number;               // Minimum spacing between images
-  responsiveHeights: ResponsiveHeight[];
-}
-```
-
-### Animation Configuration
-
-```typescript
-interface AnimationConfig {
-  duration: number;                 // Animation duration (ms)
-  easing: string;                   // CSS easing function
-  queueInterval: number;            // Delay between image insertions (ms)
-}
-```
-
-### Zoom Configuration
-
-```typescript
-interface ZoomConfig {
-  focusScale: number;               // Scale factor when focused
-  mobileScale: number;              // Scale for mobile devices
-  focusZIndex: number;              // Z-index when focused
+  container?: string;              // HTML element ID (default: 'imageCloud')
+  loader?: Partial<LoaderConfig>;
+  layout?: Partial<LayoutConfig>;
+  animation?: Partial<AnimationConfig>;
+  interaction?: Partial<InteractionConfig>;
+  rendering?: Partial<RenderingConfig>;
+  debug?: boolean;
 }
 ```
 
@@ -287,10 +278,12 @@ function GalleryComponent() {
   useEffect(() => {
     if (containerRef.current) {
       galleryRef.current = new ImageGallery({
-        containerId: containerRef.current.id,
-        loaderType: 'static',
-        staticLoader: {
-          sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
+        container: containerRef.current.id,
+        loader: {
+          type: 'static',
+          static: {
+            sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
+          }
         }
       });
 

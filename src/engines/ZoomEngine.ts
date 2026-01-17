@@ -11,7 +11,7 @@
  * - reset()
  */
 
-import type { ZoomConfig, ContainerBounds, ImageLayout, TransformParams } from '../config/types';
+import type { FocusInteractionConfig, ContainerBounds, ImageLayout, TransformParams } from '../config/types';
 import { AnimationEngine } from './AnimationEngine';
 
 interface FocusData {
@@ -21,19 +21,13 @@ interface FocusData {
 }
 
 export class ZoomEngine {
-  private config: {
-    focusScale: number;
-    focusZIndex: number;
-  };
+  private config: FocusInteractionConfig;
   private animationEngine: AnimationEngine;
   private currentFocus: HTMLElement | null;
   private focusData: FocusData | null;
 
-  constructor(config: Partial<ZoomConfig>, animationEngine: AnimationEngine) {
-    this.config = {
-      focusScale: config.focusScale ?? 2.5,
-      focusZIndex: config.focusZIndex ?? 1000
-    };
+  constructor(config: FocusInteractionConfig, animationEngine: AnimationEngine) {
+    this.config = config;
 
     this.animationEngine = animationEngine;
     this.currentFocus = null;  // Currently focused image element
@@ -77,12 +71,12 @@ export class ZoomEngine {
         x: targetX,
         y: targetY,
         rotation: 0,  // Reset rotation when focused
-        scale: this.config.focusScale
+        scale: this.config.scale
       }
     };
 
     // Update z-index
-    imageElement.style.zIndex = String(this.config.focusZIndex);
+    imageElement.style.zIndex = String(this.config.zIndex);
     imageElement.classList.add('focused');
 
     // Animate to focused state
@@ -90,7 +84,8 @@ export class ZoomEngine {
 
     return this.animationEngine.animateTransform(
       imageElement,
-      this.focusData.focusTransform
+      this.focusData.focusTransform,
+      this.config.animationDuration
     );
   }
 
