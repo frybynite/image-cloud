@@ -35,6 +35,11 @@
       },
       debug: true
     });
+
+    // Initialize the gallery
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+    });
   </script>
 </body>
 </html>
