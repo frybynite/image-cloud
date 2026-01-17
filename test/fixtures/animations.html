@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animations Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageGallery } from '/dist/image-cloud.js';
+
+    window.gallery = new ImageGallery({
+      container: 'imageCloud',
+      loader: {
+        type: 'static',
+        static: {
+          sources: [{
+            type: 'urls',
+            urls: [
+              '/test/fixtures/images/image1.jpg',
+              '/test/fixtures/images/image2.jpg',
+              '/test/fixtures/images/image3.jpg'
+            ]
+          }],
+          validateUrls: false
+        }
+      },
+      animation: {
+        duration: 500,
+        easing: {
+          default: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+          bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+          focus: 'cubic-bezier(0.4, 0, 0.2, 1)'
+        },
+        queue: {
+          enabled: true,
+          interval: 150
+        }
+      },
+      debug: true
+    });
+  </script>
+</body>
+</html>
