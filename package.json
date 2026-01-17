@@ -20,6 +20,10 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run clean && tsc && vite build",
+    "test": "playwright test --config=test/playwright.config.ts",
+    "test:ui": "playwright test --config=test/playwright.config.ts --ui",
+    "test:headed": "playwright test --config=test/playwright.config.ts --headed",
+    "test:update-snapshots": "playwright test --config=test/playwright.config.ts --update-snapshots",
     "build:dev": "./scripts/build.sh",
     "build:prod": "./scripts/build.sh --production",
     "build:watch": "vite build --watch",
@@ -57,6 +61,7 @@
   },
   "homepage": "https://github.com/frybynite/image-cloud#readme",
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.11",
     "vite-plugin-dts": "^3.7.1"
