@@ -14,6 +14,7 @@
   <script type="module">
     import { ImageGallery } from '/dist/image-cloud.js';
 
+    window.ImageGallery = ImageGallery;
     window.gallery = new ImageGallery({
       container: 'imageCloud',
       loader: {
@@ -43,6 +44,11 @@
         }
       },
       debug: true
+    });
+
+    // Initialize the gallery
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
     });
   </script>
 </body>
