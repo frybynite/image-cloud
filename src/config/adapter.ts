@@ -15,6 +15,10 @@ import type {
   RenderingConfig
 } from './types';
 
+// Type aliases for clarity in the adapter
+type NewOptions = Partial<ImageGalleryOptions>;
+type OldOptions = LegacyImageGalleryOptions;
+
 /**
  * Tracks which deprecation warnings have been shown
  */
@@ -28,7 +32,7 @@ export class LegacyOptionsAdapter {
   /**
    * Detect if options are in legacy format
    */
-  static isLegacyFormat(options: ImageGalleryOptions | NewImageGalleryOptions): options is ImageGalleryOptions {
+  static isLegacyFormat(options: ImageGalleryOptions | OldOptions): options is OldOptions {
     const opts = options as any;
 
     // Check for legacy top-level properties
@@ -45,8 +49,8 @@ export class LegacyOptionsAdapter {
   /**
    * Convert legacy options to new pattern-based options
    */
-  static convert(oldOptions: ImageGalleryOptions): NewImageGalleryOptions {
-    const newOptions: NewImageGalleryOptions = {};
+  static convert(oldOptions: OldOptions): NewOptions {
+    const newOptions: NewOptions = {};
 
     // Convert container ID
     if (oldOptions.containerId) {
@@ -86,8 +90,8 @@ export class LegacyOptionsAdapter {
   /**
    * Convert loader configuration
    */
-  private static convertLoader(oldOptions: ImageGalleryOptions): Partial<NewLoaderConfig> {
-    const loader: Partial<NewLoaderConfig> = {};
+  private static convertLoader(oldOptions: OldOptions): Partial<LoaderConfig> {
+    const loader: Partial<LoaderConfig> = {};
 
     // Determine loader type
     const loaderType = oldOptions.loaderType || oldOptions.config?.loader?.type || 'googleDrive';
@@ -143,10 +147,10 @@ export class LegacyOptionsAdapter {
   /**
    * Convert layout configuration to new pattern-based structure
    */
-  private static convertLayout(oldLayout: any): Partial<NewLayoutConfig> {
+  private static convertLayout(oldLayout: any): Partial<LayoutConfig> {
     this.warn('layout', 'Flat layout configuration is deprecated. Use the pattern-based structure with sizing, rotation, and spacing groups.');
 
-    const newLayout: Partial<NewLayoutConfig> = {
+    const newLayout: Partial<LayoutConfig> = {
       algorithm: oldLayout.type || 'radial',
       debugRadials: oldLayout.debugRadials
     };
@@ -183,10 +187,10 @@ export class LegacyOptionsAdapter {
   /**
    * Convert animation configuration to new pattern-based structure
    */
-  private static convertAnimation(oldAnimation: any): Partial<NewAnimationConfig> {
+  private static convertAnimation(oldAnimation: any): Partial<AnimationConfig> {
     this.warn('animation', 'Flat animation configuration is deprecated. Use the pattern-based structure with easing, queue, and performance groups.');
 
-    const newAnimation: Partial<NewAnimationConfig> = {
+    const newAnimation: Partial<AnimationConfig> = {
       duration: oldAnimation.duration || 600
     };
 
@@ -209,7 +213,7 @@ export class LegacyOptionsAdapter {
   /**
    * Convert zoom configuration to interaction.focus
    */
-  private static convertZoomToInteraction(oldZoom: any): Partial<NewInteractionConfig> {
+  private static convertZoomToInteraction(oldZoom: any): Partial<InteractionConfig> {
     this.warn('interaction', 'Zoom configuration is deprecated. Use "interaction.focus" instead.');
 
     return {
@@ -225,8 +229,8 @@ export class LegacyOptionsAdapter {
   /**
    * Convert rendering configuration (breakpoints + ui)
    */
-  private static convertRendering(oldOptions: ImageGalleryOptions): Partial<NewRenderingConfig> {
-    const rendering: Partial<NewRenderingConfig> = {};
+  private static convertRendering(oldOptions: OldOptions): Partial<RenderingConfig> {
+    const rendering: Partial<RenderingConfig> = {};
 
     // Convert responsive configuration
     if (oldOptions.config?.breakpoints || oldOptions.config?.isMobile) {

@@ -16,4 +16,5 @@
 - [x] Change page title to "Resume Certifications Gallery"
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [ ] Move google drive API key out of config.js and into a parameter passed the outermost method.
+- [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
 
