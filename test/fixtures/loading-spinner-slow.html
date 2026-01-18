@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading Spinner Test (Slow Loading)</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #1a1a2e;
+    }
+    #imageCloud {
+      width: 100%;
+      height: 100%;
+    }
+    .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 1000;
+    }
+    .loading.hidden {
+      display: none;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #e94560;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <div id="loading" class="loading hidden">
+    <div class="spinner"></div>
+    <p>Loading images...</p>
+  </div>
+
+  <script type="module">
+    import { ImageGallery, StaticImageLoader } from '/dist/image-cloud.js';
+
+    // Wrap the StaticImageLoader to add delay
+    class SlowStaticImageLoader extends StaticImageLoader {
+      constructor(config, delay = 3000) {
+        super(config);
+        this.delay = delay;
+      }
+
+      async loadImagesFromFolder(sources) {
+        // Show spinner during this delay
+        await new Promise(resolve => setTimeout(resolve, this.delay));
+        return super.loadImagesFromFolder(sources);
+      }
+    }
+
+    window.ImageGallery = ImageGallery;
+
+    // Create gallery with a patched loader
+    const staticConfig = {
+      sources: [
+        {
+          type: 'urls',
+          urls: [
+            '/test/fixtures/images/image1.jpg',
+            '/test/fixtures/images/image2.jpg',
+            '/test/fixtures/images/image3.jpg'
+          ]
+        }
+      ],
+      validateUrls: false
+    };
+
+    window.gallery = new ImageGallery({
+      container: 'imageCloud',
+      loader: {
+        type: 'static',
+        static: staticConfig
+      },
+      rendering: {
+        ui: {
+          showLoadingSpinner: true
+        }
+      },
+      animation: {
+        duration: 300,
+        queue: { enabled: true, interval: 100 }
+      },
+      debug: true
+    });
+
+    // Patch the loader with our slow version
+    window.gallery.imageLoader = new SlowStaticImageLoader(staticConfig, 3000);
+
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+    });
+  </script>
+</body>
+</html>
