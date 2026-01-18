@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery - Layout Algorithms Demo</title>
+    <link rel="stylesheet" href="../dist/style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .gallery-section {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .gallery-section h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.3rem;
+            color: #7f5af0;
+        }
+        .gallery-section p {
+            margin: 0 0 15px 0;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .image-cloud {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background: #0f0f23;
+            border-radius: 8px;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .controls button {
+            padding: 8px 16px;
+            background: #7f5af0;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .controls button:hover {
+            background: #6b46c1;
+        }
+        .controls select {
+            padding: 8px 12px;
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Layout Algorithms Demo</h1>
+    <p class="subtitle">Explore different image placement algorithms</p>
+
+    <div class="gallery-grid">
+        <!-- Grid Layout -->
+        <div class="gallery-section">
+            <h2>Grid Layout</h2>
+            <p>Clean rows and columns with optional stagger and jitter for organic feel</p>
+            <div id="gallery-grid" class="image-cloud"></div>
+            <div class="controls">
+                <select id="grid-stagger">
+                    <option value="none">No Stagger</option>
+                    <option value="row">Row Stagger</option>
+                    <option value="column">Column Stagger</option>
+                </select>
+                <select id="grid-jitter">
+                    <option value="0">No Jitter</option>
+                    <option value="0.3">Light Jitter</option>
+                    <option value="0.6">Medium Jitter</option>
+                    <option value="1">Heavy Jitter</option>
+                </select>
+                <button id="grid-refresh">Try it</button>
+            </div>
+        </div>
+
+        <!-- Spiral Layout -->
+        <div class="gallery-section">
+            <h2>Spiral Layout</h2>
+            <p>Images arranged along a spiral path - golden, archimedean, or logarithmic</p>
+            <div id="gallery-spiral" class="image-cloud"></div>
+            <div class="controls">
+                <select id="spiral-type">
+                    <option value="golden">Golden Spiral</option>
+                    <option value="archimedean">Archimedean</option>
+                    <option value="logarithmic">Logarithmic</option>
+                </select>
+                <select id="spiral-direction">
+                    <option value="counterclockwise">Counter-clockwise</option>
+                    <option value="clockwise">Clockwise</option>
+                </select>
+                <button id="spiral-refresh">Try it</button>
+            </div>
+        </div>
+
+        <!-- Cluster Layout -->
+        <div class="gallery-section">
+            <h2>Cluster Layout</h2>
+            <p>Organic groupings like photos scattered on a table</p>
+            <div id="gallery-cluster" class="image-cloud"></div>
+            <div class="controls">
+                <select id="cluster-count">
+                    <option value="auto">Auto Clusters</option>
+                    <option value="2">2 Clusters</option>
+                    <option value="3">3 Clusters</option>
+                    <option value="5">5 Clusters</option>
+                </select>
+                <select id="cluster-distribution">
+                    <option value="gaussian">Gaussian</option>
+                    <option value="uniform">Uniform</option>
+                </select>
+                <button id="cluster-refresh">Try it</button>
+            </div>
+        </div>
+
+        <!-- Radial Layout (existing) -->
+        <div class="gallery-section">
+            <h2>Radial Layout</h2>
+            <p>Concentric rings emanating from center (existing algorithm)</p>
+            <div id="gallery-radial" class="image-cloud"></div>
+        </div>
+
+        <!-- Random Layout (existing) -->
+        <div class="gallery-section">
+            <h2>Random Layout</h2>
+            <p>Randomly scattered images (existing algorithm)</p>
+            <div id="gallery-random" class="image-cloud"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../dist/image-cloud.js';
+
+        // Sample images from test fixtures
+        const sampleImages = [
+            '/test/fixtures/images/image1.jpg',
+            '/test/fixtures/images/image2.jpg',
+            '/test/fixtures/images/image3.jpg',
+            '/test/fixtures/images/computing1.jpg',
+            '/test/fixtures/images/computing2.jpg',
+            '/test/fixtures/images/computing3.jpg',
+            '/test/fixtures/images/food1.jpg',
+            '/test/fixtures/images/food2.jpg',
+            '/test/fixtures/images/food3.jpg',
+            '/test/fixtures/images/scenery1.jpg',
+            '/test/fixtures/images/scenery2.jpg',
+            '/test/fixtures/images/scenery3.jpg'
+        ];
+
+        const loaderConfig = {
+            type: 'static',
+            static: {
+                sources: [{ type: 'urls', urls: sampleImages }],
+                validationMethod: 'none'
+            }
+        };
+
+        // Grid Gallery
+        const gridGallery = new ImageGallery({
+            container: 'gallery-grid',
+            loader: loaderConfig,
+            layout: {
+                algorithm: 'grid',
+                sizing: { base: 100 },
+                grid: {
+                    columns: 'auto',
+                    rows: 'auto',
+                    stagger: 'none',
+                    jitter: 0,
+                    overlap: 0.2,
+                    gap: 10
+                }
+            }
+        });
+
+        // Spiral Gallery
+        const spiralGallery = new ImageGallery({
+            container: 'gallery-spiral',
+            loader: loaderConfig,
+            layout: {
+                algorithm: 'spiral',
+                sizing: { base: 80 },
+                spiral: {
+                    spiralType: 'golden',
+                    direction: 'counterclockwise',
+                    tightness: 1.0,
+                    scaleDecay: 0.3
+                }
+            }
+        });
+
+        // Cluster Gallery
+        const clusterGallery = new ImageGallery({
+            container: 'gallery-cluster',
+            loader: loaderConfig,
+            layout: {
+                algorithm: 'cluster',
+                sizing: { base: 90 },
+                cluster: {
+                    clusterCount: 'auto',
+                    clusterSpread: 120,
+                    clusterSpacing: 180,
+                    overlap: 0.4,
+                    distribution: 'gaussian'
+                }
+            }
+        });
+
+        // Radial Gallery (existing)
+        const radialGallery = new ImageGallery({
+            container: 'gallery-radial',
+            loader: loaderConfig,
+            layout: {
+                algorithm: 'radial',
+                sizing: { base: 100 }
+            }
+        });
+
+        // Random Gallery (existing)
+        const randomGallery = new ImageGallery({
+            container: 'gallery-random',
+            loader: loaderConfig,
+            layout: {
+                algorithm: 'random',
+                sizing: { base: 120 }
+            }
+        });
+
+        // Store gallery instances for refresh
+        let galleries = {
+            grid: gridGallery,
+            spiral: spiralGallery,
+            cluster: clusterGallery,
+            radial: radialGallery,
+            random: randomGallery
+        };
+
+        // Initialize all galleries
+        Promise.all([
+            gridGallery.init(),
+            spiralGallery.init(),
+            clusterGallery.init(),
+            radialGallery.init(),
+            randomGallery.init()
+        ]).catch(error => {
+            console.error('Gallery initialization failed:', error);
+        });
+
+        // Helper to recreate a gallery with new config
+        async function refreshGallery(containerId, config) {
+            // Clear the container
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            // Create new gallery
+            const gallery = new ImageGallery({
+                container: containerId,
+                loader: loaderConfig,
+                layout: config
+            });
+
+            await gallery.init();
+            return gallery;
+        }
+
+        // Grid refresh handler
+        document.getElementById('grid-refresh').addEventListener('click', async () => {
+            const stagger = document.getElementById('grid-stagger').value;
+            const jitter = parseFloat(document.getElementById('grid-jitter').value);
+
+            galleries.grid = await refreshGallery('gallery-grid', {
+                algorithm: 'grid',
+                sizing: { base: 100 },
+                grid: {
+                    columns: 'auto',
+                    rows: 'auto',
+                    stagger: stagger,
+                    jitter: jitter,
+                    overlap: 0.2,
+                    gap: 10
+                }
+            });
+        });
+
+        // Spiral refresh handler
+        document.getElementById('spiral-refresh').addEventListener('click', async () => {
+            const spiralType = document.getElementById('spiral-type').value;
+            const direction = document.getElementById('spiral-direction').value;
+
+            galleries.spiral = await refreshGallery('gallery-spiral', {
+                algorithm: 'spiral',
+                sizing: { base: 80 },
+                spiral: {
+                    spiralType: spiralType,
+                    direction: direction,
+                    tightness: 1.0,
+                    scaleDecay: 0.3
+                }
+            });
+        });
+
+        // Cluster refresh handler
+        document.getElementById('cluster-refresh').addEventListener('click', async () => {
+            const countValue = document.getElementById('cluster-count').value;
+            const clusterCount = countValue === 'auto' ? 'auto' : parseInt(countValue);
+            const distribution = document.getElementById('cluster-distribution').value;
+
+            galleries.cluster = await refreshGallery('gallery-cluster', {
+                algorithm: 'cluster',
+                sizing: { base: 90 },
+                cluster: {
+                    clusterCount: clusterCount,
+                    clusterSpread: 120,
+                    clusterSpacing: 180,
+                    overlap: 0.4,
+                    distribution: distribution
+                }
+            });
+        });
+    </script>
+</body>
+</html>

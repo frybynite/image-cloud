@@ -134,7 +134,8 @@ test.describe('Layout Algorithms', () => {
     test('images are positioned within viewport bounds', async ({ page }) => {
       await page.goto('/test/fixtures/static-basic.html');
       await waitForGalleryInit(page);
-      await page.waitForTimeout(500);
+      // Wait for all 12 images to load (queue animation)
+      await page.waitForTimeout(1500);
 
       const images = page.locator('#imageCloud img');
       const viewport = page.viewportSize();

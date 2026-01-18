@@ -18,11 +18,11 @@ test.describe('Gallery Initialization', () => {
     await page.goto('/test/fixtures/static-basic.html');
     await waitForGalleryInit(page);
 
-    // Wait a bit for all images to load (queue animation)
-    await page.waitForTimeout(500);
+    // Wait a bit for all images to load (queue animation with 12 images)
+    await page.waitForTimeout(1500);
 
     const imageCount = await getImageCount(page);
-    expect(imageCount).toBe(3);
+    expect(imageCount).toBe(12);
   });
 
   test('applies absolute positioning to images', async ({ page }) => {

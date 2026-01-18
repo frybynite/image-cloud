@@ -10,10 +10,10 @@ test.describe('Static Image Loader', () => {
       await waitForGalleryInit(page);
 
       // Wait for all images to load (queue animation)
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
 
       const count = await getImageCount(page);
-      expect(count).toBe(3);
+      expect(count).toBe(12);
     });
 
     test('images have correct src attributes', async ({ page }) => {
@@ -21,16 +21,18 @@ test.describe('Static Image Loader', () => {
       await waitForGalleryInit(page);
 
       // Wait for all images to load (queue animation)
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
 
       const images = page.locator('#imageCloud img');
       const srcs = await images.evaluateAll((imgs) =>
         imgs.map((img) => (img as HTMLImageElement).src)
       );
 
+      // Check for images from each category
       expect(srcs.some(src => src.includes('image1.jpg'))).toBe(true);
-      expect(srcs.some(src => src.includes('image2.jpg'))).toBe(true);
-      expect(srcs.some(src => src.includes('image3.jpg'))).toBe(true);
+      expect(srcs.some(src => src.includes('computing1.jpg'))).toBe(true);
+      expect(srcs.some(src => src.includes('food1.jpg'))).toBe(true);
+      expect(srcs.some(src => src.includes('scenery1.jpg'))).toBe(true);
     });
 
     test('images are visible after load', async ({ page }) => {
@@ -53,19 +55,20 @@ test.describe('Static Image Loader', () => {
       await page.goto('/test/fixtures/static-multiple.html');
       await waitForGalleryInit(page);
 
-      // Wait for all images to load (queue animation)
-      await page.waitForTimeout(500);
+      // Wait for all images to load (queue animation with 12 images takes longer)
+      await page.waitForTimeout(2000);
 
       const count = await getImageCount(page);
-      expect(count).toBe(3);
+      // 3 from URLs + 9 from path (PDF filtered out) = 12 total
+      expect(count).toBe(12);
     });
 
     test('path sources resolve with basePath', async ({ page }) => {
       await page.goto('/test/fixtures/static-multiple.html');
       await waitForGalleryInit(page);
 
-      // Wait for all images to load (queue animation)
-      await page.waitForTimeout(500);
+      // Wait for all images to load (queue animation with 12 images takes longer)
+      await page.waitForTimeout(2000);
 
       const images = page.locator('#imageCloud img');
       const srcs = await images.evaluateAll((imgs) =>
@@ -78,6 +81,28 @@ test.describe('Static Image Loader', () => {
       });
     });
 
+    test('filters out non-image files (PDF)', async ({ page }) => {
+      await page.goto('/test/fixtures/static-multiple.html');
+      await waitForGalleryInit(page);
+
+      // Wait for all images to load (queue animation with 12 images takes longer)
+      await page.waitForTimeout(2000);
+
+      const images = page.locator('#imageCloud img');
+      const srcs = await images.evaluateAll((imgs) =>
+        imgs.map((img) => (img as HTMLImageElement).src)
+      );
+
+      // PDF should be filtered out
+      expect(srcs.some(src => src.includes('.pdf'))).toBe(false);
+      expect(srcs.some(src => src.includes('skip-me'))).toBe(false);
+
+      // All sources should be image files
+      srcs.forEach(src => {
+        expect(src).toMatch(/\.(jpg|jpeg|png|gif|webp)$/i);
+      });
+    });
+
   });
 
   test.describe('Error Handling', () => {
@@ -87,12 +112,12 @@ test.describe('Static Image Loader', () => {
       await page.goto('/test/fixtures/static-basic.html');
       await waitForGalleryInit(page);
 
-      // Wait for all 3 images to be present (queue animation)
-      await expect(page.locator('#imageCloud img')).toHaveCount(3, { timeout: 5000 });
+      // Wait for all 12 images to be present (queue animation)
+      await expect(page.locator('#imageCloud img')).toHaveCount(12, { timeout: 10000 });
 
       // Get initial image count
       const initialCount = await getImageCount(page);
-      expect(initialCount).toBe(3);
+      expect(initialCount).toBe(12);
 
       // Dynamically add a broken image to the container
       await page.evaluate(() => {
@@ -117,7 +142,7 @@ test.describe('Static Image Loader', () => {
 
       // All images (including broken one) should be in DOM
       const allImages = page.locator('#imageCloud img');
-      await expect(allImages).toHaveCount(4, { timeout: 2000 }); // 3 original + 1 broken
+      await expect(allImages).toHaveCount(13, { timeout: 2000 }); // 12 original + 1 broken
 
       // Only valid images should have loaded successfully
       const validLoadedImages = await allImages.evaluateAll((imgs) =>
@@ -126,7 +151,7 @@ test.describe('Static Image Loader', () => {
           return imgEl.complete && imgEl.naturalWidth > 0;
         }).length
       );
-      expect(validLoadedImages).toBe(3); // Only the original 3 loaded properly
+      expect(validLoadedImages).toBe(12); // Only the original 12 loaded properly
 
       // Gallery should still be functional - verify an original image is clickable
       const firstImage = page.locator('#imageCloud img').first();

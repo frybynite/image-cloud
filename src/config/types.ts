@@ -112,12 +112,49 @@ export interface LayoutSpacingConfig {
   minGap: number;
 }
 
+// ============================================================================
+// Algorithm-Specific Configuration
+// ============================================================================
+
+export interface GridAlgorithmConfig {
+  columns: number | 'auto';
+  rows: number | 'auto';
+  stagger: 'none' | 'row' | 'column';
+  jitter: number;
+  overlap: number;
+  fillDirection: 'row' | 'column';
+  alignment: 'start' | 'center' | 'end';
+  gap: number;
+}
+
+export interface SpiralAlgorithmConfig {
+  spiralType: 'golden' | 'archimedean' | 'logarithmic';
+  direction: 'clockwise' | 'counterclockwise';
+  tightness: number;
+  scaleDecay: number;
+  startAngle: number;
+}
+
+export interface ClusterAlgorithmConfig {
+  clusterCount: number | 'auto';
+  clusterSpread: number;
+  clusterSpacing: number;
+  density: 'uniform' | 'varied';
+  overlap: number;
+  distribution: 'gaussian' | 'uniform';
+}
+
+export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster';
+
 export interface LayoutConfig {
-  algorithm: 'random' | 'radial';
+  algorithm: LayoutAlgorithm;
   sizing: LayoutSizingConfig;
   rotation: LayoutRotationConfig;
   spacing: LayoutSpacingConfig;
   debugRadials?: boolean;
+  grid?: GridAlgorithmConfig;
+  spiral?: SpiralAlgorithmConfig;
+  cluster?: ClusterAlgorithmConfig;
 }
 
 // ============================================================================

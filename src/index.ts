@@ -16,6 +16,10 @@ export type {
   GalleryConfig,
   AnimationConfig,
   LayoutConfig,
+  LayoutAlgorithm,
+  GridAlgorithmConfig,
+  SpiralAlgorithmConfig,
+  ClusterAlgorithmConfig,
   GoogleDriveLoaderConfig,
   StaticLoaderConfig,
   LoaderConfig,
@@ -42,6 +46,9 @@ export { ZoomEngine } from './engines/ZoomEngine';
 // Export generators for custom implementations
 export { RandomPlacementGenerator } from './generators/RandomPlacementGenerator';
 export { RadialPlacementGenerator } from './generators/RadialPlacementGenerator';
+export { GridPlacementGenerator } from './generators/GridPlacementGenerator';
+export { SpiralPlacementGenerator } from './generators/SpiralPlacementGenerator';
+export { ClusterPlacementGenerator } from './generators/ClusterPlacementGenerator';
 
 // Export loaders for custom implementations
 export { GoogleDriveLoader } from './loaders/GoogleDriveLoader';

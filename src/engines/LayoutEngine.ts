@@ -12,6 +12,9 @@
 import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator } from '../config/types';
 import { RandomPlacementGenerator } from '../generators/RandomPlacementGenerator';
 import { RadialPlacementGenerator } from '../generators/RadialPlacementGenerator';
+import { GridPlacementGenerator } from '../generators/GridPlacementGenerator';
+import { SpiralPlacementGenerator } from '../generators/SpiralPlacementGenerator';
+import { ClusterPlacementGenerator } from '../generators/ClusterPlacementGenerator';
 
 export class LayoutEngine {
   private config: LayoutConfig;
@@ -35,6 +38,12 @@ export class LayoutEngine {
     switch (this.config.algorithm) {
       case 'radial':
         return new RadialPlacementGenerator(this.config);
+      case 'grid':
+        return new GridPlacementGenerator(this.config);
+      case 'spiral':
+        return new SpiralPlacementGenerator(this.config);
+      case 'cluster':
+        return new ClusterPlacementGenerator(this.config);
       case 'random':
       default:
         return new RandomPlacementGenerator(this.config);
