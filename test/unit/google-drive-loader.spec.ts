@@ -11,27 +11,27 @@ test.describe('GoogleDriveLoader Unit Tests', () => {
       const result = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({});
-        return loader.extractFolderId('https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t');
+        return loader.extractFolderId('https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph');
       });
-      expect(result).toBe('19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t');
+      expect(result).toBe('1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph');
     });
 
     test('extracts folder ID from URL with sharing parameter', async ({ page }) => {
       const result = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({});
-        return loader.extractFolderId('https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t?usp=sharing');
+        return loader.extractFolderId('https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing');
       });
-      expect(result).toBe('19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t');
+      expect(result).toBe('1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph');
     });
 
     test('extracts folder ID from id= format', async ({ page }) => {
       const result = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({});
-        return loader.extractFolderId('https://drive.google.com/open?id=19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t');
+        return loader.extractFolderId('https://drive.google.com/open?id=1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph');
       });
-      expect(result).toBe('19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t');
+      expect(result).toBe('1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph');
     });
 
     test('returns null for invalid URL', async ({ page }) => {

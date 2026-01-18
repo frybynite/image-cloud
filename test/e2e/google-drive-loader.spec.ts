@@ -142,7 +142,7 @@ test.describe('Google Drive Loader', () => {
           apiKey: 'INVALID_API_KEY_12345'
         });
         try {
-          await loader.loadImagesFromFolder('https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t');
+          await loader.loadImagesFromFolder('https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph');
           return null;
         } catch (e) {
           return (e as Error).message;
@@ -161,7 +161,7 @@ test.describe('Google Drive Loader', () => {
       const error = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({
-          apiKey: 'AIzaSyBKTCzznRaJt_Nyd9_9agTHDhFieMMe0u8'
+          apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc'
         });
         try {
           // Use a folder ID that doesn't exist or isn't shared

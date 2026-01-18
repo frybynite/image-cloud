@@ -135,7 +135,7 @@ class ImageGallery {
                 await this.handleLoadImages(null);
             } else {
                 // GoogleDrive loader uses folderUrl
-                const folderUrl = this.options.folderUrl || 'https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t?usp=sharing';
+                const folderUrl = this.options.folderUrl || 'https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing';
                 await this.handleLoadImages(folderUrl);
             }
 
@@ -193,7 +193,7 @@ class ImageGallery {
                 if (loaderType === 'static') {
                     this.handleLoadImages(null);
                 } else {
-                    const folderUrl = this.options.folderUrl || 'https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t?usp=sharing';
+                    const folderUrl = this.options.folderUrl || 'https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing';
                     this.handleLoadImages(folderUrl);
                 }
             } else {
