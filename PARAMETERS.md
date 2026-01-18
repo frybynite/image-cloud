@@ -134,32 +134,174 @@ Controls UI elements and responsiveness.
 
 ---
 
-## Example
+## Complete JSON Reference
 
-```typescript
-const gallery = new ImageGallery({
-  container: 'my-gallery',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [
-        { type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }
+All available parameters with example values:
+
+```jsonc
+{
+  "container": "imageCloud",                    // ID of the container element
+  "debug": false,                               // Default. Enable debug logging
+
+  "loader": {
+    "type": "googleDrive",                      // Default. "googleDrive" | "static"
+
+    "googleDrive": {
+      "apiKey": "YOUR_GOOGLE_API_KEY",          // Required
+      "sources": [                              // Required
+        {
+          "type": "folder",                     // Load from folder(s)
+          "folders": [
+            "https://drive.google.com/drive/folders/FOLDER_ID"
+          ],
+          "recursive": true                     // Include subfolders
+        },
+        {
+          "type": "files",                      // Load specific files
+          "files": [
+            "https://drive.google.com/file/d/FILE_ID_1",
+            "https://drive.google.com/file/d/FILE_ID_2"
+          ]
+        }
+      ],
+      "apiEndpoint": "https://www.googleapis.com/drive/v3/files",  // Default
+      "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
+      "debugLogging": false                     // Default
+    },
+
+    "static": {
+      "sources": [                              // Required
+        {
+          "type": "urls",                       // Direct image URLs
+          "urls": [
+            "https://example.com/image1.jpg",
+            "https://example.com/image2.jpg"
+          ]
+        },
+        {
+          "type": "path",                       // Base path + filenames
+          "basePath": "/images/gallery/",
+          "files": ["photo1.jpg", "photo2.png"]
+        }
+      ],
+      "validateUrls": true,                     // Default
+      "validationTimeout": 5000,                // Default. Timeout in ms
+      "validationMethod": "head",               // Default. "head" | "simple" | "none"
+      "failOnAllMissing": true,                 // Default
+      "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
+      "debugLogging": false                     // Default
+    }
+  },
+
+  "layout": {
+    "algorithm": "radial",                      // Default. "radial" | "random"
+    "debugRadials": false,                      // Default
+
+    "sizing": {
+      "base": 200,                              // Default. Base image size in px
+      "variance": {
+        "min": 1.0,                             // Default. Min scale multiplier
+        "max": 1.0                              // Default. Max scale multiplier
+      },
+      "responsive": [                           // Default
+        { "minWidth": 1200, "height": 225 },
+        { "minWidth": 768, "height": 180 },
+        { "minWidth": 0, "height": 100 }
+      ]
+    },
+
+    "rotation": {
+      "enabled": true,                          // Default
+      "range": {
+        "min": -15,                             // Default. Degrees
+        "max": 15                               // Default. Degrees
+      }
+    },
+
+    "spacing": {
+      "padding": 50,                            // Default. Container padding in px
+      "minGap": 20                              // Default. Min gap between images
+    }
+  },
+
+  "animation": {
+    "duration": 600,                            // Default. Animation duration in ms
+
+    "easing": {
+      "default": "cubic-bezier(0.4, 0.0, 0.2, 1)",        // Default
+      "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)", // Default
+      "focus": "cubic-bezier(0.4, 0.0, 0.2, 1)"           // Default
+    },
+
+    "queue": {
+      "enabled": true,                          // Default
+      "interval": 150                           // Default. Delay between each image (ms)
+    }
+  },
+
+  "interaction": {
+    "focus": {
+      "scale": 2.5,                             // Default
+      "mobileScale": 2.0,                       // Default
+      "unfocusedOpacity": 0.3,                  // Default
+      "zIndex": 1000                            // Default
+    }
+  },
+
+  "rendering": {
+    "responsive": {
+      "breakpoints": {
+        "mobile": 768                           // Default
+      }
+    },
+
+    "ui": {
+      "showLoadingSpinner": false               // Default
+    }
+  }
+}
+```
+
+---
+
+## Minimal Examples
+
+### Google Drive Loader
+```jsonc
+{
+  "container": "imageCloud",
+  "loader": {
+    "type": "googleDrive",
+    "googleDrive": {
+      "apiKey": "YOUR_API_KEY",
+      "sources": [
+        {
+          "type": "folder",
+          "folders": ["https://drive.google.com/drive/folders/FOLDER_ID"]
+        }
       ]
     }
-  },
-  layout: {
-    algorithm: 'radial',
-    spacing: {
-      padding: 100,
-      minGap: 30
+  }
+}
+```
+
+### Static Loader
+```jsonc
+{
+  "container": "imageCloud",
+  "loader": {
+    "type": "static",
+    "static": {
+      "sources": [
+        {
+          "type": "urls",
+          "urls": [
+            "https://example.com/image1.jpg",
+            "https://example.com/image2.jpg"
+          ]
+        }
+      ]
     }
-  },
-  animation: {
-    duration: 800,
-    queue: {
-      interval: 100
-    }
-  },
-  debug: true
-});
+  }
+}
 ```
