@@ -86,6 +86,9 @@ export class ImageGallery {
         throw new Error(`Container #${this.containerId} not found`);
       }
 
+      // Add gallery class for CSS scoping
+      this.containerEl.classList.add('fbn-ic-gallery');
+
       // Create or bind UI elements
       this.setupUI();
 
@@ -117,7 +120,7 @@ export class ImageGallery {
     });
 
     document.addEventListener('click', (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest('.cloud-image')) {
+      if (!(e.target as HTMLElement).closest('.fbn-ic-image')) {
         this.zoomEngine.unfocusImage();
       }
     });
@@ -303,7 +306,7 @@ export class ImageGallery {
       const img = document.createElement('img');
       img.src = url;
       img.referrerPolicy = 'no-referrer';
-      img.classList.add('cloud-image');
+      img.classList.add('fbn-ic-image');
       img.dataset.imageId = String(index);
 
       const layout = layouts[index];
@@ -396,21 +399,21 @@ export class ImageGallery {
   private showLoading(show: boolean): void {
     if (!this.fullConfig.rendering.ui.showLoadingSpinner || !this.loadingEl) return;
     if (show) {
-      this.loadingEl.classList.remove('hidden');
+      this.loadingEl.classList.remove('fbn-ic-hidden');
     } else {
-      this.loadingEl.classList.add('hidden');
+      this.loadingEl.classList.add('fbn-ic-hidden');
     }
   }
 
   private showError(message: string): void {
     if (!this.errorEl) return;
     this.errorEl.textContent = message;
-    this.errorEl.classList.remove('hidden');
+    this.errorEl.classList.remove('fbn-ic-hidden');
   }
 
   private hideError(): void {
     if (this.errorEl) {
-      this.errorEl.classList.add('hidden');
+      this.errorEl.classList.add('fbn-ic-hidden');
     }
   }
 

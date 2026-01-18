@@ -77,7 +77,7 @@ export class ZoomEngine {
 
     // Update z-index
     imageElement.style.zIndex = String(this.config.zIndex);
-    imageElement.classList.add('focused');
+    imageElement.classList.add('fbn-ic-focused');
 
     // Animate to focused state
     this.currentFocus = imageElement;
@@ -111,7 +111,7 @@ export class ZoomEngine {
 
     // Reset z-index after animation completes
     element.style.zIndex = '';
-    element.classList.remove('focused');
+    element.classList.remove('fbn-ic-focused');
 
     // Clear focus state
     this.currentFocus = null;
