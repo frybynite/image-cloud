@@ -11,6 +11,10 @@ interface ClusterCenter {
   spread: number; // Actual spread for this cluster (may vary if density='varied')
 }
 
+interface ClusterLayoutOptions extends Partial<LayoutConfig> {
+  fixedHeight?: number;
+}
+
 const DEFAULT_CLUSTER_CONFIG: ClusterAlgorithmConfig = {
   clusterCount: 'auto',
   clusterSpread: 150,
@@ -31,20 +35,21 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
    * Generate cluster layout positions for images
    * @param imageCount - Number of images to layout
    * @param containerBounds - Container dimensions {width, height}
-   * @param options - Optional overrides
+   * @param options - Optional overrides (includes fixedHeight)
    * @returns Array of layout objects with position, rotation, scale
    */
   generate(
     imageCount: number,
     containerBounds: ContainerBounds,
-    _options: Partial<LayoutConfig> = {}
+    options: ClusterLayoutOptions = {}
   ): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
 
     const clusterConfig = { ...DEFAULT_CLUSTER_CONFIG, ...this.config.cluster };
     const padding = this.config.spacing.padding;
-    const baseImageSize = this.config.sizing.base;
+    // Use fixedHeight if provided, otherwise use base size from config
+    const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
     const rotationRange = this.config.rotation.range.max;
 
     // Calculate number of clusters

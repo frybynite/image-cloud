@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { GalleryConfig, DeepPartial, ResponsiveHeight } from './types';
+import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig } from './types';
 
 /**
  * Default configuration object
@@ -44,7 +44,15 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
         { minWidth: 1200, height: 225 },  // Large screens
         { minWidth: 768, height: 180 },   // Tablet / Small desktop
         { minWidth: 0, height: 100 }      // Mobile / Default
-      ]
+      ],
+      adaptive: Object.freeze({
+        enabled: true,             // Enable adaptive sizing by default
+        minSize: 50,               // Minimum 50px image height
+        maxSize: 400,              // Maximum 400px image height
+        targetCoverage: 0.6,       // Target 60% of container area
+        densityFactor: 1.0,        // Default density
+        overflowBehavior: 'minimize' as const  // Reduce size to fit, never truncate by default
+      })
     }),
     rotation: Object.freeze({
       enabled: true,
@@ -190,7 +198,10 @@ export function mergeConfig(
         variance: userConfig.layout.sizing.variance
           ? { ...DEFAULT_CONFIG.layout.sizing.variance, ...userConfig.layout.sizing.variance }
           : DEFAULT_CONFIG.layout.sizing.variance,
-        responsive: (userConfig.layout.sizing.responsive as ResponsiveHeight[]) || DEFAULT_CONFIG.layout.sizing.responsive
+        responsive: (userConfig.layout.sizing.responsive as ResponsiveHeight[]) || DEFAULT_CONFIG.layout.sizing.responsive,
+        adaptive: userConfig.layout.sizing.adaptive
+          ? { ...DEFAULT_CONFIG.layout.sizing.adaptive!, ...(userConfig.layout.sizing.adaptive as AdaptiveSizingConfig) }
+          : DEFAULT_CONFIG.layout.sizing.adaptive
       };
     }
 

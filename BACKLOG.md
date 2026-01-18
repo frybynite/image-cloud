@@ -17,4 +17,7 @@
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [ ] Move google drive API key out of config.js and into a parameter passed the outermost method.
 - [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
-
+- [ ] in smaller context windows we need more discrete control over the size of the image and the "full view" size.
+- [ ] Discuss custom fly-in animations - allow configurable entrance animation styles for images.
+- [ ] Fix: Dragging window between screens triggers re-animation even when staying within same breakpoint.
+- [ ] Fix: Duplicate images still appearing when resizing window from desktop to mobile size (race condition not fully resolved).

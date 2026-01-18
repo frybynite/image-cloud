@@ -90,6 +90,22 @@ export interface LoaderConfig {
 // Layout Configuration
 // ============================================================================
 
+export type OverflowBehavior = 'truncate' | 'minimize';
+
+export interface AdaptiveSizingConfig {
+  enabled: boolean;              // Enable auto-sizing (default: true)
+  minSize: number;               // Minimum image height (default: 50px)
+  maxSize: number;               // Maximum image height (default: 400px)
+  targetCoverage: number;        // Target % of container to fill (default: 0.6)
+  densityFactor: number;         // Packing density multiplier (default: 1.0)
+  overflowBehavior: OverflowBehavior;  // How to handle overflow (default: 'minimize')
+}
+
+export interface AdaptiveSizingResult {
+  height: number;                // Calculated image height
+  truncateCount?: number;        // If truncate behavior, max images to show
+}
+
 export interface LayoutSizingConfig {
   base: number;
   variance: {
@@ -97,6 +113,7 @@ export interface LayoutSizingConfig {
     max: number;
   };
   responsive: ResponsiveHeight[];
+  adaptive?: AdaptiveSizingConfig;
 }
 
 export interface LayoutRotationConfig {

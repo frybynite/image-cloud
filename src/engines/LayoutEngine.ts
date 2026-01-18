@@ -9,7 +9,7 @@
  * - updateConfig(newConfig)
  */
 
-import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator } from '../config/types';
+import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator, AdaptiveSizingResult, LayoutSizingConfig } from '../config/types';
 import { RandomPlacementGenerator } from '../generators/RandomPlacementGenerator';
 import { RadialPlacementGenerator } from '../generators/RadialPlacementGenerator';
 import { GridPlacementGenerator } from '../generators/GridPlacementGenerator';
@@ -97,5 +97,74 @@ export class LayoutEngine {
     if (newConfig.algorithm && newConfig.algorithm !== this.config.algorithm) {
       this.generator = this.initGenerator();
     }
+  }
+
+  /**
+   * Calculate adaptive image size based on container dimensions and image count
+   * @param containerBounds - Container dimensions {width, height}
+   * @param imageCount - Number of images to display
+   * @param sizingConfig - Sizing configuration including responsive and adaptive settings
+   * @param responsiveHeight - Current responsive breakpoint height (upper bound)
+   * @returns Calculated sizing result with height and optional truncate count
+   */
+  calculateAdaptiveSize(
+    containerBounds: ContainerBounds,
+    imageCount: number,
+    sizingConfig: LayoutSizingConfig,
+    responsiveHeight: number
+  ): AdaptiveSizingResult {
+    const adaptive = sizingConfig.adaptive;
+
+    // If adaptive sizing is disabled, return responsive height
+    if (!adaptive || !adaptive.enabled) {
+      return { height: responsiveHeight };
+    }
+
+    const { width, height } = containerBounds;
+    const { minSize, maxSize, targetCoverage, densityFactor, overflowBehavior } = adaptive;
+
+    // Calculate area-based optimal size
+    const containerArea = width * height;
+    const targetArea = containerArea * targetCoverage;
+    const areaPerImage = targetArea / imageCount;
+
+    // Calculate height from area assuming 1.4 aspect ratio (landscape images)
+    const aspectRatio = 1.4;
+    let calculatedHeight = Math.sqrt(areaPerImage / aspectRatio);
+
+    // Apply density factor
+    calculatedHeight *= densityFactor;
+
+    // Clamp to responsive maximum (responsive height is the ceiling)
+    calculatedHeight = Math.min(calculatedHeight, responsiveHeight);
+
+    // Apply min/max constraints
+    let finalHeight = this.clamp(calculatedHeight, minSize, maxSize);
+
+    // Handle overflow behavior
+    if (finalHeight === minSize && calculatedHeight < minSize) {
+      // Images still wouldn't fit at minimum size
+      if (overflowBehavior === 'truncate') {
+        // Calculate how many images can fit at minSize
+        const minImageArea = minSize * (minSize * aspectRatio);
+        const maxImages = Math.floor(targetArea / minImageArea);
+        return {
+          height: minSize,
+          truncateCount: Math.max(1, maxImages)
+        };
+      }
+      // 'minimize' behavior: force fit below minimum
+      // Recalculate without minimum constraint
+      finalHeight = Math.max(20, calculatedHeight); // Hard floor at 20px
+    }
+
+    return { height: finalHeight };
+  }
+
+  /**
+   * Utility: Clamp a value between min and max
+   */
+  private clamp(value: number, min: number, max: number): number {
+    return Math.max(min, Math.min(max, value));
   }
 }

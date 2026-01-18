@@ -5,6 +5,10 @@
 
 import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig } from '../config/types';
 
+interface RandomLayoutOptions extends Partial<LayoutConfig> {
+  fixedHeight?: number;
+}
+
 export class RandomPlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
 
@@ -16,15 +20,16 @@ export class RandomPlacementGenerator implements PlacementGenerator {
    * Generate random layout positions for images
    * @param imageCount - Number of images to layout
    * @param containerBounds - Container dimensions {width, height}
-   * @param options - Optional overrides
+   * @param options - Optional overrides (includes fixedHeight)
    * @returns Array of layout objects with position, rotation, scale
    */
-  generate(imageCount: number, containerBounds: ContainerBounds, _options: Partial<LayoutConfig> = {}): ImageLayout[] {
+  generate(imageCount: number, containerBounds: ContainerBounds, options: RandomLayoutOptions = {}): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
-    
+
     const padding = this.config.spacing.padding;
-    const baseImageSize = this.config.sizing.base;
+    // Use fixedHeight if provided, otherwise use base size from config
+    const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
     const rotationRange = this.config.rotation.range.max;
     const sizeVarianceMin = this.config.sizing.variance.min;
     const sizeVarianceMax = this.config.sizing.variance.max;

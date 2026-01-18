@@ -5,6 +5,10 @@
 
 import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, SpiralAlgorithmConfig } from '../config/types';
 
+interface SpiralLayoutOptions extends Partial<LayoutConfig> {
+  fixedHeight?: number;
+}
+
 // Golden angle in radians (~137.5 degrees)
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 
@@ -27,20 +31,21 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
    * Generate spiral layout positions for images
    * @param imageCount - Number of images to layout
    * @param containerBounds - Container dimensions {width, height}
-   * @param options - Optional overrides
+   * @param options - Optional overrides (includes fixedHeight)
    * @returns Array of layout objects with position, rotation, scale
    */
   generate(
     imageCount: number,
     containerBounds: ContainerBounds,
-    _options: Partial<LayoutConfig> = {}
+    options: SpiralLayoutOptions = {}
   ): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
 
     const spiralConfig = { ...DEFAULT_SPIRAL_CONFIG, ...this.config.spiral };
     const padding = this.config.spacing.padding;
-    const baseImageSize = this.config.sizing.base;
+    // Use fixedHeight if provided, otherwise use base size from config
+    const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
     const rotationRange = this.config.rotation.range.max;
 
     // Center of the spiral

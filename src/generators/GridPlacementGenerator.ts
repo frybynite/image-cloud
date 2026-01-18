@@ -5,6 +5,10 @@
 
 import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, GridAlgorithmConfig } from '../config/types';
 
+interface GridLayoutOptions extends Partial<LayoutConfig> {
+  fixedHeight?: number;
+}
+
 const DEFAULT_GRID_CONFIG: GridAlgorithmConfig = {
   columns: 'auto',
   rows: 'auto',
@@ -27,20 +31,21 @@ export class GridPlacementGenerator implements PlacementGenerator {
    * Generate grid layout positions for images
    * @param imageCount - Number of images to layout
    * @param containerBounds - Container dimensions {width, height}
-   * @param options - Optional overrides
+   * @param options - Optional overrides (includes fixedHeight)
    * @returns Array of layout objects with position, rotation, scale
    */
   generate(
     imageCount: number,
     containerBounds: ContainerBounds,
-    _options: Partial<LayoutConfig> = {}
+    options: GridLayoutOptions = {}
   ): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
 
     const gridConfig = { ...DEFAULT_GRID_CONFIG, ...this.config.grid };
     const padding = this.config.spacing.padding;
-    const baseImageSize = this.config.sizing.base;
+    // Use fixedHeight if provided, otherwise use base size from config
+    const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
     const rotationRange = this.config.rotation.range.max;
 
     // Calculate available space
@@ -63,7 +68,13 @@ export class GridPlacementGenerator implements PlacementGenerator {
     // Calculate image size with overlap factor
     // overlap: 0 = fit in cell, 0.5 = 50% larger, 1.0 = 2x cell size
     const overlapMultiplier = 1 + gridConfig.overlap;
-    const imageSize = Math.min(cellWidth, cellHeight) * overlapMultiplier;
+    const cellBasedSize = Math.min(cellWidth, cellHeight) * overlapMultiplier;
+
+    // Use fixedHeight if provided, otherwise use cell-based calculation
+    // For grid layouts, we respect fixedHeight but cap at cell-based size to avoid overflow
+    const imageSize = options.fixedHeight
+      ? Math.min(options.fixedHeight, cellBasedSize)
+      : cellBasedSize;
 
     // Estimated width for landscape images
     const estimatedImageWidth = imageSize * 1.4;

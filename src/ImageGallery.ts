@@ -23,6 +23,8 @@ export class ImageGallery {
   private currentImageHeight: number;
   private resizeTimeout: number | null;
   private displayQueue: HTMLImageElement[];
+  private queueInterval: number | null;
+  private loadGeneration: number;
 
   // Modules
   private animationEngine: AnimationEngine;
@@ -46,6 +48,8 @@ export class ImageGallery {
     this.currentImageHeight = 225;
     this.resizeTimeout = null;
     this.displayQueue = [];
+    this.queueInterval = null;
+    this.loadGeneration = 0;
 
     // Initialize engines with new config structure
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
@@ -182,6 +186,19 @@ export class ImageGallery {
   }
 
   /**
+   * Get container bounds for layout calculations
+   */
+  private getContainerBounds(): { width: number; height: number } {
+    if (!this.containerEl) {
+      return { width: window.innerWidth, height: window.innerHeight * 0.7 };
+    }
+    return {
+      width: this.containerEl.offsetWidth,
+      height: this.containerEl.offsetHeight || window.innerHeight * 0.7
+    };
+  }
+
+  /**
    * Load images using the unified loader interface
    */
   private async loadImages(): Promise<void> {
@@ -195,7 +212,7 @@ export class ImageGallery {
 
       // Get image count and URLs from loader
       const imageCount = this.imageLoader.imagesLength();
-      const imageUrls = this.imageLoader.imageURLs();
+      let imageUrls = this.imageLoader.imageURLs();
 
       if (imageCount === 0) {
         this.showError('No images found.');
@@ -203,9 +220,28 @@ export class ImageGallery {
         return;
       }
 
-      this.logDebug(`Loaded ${imageCount} images`);
+      // Calculate adaptive sizing based on container and image count
+      const containerBounds = this.getContainerBounds();
+      const responsiveHeight = this.getImageHeight();
 
-      await this.createImageCloud(imageUrls);
+      this.logDebug(`Adaptive sizing input: container=${containerBounds.width}x${containerBounds.height}px, images=${imageCount}, responsiveMax=${responsiveHeight}px`);
+
+      const sizingResult = this.layoutEngine.calculateAdaptiveSize(
+        containerBounds,
+        imageCount,
+        this.fullConfig.layout.sizing,
+        responsiveHeight
+      );
+
+      this.logDebug(`Adaptive sizing result: height=${sizingResult.height}px${sizingResult.truncateCount ? `, overflow=${this.fullConfig.layout.sizing.adaptive?.overflowBehavior}, truncateCount=${sizingResult.truncateCount}` : ''}`);
+
+      // Handle truncation if needed
+      if (sizingResult.truncateCount && sizingResult.truncateCount < imageUrls.length) {
+        this.logDebug(`Truncating from ${imageUrls.length} to ${sizingResult.truncateCount} images`);
+        imageUrls = imageUrls.slice(0, sizingResult.truncateCount);
+      }
+
+      await this.createImageCloud(imageUrls, sizingResult.height);
 
       this.showLoading(false);
       this.imagesLoaded = true;
@@ -228,16 +264,14 @@ export class ImageGallery {
     }
   }
 
-  private async createImageCloud(imageUrls: string[]): Promise<void> {
+  private async createImageCloud(imageUrls: string[], imageHeight: number): Promise<void> {
     if (!this.containerEl) return;
 
-    const containerBounds: ContainerBounds = {
-      width: this.containerEl.offsetWidth,
-      height: this.containerEl.offsetHeight || window.innerHeight * 0.7
-    };
-
-    const imageHeight = this.getImageHeight();
+    const containerBounds = this.getContainerBounds();
     this.currentImageHeight = imageHeight;
+
+    // Capture current generation to detect stale callbacks
+    const currentGeneration = this.loadGeneration;
 
     // Generate layout
     const layouts = this.layoutEngine.generateLayout(imageUrls.length, containerBounds, { fixedHeight: imageHeight } as any);
@@ -247,7 +281,20 @@ export class ImageGallery {
 
     const startQueueProcessing = () => {
       this.logDebug('Starting queue processing');
-      const queueInterval = setInterval(() => {
+      // Clear any existing interval before creating new one
+      if (this.queueInterval !== null) {
+        clearInterval(this.queueInterval);
+      }
+      this.queueInterval = window.setInterval(() => {
+        // Check if this interval is still valid (generation hasn't changed)
+        if (currentGeneration !== this.loadGeneration) {
+          if (this.queueInterval !== null) {
+            clearInterval(this.queueInterval);
+            this.queueInterval = null;
+          }
+          return;
+        }
+
         if (this.displayQueue.length > 0 && this.containerEl) {
           const img = this.displayQueue.shift();
           if (img) {
@@ -266,7 +313,10 @@ export class ImageGallery {
         }
 
         if (processedCount >= imageUrls.length && this.displayQueue.length === 0) {
-          if (processedCount === imageUrls.length) clearInterval(queueInterval);
+          if (this.queueInterval !== null) {
+            clearInterval(this.queueInterval);
+            this.queueInterval = null;
+          }
         }
       }, this.fullConfig.animation.queue.interval);
     };
@@ -316,6 +366,11 @@ export class ImageGallery {
       img.style.transition = 'opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
 
       img.onload = () => {
+        // Ignore if generation has changed (stale callback from previous load)
+        if (currentGeneration !== this.loadGeneration) {
+          return;
+        }
+
         const aspectRatio = img.naturalWidth / img.naturalHeight;
         const renderedWidth = imageHeight * aspectRatio;
 
@@ -372,6 +427,15 @@ export class ImageGallery {
    * Clear the image cloud and reset state
    */
   clearImageCloud(): void {
+    // Clear queue processing interval to prevent stale images from being added
+    if (this.queueInterval !== null) {
+      clearInterval(this.queueInterval);
+      this.queueInterval = null;
+    }
+    // Increment generation to invalidate pending image onload handlers
+    this.loadGeneration++;
+    this.displayQueue = [];
+
     if (this.containerEl) {
       this.containerEl.innerHTML = '';
     }
