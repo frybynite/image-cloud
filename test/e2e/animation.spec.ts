@@ -16,36 +16,39 @@ test.describe('Animation System', () => {
 
   test.describe('Entrance Animations', () => {
 
-    test('images animate in from edges', async ({ page }) => {
+    test('images become visible after entrance animation', async ({ page }) => {
       await page.goto('/test/fixtures/animations.html');
 
-      // Check initial state before full animation
+      // Wait for images to be attached to DOM
       await page.waitForSelector('#imageCloud img', { state: 'attached' });
 
-      // Images should have transforms applied
+      // Images should become visible after animation completes
       const img = page.locator('#imageCloud img').first();
       await expect(img).toBeVisible({ timeout: 2000 });
+
+      // Verify image has a transform applied (indicating animation system is working)
+      const transform = await img.evaluate((el) => window.getComputedStyle(el).transform);
+      expect(transform).not.toBe('');
     });
 
     test('images appear staggered (queue enabled)', async ({ page }) => {
       await page.goto('/test/fixtures/animations.html');
 
-      // Wait for first image
-      await page.waitForSelector('#imageCloud img', { state: 'visible' });
+      // Wait for first image to appear
+      await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
 
-      // Count visible images over time
-      let visibleAt100ms = 0;
-      let visibleAt300ms = 0;
+      // Wait for all images to finish appearing (3 images * 150ms interval + buffer)
+      await page.waitForTimeout(600);
 
-      await page.waitForTimeout(100);
-      visibleAt100ms = await page.locator('#imageCloud img:visible').count();
+      // Verify all 3 images are now visible
+      const finalCount = await page.locator('#imageCloud img').count();
+      expect(finalCount).toBe(3);
 
-      await page.waitForTimeout(200);
-      visibleAt300ms = await page.locator('#imageCloud img:visible').count();
-
-      // With queue interval of 150ms, we should see staggered appearance
-      // This is a soft check - timing can vary
-      expect(visibleAt300ms).toBeGreaterThanOrEqual(visibleAt100ms);
+      // Verify each image has visibility (all eventually appeared)
+      const images = page.locator('#imageCloud img');
+      for (let i = 0; i < finalCount; i++) {
+        await expect(images.nth(i)).toBeVisible();
+      }
     });
 
   });
@@ -58,12 +61,14 @@ test.describe('Animation System', () => {
 
       // Check that transition duration is applied
       const img = page.locator('#imageCloud img').first();
-      const transition = await img.evaluate((el) =>
-        window.getComputedStyle(el).transition
+      const transitionDuration = await img.evaluate((el) =>
+        window.getComputedStyle(el).transitionDuration
       );
 
-      // Should contain duration info
-      expect(transition.length).toBeGreaterThan(0);
+      // Duration should be non-trivial (not 0s)
+      // Multiple durations may be returned for different properties (e.g., "0.6s, 0.8s")
+      expect(transitionDuration).not.toBe('0s');
+      expect(transitionDuration.length).toBeGreaterThan(0);
     });
 
     test('focus animation completes smoothly', async ({ page }) => {

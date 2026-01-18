@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Drive Loader - E2E Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #1a1a2e;
+    }
+    #imageCloud {
+      width: 100%;
+      height: 100%;
+      background-color: #16213e;
+      border: 4px solid #0f3460;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageGallery, GoogleDriveLoader } from '/dist/image-cloud.js';
+
+    window.ImageGallery = ImageGallery;
+    window.GoogleDriveLoader = GoogleDriveLoader;
+
+    window.gallery = new ImageGallery({
+      container: 'imageCloud',
+      loader: {
+        type: 'googleDrive',
+        googleDrive: {
+          apiKey: 'AIzaSyBKTCzznRaJt_Nyd9_9agTHDhFieMMe0u8',
+          sources: [
+            {
+              type: 'folder',
+              folders: ['https://drive.google.com/drive/folders/19JY4GPJkTIVa5DwrqNftYOuJfGUWRU5t?usp=sharing'],
+              recursive: true
+            }
+          ],
+          debugLogging: true
+        }
+      },
+      layout: {
+        algorithm: 'radial',
+        rotation: { enabled: true }
+      },
+      animation: {
+        duration: 300,
+        queue: { enabled: true, interval: 50 }
+      },
+      debug: true
+    });
+
+    // Initialize the gallery and expose promise for tests
+    window.galleryInitPromise = window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+      window.galleryInitError = error;
+    });
+  </script>
+</body>
+</html>

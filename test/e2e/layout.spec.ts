@@ -6,17 +6,20 @@ test.describe('Layout Algorithms', () => {
   test.describe('Radial Layout', () => {
 
     test('positions images within viewport', async ({ page }) => {
-      await page.goto('/test/fixtures/static-basic.html');
+      // Uses fixture with dark background and red border for visual validation
+      // Loads 12 images to test radial layout with multiple rings
+      await page.goto('/test/fixtures/layout-viewport-test.html');
       await waitForGalleryInit(page);
 
       // Wait for all images to load with queue animation
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1500);
 
       const images = page.locator('#imageCloud img');
       const count = await images.count();
       const viewport = page.viewportSize();
 
-      expect(count).toBeGreaterThan(0);
+      // Should have loaded all 12 images
+      expect(count).toBe(12);
 
       for (let i = 0; i < count; i++) {
         const box = await images.nth(i).boundingBox();
@@ -26,6 +29,8 @@ test.describe('Layout Algorithms', () => {
           // Check that the image overlaps with the viewport area
           expect(box.x + box.width).toBeGreaterThan(0);
           expect(box.y + box.height).toBeGreaterThan(0);
+          expect(box.x).toBeLessThan(viewport.width);
+          expect(box.y).toBeLessThan(viewport.height);
         }
       }
     });
@@ -47,24 +52,30 @@ test.describe('Layout Algorithms', () => {
       expect(hasRotation).toBe(true);
     });
 
-    test('images have varied sizes', async ({ page }) => {
+    test('layout applies dimensions to images', async ({ page }) => {
       await page.goto('/test/fixtures/static-basic.html');
       await waitForGalleryInit(page);
 
       const images = page.locator('#imageCloud img');
-      const heights = await images.evaluateAll((imgs) =>
-        imgs.map((img) => img.getBoundingClientRect().height)
+      const dimensions = await images.evaluateAll((imgs) =>
+        imgs.map((img) => {
+          const rect = img.getBoundingClientRect();
+          return { width: rect.width, height: rect.height };
+        })
       );
 
-      // Should have height values (layout applied)
-      heights.forEach(h => expect(h).toBeGreaterThan(0));
+      // All images should have positive dimensions (layout applied sizes)
+      dimensions.forEach(dim => {
+        expect(dim.width).toBeGreaterThan(0);
+        expect(dim.height).toBeGreaterThan(0);
+      });
     });
 
   });
 
   test.describe('Random Layout', () => {
 
-    test('distributes images across viewport', async ({ page }) => {
+    test('distributes images at different positions', async ({ page }) => {
       // Load static-basic.html first, then reinitialize with random layout
       await page.goto('/test/fixtures/static-basic.html');
       await waitForGalleryInit(page);
@@ -101,7 +112,6 @@ test.describe('Layout Algorithms', () => {
       await page.waitForTimeout(500);
 
       const images = page.locator('#imageCloud img');
-      const count = await images.count();
       const positions = await images.evaluateAll((imgs) =>
         imgs.map((img) => {
           const rect = img.getBoundingClientRect();
@@ -109,31 +119,44 @@ test.describe('Layout Algorithms', () => {
         })
       );
 
-      // Images should have been distributed (at least one image visible)
-      expect(count).toBeGreaterThanOrEqual(1);
-      expect(positions.length).toBeGreaterThanOrEqual(1);
+      // Should have multiple images
+      expect(positions.length).toBeGreaterThanOrEqual(2);
+
+      // Verify images are at different positions (not all stacked)
+      const uniquePositions = new Set(positions.map(p => `${Math.round(p.x)},${Math.round(p.y)}`));
+      expect(uniquePositions.size).toBeGreaterThan(1);
     });
 
   });
 
   test.describe('Spacing', () => {
 
-    test('respects padding from edges', async ({ page }) => {
+    test('images are positioned within viewport bounds', async ({ page }) => {
       await page.goto('/test/fixtures/static-basic.html');
       await waitForGalleryInit(page);
+      await page.waitForTimeout(500);
 
-      // Images should not be flush against edges
       const images = page.locator('#imageCloud img');
+      const viewport = page.viewportSize();
       const positions = await images.evaluateAll((imgs) =>
         imgs.map((img) => {
           const rect = img.getBoundingClientRect();
-          return { left: rect.left, top: rect.top };
+          return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
         })
       );
 
-      // At least some padding from top-left (default padding is 50px)
-      // Note: This is a soft check as radial layout may position some near edges
       expect(positions.length).toBeGreaterThan(0);
+
+      // Verify images are at least partially within the viewport
+      positions.forEach(pos => {
+        // At least part of the image should be visible in viewport
+        expect(pos.right).toBeGreaterThan(0);
+        expect(pos.bottom).toBeGreaterThan(0);
+        if (viewport) {
+          expect(pos.left).toBeLessThan(viewport.width);
+          expect(pos.top).toBeLessThan(viewport.height);
+        }
+      });
     });
 
   });

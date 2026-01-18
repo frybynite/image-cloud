@@ -25,11 +25,11 @@ test.describe('Gallery Initialization', () => {
     expect(imageCount).toBe(3);
   });
 
-  test('applies container styles', async ({ page }) => {
+  test('applies absolute positioning to images', async ({ page }) => {
     await page.goto('/test/fixtures/static-basic.html');
     await waitForGalleryInit(page);
 
-    // Check that images have the cloud-image class with expected styles
+    // Check that images have absolute positioning for layout
     const image = page.locator('#imageCloud img').first();
     const position = await image.evaluate((el) => window.getComputedStyle(el).position);
     expect(position).toBe('absolute');

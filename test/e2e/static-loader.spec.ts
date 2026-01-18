@@ -133,43 +133,36 @@ test.describe('Static Image Loader', () => {
       await expect(firstImage).toBeVisible();
     });
 
-    test('shows error when all images fail', async ({ page }) => {
-      // Create a page with invalid URLs
-      await page.setContent(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <link rel="stylesheet" href="/dist/style.css">
-          <style>html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }</style>
-        </head>
-        <body>
-          <div id="imageCloud"></div>
-          <script type="module">
-            import { ImageGallery } from '/dist/image-cloud.js';
-            window.gallery = new ImageGallery({
-              container: 'imageCloud',
-              loader: {
-                type: 'static',
-                static: {
-                  sources: [{
-                    type: 'urls',
-                    urls: ['/nonexistent1.jpg', '/nonexistent2.jpg']
-                  }],
-                  validateUrls: true,
-                  failOnAllMissing: true
-                }
-              }
-            });
-          </script>
-        </body>
-        </html>
-      `);
+    test('continues to work when some images fail to load', async ({ page }) => {
+      // Load fixture with mixed valid and invalid URLs (1 valid, 2 invalid)
+      await page.goto('/test/fixtures/static-mixed-errors.html');
+      await waitForGalleryInit(page);
 
-      // Should show error message or handle gracefully
-      await page.waitForTimeout(3000);
+      // Wait for the gallery to initialize and images to attempt loading
+      await page.waitForTimeout(1000);
+
+      // Container should exist and not crash
       const container = page.locator('#imageCloud');
-      // Container should exist (not crash), even if empty or with error
       await expect(container).toBeAttached();
+
+      // Only successfully loaded images are added to the DOM
+      // Failed images are not displayed (onerror doesn't add to displayQueue)
+      const images = page.locator('#imageCloud img');
+      const count = await images.count();
+      expect(count).toBe(1); // Only the 1 valid image
+
+      // Verify the valid image loaded successfully
+      const validLoadedImages = await images.evaluateAll((imgs) =>
+        imgs.filter((img) => {
+          const imgEl = img as HTMLImageElement;
+          return imgEl.complete && imgEl.naturalWidth > 0;
+        }).length
+      );
+      expect(validLoadedImages).toBe(1);
+
+      // Verify the gallery is still functional - image should be visible and clickable
+      const firstImage = images.first();
+      await expect(firstImage).toBeVisible();
     });
 
   });
