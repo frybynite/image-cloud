@@ -4,14 +4,14 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds } from './config/types';
+import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds, ImageLoader } from './config/types';
 import { mergeConfig } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
 import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 import { StaticImageLoader } from './loaders/StaticImageLoader';
-import type { ImageLoader } from './config/types';
+import { ImageFilter } from './loaders/ImageFilter';
 
 export class ImageGallery {
   private containerId: string;
@@ -29,6 +29,7 @@ export class ImageGallery {
   private layoutEngine: LayoutEngine;
   private zoomEngine: ZoomEngine;
   private imageLoader: ImageLoader;
+  private imageFilter: ImageFilter;
 
   // DOM Elements
   private containerEl: HTMLElement | null;
@@ -51,6 +52,9 @@ export class ImageGallery {
     this.layoutEngine = new LayoutEngine(this.fullConfig.layout);
     this.zoomEngine = new ZoomEngine(this.fullConfig.interaction.focus, this.animationEngine);
 
+    // Initialize image filter with configured extensions
+    this.imageFilter = this.createImageFilter();
+
     // Initialize image loader based on type
     this.imageLoader = this.createLoader();
 
@@ -58,6 +62,23 @@ export class ImageGallery {
     this.containerEl = null;
     this.loadingEl = null;
     this.errorEl = null;
+  }
+
+  /**
+   * Create image filter based on config
+   */
+  private createImageFilter(): ImageFilter {
+    const loaderType = this.fullConfig.loader.type;
+
+    // Get extensions from the appropriate loader config
+    let extensions: string[] | undefined;
+    if (loaderType === 'googleDrive') {
+      extensions = this.fullConfig.loader.googleDrive?.allowedExtensions;
+    } else {
+      extensions = this.fullConfig.loader.static?.allowedExtensions;
+    }
+
+    return new ImageFilter(extensions);
   }
 
   /**
@@ -161,7 +182,7 @@ export class ImageGallery {
   }
 
   /**
-   * Load images based on configured loader type
+   * Load images using the unified loader interface
    */
   private async loadImages(): Promise<void> {
     try {
@@ -169,25 +190,20 @@ export class ImageGallery {
       this.hideError();
       this.clearImageCloud();
 
-      const loaderType = this.fullConfig.loader.type;
+      // Prepare the loader (show spinner during this)
+      await this.imageLoader.prepare(this.imageFilter);
 
-      let imageUrls: string[] = [];
+      // Get image count and URLs from loader
+      const imageCount = this.imageLoader.imagesLength();
+      const imageUrls = this.imageLoader.imageURLs();
 
-      if (loaderType === 'googleDrive') {
-        // Load from Google Drive sources (folders and/or files)
-        imageUrls = await this.loadGoogleDriveSources();
-      } else {
-        // Load from static sources
-        imageUrls = await this.imageLoader.loadImagesFromFolder(this.fullConfig.loader.static!.sources);
-      }
-
-      if (imageUrls.length === 0) {
+      if (imageCount === 0) {
         this.showError('No images found.');
         this.showLoading(false);
         return;
       }
 
-      this.logDebug(`Loaded ${imageUrls.length} images`);
+      this.logDebug(`Loaded ${imageCount} images`);
 
       await this.createImageCloud(imageUrls);
 
@@ -201,37 +217,6 @@ export class ImageGallery {
       }
       this.showLoading(false);
     }
-  }
-
-  /**
-   * Load images from multiple Google Drive sources (folders and files)
-   */
-  private async loadGoogleDriveSources(): Promise<string[]> {
-    const sources = this.fullConfig.loader.googleDrive!.sources;
-
-    if (sources.length === 0) {
-      throw new Error('No Google Drive sources configured');
-    }
-
-    const loader = this.imageLoader as GoogleDriveLoader;
-    const allImageUrls: string[] = [];
-
-    for (const source of sources) {
-      if (source.type === 'folder') {
-        // Load from folder(s)
-        for (const folderUrl of source.folders) {
-          const recursive = source.recursive !== undefined ? source.recursive : true;
-          const urls = await loader.loadImagesFromFolder(folderUrl, recursive);
-          allImageUrls.push(...urls);
-        }
-      } else if (source.type === 'files') {
-        // Load specific files
-        const urls = await loader.loadFiles(source.files);
-        allImageUrls.push(...urls);
-      }
-    }
-
-    return allImageUrls;
   }
 
   /**

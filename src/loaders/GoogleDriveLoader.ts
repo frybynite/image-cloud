@@ -3,24 +3,90 @@
  * Loads images from a public Google Drive folder
  *
  * Public API:
- * - loadImagesFromFolder(folderUrl)
+ * - prepare(filter) - Async discovery of images
+ * - imagesLength() - Get count of discovered images
+ * - imageURLs() - Get ordered list of image URLs
+ * - isPrepared() - Check if loader has been prepared
+ *
+ * Helper methods (for advanced usage):
  * - extractFolderId(folderUrl)
  * - manualImageUrls(imageIds)
  */
 
-import type { ImageLoader, GoogleDriveResponse, GoogleDriveLoaderConfig } from '../config/types';
+import type { ImageLoader, IImageFilter, GoogleDriveResponse, GoogleDriveLoaderConfig, GoogleDriveSource } from '../config/types';
 
 export class GoogleDriveLoader implements ImageLoader {
   private apiKey: string;
   private apiEndpoint: string;
   private debugLogging: boolean;
-  private allowedExtensions: string[];
+  private sources: GoogleDriveSource[];
+
+  // State for new interface
+  private _prepared: boolean = false;
+  private _discoveredUrls: string[] = [];
 
   constructor(config: Partial<GoogleDriveLoaderConfig> = {}) {
     this.apiKey = config.apiKey ?? '';
     this.apiEndpoint = config.apiEndpoint ?? 'https://www.googleapis.com/drive/v3/files';
     this.debugLogging = config.debugLogging ?? false;
-    this.allowedExtensions = config.allowedExtensions || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+    this.sources = config.sources ?? [];
+
+    // Validate that we have sources configured
+    if (!this.sources || this.sources.length === 0) {
+      throw new Error('GoogleDriveLoader requires at least one source to be configured');
+    }
+  }
+
+  /**
+   * Prepare the loader by discovering all images from configured sources
+   * @param filter - Filter to apply to discovered images
+   */
+  async prepare(filter: IImageFilter): Promise<void> {
+    this._discoveredUrls = [];
+
+    for (const source of this.sources) {
+      if (source.type === 'folder') {
+        for (const folderUrl of source.folders) {
+          const recursive = source.recursive !== undefined ? source.recursive : true;
+          const urls = await this.loadFromFolder(folderUrl, filter, recursive);
+          this._discoveredUrls.push(...urls);
+        }
+      } else if (source.type === 'files') {
+        const urls = await this.loadFiles(source.files, filter);
+        this._discoveredUrls.push(...urls);
+      }
+    }
+
+    this._prepared = true;
+  }
+
+  /**
+   * Get the number of discovered images
+   * @throws Error if called before prepare()
+   */
+  imagesLength(): number {
+    if (!this._prepared) {
+      throw new Error('GoogleDriveLoader.imagesLength() called before prepare()');
+    }
+    return this._discoveredUrls.length;
+  }
+
+  /**
+   * Get the ordered list of image URLs
+   * @throws Error if called before prepare()
+   */
+  imageURLs(): string[] {
+    if (!this._prepared) {
+      throw new Error('GoogleDriveLoader.imageURLs() called before prepare()');
+    }
+    return [...this._discoveredUrls];
+  }
+
+  /**
+   * Check if the loader has been prepared
+   */
+  isPrepared(): boolean {
+    return this._prepared;
   }
 
   /**
@@ -49,17 +115,13 @@ export class GoogleDriveLoader implements ImageLoader {
   }
 
   /**
-   * Load images from a public Google Drive folder
-   * @param folderUrl - Google Drive folder URL or string (for compatibility)
-   * @param recursive - Whether to include images from subfolders (default: true)
+   * Load images from a Google Drive folder
+   * @param folderUrl - Google Drive folder URL
+   * @param filter - Filter to apply to discovered images
+   * @param recursive - Whether to include images from subfolders
    * @returns Promise resolving to array of image URLs
    */
-  async loadImagesFromFolder(folderUrl: string | any, recursive: boolean = true): Promise<string[]> {
-    // Handle both string URL and StaticSource[] (for ImageLoader interface compatibility)
-    if (Array.isArray(folderUrl)) {
-      throw new Error('GoogleDriveLoader does not support StaticSource[] format. Use GoogleDriveSource instead.');
-    }
-
+  private async loadFromFolder(folderUrl: string, filter: IImageFilter, recursive: boolean = true): Promise<string[]> {
     const folderId = this.extractFolderId(folderUrl);
 
     if (!folderId) {
@@ -68,33 +130,29 @@ export class GoogleDriveLoader implements ImageLoader {
 
     // If no API key is configured, use direct link method
     if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
-      return this.loadImagesDirectly(folderId);
+      return this.loadImagesDirectly(folderId, filter);
     }
 
     try {
       if (recursive) {
-        // Recursively load images from folder and all subfolders
-        const imageUrls = await this.loadImagesRecursively(folderId);
-        return imageUrls;
+        return await this.loadImagesRecursively(folderId, filter);
       } else {
-        // Load images from single folder only
-        const imageUrls = await this.loadImagesFromSingleFolder(folderId);
-        return imageUrls;
+        return await this.loadImagesFromSingleFolder(folderId, filter);
       }
-
     } catch (error) {
       console.error('Error loading from Google Drive API:', error);
       // Fallback to direct link method
-      return this.loadImagesDirectly(folderId);
+      return this.loadImagesDirectly(folderId, filter);
     }
   }
 
   /**
    * Load images from a single folder (non-recursive)
    * @param folderId - Google Drive folder ID
+   * @param filter - Filter to apply to discovered images
    * @returns Promise resolving to array of image URLs
    */
-  async loadImagesFromSingleFolder(folderId: string): Promise<string[]> {
+  private async loadImagesFromSingleFolder(folderId: string, filter: IImageFilter): Promise<string[]> {
     const imageUrls: string[] = [];
 
     // Query for all files in this folder
@@ -110,9 +168,9 @@ export class GoogleDriveLoader implements ImageLoader {
 
     const data: GoogleDriveResponse = await response.json();
 
-    // Filter for valid image files only
+    // Filter for valid image files only using the provided filter
     const validFiles = data.files.filter(file =>
-      file.mimeType.startsWith('image/') && this.hasValidExtension(file.name)
+      file.mimeType.startsWith('image/') && filter.isAllowed(file.name)
     );
 
     this.log(`Found ${validFiles.length} images in folder ${folderId} (non-recursive)`);
@@ -129,9 +187,10 @@ export class GoogleDriveLoader implements ImageLoader {
   /**
    * Load specific files by their URLs or IDs
    * @param fileUrls - Array of Google Drive file URLs or IDs
+   * @param filter - Filter to apply to discovered images
    * @returns Promise resolving to array of image URLs
    */
-  async loadFiles(fileUrls: string[]): Promise<string[]> {
+  private async loadFiles(fileUrls: string[], filter: IImageFilter): Promise<string[]> {
     const imageUrls: string[] = [];
 
     for (const fileUrl of fileUrls) {
@@ -151,7 +210,7 @@ export class GoogleDriveLoader implements ImageLoader {
 
           if (response.ok) {
             const metadata = await response.json();
-            if (metadata.mimeType.startsWith('image/') && this.hasValidExtension(metadata.name)) {
+            if (metadata.mimeType.startsWith('image/') && filter.isAllowed(metadata.name)) {
               imageUrls.push(`https://lh3.googleusercontent.com/d/${fileId}=s1600`);
               this.log(`Added file: ${metadata.name}`);
             } else {
@@ -205,21 +264,12 @@ export class GoogleDriveLoader implements ImageLoader {
   }
 
   /**
-   * Check if file has a valid image extension
-   * @param filename - File name to check
-   * @returns True if file has valid extension
-   */
-  private hasValidExtension(filename: string): boolean {
-    const extension = filename.split('.').pop()?.toLowerCase();
-    return extension ? this.allowedExtensions.includes(extension) : false;
-  }
-
-  /**
    * Recursively load images from a folder and all its subfolders
    * @param folderId - Google Drive folder ID
+   * @param filter - Filter to apply to discovered images
    * @returns Promise resolving to array of image URLs
    */
-  private async loadImagesRecursively(folderId: string): Promise<string[]> {
+  private async loadImagesRecursively(folderId: string, filter: IImageFilter): Promise<string[]> {
     const imageUrls: string[] = [];
 
     // Query for all files in this folder
@@ -236,10 +286,9 @@ export class GoogleDriveLoader implements ImageLoader {
 
     const data: GoogleDriveResponse = await response.json();
 
-    // Separate images and folders
-    // valid files are images only with allowed extensions
+    // Separate images and folders using the provided filter
     const validFiles = data.files.filter(file =>
-      file.mimeType.startsWith('image/') && this.hasValidExtension(file.name)
+      file.mimeType.startsWith('image/') && filter.isAllowed(file.name)
     );
 
     const subfolders = data.files.filter(file =>
@@ -271,7 +320,7 @@ export class GoogleDriveLoader implements ImageLoader {
     // Recursively process subfolders
     for (const folder of subfolders) {
       this.log(`Loading images from subfolder: ${folder.name}`);
-      const subfolderImages = await this.loadImagesRecursively(folder.id);
+      const subfolderImages = await this.loadImagesRecursively(folder.id, filter);
       imageUrls.push(...subfolderImages);
     }
 
@@ -282,9 +331,10 @@ export class GoogleDriveLoader implements ImageLoader {
    * Direct loading method (no API key required, but less reliable)
    * Uses embedded folder view to scrape image IDs
    * @param folderId - Google Drive folder ID
+   * @param filter - Filter to apply (not used in fallback mode)
    * @returns Promise resolving to array of image URLs
    */
-  private async loadImagesDirectly(folderId: string): Promise<string[]> {
+  private async loadImagesDirectly(folderId: string, _filter: IImageFilter): Promise<string[]> {
     // For now, we'll return a method that requires the user to manually provide image IDs
     // or we construct URLs based on a known pattern
 

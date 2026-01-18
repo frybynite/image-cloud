@@ -27,6 +27,7 @@ export type {
   StaticSource,
   PlacementGenerator,
   ImageLoader,
+  IImageFilter,
   TransformParams
 } from './config/types';
 
@@ -45,3 +46,4 @@ export { RadialPlacementGenerator } from './generators/RadialPlacementGenerator'
 // Export loaders for custom implementations
 export { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 export { StaticImageLoader } from './loaders/StaticImageLoader';
+export { ImageFilter } from './loaders/ImageFilter';

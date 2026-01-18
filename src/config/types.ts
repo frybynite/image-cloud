@@ -312,8 +312,46 @@ export interface PlacementGenerator {
   ): ImageLayout[];
 }
 
+/**
+ * ImageFilter interface for filtering images by extension
+ * Implemented by the ImageFilter class in loaders/ImageFilter.ts
+ */
+export interface IImageFilter {
+  isAllowed(filename: string): boolean;
+  getAllowedExtensions(): string[];
+}
+
+/**
+ * ImageLoader interface with consistent lifecycle pattern:
+ * 1. Constructor - Initialize with required parameters, throw if missing
+ * 2. prepare(filter) - Async discovery of images, accepts filter
+ * 3. imagesLength() - Return count of images (after prepare)
+ * 4. imageURLs() - Return ordered list of URLs (after prepare)
+ */
 export interface ImageLoader {
-  loadImagesFromFolder(source: string | StaticSource[]): Promise<string[]>;
+  /**
+   * Async preparation - discovers images and applies filter
+   * Succeeds even if 0 images found (gallery handles empty state)
+   * @param filter - Filter to apply to discovered images
+   */
+  prepare(filter: IImageFilter): Promise<void>;
+
+  /**
+   * Get the number of discovered images
+   * @throws Error if called before prepare() completes
+   */
+  imagesLength(): number;
+
+  /**
+   * Get the ordered list of image URLs
+   * @throws Error if called before prepare() completes
+   */
+  imageURLs(): string[];
+
+  /**
+   * Check if the loader has been prepared
+   */
+  isPrepared(): boolean;
 }
 
 export interface GoogleDriveFile {
