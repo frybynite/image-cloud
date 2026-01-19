@@ -216,7 +216,7 @@ await gallery.init();
 
 ## Configuration Options
 
-See `PARAMETERS.md` for full documentation of the configuration object.
+See `docs/PARAMETERS.md` for full documentation of the configuration object.
 
 ### ImageGalleryOptions
 
