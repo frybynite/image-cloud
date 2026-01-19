@@ -15,6 +15,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
   - [Random Algorithm](#random-algorithm)
 - [Sizing Configuration](#sizing-layoutsizing)
 - [Animation Configuration](#3-animation-configuration-animation)
+- [Entry Animation](#entry-animation)
 - [Interaction Configuration](#4-interaction-configuration-interaction)
 - [Rendering Configuration](#5-rendering-configuration-rendering)
 - [Complete JSON Reference](#complete-json-reference)
@@ -335,6 +336,160 @@ Controls entrance and interaction animations.
 | `easing.focus` | `string` | `cubic-bezier(...)` | CSS easing for zoom focus. |
 | `queue.enabled` | `boolean` | `true` | Enable staggered entrance. |
 | `queue.interval` | `number` | `150` | Time between appearance of each image (ms). |
+| `entry` | `EntryAnimationConfig` | *See below* | Entry animation configuration. |
+
+---
+
+## Entry Animation
+
+Controls how images animate into the gallery when it first loads. Supports 8 different start positions and layout-aware smart defaults.
+
+### Configuration Structure
+
+```typescript
+animation: {
+  entry: {
+    start: {
+      position: 'nearest-edge',  // Where images start
+      offset: 100,               // Pixels beyond edge
+      circular: {                // Only for position: 'circular'
+        radius: '120%',          // Circle radius
+        distribution: 'even'     // How images are placed on circle
+      }
+    },
+    timing: {
+      duration: 600,             // Animation duration (ms)
+      stagger: 150               // Delay between images (ms)
+    },
+    easing: 'cubic-bezier(0.25, 1, 0.5, 1)'  // CSS easing
+  }
+}
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `start.position` | `string` | `'nearest-edge'` | Starting position for images |
+| `start.offset` | `number` | `100` | Pixels beyond edge (for edge-based positions) |
+| `start.circular.radius` | `number \| string` | `'120%'` | Circle radius in pixels or % of container diagonal |
+| `start.circular.distribution` | `string` | `'even'` | `'even'` (evenly spaced) or `'random'` |
+| `timing.duration` | `number` | `600` | Animation duration in milliseconds |
+| `timing.stagger` | `number` | `150` | Delay between each image's animation start |
+| `easing` | `string` | `cubic-bezier(0.25, 1, 0.5, 1)` | CSS easing function |
+
+### Start Position Options
+
+| Position | Description | Best For |
+|----------|-------------|----------|
+| `nearest-edge` | Each image enters from its closest edge | General use, organic feel |
+| `top` | All images enter from top edge | Grid layouts, reading order |
+| `bottom` | All images enter from bottom edge | Rising effect |
+| `left` | All images enter from left edge | Horizontal flow |
+| `right` | All images enter from right edge | Horizontal flow |
+| `center` | Images scale up from container center | Radial/spiral layouts, burst effect |
+| `random-edge` | Each image enters from a random edge | Chaotic, energetic feel |
+| `circular` | Images enter from positions on a circle | Dramatic reveal, convergence |
+
+### Layout-Aware Smart Defaults
+
+When you don't specify `start.position`, the library automatically chooses the best default based on your layout algorithm:
+
+| Layout Algorithm | Default Entry | Why |
+|------------------|---------------|-----|
+| `radial` | `center` | Images radiate outward, matching the radial pattern |
+| `spiral` | `center` | Spiral emanates from center, so entry should too |
+| `grid` | `top` | Natural top-to-bottom reading order |
+| `cluster` | `nearest-edge` | Organic grouping feel, images "find" their cluster |
+| `random` | `nearest-edge` | Classic scattered photo effect |
+
+### Examples
+
+**Default behavior (no config needed):**
+```typescript
+// Uses layout-aware defaults automatically
+const gallery = new ImageGallery({
+  container: 'my-gallery',
+  loader: { ... },
+  layout: { algorithm: 'radial' }  // Will use 'center' entry by default
+});
+```
+
+**Center burst with fast stagger:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'center' },
+    timing: { duration: 500, stagger: 50 }
+  }
+}
+```
+
+**Cascade from top (great for grids):**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'top' },
+    timing: { duration: 800, stagger: 100 },
+    easing: 'ease-out'
+  }
+}
+```
+
+**Circular entrance with even distribution:**
+```typescript
+animation: {
+  entry: {
+    start: {
+      position: 'circular',
+      circular: {
+        radius: 500,           // 500px radius
+        distribution: 'even'   // Evenly spaced on circle
+      }
+    },
+    timing: { duration: 1000, stagger: 80 }
+  }
+}
+```
+
+**Circular entrance with percentage radius:**
+```typescript
+animation: {
+  entry: {
+    start: {
+      position: 'circular',
+      circular: {
+        radius: '150%',        // 150% of container diagonal
+        distribution: 'random' // Random positions on circle
+      }
+    },
+    timing: { duration: 1200, stagger: 60 }
+  }
+}
+```
+
+**Slow dramatic entrance from bottom:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'bottom', offset: 200 },
+    timing: { duration: 1500, stagger: 200 },
+    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'  // Overshoot easing
+  }
+}
+```
+
+**Random edge for chaotic effect:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'random-edge' },
+    timing: { duration: 600, stagger: 80 }
+  }
+}
+```
+
+---
 
 ### 4. Interaction Configuration (`interaction`)
 
@@ -505,6 +660,22 @@ All available parameters with example values:
     "queue": {
       "enabled": true,                          // Default
       "interval": 150                           // Default. Delay between each image (ms)
+    },
+
+    "entry": {
+      "start": {
+        "position": "nearest-edge",             // Default. See docs for all options
+        "offset": 100,                          // Default. Pixels beyond edge
+        "circular": {
+          "radius": "120%",                     // Default. Pixels or % of diagonal
+          "distribution": "even"                // Default. "even" | "random"
+        }
+      },
+      "timing": {
+        "duration": 600,                        // Default. Entry animation duration
+        "stagger": 150                          // Default. Delay between images
+      },
+      "easing": "cubic-bezier(0.25, 1, 0.5, 1)" // Default. Entry animation easing
     }
   },
 
@@ -679,6 +850,111 @@ const gallery = new ImageGallery({
           ]
         }
       ]
+    }
+  }
+}
+```
+
+### Entry Animation: Center Burst
+
+```typescript
+const gallery = new ImageGallery({
+  container: 'my-gallery',
+  loader: {
+    type: 'static',
+    static: {
+      sources: [{ type: 'urls', urls: [...] }]
+    }
+  },
+  layout: {
+    algorithm: 'radial',
+    sizing: { base: 100 }
+  },
+  animation: {
+    entry: {
+      start: { position: 'center' },
+      timing: { duration: 500, stagger: 50 }
+    }
+  }
+});
+```
+
+### Entry Animation: Top Cascade (Grid)
+
+```typescript
+const gallery = new ImageGallery({
+  container: 'my-gallery',
+  loader: { ... },
+  layout: {
+    algorithm: 'grid',
+    sizing: { base: 120 },
+    grid: { columns: 4, gap: 15 }
+  },
+  animation: {
+    entry: {
+      start: { position: 'top' },
+      timing: { duration: 800, stagger: 100 },
+      easing: 'ease-out'
+    }
+  }
+});
+```
+
+### Entry Animation: Circular Entrance
+
+```typescript
+const gallery = new ImageGallery({
+  container: 'my-gallery',
+  loader: { ... },
+  layout: {
+    algorithm: 'radial',
+    sizing: { base: 90 }
+  },
+  animation: {
+    entry: {
+      start: {
+        position: 'circular',
+        circular: {
+          radius: '120%',        // 120% of container diagonal
+          distribution: 'even'   // Evenly distributed on circle
+        }
+      },
+      timing: { duration: 1000, stagger: 80 }
+    }
+  }
+});
+```
+
+### Entry Animation: JSON Format
+
+```jsonc
+{
+  "container": "imageCloud",
+  "loader": {
+    "type": "static",
+    "static": {
+      "sources": [
+        {
+          "type": "urls",
+          "urls": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+        }
+      ]
+    }
+  },
+  "layout": {
+    "algorithm": "spiral",
+    "sizing": { "base": 100 }
+  },
+  "animation": {
+    "entry": {
+      "start": {
+        "position": "center"
+      },
+      "timing": {
+        "duration": 600,
+        "stagger": 100
+      },
+      "easing": "cubic-bezier(0.25, 1, 0.5, 1)"
     }
   }
 }

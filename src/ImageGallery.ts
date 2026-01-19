@@ -4,9 +4,10 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds, ImageLoader } from './config/types';
-import { mergeConfig } from './config/defaults';
+import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig } from './config/types';
+import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
+import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
 import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
@@ -28,6 +29,7 @@ export class ImageGallery {
 
   // Modules
   private animationEngine: AnimationEngine;
+  private entryAnimationEngine: EntryAnimationEngine;
   private layoutEngine: LayoutEngine;
   private zoomEngine: ZoomEngine;
   private imageLoader: ImageLoader;
@@ -55,6 +57,13 @@ export class ImageGallery {
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
     this.layoutEngine = new LayoutEngine(this.fullConfig.layout);
     this.zoomEngine = new ZoomEngine(this.fullConfig.interaction.focus, this.animationEngine);
+
+    // Initialize entry animation engine with layout-aware defaults
+    const entryConfig = this.fullConfig.animation.entry || DEFAULT_CONFIG.animation.entry!;
+    this.entryAnimationEngine = new EntryAnimationEngine(
+      entryConfig as EntryAnimationConfig,
+      this.fullConfig.layout.algorithm
+    );
 
     // Initialize image filter with configured extensions
     this.imageFilter = this.createImageFilter();
@@ -363,7 +372,7 @@ export class ImageGallery {
       });
 
       img.style.opacity = '0';
-      img.style.transition = 'opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+      img.style.transition = this.entryAnimationEngine.getTransitionCSS();
 
       img.onload = () => {
         // Ignore if generation has changed (stale callback from previous load)
@@ -374,28 +383,28 @@ export class ImageGallery {
         const aspectRatio = img.naturalWidth / img.naturalHeight;
         const renderedWidth = imageHeight * aspectRatio;
 
-        // Animation calculations
-        const centerX = layout.x + renderedWidth / 2;
-        const centerY = layout.y + imageHeight / 2;
-        const containerWidth = containerBounds.width;
-        const containerHeight = containerBounds.height;
+        // Use EntryAnimationEngine for start position calculation
+        const finalPosition = { x: layout.x, y: layout.y };
+        const imageSize = { width: renderedWidth, height: imageHeight };
 
-        let startTx = 0, startTy = 0;
-        const buffer = 100;
+        const startPosition = this.entryAnimationEngine.calculateStartPosition(
+          finalPosition,
+          imageSize,
+          containerBounds,
+          index,
+          imageUrls.length
+        );
 
-        const distLeft = centerX;
-        const distRight = containerWidth - centerX;
-        const distTop = centerY;
-        const distBottom = containerHeight - centerY;
-        const minDist = Math.min(distLeft, distRight, distTop, distBottom);
-
-        if (minDist === distLeft) startTx = -(layout.x + renderedWidth + buffer);
-        else if (minDist === distRight) startTx = (containerWidth - layout.x) + buffer;
-        else if (minDist === distTop) startTy = -(layout.y + imageHeight + buffer);
-        else startTy = (containerHeight - layout.y) + buffer;
-
-        const finalTransform = `rotate(${layout.rotation}deg) scale(${layout.scale})`;
-        const startTransform = `translate(${startTx}px, ${startTy}px) ${finalTransform}`;
+        const finalTransform = this.entryAnimationEngine.buildFinalTransform(
+          layout.rotation,
+          layout.scale
+        );
+        const startTransform = this.entryAnimationEngine.buildStartTransform(
+          startPosition,
+          finalPosition,
+          layout.rotation,
+          layout.scale
+        );
 
         img.style.transform = startTransform;
         img.dataset.finalTransform = finalTransform;

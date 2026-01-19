@@ -57,7 +57,15 @@ test.describe('Gallery Initialization', () => {
     await page.evaluate(() => {
       document.getElementById('imageCloud')?.remove();
       // @ts-ignore
-      const gallery = new window.ImageGallery({ container: 'nonexistent' });
+      const gallery = new window.ImageGallery({
+        container: 'nonexistent',
+        loader: {
+          type: 'static',
+          static: {
+            sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }]
+          }
+        }
+      });
       // @ts-ignore
       gallery.init();
     });

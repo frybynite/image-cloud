@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery - Entry Animations Demo</title>
+    <link rel="stylesheet" href="../dist/style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .gallery-section {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .gallery-section h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.3rem;
+            color: #7f5af0;
+        }
+        .gallery-section p {
+            margin: 0 0 15px 0;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .image-cloud {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background: #0f0f23;
+            border-radius: 8px;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .controls button {
+            padding: 8px 16px;
+            background: #7f5af0;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .controls button:hover {
+            background: #6b46c1;
+        }
+        .controls select {
+            padding: 8px 12px;
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.85rem;
+        }
+        .controls label {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .config-hint {
+            margin-top: 10px;
+            padding: 10px;
+            background: #0d1117;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #7ee787;
+            white-space: pre-wrap;
+            display: none;
+        }
+        .gallery-section:hover .config-hint {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Entry Animations Demo</h1>
+    <p class="subtitle">Explore different entry animation start positions and timing</p>
+
+    <div class="gallery-grid">
+        <!-- Nearest Edge (Default) -->
+        <div class="gallery-section">
+            <h2>Nearest Edge (Default)</h2>
+            <p>Images enter from the closest edge to their final position</p>
+            <div id="gallery-nearest" class="image-cloud"></div>
+            <div class="controls">
+                <button id="nearest-replay">Replay Animation</button>
+            </div>
+            <div class="config-hint">start: { position: 'nearest-edge' }</div>
+        </div>
+
+        <!-- Center Burst -->
+        <div class="gallery-section">
+            <h2>Center Burst</h2>
+            <p>Images scale up from the center - great for radial/spiral layouts</p>
+            <div id="gallery-center" class="image-cloud"></div>
+            <div class="controls">
+                <button id="center-replay">Replay Animation</button>
+            </div>
+            <div class="config-hint">start: { position: 'center' }</div>
+        </div>
+
+        <!-- Top Cascade -->
+        <div class="gallery-section">
+            <h2>Top Cascade</h2>
+            <p>All images enter from the top edge - natural reading order</p>
+            <div id="gallery-top" class="image-cloud"></div>
+            <div class="controls">
+                <button id="top-replay">Replay Animation</button>
+            </div>
+            <div class="config-hint">start: { position: 'top' }</div>
+        </div>
+
+        <!-- Circular Entrance -->
+        <div class="gallery-section">
+            <h2>Circular Entrance</h2>
+            <p>Images enter from evenly distributed positions on a circle</p>
+            <div id="gallery-circular" class="image-cloud"></div>
+            <div class="controls">
+                <select id="circular-distribution">
+                    <option value="even">Even Distribution</option>
+                    <option value="random">Random Distribution</option>
+                </select>
+                <button id="circular-replay">Replay Animation</button>
+            </div>
+            <div class="config-hint">start: { position: 'circular', circular: { distribution: 'even' } }</div>
+        </div>
+
+        <!-- Random Edge -->
+        <div class="gallery-section">
+            <h2>Random Edge</h2>
+            <p>Each image enters from a randomly chosen edge</p>
+            <div id="gallery-random-edge" class="image-cloud"></div>
+            <div class="controls">
+                <button id="random-edge-replay">Replay Animation</button>
+            </div>
+            <div class="config-hint">start: { position: 'random-edge' }</div>
+        </div>
+
+        <!-- Custom Timing -->
+        <div class="gallery-section">
+            <h2>Custom Timing</h2>
+            <p>Adjust duration and stagger timing</p>
+            <div id="gallery-timing" class="image-cloud"></div>
+            <div class="controls">
+                <label>Duration:</label>
+                <select id="timing-duration">
+                    <option value="300">Fast (300ms)</option>
+                    <option value="600" selected>Normal (600ms)</option>
+                    <option value="1000">Slow (1000ms)</option>
+                </select>
+                <label>Stagger:</label>
+                <select id="timing-stagger">
+                    <option value="50">Quick (50ms)</option>
+                    <option value="150" selected>Normal (150ms)</option>
+                    <option value="300">Slow (300ms)</option>
+                </select>
+                <button id="timing-replay">Replay Animation</button>
+            </div>
+            <div class="config-hint">timing: { duration: 600, stagger: 150 }</div>
+        </div>
+
+        <!-- Layout-Aware Defaults -->
+        <div class="gallery-section">
+            <h2>Layout-Aware Defaults</h2>
+            <p>Different layouts have smart default entry animations</p>
+            <div id="gallery-layout-aware" class="image-cloud"></div>
+            <div class="controls">
+                <select id="layout-algorithm">
+                    <option value="radial">Radial (default: center)</option>
+                    <option value="spiral">Spiral (default: center)</option>
+                    <option value="grid">Grid (default: top)</option>
+                    <option value="cluster">Cluster (default: nearest-edge)</option>
+                    <option value="random">Random (default: nearest-edge)</option>
+                </select>
+                <button id="layout-replay">Try Layout</button>
+            </div>
+            <div class="config-hint">// No entry config needed - uses smart layout defaults</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../dist/image-cloud.js';
+
+        // Sample images from test fixtures
+        const sampleImages = [
+            '/test/fixtures/images/image1.jpg',
+            '/test/fixtures/images/image2.jpg',
+            '/test/fixtures/images/image3.jpg',
+            '/test/fixtures/images/computing1.jpg',
+            '/test/fixtures/images/computing2.jpg',
+            '/test/fixtures/images/computing3.jpg',
+            '/test/fixtures/images/food1.jpg',
+            '/test/fixtures/images/food2.jpg',
+            '/test/fixtures/images/food3.jpg',
+            '/test/fixtures/images/scenery1.jpg',
+            '/test/fixtures/images/scenery2.jpg',
+            '/test/fixtures/images/scenery3.jpg'
+        ];
+
+        const loaderConfig = {
+            type: 'static',
+            static: {
+                sources: [{ type: 'urls', urls: sampleImages }],
+                validationMethod: 'none'
+            }
+        };
+
+        // Helper to create and initialize a gallery
+        async function createGallery(containerId, layoutConfig = {}, animationConfig = {}) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            const gallery = new ImageGallery({
+                container: containerId,
+                loader: loaderConfig,
+                layout: {
+                    algorithm: 'radial',
+                    sizing: { base: 90 },
+                    ...layoutConfig
+                },
+                animation: animationConfig
+            });
+
+            await gallery.init();
+            return gallery;
+        }
+
+        // Initialize all demo galleries
+        async function initAllGalleries() {
+            // Nearest Edge (default)
+            await createGallery('gallery-nearest', {}, {
+                entry: {
+                    start: { position: 'nearest-edge' }
+                }
+            });
+
+            // Center Burst
+            await createGallery('gallery-center', {}, {
+                entry: {
+                    start: { position: 'center' },
+                    timing: { duration: 500, stagger: 80 }
+                }
+            });
+
+            // Top Cascade
+            await createGallery('gallery-top', { algorithm: 'grid' }, {
+                entry: {
+                    start: { position: 'top' },
+                    timing: { duration: 800, stagger: 100 }
+                }
+            });
+
+            // Circular
+            await createGallery('gallery-circular', {}, {
+                entry: {
+                    start: {
+                        position: 'circular',
+                        circular: { radius: '100%', distribution: 'even' }
+                    },
+                    timing: { duration: 800, stagger: 80 }
+                }
+            });
+
+            // Random Edge
+            await createGallery('gallery-random-edge', {}, {
+                entry: {
+                    start: { position: 'random-edge' },
+                    timing: { duration: 600, stagger: 100 }
+                }
+            });
+
+            // Custom Timing
+            await createGallery('gallery-timing', {}, {
+                entry: {
+                    start: { position: 'nearest-edge' },
+                    timing: { duration: 600, stagger: 150 }
+                }
+            });
+
+            // Layout-Aware (uses defaults based on layout algorithm)
+            await createGallery('gallery-layout-aware', { algorithm: 'radial' }, {});
+        }
+
+        // Replay handlers
+        document.getElementById('nearest-replay').addEventListener('click', () => {
+            createGallery('gallery-nearest', {}, {
+                entry: { start: { position: 'nearest-edge' } }
+            });
+        });
+
+        document.getElementById('center-replay').addEventListener('click', () => {
+            createGallery('gallery-center', {}, {
+                entry: {
+                    start: { position: 'center' },
+                    timing: { duration: 500, stagger: 80 }
+                }
+            });
+        });
+
+        document.getElementById('top-replay').addEventListener('click', () => {
+            createGallery('gallery-top', { algorithm: 'grid' }, {
+                entry: {
+                    start: { position: 'top' },
+                    timing: { duration: 800, stagger: 100 }
+                }
+            });
+        });
+
+        document.getElementById('circular-replay').addEventListener('click', () => {
+            const distribution = document.getElementById('circular-distribution').value;
+            createGallery('gallery-circular', {}, {
+                entry: {
+                    start: {
+                        position: 'circular',
+                        circular: { radius: '100%', distribution }
+                    },
+                    timing: { duration: 800, stagger: 80 }
+                }
+            });
+        });
+
+        document.getElementById('random-edge-replay').addEventListener('click', () => {
+            createGallery('gallery-random-edge', {}, {
+                entry: {
+                    start: { position: 'random-edge' },
+                    timing: { duration: 600, stagger: 100 }
+                }
+            });
+        });
+
+        document.getElementById('timing-replay').addEventListener('click', () => {
+            const duration = parseInt(document.getElementById('timing-duration').value);
+            const stagger = parseInt(document.getElementById('timing-stagger').value);
+            createGallery('gallery-timing', {}, {
+                entry: {
+                    start: { position: 'nearest-edge' },
+                    timing: { duration, stagger }
+                }
+            });
+        });
+
+        document.getElementById('layout-replay').addEventListener('click', () => {
+            const algorithm = document.getElementById('layout-algorithm').value;
+            // Don't specify entry config - let it use layout-aware defaults
+            createGallery('gallery-layout-aware', { algorithm }, {});
+        });
+
+        // Initialize on load
+        initAllGalleries().catch(error => {
+            console.error('Gallery initialization failed:', error);
+        });
+    </script>
+</body>
+</html>

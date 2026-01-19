@@ -139,10 +139,13 @@ test.describe('Google Drive Loader', () => {
       const error = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({
-          apiKey: 'INVALID_API_KEY_12345'
+          apiKey: 'INVALID_API_KEY_12345',
+          sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph'] }]
         });
         try {
-          await loader.loadImagesFromFolder('https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph');
+          // Create a mock filter for testing
+          const filter = { isAllowed: () => true };
+          await loader.prepare(filter);
           return null;
         } catch (e) {
           return (e as Error).message;
@@ -161,11 +164,13 @@ test.describe('Google Drive Loader', () => {
       const error = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({
-          apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc'
+          apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc',
+          sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/NONEXISTENT_FOLDER_ID_12345'] }]
         });
         try {
-          // Use a folder ID that doesn't exist or isn't shared
-          await loader.loadImagesFromFolder('https://drive.google.com/drive/folders/NONEXISTENT_FOLDER_ID_12345');
+          // Create a mock filter for testing
+          const filter = { isAllowed: () => true };
+          await loader.prepare(filter);
           return null;
         } catch (e) {
           return (e as Error).message;
@@ -180,16 +185,17 @@ test.describe('Google Drive Loader', () => {
 
   test.describe('Loader Direct API', () => {
 
-    test('loadFiles handles array of file URLs', async ({ page }) => {
+    test('manualImageUrls generates correct URLs', async ({ page }) => {
       await page.goto('/test/fixtures/google-drive-unit-test.html');
       await page.waitForFunction(() => typeof window.GoogleDriveLoader !== 'undefined');
 
-      // Test with valid file ID format (won't actually load, but tests URL generation)
-      const result = await page.evaluate(async () => {
+      // Test the public manualImageUrls method
+      const result = await page.evaluate(() => {
         // @ts-ignore
-        const loader = new window.GoogleDriveLoader({});
-        // Without API key, loadFiles just converts IDs to URLs
-        return await loader.loadFiles(['abc123', 'def456']);
+        const loader = new window.GoogleDriveLoader({
+          sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/test'] }]
+        });
+        return loader.manualImageUrls(['abc123', 'def456']);
       });
 
       expect(result).toHaveLength(2);

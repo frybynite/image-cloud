@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entry Animations Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    #imageCloud { width: 100%; height: 100%; position: relative; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageGallery } from '/dist/image-cloud.js';
+
+    // Get entry position from URL param (default: nearest-edge)
+    const params = new URLSearchParams(window.location.search);
+    const entryPosition = params.get('position') || 'nearest-edge';
+    const layoutAlgorithm = params.get('layout') || 'radial';
+    const circularRadius = params.get('radius') || '120%';
+    const circularDistribution = params.get('distribution') || 'even';
+    const duration = parseInt(params.get('duration') || '600');
+    const stagger = parseInt(params.get('stagger') || '150');
+    const useDefault = params.get('useDefault') === 'true';
+
+    window.ImageGallery = ImageGallery;
+
+    const config = {
+      container: 'imageCloud',
+      loader: {
+        type: 'static',
+        static: {
+          sources: [{
+            type: 'urls',
+            urls: [
+              '/test/fixtures/images/image1.jpg',
+              '/test/fixtures/images/image2.jpg',
+              '/test/fixtures/images/image3.jpg',
+              '/test/fixtures/images/computing1.jpg',
+              '/test/fixtures/images/computing2.jpg',
+              '/test/fixtures/images/computing3.jpg'
+            ]
+          }],
+          validateUrls: false
+        }
+      },
+      layout: {
+        algorithm: layoutAlgorithm,
+        sizing: { base: 100 }
+      },
+      debug: true
+    };
+
+    // Only add entry config if not using layout defaults
+    if (!useDefault) {
+      config.animation = {
+        entry: {
+          start: {
+            position: entryPosition,
+            offset: 100
+          },
+          timing: {
+            duration: duration,
+            stagger: stagger
+          },
+          easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+        }
+      };
+
+      // Add circular config if position is circular
+      if (entryPosition === 'circular') {
+        config.animation.entry.start.circular = {
+          radius: circularRadius,
+          distribution: circularDistribution
+        };
+      }
+    }
+
+    window.galleryConfig = config;
+    window.gallery = new ImageGallery(config);
+
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+    });
+  </script>
+</body>
+</html>

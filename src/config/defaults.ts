@@ -84,6 +84,21 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
     performance: Object.freeze({
       useGPU: undefined,  // STUB: Not implemented yet
       reduceMotion: undefined  // STUB: Not implemented yet
+    }),
+    entry: Object.freeze({
+      start: Object.freeze({
+        position: 'nearest-edge' as const,  // Default to nearest edge (current behavior)
+        offset: 100,  // pixels beyond edge
+        circular: Object.freeze({
+          radius: '120%',  // 120% of container diagonal
+          distribution: 'even' as const
+        })
+      }),
+      timing: Object.freeze({
+        duration: 600,  // ms
+        stagger: 150  // ms between images
+      }),
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)'  // smooth deceleration
     })
   }),
 
@@ -253,6 +268,26 @@ export function mergeConfig(
       merged.animation.performance = {
         ...DEFAULT_CONFIG.animation.performance,
         ...userConfig.animation.performance
+      };
+    }
+
+    // Deep merge entry animation config
+    if (userConfig.animation.entry) {
+      merged.animation.entry = {
+        ...DEFAULT_CONFIG.animation.entry!,
+        ...userConfig.animation.entry,
+        start: userConfig.animation.entry.start
+          ? {
+              ...DEFAULT_CONFIG.animation.entry!.start,
+              ...userConfig.animation.entry.start,
+              circular: userConfig.animation.entry.start.circular
+                ? { ...DEFAULT_CONFIG.animation.entry!.start.circular, ...userConfig.animation.entry.start.circular }
+                : DEFAULT_CONFIG.animation.entry!.start.circular
+            }
+          : DEFAULT_CONFIG.animation.entry!.start,
+        timing: userConfig.animation.entry.timing
+          ? { ...DEFAULT_CONFIG.animation.entry!.timing, ...userConfig.animation.entry.timing }
+          : DEFAULT_CONFIG.animation.entry!.timing
       };
     }
   }

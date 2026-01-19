@@ -178,6 +178,38 @@ export interface LayoutConfig {
 // Animation Configuration
 // ============================================================================
 
+export type EntryStartPosition =
+  | 'nearest-edge'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'center'
+  | 'random-edge'
+  | 'circular';
+
+export interface EntryCircularConfig {
+  radius?: number | string;  // pixels or percentage like '120%', default: '120%' of container diagonal
+  distribution?: 'even' | 'random';  // default: 'even'
+}
+
+export interface EntryStartConfig {
+  position: EntryStartPosition;
+  offset?: number;  // pixels beyond edge, default: 100
+  circular?: EntryCircularConfig;
+}
+
+export interface EntryTimingConfig {
+  duration: number;  // default: 600ms
+  stagger: number;   // default: 150ms
+}
+
+export interface EntryAnimationConfig {
+  start: EntryStartConfig;
+  timing: EntryTimingConfig;
+  easing: string;  // CSS easing, default: 'cubic-bezier(0.25, 1, 0.5, 1)'
+}
+
 export interface AnimationEasingConfig {
   default: string;
   bounce: string;
@@ -200,6 +232,7 @@ export interface AnimationConfig {
   easing: AnimationEasingConfig;
   queue: AnimationQueueConfig;
   performance?: AnimationPerformanceConfig;
+  entry?: EntryAnimationConfig;
 }
 
 // ============================================================================
