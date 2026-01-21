@@ -48,6 +48,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 *Future feature ideas to explore*
 
+- Interactive configurator page - visual tool for choosing gallery settings, previewing layouts in real-time, and generating the JSON configuration
 - Vue component wrapper
 - Web Component wrapper
 - Additional layout algorithms (honeycomb, wave, physics-based)
