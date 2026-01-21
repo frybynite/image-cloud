@@ -10,73 +10,106 @@
         .container { width: 100%; height: 100%; }
         #imageCloud { width: 100%; height: 100%; }
         .controls { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.9); color: white; padding: 20px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; z-index: 2000; max-width: 340px; max-height: 90vh; overflow-y: auto; }
-        .controls h3 { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
+        .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+        .controls h3 { margin: 0; color: #fff; font-size: 16px; }
+        .path-toggle { background: none; border: 1px solid #444; border-radius: 6px; padding: 4px 8px; cursor: pointer; color: #888; font-size: 14px; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+        .path-toggle:hover { border-color: #f472b6; color: #f472b6; }
+        .path-toggle.active { background: rgba(244, 114, 182, 0.2); border-color: #f472b6; color: #f472b6; }
+        .path-toggle .eye-icon { font-size: 12px; }
         .controls .subtitle { color: #888; margin-bottom: 15px; font-size: 11px; }
         .control-group { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
         .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .control-group h4 { margin: 0 0 10px 0; color: #f472b6; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .control-group h4 { margin: 0 0 10px 0; color: #f472b6; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; }
+        .control-group h4.show-path { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; text-transform: none; letter-spacing: 0; font-size: 11px; }
         .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
-        .control-row label { flex: 0 0 80px; color: #aaa; font-size: 12px; }
+        .control-row label { flex: 0 0 80px; color: #aaa; font-size: 12px; transition: all 0.2s; }
+        .control-row label.show-path { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; color: #f472b6; font-size: 11px; }
         .control-row input[type="range"] { flex: 1; }
         .control-row .value { width: 40px; text-align: right; color: #f472b6; font-size: 12px; }
         .apply-btn { width: 100%; padding: 12px; background: #f472b6; color: black; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
         .apply-btn:hover { background: #ec4899; }
+        .show-config-btn { width: 100%; padding: 10px; background: transparent; color: #f472b6; border: 1px solid #f472b6; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+        .show-config-btn:hover { background: rgba(244, 114, 182, 0.1); }
+        .config-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 3000; align-items: center; justify-content: center; }
+        .config-modal.active { display: flex; }
+        .config-content { background: #1a1a2e; border: 1px solid #333; border-radius: 12px; padding: 20px; max-width: 600px; max-height: 80vh; overflow: auto; position: relative; }
+        .config-content h4 { margin: 0 0 15px 0; color: #fff; }
+        .config-content pre { background: #0d0d1a; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; color: #e5e5e5; margin: 0; }
+        .config-content .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #888; font-size: 20px; cursor: pointer; }
+        .config-content .copy-btn { margin-top: 15px; padding: 8px 16px; background: #f472b6; color: black; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .config-content .copy-btn:hover { background: #ec4899; }
+        .config-content .copy-btn.copied { background: #22c55e; }
     </style>
 </head>
 <body>
     <div class="controls">
-        <h3>Filter Effects</h3>
+        <div class="controls-header">
+            <h3>Filter Effects</h3>
+            <button class="path-toggle" onclick="togglePaths()" title="Toggle JSON paths">
+                <span class="eye-icon">👁</span>
+            </button>
+        </div>
         <p class="subtitle">Contrast, saturate, sepia, hue-rotate</p>
 
         <div class="control-group">
-            <h4>Default State</h4>
+            <h4 data-label="Default State" data-path="styling.default">Default State</h4>
             <div class="control-row">
-                <label>Contrast</label>
+                <label data-label="Contrast" data-path="filter.contrast">Contrast</label>
                 <input type="range" id="defaultContrast" min="0.5" max="2" step="0.1" value="1.2" oninput="updateValue(this)">
                 <span class="value">1.2</span>
             </div>
             <div class="control-row">
-                <label>Saturate</label>
+                <label data-label="Saturate" data-path="filter.saturate">Saturate</label>
                 <input type="range" id="defaultSaturate" min="0" max="2" step="0.1" value="1.3" oninput="updateValue(this)">
                 <span class="value">1.3</span>
             </div>
             <div class="control-row">
-                <label>Sepia</label>
+                <label data-label="Sepia" data-path="filter.sepia">Sepia</label>
                 <input type="range" id="defaultSepia" min="0" max="1" step="0.1" value="0.1" oninput="updateValue(this)">
                 <span class="value">0.1</span>
             </div>
             <div class="control-row">
-                <label>Hue Rotate</label>
+                <label data-label="Hue Rotate" data-path="filter.hueRotate">Hue Rotate</label>
                 <input type="range" id="defaultHueRotate" min="0" max="360" step="5" value="0" oninput="updateValue(this)">
                 <span class="value">0</span>
             </div>
         </div>
 
         <div class="control-group">
-            <h4>Hover State</h4>
+            <h4 data-label="Hover State" data-path="styling.hover">Hover State</h4>
             <div class="control-row">
-                <label>Contrast</label>
+                <label data-label="Contrast" data-path="filter.contrast">Contrast</label>
                 <input type="range" id="hoverContrast" min="0.5" max="2" step="0.1" value="1.1" oninput="updateValue(this)">
                 <span class="value">1.1</span>
             </div>
             <div class="control-row">
-                <label>Saturate</label>
+                <label data-label="Saturate" data-path="filter.saturate">Saturate</label>
                 <input type="range" id="hoverSaturate" min="0" max="2" step="0.1" value="1.5" oninput="updateValue(this)">
                 <span class="value">1.5</span>
             </div>
             <div class="control-row">
-                <label>Sepia</label>
+                <label data-label="Sepia" data-path="filter.sepia">Sepia</label>
                 <input type="range" id="hoverSepia" min="0" max="1" step="0.1" value="0" oninput="updateValue(this)">
                 <span class="value">0</span>
             </div>
             <div class="control-row">
-                <label>Hue Rotate</label>
+                <label data-label="Hue Rotate" data-path="filter.hueRotate">Hue Rotate</label>
                 <input type="range" id="hoverHueRotate" min="0" max="360" step="5" value="15" oninput="updateValue(this)">
                 <span class="value">15</span>
             </div>
         </div>
 
         <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+        <button class="show-config-btn" onclick="showConfig()">Show Config JSON</button>
+    </div>
+
+    <div class="config-modal" id="configModal">
+        <div class="config-content">
+            <button class="close-btn" onclick="hideConfig()">&times;</button>
+            <h4>Current Styling Configuration</h4>
+            <pre id="configOutput"></pre>
+            <button class="copy-btn" onclick="copyConfig()">Copy to Clipboard</button>
+        </div>
     </div>
 
     <div class="container">
@@ -88,6 +121,22 @@
     <script type="module">
         import { ImageGallery } from '../../dist/image-cloud.js';
         let gallery = null;
+        let showingPaths = false;
+
+        window.togglePaths = function() {
+            showingPaths = !showingPaths;
+            const toggle = document.querySelector('.path-toggle');
+            toggle.classList.toggle('active', showingPaths);
+            document.querySelectorAll('[data-label][data-path]').forEach(el => {
+                if (showingPaths) {
+                    el.textContent = el.dataset.path;
+                    el.classList.add('show-path');
+                } else {
+                    el.textContent = el.dataset.label;
+                    el.classList.remove('show-path');
+                }
+            });
+        };
 
         window.updateValue = function(input) {
             input.nextElementSibling.textContent = input.value;
@@ -140,6 +189,27 @@
             await gallery.init();
         };
 
+        window.showConfig = function() {
+            const config = getConfig();
+            document.getElementById('configOutput').textContent = JSON.stringify({ styling: config.styling }, null, 2);
+            document.getElementById('configModal').classList.add('active');
+        };
+
+        window.hideConfig = function() {
+            document.getElementById('configModal').classList.remove('active');
+        };
+
+        window.copyConfig = function() {
+            const config = getConfig();
+            navigator.clipboard.writeText(JSON.stringify({ styling: config.styling }, null, 2)).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2000);
+            });
+        };
+
+        document.getElementById('configModal').addEventListener('click', function(e) { if (e.target === this) hideConfig(); });
         document.addEventListener('DOMContentLoaded', () => { window.applyChanges(); });
     </script>
 </body>

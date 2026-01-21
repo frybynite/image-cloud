@@ -6,70 +6,72 @@
     <title>Styling: Asymmetric Borders</title>
     <link rel="stylesheet" href="../../dist/style.css">
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #0f172a;
-        }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #0f172a; }
         .container { width: 100%; height: 100%; }
         #imageCloud { width: 100%; height: 100%; }
-        .controls {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 13px;
-            z-index: 2000;
-            max-width: 320px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .controls h3 { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
+        .controls { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.9); color: white; padding: 20px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; z-index: 2000; max-width: 320px; max-height: 90vh; overflow-y: auto; }
+        .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+        .controls h3 { margin: 0; color: #fff; font-size: 16px; }
+        .path-toggle { background: none; border: 1px solid #444; border-radius: 6px; padding: 4px 8px; cursor: pointer; color: #888; font-size: 14px; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+        .path-toggle:hover { border-color: #22d3ee; color: #22d3ee; }
+        .path-toggle.active { background: rgba(34, 211, 238, 0.2); border-color: #22d3ee; color: #22d3ee; }
+        .path-toggle .eye-icon { font-size: 12px; }
         .controls .subtitle { color: #888; margin-bottom: 15px; font-size: 11px; }
         .control-group { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
         .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .control-group h4 { margin: 0 0 10px 0; color: #22d3ee; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .control-group h4 { margin: 0 0 10px 0; color: #22d3ee; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; }
+        .control-group h4.show-path { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; text-transform: none; letter-spacing: 0; font-size: 11px; }
         .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
-        .control-row label { flex: 0 0 100px; color: #aaa; font-size: 12px; }
+        .control-row label { flex: 0 0 100px; color: #aaa; font-size: 12px; transition: all 0.2s; }
+        .control-row label.show-path { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; color: #22d3ee; font-size: 11px; }
         .control-row input[type="number"] { width: 70px; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; }
         .control-row input[type="color"] { width: 50px; height: 30px; padding: 0; border: 1px solid #444; border-radius: 6px; background: #222; cursor: pointer; }
         .control-row select { padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; cursor: pointer; }
         .apply-btn { width: 100%; padding: 12px; background: #22d3ee; color: black; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
         .apply-btn:hover { background: #06b6d4; }
+        .show-config-btn { width: 100%; padding: 10px; background: transparent; color: #22d3ee; border: 1px solid #22d3ee; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+        .show-config-btn:hover { background: rgba(34, 211, 238, 0.1); }
+        .config-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 3000; align-items: center; justify-content: center; }
+        .config-modal.active { display: flex; }
+        .config-content { background: #1a1a2e; border: 1px solid #333; border-radius: 12px; padding: 20px; max-width: 600px; max-height: 80vh; overflow: auto; position: relative; }
+        .config-content h4 { margin: 0 0 15px 0; color: #fff; }
+        .config-content pre { background: #0d0d1a; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; color: #e5e5e5; margin: 0; }
+        .config-content .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #888; font-size: 20px; cursor: pointer; }
+        .config-content .copy-btn { margin-top: 15px; padding: 8px 16px; background: #22d3ee; color: black; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .config-content .copy-btn:hover { background: #06b6d4; }
+        .config-content .copy-btn.copied { background: #22c55e; }
     </style>
 </head>
 <body>
     <div class="controls">
-        <h3>Asymmetric Borders</h3>
+        <div class="controls-header">
+            <h3>Asymmetric Borders</h3>
+            <button class="path-toggle" onclick="togglePaths()" title="Toggle JSON paths">
+                <span class="eye-icon">👁</span>
+            </button>
+        </div>
         <p class="subtitle">Per-side border configuration</p>
 
         <div class="control-group">
-            <h4>Base Border</h4>
+            <h4 data-label="Base Border" data-path="styling.default">Base Border</h4>
             <div class="control-row">
-                <label>Radius (px)</label>
+                <label data-label="Radius (px)" data-path="border.radius">Radius (px)</label>
                 <input type="number" id="borderRadius" value="4" min="0" max="50">
             </div>
         </div>
 
         <div class="control-group">
-            <h4>Bottom Border (Default)</h4>
+            <h4 data-label="Bottom Border (Default)" data-path="styling.default">Bottom Border (Default)</h4>
             <div class="control-row">
-                <label>Width (px)</label>
+                <label data-label="Width (px)" data-path="borderBottom.width">Width (px)</label>
                 <input type="number" id="bottomWidth" value="4" min="0" max="20">
             </div>
             <div class="control-row">
-                <label>Color</label>
+                <label data-label="Color" data-path="borderBottom.color">Color</label>
                 <input type="color" id="bottomColor" value="#22d3ee">
             </div>
             <div class="control-row">
-                <label>Style</label>
+                <label data-label="Style" data-path="borderBottom.style">Style</label>
                 <select id="bottomStyle">
                     <option value="solid" selected>solid</option>
                     <option value="dashed">dashed</option>
@@ -79,26 +81,33 @@
         </div>
 
         <div class="control-group">
-            <h4>Bottom Border (Hover)</h4>
+            <h4 data-label="Bottom Border (Hover)" data-path="styling.hover">Bottom Border (Hover)</h4>
             <div class="control-row">
-                <label>Width (px)</label>
+                <label data-label="Width (px)" data-path="borderBottom.width">Width (px)</label>
                 <input type="number" id="hoverBottomWidth" value="6" min="0" max="20">
             </div>
             <div class="control-row">
-                <label>Color</label>
+                <label data-label="Color" data-path="borderBottom.color">Color</label>
                 <input type="color" id="hoverBottomColor" value="#06b6d4">
             </div>
         </div>
 
         <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+        <button class="show-config-btn" onclick="showConfig()">Show Config JSON</button>
+    </div>
+
+    <div class="config-modal" id="configModal">
+        <div class="config-content">
+            <button class="close-btn" onclick="hideConfig()">&times;</button>
+            <h4>Current Styling Configuration</h4>
+            <pre id="configOutput"></pre>
+            <button class="copy-btn" onclick="copyConfig()">Copy to Clipboard</button>
+        </div>
     </div>
 
     <div class="container">
         <div id="imageCloud"></div>
-        <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
-            <div class="fbn-ic-spinner"></div>
-            <p>Loading images...</p>
-        </div>
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden"><div class="fbn-ic-spinner"></div><p>Loading images...</p></div>
         <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
     </div>
 
@@ -106,6 +115,7 @@
         import { ImageGallery } from '../../dist/image-cloud.js';
 
         let gallery = null;
+        let showingPaths = false;
 
         const imageUrls = [
             'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -116,13 +126,25 @@
             'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800'
         ];
 
+        window.togglePaths = function() {
+            showingPaths = !showingPaths;
+            const toggle = document.querySelector('.path-toggle');
+            toggle.classList.toggle('active', showingPaths);
+            document.querySelectorAll('[data-label][data-path]').forEach(el => {
+                if (showingPaths) {
+                    el.textContent = el.dataset.path;
+                    el.classList.add('show-path');
+                } else {
+                    el.textContent = el.dataset.label;
+                    el.classList.remove('show-path');
+                }
+            });
+        };
+
         function getConfig() {
             return {
                 container: 'imageCloud',
-                loader: {
-                    type: 'static',
-                    static: { sources: [{ type: 'urls', urls: imageUrls }] }
-                },
+                loader: { type: 'static', static: { sources: [{ type: 'urls', urls: imageUrls }] } },
                 styling: {
                     default: {
                         border: { width: 0, radius: parseInt(document.getElementById('borderRadius').value) },
@@ -150,6 +172,27 @@
             await gallery.init();
         };
 
+        window.showConfig = function() {
+            const config = getConfig();
+            document.getElementById('configOutput').textContent = JSON.stringify({ styling: config.styling }, null, 2);
+            document.getElementById('configModal').classList.add('active');
+        };
+
+        window.hideConfig = function() {
+            document.getElementById('configModal').classList.remove('active');
+        };
+
+        window.copyConfig = function() {
+            const config = getConfig();
+            navigator.clipboard.writeText(JSON.stringify({ styling: config.styling }, null, 2)).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2000);
+            });
+        };
+
+        document.getElementById('configModal').addEventListener('click', function(e) { if (e.target === this) hideConfig(); });
         document.addEventListener('DOMContentLoaded', () => { window.applyChanges(); });
     </script>
 </body>

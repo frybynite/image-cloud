@@ -6,38 +6,24 @@
     <title>Styling: Shadows</title>
     <link rel="stylesheet" href="../../dist/style.css">
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #18181b;
-        }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #18181b; }
         .container { width: 100%; height: 100%; }
         #imageCloud { width: 100%; height: 100%; }
-        .controls {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 13px;
-            z-index: 2000;
-            max-width: 340px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .controls h3 { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
+        .controls { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.9); color: white; padding: 20px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; z-index: 2000; max-width: 340px; max-height: 90vh; overflow-y: auto; }
+        .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+        .controls h3 { margin: 0; color: #fff; font-size: 16px; }
+        .path-toggle { background: none; border: 1px solid #444; border-radius: 6px; padding: 4px 8px; cursor: pointer; color: #888; font-size: 14px; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+        .path-toggle:hover { border-color: #fbbf24; color: #fbbf24; }
+        .path-toggle.active { background: rgba(251, 191, 36, 0.2); border-color: #fbbf24; color: #fbbf24; }
+        .path-toggle .eye-icon { font-size: 12px; }
         .controls .subtitle { color: #888; margin-bottom: 15px; font-size: 11px; }
         .control-group { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
         .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .control-group h4 { margin: 0 0 10px 0; color: #fbbf24; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .control-group h4 { margin: 0 0 10px 0; color: #fbbf24; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; }
+        .control-group h4.show-path { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; text-transform: none; letter-spacing: 0; font-size: 11px; }
         .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
-        .control-row label { flex: 0 0 80px; color: #aaa; font-size: 12px; }
+        .control-row label { flex: 0 0 80px; color: #aaa; font-size: 12px; transition: all 0.2s; }
+        .control-row label.show-path { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; color: #fbbf24; font-size: 11px; }
         .control-row select { flex: 1; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; cursor: pointer; }
         .control-row input[type="text"] { flex: 1; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; }
         .control-row input[type="number"] { width: 70px; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; }
@@ -47,21 +33,37 @@
         .tabs { display: flex; gap: 5px; margin-bottom: 10px; }
         .tab { padding: 6px 12px; background: #333; border: none; border-radius: 6px; color: #888; cursor: pointer; font-size: 11px; }
         .tab.active { background: #fbbf24; color: black; }
+        .show-config-btn { width: 100%; padding: 10px; background: transparent; color: #fbbf24; border: 1px solid #fbbf24; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+        .show-config-btn:hover { background: rgba(251, 191, 36, 0.1); }
+        .config-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 3000; align-items: center; justify-content: center; }
+        .config-modal.active { display: flex; }
+        .config-content { background: #1a1a2e; border: 1px solid #333; border-radius: 12px; padding: 20px; max-width: 600px; max-height: 80vh; overflow: auto; position: relative; }
+        .config-content h4 { margin: 0 0 15px 0; color: #fff; }
+        .config-content pre { background: #0d0d1a; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; color: #e5e5e5; margin: 0; }
+        .config-content .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #888; font-size: 20px; cursor: pointer; }
+        .config-content .copy-btn { margin-top: 15px; padding: 8px 16px; background: #fbbf24; color: black; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .config-content .copy-btn:hover { background: #f59e0b; }
+        .config-content .copy-btn.copied { background: #22c55e; }
     </style>
 </head>
 <body>
     <div class="controls">
-        <h3>Shadow Configuration</h3>
+        <div class="controls-header">
+            <h3>Shadow Configuration</h3>
+            <button class="path-toggle" onclick="togglePaths()" title="Toggle JSON paths">
+                <span class="eye-icon">👁</span>
+            </button>
+        </div>
         <p class="subtitle">Presets or custom CSS shadows</p>
 
         <div class="control-group">
-            <h4>Default Shadow</h4>
+            <h4 data-label="Default Shadow" data-path="styling.default">Default Shadow</h4>
             <div class="tabs">
                 <button class="tab active" onclick="setMode('default', 'preset')">Preset</button>
                 <button class="tab" onclick="setMode('default', 'custom')">Custom</button>
             </div>
             <div id="defaultPreset" class="control-row">
-                <label>Preset</label>
+                <label data-label="Preset" data-path="shadow">Preset</label>
                 <select id="defaultShadowPreset">
                     <option value="none">none</option>
                     <option value="sm">sm</option>
@@ -71,19 +73,19 @@
                 </select>
             </div>
             <div id="defaultCustom" class="control-row" style="display:none;">
-                <label>CSS</label>
+                <label data-label="CSS" data-path="shadow">CSS</label>
                 <input type="text" id="defaultShadowCustom" value="0 0 20px rgba(251, 191, 36, 0.4)" placeholder="CSS box-shadow">
             </div>
         </div>
 
         <div class="control-group">
-            <h4>Hover Shadow</h4>
+            <h4 data-label="Hover Shadow" data-path="styling.hover">Hover Shadow</h4>
             <div class="tabs">
                 <button class="tab active" onclick="setMode('hover', 'preset')">Preset</button>
                 <button class="tab" onclick="setMode('hover', 'custom')">Custom</button>
             </div>
             <div id="hoverPreset" class="control-row">
-                <label>Preset</label>
+                <label data-label="Preset" data-path="shadow">Preset</label>
                 <select id="hoverShadowPreset">
                     <option value="none">none</option>
                     <option value="sm">sm</option>
@@ -93,19 +95,19 @@
                 </select>
             </div>
             <div id="hoverCustom" class="control-row" style="display:none;">
-                <label>CSS</label>
+                <label data-label="CSS" data-path="shadow">CSS</label>
                 <input type="text" id="hoverShadowCustom" value="0 0 40px rgba(251, 191, 36, 0.6)" placeholder="CSS box-shadow">
             </div>
         </div>
 
         <div class="control-group">
-            <h4>Focused Shadow</h4>
+            <h4 data-label="Focused Shadow" data-path="styling.focused">Focused Shadow</h4>
             <div class="tabs">
                 <button class="tab active" onclick="setMode('focused', 'preset')">Preset</button>
                 <button class="tab" onclick="setMode('focused', 'custom')">Custom</button>
             </div>
             <div id="focusedPreset" class="control-row">
-                <label>Preset</label>
+                <label data-label="Preset" data-path="shadow">Preset</label>
                 <select id="focusedShadowPreset">
                     <option value="none">none</option>
                     <option value="sm">sm</option>
@@ -115,28 +117,35 @@
                 </select>
             </div>
             <div id="focusedCustom" class="control-row" style="display:none;">
-                <label>CSS</label>
+                <label data-label="CSS" data-path="shadow">CSS</label>
                 <input type="text" id="focusedShadowCustom" value="0 0 60px rgba(251, 191, 36, 0.8)" placeholder="CSS box-shadow">
             </div>
         </div>
 
         <div class="control-group">
-            <h4>Border Radius</h4>
+            <h4 data-label="Border Radius" data-path="styling.default">Border Radius</h4>
             <div class="control-row">
-                <label>Radius (px)</label>
+                <label data-label="Radius (px)" data-path="border.radius">Radius (px)</label>
                 <input type="number" id="borderRadius" value="8" min="0" max="50">
             </div>
         </div>
 
         <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+        <button class="show-config-btn" onclick="showConfig()">Show Config JSON</button>
+    </div>
+
+    <div class="config-modal" id="configModal">
+        <div class="config-content">
+            <button class="close-btn" onclick="hideConfig()">&times;</button>
+            <h4>Current Styling Configuration</h4>
+            <pre id="configOutput"></pre>
+            <button class="copy-btn" onclick="copyConfig()">Copy to Clipboard</button>
+        </div>
     </div>
 
     <div class="container">
         <div id="imageCloud"></div>
-        <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
-            <div class="fbn-ic-spinner"></div>
-            <p>Loading images...</p>
-        </div>
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden"><div class="fbn-ic-spinner"></div><p>Loading images...</p></div>
         <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
     </div>
 
@@ -144,7 +153,23 @@
         import { ImageGallery } from '../../dist/image-cloud.js';
 
         let gallery = null;
+        let showingPaths = false;
         const modes = { default: 'preset', hover: 'preset', focused: 'preset' };
+
+        window.togglePaths = function() {
+            showingPaths = !showingPaths;
+            const toggle = document.querySelector('.path-toggle');
+            toggle.classList.toggle('active', showingPaths);
+            document.querySelectorAll('[data-label][data-path]').forEach(el => {
+                if (showingPaths) {
+                    el.textContent = el.dataset.path;
+                    el.classList.add('show-path');
+                } else {
+                    el.textContent = el.dataset.label;
+                    el.classList.remove('show-path');
+                }
+            });
+        };
 
         window.setMode = function(state, mode) {
             modes[state] = mode;
@@ -176,10 +201,7 @@
         function getConfig() {
             return {
                 container: 'imageCloud',
-                loader: {
-                    type: 'static',
-                    static: { sources: [{ type: 'urls', urls: imageUrls }] }
-                },
+                loader: { type: 'static', static: { sources: [{ type: 'urls', urls: imageUrls }] } },
                 styling: {
                     default: {
                         border: { radius: parseInt(document.getElementById('borderRadius').value) },
@@ -197,6 +219,27 @@
             await gallery.init();
         };
 
+        window.showConfig = function() {
+            const config = getConfig();
+            document.getElementById('configOutput').textContent = JSON.stringify({ styling: config.styling }, null, 2);
+            document.getElementById('configModal').classList.add('active');
+        };
+
+        window.hideConfig = function() {
+            document.getElementById('configModal').classList.remove('active');
+        };
+
+        window.copyConfig = function() {
+            const config = getConfig();
+            navigator.clipboard.writeText(JSON.stringify({ styling: config.styling }, null, 2)).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2000);
+            });
+        };
+
+        document.getElementById('configModal').addEventListener('click', function(e) { if (e.target === this) hideConfig(); });
         document.addEventListener('DOMContentLoaded', () => { window.applyChanges(); });
     </script>
 </body>
