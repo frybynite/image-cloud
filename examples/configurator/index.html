@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Configurator</title>
+    <link rel="stylesheet" href="../../dist/style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e5e5e5;
+        }
+
+        /* Main Layout */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 2000;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .path-toggle {
+            background: none;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: #888;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .path-toggle:hover {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .path-toggle.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .help-btn {
+            background: none;
+            border: 1px solid #444;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            color: #888;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .help-btn:hover {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 360px;
+            min-width: 360px;
+            height: calc(100% - 50px);
+            margin-top: 50px;
+            background: rgba(0, 0, 0, 0.95);
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #333;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Preset Section */
+        .preset-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .preset-section label {
+            display: block;
+            color: #888;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .preset-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .image-count-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .image-count-control input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #333;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .image-count-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .image-count-value {
+            min-width: 32px;
+            padding: 6px 10px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #8b5cf6;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .preset-select:hover {
+            border-color: #8b5cf6;
+        }
+
+        .preset-select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin-bottom: 10px;
+        }
+
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .accordion.open .accordion-header {
+            border-radius: 8px 8px 0 0;
+            border-bottom-color: transparent;
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .accordion-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.2s;
+        }
+
+        .accordion-title.show-path {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 12px;
+            color: #8b5cf6;
+        }
+
+        .accordion-arrow {
+            color: #888;
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .accordion.open .accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .accordion.open .accordion-content {
+            display: block;
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        /* Control Groups */
+        .control-group {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .control-group-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8b5cf6;
+            margin: 0 0 10px 0;
+            transition: all 0.2s;
+        }
+
+        .control-group-title.show-path {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 10px;
+        }
+
+        /* Control Row */
+        .control-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .control-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-checkbox {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            accent-color: #8b5cf6;
+            cursor: pointer;
+        }
+
+        .control-label {
+            flex: 0 0 110px;
+            font-size: 12px;
+            color: #aaa;
+            transition: all 0.2s;
+        }
+
+        .control-label.show-path {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 10px;
+            color: #8b5cf6;
+        }
+
+        .control-input {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-row.disabled .control-label {
+            color: #555;
+        }
+
+        .control-row.disabled .control-input {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Input Styles */
+        input[type="number"] {
+            width: 70px;
+            padding: 6px 8px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #333;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="color"] {
+            width: 40px;
+            height: 28px;
+            padding: 0;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #222;
+            cursor: pointer;
+        }
+
+        select {
+            padding: 6px 10px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .value-display {
+            min-width: 40px;
+            text-align: right;
+            font-size: 12px;
+            color: #8b5cf6;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        /* Buttons */
+        .apply-btn {
+            width: 100%;
+            padding: 12px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .apply-btn:hover {
+            background: #7c3aed;
+        }
+
+        .show-config-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: #8b5cf6;
+            border: 1px solid #8b5cf6;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .show-config-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Gallery Preview */
+        .gallery-preview {
+            flex: 1;
+            height: calc(100% - 50px);
+            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        #imageCloud {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Config Modal */
+        .config-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .config-modal.active {
+            display: flex;
+        }
+
+        .config-content {
+            background: #1a1a2e;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: auto;
+            position: relative;
+        }
+
+        .config-content h4 {
+            margin: 0 0 15px 0;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .config-content pre {
+            background: #0d0d1a;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+            color: #e5e5e5;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .config-content .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .config-content .close-btn:hover {
+            color: #fff;
+        }
+
+        .config-content .copy-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .config-content .copy-btn:hover {
+            background: #7c3aed;
+        }
+
+        .config-content .copy-btn.copied {
+            background: #22c55e;
+        }
+
+        /* Help Modal */
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .help-modal.active {
+            display: flex;
+        }
+
+        .help-content {
+            background: #1a1a2e;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .help-content h4 {
+            margin: 0 0 15px 0;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .help-content p {
+            color: #aaa;
+            line-height: 1.6;
+            margin: 0 0 12px 0;
+            font-size: 14px;
+        }
+
+        .help-content ul {
+            color: #aaa;
+            line-height: 1.8;
+            margin: 0;
+            padding-left: 20px;
+            font-size: 14px;
+        }
+
+        .help-content .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .help-content .close-btn:hover {
+            color: #fff;
+        }
+
+        /* Mobile Styles */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 8px;
+            left: 10px;
+            z-index: 2001;
+            background: rgba(139, 92, 246, 0.9);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                margin-left: 50px;
+                font-size: 16px;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -360px;
+                top: 0;
+                height: 100%;
+                margin-top: 0;
+                padding-top: 50px;
+                transition: left 0.3s ease;
+                z-index: 1500;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1400;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .gallery-preview {
+                width: 100%;
+            }
+        }
+
+        /* Algorithm-specific controls visibility */
+        .algorithm-specific {
+            display: none;
+        }
+
+        .algorithm-specific.visible {
+            display: block;
+        }
+
+        /* Subsection toggle */
+        .subsection-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .subsection-toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #8b5cf6;
+            cursor: pointer;
+        }
+
+        .subsection-toggle label {
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .subsection-content {
+            padding-left: 24px;
+        }
+
+        .subsection-content.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰ Config</button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <header class="header">
+        <h1>Gallery Configurator</h1>
+        <div class="header-actions">
+            <button class="path-toggle" onclick="togglePaths()" title="Toggle JSON paths">
+                <span>👁</span>
+                <span>Paths</span>
+            </button>
+            <button class="help-btn" onclick="showHelp()" title="Help">?</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <!-- Presets -->
+                <div class="preset-section">
+                    <label>Preset</label>
+                    <select class="preset-select" id="presetSelect" onchange="applyPreset(this.value)">
+                        <option value="default">Default</option>
+                        <option value="scattered-photos">Scattered Photos</option>
+                        <option value="clean-grid">Clean Grid</option>
+                        <option value="polaroid">Polaroid</option>
+                        <option value="vintage">Vintage</option>
+                        <option value="neon-glow">Neon Glow</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="dramatic">Dramatic</option>
+                    </select>
+                </div>
+
+                <div class="preset-section">
+                    <label>Image Count</label>
+                    <div class="image-count-control">
+                        <input type="range" id="imageCount" min="5" max="50" step="1" value="8" oninput="updateImageCount(this)">
+                        <span class="image-count-value" id="imageCountValue">8</span>
+                    </div>
+                </div>
+
+                <!-- Layout Section -->
+                <div class="accordion open" data-section="layout">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="Layout" data-path="layout">Layout</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- Algorithm -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Algorithm" data-path="layout.algorithm">Algorithm</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-algorithm" checked>
+                                <label class="control-label" data-label="Type" data-path="algorithm">Type</label>
+                                <div class="control-input">
+                                    <select id="layout-algorithm" onchange="onAlgorithmChange()">
+                                        <option value="radial">Radial</option>
+                                        <option value="grid">Grid</option>
+                                        <option value="spiral">Spiral</option>
+                                        <option value="cluster">Cluster</option>
+                                        <option value="random">Random</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Grid-specific options -->
+                            <div class="algorithm-specific" data-algorithm="grid">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-columns">
+                                    <label class="control-label" data-label="Columns" data-path="grid.columns">Columns</label>
+                                    <div class="control-input">
+                                        <input type="number" id="grid-columns" value="4" min="1" max="12">
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-rows">
+                                    <label class="control-label" data-label="Rows" data-path="grid.rows">Rows</label>
+                                    <div class="control-input">
+                                        <input type="number" id="grid-rows" value="3" min="1" max="12">
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-gap">
+                                    <label class="control-label" data-label="Gap" data-path="grid.gap">Gap</label>
+                                    <div class="control-input">
+                                        <input type="number" id="grid-gap" value="10" min="0" max="100">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-stagger">
+                                    <label class="control-label" data-label="Stagger" data-path="grid.stagger">Stagger</label>
+                                    <div class="control-input">
+                                        <select id="grid-stagger">
+                                            <option value="none">None</option>
+                                            <option value="row">Row</option>
+                                            <option value="column">Column</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-jitter">
+                                    <label class="control-label" data-label="Jitter" data-path="grid.jitter">Jitter</label>
+                                    <div class="control-input">
+                                        <input type="range" id="grid-jitter" min="0" max="50" step="5" value="0" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">0</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-overlap">
+                                    <label class="control-label" data-label="Overlap" data-path="grid.overlap">Overlap</label>
+                                    <div class="control-input">
+                                        <input type="range" id="grid-overlap" min="0" max="0.5" step="0.05" value="0" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">0</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-fillDirection">
+                                    <label class="control-label" data-label="Fill Direction" data-path="grid.fillDirection">Fill Direction</label>
+                                    <div class="control-input">
+                                        <select id="grid-fillDirection">
+                                            <option value="row">Row</option>
+                                            <option value="column">Column</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-alignment">
+                                    <label class="control-label" data-label="Alignment" data-path="grid.alignment">Alignment</label>
+                                    <div class="control-input">
+                                        <select id="grid-alignment">
+                                            <option value="start">Start</option>
+                                            <option value="center">Center</option>
+                                            <option value="end">End</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Spiral-specific options -->
+                            <div class="algorithm-specific" data-algorithm="spiral">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-spiral-type">
+                                    <label class="control-label" data-label="Spiral Type" data-path="spiral.spiralType">Spiral Type</label>
+                                    <div class="control-input">
+                                        <select id="spiral-type">
+                                            <option value="golden">Golden</option>
+                                            <option value="archimedean">Archimedean</option>
+                                            <option value="logarithmic">Logarithmic</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-spiral-direction">
+                                    <label class="control-label" data-label="Direction" data-path="spiral.direction">Direction</label>
+                                    <div class="control-input">
+                                        <select id="spiral-direction">
+                                            <option value="clockwise">Clockwise</option>
+                                            <option value="counterclockwise">Counter-clockwise</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-spiral-tightness">
+                                    <label class="control-label" data-label="Tightness" data-path="spiral.tightness">Tightness</label>
+                                    <div class="control-input">
+                                        <input type="range" id="spiral-tightness" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">1.0</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-spiral-scaleDecay">
+                                    <label class="control-label" data-label="Scale Decay" data-path="spiral.scaleDecay">Scale Decay</label>
+                                    <div class="control-input">
+                                        <input type="range" id="spiral-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">0</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-spiral-startAngle">
+                                    <label class="control-label" data-label="Start Angle" data-path="spiral.startAngle">Start Angle</label>
+                                    <div class="control-input">
+                                        <input type="range" id="spiral-startAngle" min="0" max="360" step="15" value="0" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">0°</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cluster-specific options -->
+                            <div class="algorithm-specific" data-algorithm="cluster">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-cluster-count">
+                                    <label class="control-label" data-label="Cluster Count" data-path="cluster.clusterCount">Cluster Count</label>
+                                    <div class="control-input">
+                                        <input type="number" id="cluster-count" value="3" min="1" max="10">
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-cluster-spread">
+                                    <label class="control-label" data-label="Cluster Spread" data-path="cluster.clusterSpread">Cluster Spread</label>
+                                    <div class="control-input">
+                                        <input type="range" id="cluster-spread" min="50" max="300" step="10" value="150" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">150</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-cluster-spacing">
+                                    <label class="control-label" data-label="Cluster Spacing" data-path="cluster.clusterSpacing">Cluster Spacing</label>
+                                    <div class="control-input">
+                                        <input type="range" id="cluster-spacing" min="50" max="400" step="10" value="200" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">200</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-cluster-overlap">
+                                    <label class="control-label" data-label="Overlap" data-path="cluster.overlap">Overlap</label>
+                                    <div class="control-input">
+                                        <input type="range" id="cluster-overlap" min="0" max="0.5" step="0.05" value="0.2" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">0.2</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-cluster-density">
+                                    <label class="control-label" data-label="Density" data-path="cluster.density">Density</label>
+                                    <div class="control-input">
+                                        <select id="cluster-density">
+                                            <option value="uniform">Uniform</option>
+                                            <option value="varied">Varied</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-cluster-distribution">
+                                    <label class="control-label" data-label="Distribution" data-path="cluster.distribution">Distribution</label>
+                                    <div class="control-input">
+                                        <select id="cluster-distribution">
+                                            <option value="gaussian">Gaussian</option>
+                                            <option value="uniform">Uniform</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sizing -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Sizing" data-path="layout.sizing">Sizing</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-sizing-base">
+                                <label class="control-label" data-label="Base Height" data-path="sizing.base">Base Height</label>
+                                <div class="control-input">
+                                    <input type="number" id="sizing-base" value="200" min="50" max="500">
+                                    <span class="value-display">px</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-variance-min">
+                                <label class="control-label" data-label="Variance Min" data-path="sizing.variance.min">Variance Min</label>
+                                <div class="control-input">
+                                    <input type="range" id="variance-min" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1.0</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-variance-max">
+                                <label class="control-label" data-label="Variance Max" data-path="sizing.variance.max">Variance Max</label>
+                                <div class="control-input">
+                                    <input type="range" id="variance-max" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1.0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Adaptive Sizing -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Adaptive Sizing" data-path="layout.sizing.adaptive">Adaptive Sizing</h5>
+                            <div class="subsection-toggle">
+                                <input type="checkbox" id="enable-adaptive" checked onchange="toggleSubsection('adaptive-content', this.checked)">
+                                <label for="enable-adaptive" data-label="Enabled" data-path="adaptive.enabled">Enabled</label>
+                            </div>
+                            <div class="subsection-content" id="adaptive-content">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-minSize">
+                                    <label class="control-label" data-label="Min Size" data-path="adaptive.minSize">Min Size</label>
+                                    <div class="control-input">
+                                        <input type="number" id="adaptive-minSize" value="50" min="20" max="200">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-maxSize">
+                                    <label class="control-label" data-label="Max Size" data-path="adaptive.maxSize">Max Size</label>
+                                    <div class="control-input">
+                                        <input type="number" id="adaptive-maxSize" value="400" min="100" max="800">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-coverage">
+                                    <label class="control-label" data-label="Target Coverage" data-path="adaptive.targetCoverage">Target Coverage</label>
+                                    <div class="control-input">
+                                        <input type="range" id="adaptive-coverage" min="0.3" max="0.9" step="0.05" value="0.6" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">0.6</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-density">
+                                    <label class="control-label" data-label="Density Factor" data-path="adaptive.densityFactor">Density Factor</label>
+                                    <div class="control-input">
+                                        <input type="range" id="adaptive-density" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">1.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rotation -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Rotation" data-path="layout.rotation">Rotation</h5>
+                            <div class="subsection-toggle">
+                                <input type="checkbox" id="enable-rotation" checked onchange="toggleSubsection('rotation-content', this.checked)">
+                                <label for="enable-rotation" data-label="Enabled" data-path="rotation.enabled">Enabled</label>
+                            </div>
+                            <div class="subsection-content" id="rotation-content">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-rotation-min">
+                                    <label class="control-label" data-label="Min Degrees" data-path="rotation.range.min">Min Degrees</label>
+                                    <div class="control-input">
+                                        <input type="range" id="rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">-15</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-rotation-max">
+                                    <label class="control-label" data-label="Max Degrees" data-path="rotation.range.max">Max Degrees</label>
+                                    <div class="control-input">
+                                        <input type="range" id="rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">15</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Spacing -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Spacing" data-path="layout.spacing">Spacing</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-spacing-padding">
+                                <label class="control-label" data-label="Padding" data-path="spacing.padding">Padding</label>
+                                <div class="control-input">
+                                    <input type="number" id="spacing-padding" value="50" min="0" max="200">
+                                    <span class="value-display">px</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-spacing-minGap">
+                                <label class="control-label" data-label="Min Gap" data-path="spacing.minGap">Min Gap</label>
+                                <div class="control-input">
+                                    <input type="number" id="spacing-minGap" value="20" min="0" max="100">
+                                    <span class="value-display">px</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Animation Section -->
+                <div class="accordion" data-section="animation">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="Animation" data-path="animation">Animation</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- General -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="General" data-path="animation">General</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-animation-duration">
+                                <label class="control-label" data-label="Duration" data-path="duration">Duration</label>
+                                <div class="control-input">
+                                    <input type="number" id="animation-duration" value="600" min="100" max="2000" step="50">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Queue -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Queue" data-path="animation.queue">Queue</h5>
+                            <div class="subsection-toggle">
+                                <input type="checkbox" id="enable-queue" checked onchange="toggleSubsection('queue-content', this.checked)">
+                                <label for="enable-queue" data-label="Enabled" data-path="queue.enabled">Enabled</label>
+                            </div>
+                            <div class="subsection-content" id="queue-content">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-queue-interval">
+                                    <label class="control-label" data-label="Interval" data-path="queue.interval">Interval</label>
+                                    <div class="control-input">
+                                        <input type="number" id="queue-interval" value="150" min="0" max="500" step="25">
+                                        <span class="value-display">ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Entry Animation -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Entry Animation" data-path="animation.entry">Entry Animation</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-position">
+                                <label class="control-label" data-label="Start Position" data-path="entry.start.position">Start Position</label>
+                                <div class="control-input">
+                                    <select id="entry-position">
+                                        <option value="nearest-edge">Nearest Edge</option>
+                                        <option value="top">Top</option>
+                                        <option value="bottom">Bottom</option>
+                                        <option value="left">Left</option>
+                                        <option value="right">Right</option>
+                                        <option value="center">Center</option>
+                                        <option value="random-edge">Random Edge</option>
+                                        <option value="circular">Circular</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-offset">
+                                <label class="control-label" data-label="Offset" data-path="entry.start.offset">Offset</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-offset" value="100" min="0" max="300">
+                                    <span class="value-display">px</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-duration">
+                                <label class="control-label" data-label="Duration" data-path="entry.timing.duration">Duration</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-duration" value="600" min="100" max="2000" step="50">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-stagger">
+                                <label class="control-label" data-label="Stagger" data-path="entry.timing.stagger">Stagger</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-stagger" value="150" min="0" max="500" step="25">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interaction Section -->
+                <div class="accordion" data-section="interaction">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="Interaction" data-path="interaction">Interaction</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- Focus -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Focus Behavior" data-path="interaction.focus">Focus Behavior</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-scale">
+                                <label class="control-label" data-label="Scale" data-path="focus.scale">Scale</label>
+                                <div class="control-input">
+                                    <input type="range" id="focus-scale" min="1.5" max="4.0" step="0.1" value="2.5" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">2.5</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-mobileScale">
+                                <label class="control-label" data-label="Mobile Scale" data-path="focus.mobileScale">Mobile Scale</label>
+                                <div class="control-input">
+                                    <input type="range" id="focus-mobileScale" min="1.2" max="3.0" step="0.1" value="2.0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">2.0</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-unfocusedOpacity">
+                                <label class="control-label" data-label="Unfocused Opacity" data-path="focus.unfocusedOpacity">Unfocused Opacity</label>
+                                <div class="control-input">
+                                    <input type="range" id="focus-unfocusedOpacity" min="0" max="1" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0.3</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-zIndex">
+                                <label class="control-label" data-label="Z-Index" data-path="focus.zIndex">Z-Index</label>
+                                <div class="control-input">
+                                    <input type="number" id="focus-zIndex" value="1000" min="100" max="9999">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Styling Section -->
+                <div class="accordion" data-section="styling">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="Styling" data-path="styling">Styling</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- Default State -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Default State" data-path="styling.default">Default State</h5>
+
+                            <!-- Border -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-border-width">
+                                <label class="control-label" data-label="Border Width" data-path="default.border.width">Border Width</label>
+                                <div class="control-input">
+                                    <input type="number" id="default-border-width" value="0" min="0" max="20">
+                                    <span class="value-display">px</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-border-color">
+                                <label class="control-label" data-label="Border Color" data-path="default.border.color">Border Color</label>
+                                <div class="control-input">
+                                    <input type="color" id="default-border-color" value="#000000">
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-border-radius">
+                                <label class="control-label" data-label="Border Radius" data-path="default.border.radius">Border Radius</label>
+                                <div class="control-input">
+                                    <input type="number" id="default-border-radius" value="8" min="0" max="50">
+                                    <span class="value-display">px</span>
+                                </div>
+                            </div>
+
+                            <!-- Shadow -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-shadow">
+                                <label class="control-label" data-label="Shadow" data-path="default.shadow">Shadow</label>
+                                <div class="control-input">
+                                    <select id="default-shadow">
+                                        <option value="none">None</option>
+                                        <option value="sm">Small</option>
+                                        <option value="md" selected>Medium</option>
+                                        <option value="lg">Large</option>
+                                        <option value="glow">Glow</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Opacity -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-opacity">
+                                <label class="control-label" data-label="Opacity" data-path="default.opacity">Opacity</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1</span>
+                                </div>
+                            </div>
+
+                            <!-- Filters -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-grayscale">
+                                <label class="control-label" data-label="Grayscale" data-path="default.filter.grayscale">Grayscale</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-blur">
+                                <label class="control-label" data-label="Blur" data-path="default.filter.blur">Blur</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-brightness">
+                                <label class="control-label" data-label="Brightness" data-path="default.filter.brightness">Brightness</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-contrast">
+                                <label class="control-label" data-label="Contrast" data-path="default.filter.contrast">Contrast</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-saturate">
+                                <label class="control-label" data-label="Saturate" data-path="default.filter.saturate">Saturate</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-sepia">
+                                <label class="control-label" data-label="Sepia" data-path="default.filter.sepia">Sepia</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-hueRotate">
+                                <label class="control-label" data-label="Hue Rotate" data-path="default.filter.hueRotate">Hue Rotate</label>
+                                <div class="control-input">
+                                    <input type="range" id="default-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0°</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hover State -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Hover State" data-path="styling.hover">Hover State</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-hover-shadow">
+                                <label class="control-label" data-label="Shadow" data-path="hover.shadow">Shadow</label>
+                                <div class="control-input">
+                                    <select id="hover-shadow">
+                                        <option value="none">None</option>
+                                        <option value="sm">Small</option>
+                                        <option value="md">Medium</option>
+                                        <option value="lg" selected>Large</option>
+                                        <option value="glow">Glow</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-hover-grayscale">
+                                <label class="control-label" data-label="Grayscale" data-path="hover.filter.grayscale">Grayscale</label>
+                                <div class="control-input">
+                                    <input type="range" id="hover-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-hover-brightness">
+                                <label class="control-label" data-label="Brightness" data-path="hover.filter.brightness">Brightness</label>
+                                <div class="control-input">
+                                    <input type="range" id="hover-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Focused State -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Focused State" data-path="styling.focused">Focused State</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focused-shadow">
+                                <label class="control-label" data-label="Shadow" data-path="focused.shadow">Shadow</label>
+                                <div class="control-input">
+                                    <select id="focused-shadow">
+                                        <option value="none">None</option>
+                                        <option value="sm">Small</option>
+                                        <option value="md">Medium</option>
+                                        <option value="lg">Large</option>
+                                        <option value="glow" selected>Glow</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focused-grayscale">
+                                <label class="control-label" data-label="Grayscale" data-path="focused.filter.grayscale">Grayscale</label>
+                                <div class="control-input">
+                                    <input type="range" id="focused-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+                <button class="show-config-btn" onclick="showConfig()">Show Config JSON</button>
+            </div>
+        </aside>
+
+        <main class="gallery-preview">
+            <div class="gallery-container">
+                <div id="imageCloud"></div>
+                <div id="loading" class="fbn-ic-loading fbn-ic-hidden"><div class="fbn-ic-spinner"></div><p>Loading...</p></div>
+                <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Config Modal -->
+    <div class="config-modal" id="configModal">
+        <div class="config-content">
+            <button class="close-btn" onclick="hideConfig()">&times;</button>
+            <h4>Generated Configuration</h4>
+            <pre id="configOutput"></pre>
+            <button class="copy-btn" onclick="copyConfig()">Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="help-modal" id="helpModal">
+        <div class="help-content">
+            <button class="close-btn" onclick="hideHelp()">&times;</button>
+            <h4>How to Use</h4>
+            <p>This configurator lets you visually customize your Image Cloud gallery and generate the JSON configuration.</p>
+            <ul>
+                <li><strong>Presets:</strong> Start with a preset to quickly apply common styles</li>
+                <li><strong>Checkboxes:</strong> Enable settings to include them in the config</li>
+                <li><strong>Eye Toggle:</strong> Switch between friendly labels and JSON paths</li>
+                <li><strong>Apply Changes:</strong> Update the preview with your settings</li>
+                <li><strong>Show Config JSON:</strong> View and copy the generated config</li>
+            </ul>
+            <p>Only enabled (checked) settings are included in the generated configuration.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../../dist/image-cloud.js';
+
+        let gallery = null;
+        let showingPaths = false;
+        let debounceTimer = null;
+
+        // Sample images
+        // Pool of 50 images from Pexels (nature/landscape photos)
+        const imagePool = [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1525041/pexels-photo-1525041.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1450082/pexels-photo-1450082.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1619317/pexels-photo-1619317.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1668928/pexels-photo-1668928.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1591382/pexels-photo-1591382.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1485894/pexels-photo-1485894.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1166209/pexels-photo-1166209.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1659438/pexels-photo-1659438.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1433052/pexels-photo-1433052.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/2325446/pexels-photo-2325446.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/2440061/pexels-photo-2440061.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/2104152/pexels-photo-2104152.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1179229/pexels-photo-1179229.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/2245436/pexels-photo-2245436.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1591373/pexels-photo-1591373.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1366630/pexels-photo-1366630.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1402850/pexels-photo-1402850.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1183099/pexels-photo-1183099.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1323550/pexels-photo-1323550.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1212600/pexels-photo-1212600.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1693095/pexels-photo-1693095.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1612351/pexels-photo-1612351.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1552212/pexels-photo-1552212.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1435752/pexels-photo-1435752.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1647962/pexels-photo-1647962.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1535162/pexels-photo-1535162.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1671324/pexels-photo-1671324.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1643409/pexels-photo-1643409.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1662298/pexels-photo-1662298.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1581384/pexels-photo-1581384.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1578750/pexels-photo-1578750.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1545505/pexels-photo-1545505.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ];
+
+        // Get the selected number of images
+        function getSelectedImages() {
+            const count = parseInt(document.getElementById('imageCount').value);
+            // If count > pool size, repeat images
+            const images = [];
+            for (let i = 0; i < count; i++) {
+                images.push(imagePool[i % imagePool.length]);
+            }
+            return images;
+        }
+
+        // Update image count display and refresh gallery
+        window.updateImageCount = function(input) {
+            document.getElementById('imageCountValue').textContent = input.value;
+            scheduleAutoApply();
+        };
+
+        // Presets
+        const presets = {
+            'default': {
+                name: 'Default',
+                description: 'Library defaults - minimal configuration',
+                config: {}
+            },
+            'scattered-photos': {
+                name: 'Scattered Photos',
+                description: 'Classic scattered look with rotation',
+                config: {
+                    'layout-algorithm': 'radial',
+                    'enable-rotation': true,
+                    'rotation-min': -15,
+                    'rotation-max': 15,
+                    'enable-rotation-min': true,
+                    'enable-rotation-max': true,
+                    'default-shadow': 'md',
+                    'enable-default-shadow': true,
+                    'default-border-radius': 4,
+                    'enable-default-border-radius': true
+                }
+            },
+            'clean-grid': {
+                name: 'Clean Grid',
+                description: 'Organized grid layout without rotation',
+                config: {
+                    'layout-algorithm': 'grid',
+                    'enable-algorithm': true,
+                    'enable-rotation': false,
+                    'grid-columns': 4,
+                    'enable-grid-columns': true,
+                    'default-shadow': 'sm',
+                    'enable-default-shadow': true,
+                    'default-border-radius': 8,
+                    'enable-default-border-radius': true
+                }
+            },
+            'polaroid': {
+                name: 'Polaroid',
+                description: 'White borders, warm filter tones',
+                config: {
+                    'layout-algorithm': 'radial',
+                    'enable-rotation': true,
+                    'rotation-min': -12,
+                    'rotation-max': 12,
+                    'enable-rotation-min': true,
+                    'enable-rotation-max': true,
+                    'default-border-width': 8,
+                    'enable-default-border-width': true,
+                    'default-border-color': '#ffffff',
+                    'enable-default-border-color': true,
+                    'default-border-radius': 2,
+                    'enable-default-border-radius': true,
+                    'default-shadow': 'md',
+                    'enable-default-shadow': true,
+                    'default-sepia': 0.1,
+                    'enable-default-sepia': true,
+                    'default-contrast': 1.05,
+                    'enable-default-contrast': true
+                }
+            },
+            'vintage': {
+                name: 'Vintage',
+                description: 'Sepia tones, reduced saturation',
+                config: {
+                    'layout-algorithm': 'radial',
+                    'enable-rotation': true,
+                    'rotation-min': -8,
+                    'rotation-max': 8,
+                    'enable-rotation-min': true,
+                    'enable-rotation-max': true,
+                    'default-sepia': 0.4,
+                    'enable-default-sepia': true,
+                    'default-saturate': 0.8,
+                    'enable-default-saturate': true,
+                    'default-contrast': 1.1,
+                    'enable-default-contrast': true,
+                    'default-border-width': 4,
+                    'enable-default-border-width': true,
+                    'default-border-color': '#d4c4a8',
+                    'enable-default-border-color': true,
+                    'default-shadow': 'md',
+                    'enable-default-shadow': true
+                }
+            },
+            'neon-glow': {
+                name: 'Neon Glow',
+                description: 'Cyberpunk aesthetic with glowing borders',
+                config: {
+                    'layout-algorithm': 'radial',
+                    'enable-rotation': true,
+                    'rotation-min': -5,
+                    'rotation-max': 5,
+                    'enable-rotation-min': true,
+                    'enable-rotation-max': true,
+                    'default-border-width': 2,
+                    'enable-default-border-width': true,
+                    'default-border-color': '#00ffff',
+                    'enable-default-border-color': true,
+                    'default-shadow': 'glow',
+                    'enable-default-shadow': true,
+                    'default-saturate': 1.3,
+                    'enable-default-saturate': true,
+                    'default-contrast': 1.2,
+                    'enable-default-contrast': true,
+                    'hover-shadow': 'glow',
+                    'enable-hover-shadow': true,
+                    'focused-shadow': 'glow',
+                    'enable-focused-shadow': true
+                }
+            },
+            'minimal': {
+                name: 'Minimal',
+                description: 'Clean look without shadows or rotation',
+                config: {
+                    'layout-algorithm': 'grid',
+                    'enable-algorithm': true,
+                    'enable-rotation': false,
+                    'default-shadow': 'none',
+                    'enable-default-shadow': true,
+                    'default-border-radius': 0,
+                    'enable-default-border-radius': true,
+                    'hover-shadow': 'sm',
+                    'enable-hover-shadow': true,
+                    'focused-shadow': 'md',
+                    'enable-focused-shadow': true
+                }
+            },
+            'dramatic': {
+                name: 'Dramatic',
+                description: 'High contrast with strong shadows',
+                config: {
+                    'layout-algorithm': 'radial',
+                    'enable-rotation': true,
+                    'rotation-min': -20,
+                    'rotation-max': 20,
+                    'enable-rotation-min': true,
+                    'enable-rotation-max': true,
+                    'default-contrast': 1.3,
+                    'enable-default-contrast': true,
+                    'default-brightness': 0.95,
+                    'enable-default-brightness': true,
+                    'default-shadow': 'lg',
+                    'enable-default-shadow': true,
+                    'focus-unfocusedOpacity': 0.2,
+                    'enable-focus-unfocusedOpacity': true,
+                    'hover-shadow': 'lg',
+                    'enable-hover-shadow': true,
+                    'hover-brightness': 1.1,
+                    'enable-hover-brightness': true
+                }
+            }
+        };
+
+        // Toggle accordion
+        window.toggleAccordion = function(accordion) {
+            const wasOpen = accordion.classList.contains('open');
+            // Close all accordions
+            document.querySelectorAll('.accordion').forEach(a => a.classList.remove('open'));
+            // Open clicked one if it was closed
+            if (!wasOpen) {
+                accordion.classList.add('open');
+            }
+        };
+
+        // Toggle mobile sidebar
+        window.toggleSidebar = function() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        };
+
+        // Toggle JSON paths display
+        window.togglePaths = function() {
+            showingPaths = !showingPaths;
+            const toggle = document.querySelector('.path-toggle');
+            toggle.classList.toggle('active', showingPaths);
+            document.querySelectorAll('[data-label][data-path]').forEach(el => {
+                if (showingPaths) {
+                    el.textContent = el.dataset.path;
+                    el.classList.add('show-path');
+                } else {
+                    el.textContent = el.dataset.label;
+                    el.classList.remove('show-path');
+                }
+            });
+        };
+
+        // Toggle subsection enabled/disabled
+        window.toggleSubsection = function(contentId, enabled) {
+            const content = document.getElementById(contentId);
+            if (content) {
+                content.classList.toggle('disabled', !enabled);
+            }
+        };
+
+        // Update range display value
+        window.updateRangeDisplay = function(input) {
+            const display = input.parentElement.querySelector('.value-display');
+            if (display) {
+                let value = input.value;
+                if (input.id === 'default-hueRotate' || input.id === 'spiral-startAngle') {
+                    value += '°';
+                }
+                display.textContent = value;
+            }
+            scheduleAutoApply();
+        };
+
+        // Show algorithm-specific controls
+        window.onAlgorithmChange = function() {
+            const algorithm = document.getElementById('layout-algorithm').value;
+            document.querySelectorAll('.algorithm-specific').forEach(el => {
+                el.classList.toggle('visible', el.dataset.algorithm === algorithm);
+            });
+            scheduleAutoApply();
+        };
+
+        // Schedule auto-apply with debouncing
+        function scheduleAutoApply() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                applyChanges();
+            }, 300);
+        }
+
+        // Setup change listeners for auto-apply
+        function setupAutoApply() {
+            document.querySelectorAll('input, select').forEach(input => {
+                if (input.type === 'range') {
+                    // Range inputs already call updateRangeDisplay which schedules auto-apply
+                    return;
+                }
+                input.addEventListener('change', scheduleAutoApply);
+                if (input.type === 'number' || input.type === 'text') {
+                    input.addEventListener('input', scheduleAutoApply);
+                }
+            });
+        }
+
+        // Update control row disabled state based on checkbox
+        function setupCheckboxListeners() {
+            document.querySelectorAll('.control-checkbox').forEach(checkbox => {
+                const row = checkbox.closest('.control-row');
+                if (row) {
+                    checkbox.addEventListener('change', () => {
+                        row.classList.toggle('disabled', !checkbox.checked);
+                        scheduleAutoApply();
+                    });
+                    // Initialize state
+                    row.classList.toggle('disabled', !checkbox.checked);
+                }
+            });
+        }
+
+        // Get value from control if its checkbox is enabled
+        function getEnabledValue(checkboxId, controlId, parser = v => v) {
+            const checkbox = document.getElementById(checkboxId);
+            const control = document.getElementById(controlId);
+            if (checkbox && checkbox.checked && control) {
+                return parser(control.value);
+            }
+            return undefined;
+        }
+
+        // Build config from enabled controls
+        function buildConfig() {
+            const config = {
+                container: 'imageCloud',
+                loader: {
+                    type: 'static',
+                    static: { sources: [{ type: 'urls', urls: getSelectedImages() }] }
+                }
+            };
+
+            // Layout
+            const layout = {};
+            const algorithm = document.getElementById('layout-algorithm').value;
+            if (document.getElementById('enable-algorithm')?.checked) {
+                layout.algorithm = algorithm;
+            }
+
+            // Sizing
+            const sizing = {};
+            const base = getEnabledValue('enable-sizing-base', 'sizing-base', parseInt);
+            if (base !== undefined) sizing.base = base;
+
+            const variance = {};
+            const vMin = getEnabledValue('enable-variance-min', 'variance-min', parseFloat);
+            const vMax = getEnabledValue('enable-variance-max', 'variance-max', parseFloat);
+            if (vMin !== undefined) variance.min = vMin;
+            if (vMax !== undefined) variance.max = vMax;
+            if (Object.keys(variance).length > 0) sizing.variance = variance;
+
+            // Adaptive
+            const adaptiveEnabled = document.getElementById('enable-adaptive')?.checked;
+            if (adaptiveEnabled !== undefined) {
+                const adaptive = { enabled: adaptiveEnabled };
+                if (adaptiveEnabled) {
+                    const minSize = getEnabledValue('enable-adaptive-minSize', 'adaptive-minSize', parseInt);
+                    const maxSize = getEnabledValue('enable-adaptive-maxSize', 'adaptive-maxSize', parseInt);
+                    const coverage = getEnabledValue('enable-adaptive-coverage', 'adaptive-coverage', parseFloat);
+                    const density = getEnabledValue('enable-adaptive-density', 'adaptive-density', parseFloat);
+                    if (minSize !== undefined) adaptive.minSize = minSize;
+                    if (maxSize !== undefined) adaptive.maxSize = maxSize;
+                    if (coverage !== undefined) adaptive.targetCoverage = coverage;
+                    if (density !== undefined) adaptive.densityFactor = density;
+                }
+                sizing.adaptive = adaptive;
+            }
+
+            if (Object.keys(sizing).length > 0) layout.sizing = sizing;
+
+            // Rotation
+            const rotationEnabled = document.getElementById('enable-rotation')?.checked;
+            if (rotationEnabled !== undefined) {
+                const rotation = { enabled: rotationEnabled };
+                if (rotationEnabled) {
+                    const range = {};
+                    const rMin = getEnabledValue('enable-rotation-min', 'rotation-min', parseInt);
+                    const rMax = getEnabledValue('enable-rotation-max', 'rotation-max', parseInt);
+                    if (rMin !== undefined) range.min = rMin;
+                    if (rMax !== undefined) range.max = rMax;
+                    if (Object.keys(range).length > 0) rotation.range = range;
+                }
+                layout.rotation = rotation;
+            }
+
+            // Spacing
+            const spacing = {};
+            const padding = getEnabledValue('enable-spacing-padding', 'spacing-padding', parseInt);
+            const minGap = getEnabledValue('enable-spacing-minGap', 'spacing-minGap', parseInt);
+            if (padding !== undefined) spacing.padding = padding;
+            if (minGap !== undefined) spacing.minGap = minGap;
+            if (Object.keys(spacing).length > 0) layout.spacing = spacing;
+
+            // Algorithm-specific
+            if (algorithm === 'grid') {
+                const grid = {};
+                const columns = getEnabledValue('enable-grid-columns', 'grid-columns', parseInt);
+                const rows = getEnabledValue('enable-grid-rows', 'grid-rows', parseInt);
+                const gap = getEnabledValue('enable-grid-gap', 'grid-gap', parseInt);
+                const stagger = getEnabledValue('enable-grid-stagger', 'grid-stagger');
+                const jitter = getEnabledValue('enable-grid-jitter', 'grid-jitter', parseInt);
+                const overlap = getEnabledValue('enable-grid-overlap', 'grid-overlap', parseFloat);
+                const fillDirection = getEnabledValue('enable-grid-fillDirection', 'grid-fillDirection');
+                const alignment = getEnabledValue('enable-grid-alignment', 'grid-alignment');
+                if (columns !== undefined) grid.columns = columns;
+                if (rows !== undefined) grid.rows = rows;
+                if (gap !== undefined) grid.gap = gap;
+                if (stagger !== undefined) grid.stagger = stagger;
+                if (jitter !== undefined) grid.jitter = jitter;
+                if (overlap !== undefined) grid.overlap = overlap;
+                if (fillDirection !== undefined) grid.fillDirection = fillDirection;
+                if (alignment !== undefined) grid.alignment = alignment;
+                if (Object.keys(grid).length > 0) layout.grid = grid;
+            } else if (algorithm === 'spiral') {
+                const spiral = {};
+                const spiralType = getEnabledValue('enable-spiral-type', 'spiral-type');
+                const direction = getEnabledValue('enable-spiral-direction', 'spiral-direction');
+                const tightness = getEnabledValue('enable-spiral-tightness', 'spiral-tightness', parseFloat);
+                const scaleDecay = getEnabledValue('enable-spiral-scaleDecay', 'spiral-scaleDecay', parseFloat);
+                const startAngle = getEnabledValue('enable-spiral-startAngle', 'spiral-startAngle', parseInt);
+                if (spiralType !== undefined) spiral.spiralType = spiralType;
+                if (direction !== undefined) spiral.direction = direction;
+                if (tightness !== undefined) spiral.tightness = tightness;
+                if (scaleDecay !== undefined) spiral.scaleDecay = scaleDecay;
+                if (startAngle !== undefined) spiral.startAngle = startAngle;
+                if (Object.keys(spiral).length > 0) layout.spiral = spiral;
+            } else if (algorithm === 'cluster') {
+                const cluster = {};
+                const count = getEnabledValue('enable-cluster-count', 'cluster-count', parseInt);
+                const spread = getEnabledValue('enable-cluster-spread', 'cluster-spread', parseInt);
+                const spacing = getEnabledValue('enable-cluster-spacing', 'cluster-spacing', parseInt);
+                const overlap = getEnabledValue('enable-cluster-overlap', 'cluster-overlap', parseFloat);
+                const density = getEnabledValue('enable-cluster-density', 'cluster-density');
+                const distribution = getEnabledValue('enable-cluster-distribution', 'cluster-distribution');
+                if (count !== undefined) cluster.clusterCount = count;
+                if (spread !== undefined) cluster.clusterSpread = spread;
+                if (spacing !== undefined) cluster.clusterSpacing = spacing;
+                if (overlap !== undefined) cluster.overlap = overlap;
+                if (density !== undefined) cluster.density = density;
+                if (distribution !== undefined) cluster.distribution = distribution;
+                if (Object.keys(cluster).length > 0) layout.cluster = cluster;
+            }
+
+            if (Object.keys(layout).length > 0) config.layout = layout;
+
+            // Animation
+            const animation = {};
+            const duration = getEnabledValue('enable-animation-duration', 'animation-duration', parseInt);
+            if (duration !== undefined) animation.duration = duration;
+
+            // Queue
+            const queueEnabled = document.getElementById('enable-queue')?.checked;
+            if (queueEnabled !== undefined) {
+                const queue = { enabled: queueEnabled };
+                if (queueEnabled) {
+                    const interval = getEnabledValue('enable-queue-interval', 'queue-interval', parseInt);
+                    if (interval !== undefined) queue.interval = interval;
+                }
+                animation.queue = queue;
+            }
+
+            // Entry
+            const entry = {};
+            const entryStart = {};
+            const position = getEnabledValue('enable-entry-position', 'entry-position');
+            const offset = getEnabledValue('enable-entry-offset', 'entry-offset', parseInt);
+            if (position !== undefined) entryStart.position = position;
+            if (offset !== undefined) entryStart.offset = offset;
+            if (Object.keys(entryStart).length > 0) entry.start = entryStart;
+
+            const entryTiming = {};
+            const entryDuration = getEnabledValue('enable-entry-duration', 'entry-duration', parseInt);
+            const entryStagger = getEnabledValue('enable-entry-stagger', 'entry-stagger', parseInt);
+            if (entryDuration !== undefined) entryTiming.duration = entryDuration;
+            if (entryStagger !== undefined) entryTiming.stagger = entryStagger;
+            if (Object.keys(entryTiming).length > 0) entry.timing = entryTiming;
+
+            if (Object.keys(entry).length > 0) animation.entry = entry;
+            if (Object.keys(animation).length > 0) config.animation = animation;
+
+            // Interaction
+            const interaction = {};
+            const focus = {};
+            const scale = getEnabledValue('enable-focus-scale', 'focus-scale', parseFloat);
+            const mobileScale = getEnabledValue('enable-focus-mobileScale', 'focus-mobileScale', parseFloat);
+            const unfocusedOpacity = getEnabledValue('enable-focus-unfocusedOpacity', 'focus-unfocusedOpacity', parseFloat);
+            const zIndex = getEnabledValue('enable-focus-zIndex', 'focus-zIndex', parseInt);
+            if (scale !== undefined) focus.scale = scale;
+            if (mobileScale !== undefined) focus.mobileScale = mobileScale;
+            if (unfocusedOpacity !== undefined) focus.unfocusedOpacity = unfocusedOpacity;
+            if (zIndex !== undefined) focus.zIndex = zIndex;
+            if (Object.keys(focus).length > 0) interaction.focus = focus;
+            if (Object.keys(interaction).length > 0) config.interaction = interaction;
+
+            // Styling
+            const styling = {};
+
+            // Default state
+            const defaultState = {};
+            const defaultBorder = {};
+            const borderWidth = getEnabledValue('enable-default-border-width', 'default-border-width', parseInt);
+            const borderColor = getEnabledValue('enable-default-border-color', 'default-border-color');
+            const borderRadius = getEnabledValue('enable-default-border-radius', 'default-border-radius', parseInt);
+            if (borderWidth !== undefined) defaultBorder.width = borderWidth;
+            if (borderColor !== undefined) defaultBorder.color = borderColor;
+            if (borderRadius !== undefined) defaultBorder.radius = borderRadius;
+            if (Object.keys(defaultBorder).length > 0) defaultState.border = defaultBorder;
+
+            const defaultShadow = getEnabledValue('enable-default-shadow', 'default-shadow');
+            if (defaultShadow !== undefined) defaultState.shadow = defaultShadow;
+
+            const defaultOpacity = getEnabledValue('enable-default-opacity', 'default-opacity', parseFloat);
+            if (defaultOpacity !== undefined) defaultState.opacity = defaultOpacity;
+
+            const defaultFilter = {};
+            const grayscale = getEnabledValue('enable-default-grayscale', 'default-grayscale', parseFloat);
+            const blur = getEnabledValue('enable-default-blur', 'default-blur', parseFloat);
+            const brightness = getEnabledValue('enable-default-brightness', 'default-brightness', parseFloat);
+            const contrast = getEnabledValue('enable-default-contrast', 'default-contrast', parseFloat);
+            const saturate = getEnabledValue('enable-default-saturate', 'default-saturate', parseFloat);
+            const sepia = getEnabledValue('enable-default-sepia', 'default-sepia', parseFloat);
+            const hueRotate = getEnabledValue('enable-default-hueRotate', 'default-hueRotate', parseInt);
+            if (grayscale !== undefined) defaultFilter.grayscale = grayscale;
+            if (blur !== undefined) defaultFilter.blur = blur;
+            if (brightness !== undefined) defaultFilter.brightness = brightness;
+            if (contrast !== undefined) defaultFilter.contrast = contrast;
+            if (saturate !== undefined) defaultFilter.saturate = saturate;
+            if (sepia !== undefined) defaultFilter.sepia = sepia;
+            if (hueRotate !== undefined) defaultFilter.hueRotate = hueRotate;
+            if (Object.keys(defaultFilter).length > 0) defaultState.filter = defaultFilter;
+
+            if (Object.keys(defaultState).length > 0) styling.default = defaultState;
+
+            // Hover state
+            const hoverState = {};
+            const hoverShadow = getEnabledValue('enable-hover-shadow', 'hover-shadow');
+            if (hoverShadow !== undefined) hoverState.shadow = hoverShadow;
+
+            const hoverFilter = {};
+            const hoverGrayscale = getEnabledValue('enable-hover-grayscale', 'hover-grayscale', parseFloat);
+            const hoverBrightness = getEnabledValue('enable-hover-brightness', 'hover-brightness', parseFloat);
+            if (hoverGrayscale !== undefined) hoverFilter.grayscale = hoverGrayscale;
+            if (hoverBrightness !== undefined) hoverFilter.brightness = hoverBrightness;
+            if (Object.keys(hoverFilter).length > 0) hoverState.filter = hoverFilter;
+
+            if (Object.keys(hoverState).length > 0) styling.hover = hoverState;
+
+            // Focused state
+            const focusedState = {};
+            const focusedShadow = getEnabledValue('enable-focused-shadow', 'focused-shadow');
+            if (focusedShadow !== undefined) focusedState.shadow = focusedShadow;
+
+            const focusedFilter = {};
+            const focusedGrayscale = getEnabledValue('enable-focused-grayscale', 'focused-grayscale', parseFloat);
+            if (focusedGrayscale !== undefined) focusedFilter.grayscale = focusedGrayscale;
+            if (Object.keys(focusedFilter).length > 0) focusedState.filter = focusedFilter;
+
+            if (Object.keys(focusedState).length > 0) styling.focused = focusedState;
+
+            if (Object.keys(styling).length > 0) config.styling = styling;
+
+            return config;
+        }
+
+        // Apply preset
+        window.applyPreset = function(presetKey) {
+            const preset = presets[presetKey];
+            if (!preset) return;
+
+            // Reset all checkboxes
+            document.querySelectorAll('.control-checkbox').forEach(cb => {
+                cb.checked = false;
+                const row = cb.closest('.control-row');
+                if (row) row.classList.add('disabled');
+            });
+
+            // Reset subsection toggles
+            document.getElementById('enable-adaptive').checked = true;
+            toggleSubsection('adaptive-content', true);
+            document.getElementById('enable-rotation').checked = true;
+            toggleSubsection('rotation-content', true);
+            document.getElementById('enable-queue').checked = true;
+            toggleSubsection('queue-content', true);
+
+            // Reset algorithm
+            document.getElementById('layout-algorithm').value = 'radial';
+            document.getElementById('enable-algorithm').checked = true;
+            onAlgorithmChange();
+
+            // Apply preset config
+            const cfg = preset.config;
+            for (const [key, value] of Object.entries(cfg)) {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = value;
+                        // Handle subsection toggles
+                        if (key === 'enable-rotation') {
+                            toggleSubsection('rotation-content', value);
+                        } else if (key === 'enable-adaptive') {
+                            toggleSubsection('adaptive-content', value);
+                        } else if (key === 'enable-queue') {
+                            toggleSubsection('queue-content', value);
+                        } else {
+                            // Regular control checkbox
+                            const row = element.closest('.control-row');
+                            if (row) row.classList.toggle('disabled', !value);
+                        }
+                    } else {
+                        element.value = value;
+                        // Update range displays
+                        if (element.type === 'range') {
+                            const display = element.parentElement?.querySelector('.value-display');
+                            if (display) {
+                                display.textContent = element.id === 'default-hueRotate' ? value + '°' : value;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Handle special case for algorithm selection
+            if (cfg['layout-algorithm']) {
+                document.getElementById('layout-algorithm').value = cfg['layout-algorithm'];
+                onAlgorithmChange();
+            }
+
+            applyChanges();
+        };
+
+        // Apply changes to gallery
+        window.applyChanges = async function() {
+            if (gallery) {
+                gallery.destroy();
+            }
+            const config = buildConfig();
+            gallery = new ImageGallery(config);
+            await gallery.init();
+        };
+
+        // Generate config for display (without loader)
+        function getDisplayConfig() {
+            const config = buildConfig();
+            // Remove container and loader from display config
+            delete config.container;
+            delete config.loader;
+            return config;
+        }
+
+        // Show config modal
+        window.showConfig = function() {
+            const config = getDisplayConfig();
+            document.getElementById('configOutput').textContent = JSON.stringify(config, null, 2);
+            document.getElementById('configModal').classList.add('active');
+        };
+
+        // Hide config modal
+        window.hideConfig = function() {
+            document.getElementById('configModal').classList.remove('active');
+        };
+
+        // Copy config to clipboard
+        window.copyConfig = function() {
+            const config = getDisplayConfig();
+            navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy to Clipboard';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        };
+
+        // Show help modal
+        window.showHelp = function() {
+            document.getElementById('helpModal').classList.add('active');
+        };
+
+        // Hide help modal
+        window.hideHelp = function() {
+            document.getElementById('helpModal').classList.remove('active');
+        };
+
+        // Close modals on backdrop click
+        document.getElementById('configModal').addEventListener('click', function(e) {
+            if (e.target === this) hideConfig();
+        });
+        document.getElementById('helpModal').addEventListener('click', function(e) {
+            if (e.target === this) hideHelp();
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupCheckboxListeners();
+            setupAutoApply();
+            onAlgorithmChange();
+            applyChanges();
+        });
+    </script>
+</body>
+</html>
