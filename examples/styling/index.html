@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Styling Examples</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e5e5e5;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #a0a0a0;
+            margin-bottom: 40px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #8b5cf6;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+        .card p {
+            margin: 0 0 15px 0;
+            color: #a0a0a0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .card code {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        .card a {
+            display: inline-block;
+            background: #8b5cf6;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        .card a:hover {
+            background: #7c3aed;
+        }
+        .back-link {
+            display: inline-block;
+            color: #8b5cf6;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a href="../" class="back-link">&larr; Back to Examples</a>
+    <h1>Image Styling Configuration Examples</h1>
+    <p class="subtitle">Comprehensive examples demonstrating all styling options</p>
+
+    <div class="section">
+        <h2>Border Configuration</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Basic Borders</h3>
+                <p>Demonstrates <code>border.width</code>, <code>border.color</code>, <code>border.radius</code>, <code>border.style</code></p>
+                <a href="borders-basic.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>Asymmetric Borders</h3>
+                <p>Per-side borders using <code>borderTop</code>, <code>borderBottom</code>, <code>borderLeft</code>, <code>borderRight</code></p>
+                <a href="borders-asymmetric.html">View Example</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Shadow Configuration</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Shadow Presets & Custom</h3>
+                <p>Presets: <code>'none'</code>, <code>'sm'</code>, <code>'md'</code>, <code>'lg'</code>, <code>'glow'</code> plus custom CSS strings</p>
+                <a href="shadows.html">View Example</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Filter Configuration</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Grayscale Reveal</h3>
+                <p>Using <code>filter.grayscale</code> and <code>filter.brightness</code> for color reveal effect</p>
+                <a href="filters-grayscale.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>Filter Effects</h3>
+                <p>Demonstrates <code>filter.contrast</code>, <code>filter.saturate</code>, <code>filter.sepia</code>, <code>filter.hueRotate</code></p>
+                <a href="filters-effects.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>Blur & Opacity</h3>
+                <p>Using <code>filter.blur</code>, <code>filter.opacity</code> for focus effects</p>
+                <a href="filters-blur-invert.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>Drop Shadow Filter</h3>
+                <p>CSS filter <code>dropShadow</code> (object or string format)</p>
+                <a href="filters-dropshadow.html">View Example</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Other Properties</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Opacity & Cursor</h3>
+                <p>Element <code>opacity</code> and custom <code>cursor</code> per state</p>
+                <a href="opacity-cursor.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>Outline</h3>
+                <p>Using <code>outline.width</code>, <code>outline.color</code>, <code>outline.style</code>, <code>outline.offset</code></p>
+                <a href="outline.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>CSS Class Names</h3>
+                <p>Inject custom <code>className</code> per state (string or array)</p>
+                <a href="classnames.html">View Example</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Combined Effects</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Polaroid Effect</h3>
+                <p>White frame borders, asymmetric bottom, warm filter tones</p>
+                <a href="combined-polaroid.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>Vintage Photo</h3>
+                <p>Sepia tones, reduced saturation, warm borders</p>
+                <a href="combined-vintage.html">View Example</a>
+            </div>
+            <div class="card">
+                <h3>Neon Glow</h3>
+                <p>Cyberpunk aesthetic with bright glowing borders</p>
+                <a href="combined-neon.html">View Example</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

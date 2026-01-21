@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styling: Basic Borders</title>
+    <link rel="stylesheet" href="../../dist/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1a1a2e;
+        }
+        .container { width: 100%; height: 100%; }
+        #imageCloud { width: 100%; height: 100%; }
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px;
+            z-index: 2000;
+            max-width: 320px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .controls h3 {
+            margin: 0 0 5px 0;
+            color: #fff;
+            font-size: 16px;
+        }
+        .controls .subtitle {
+            color: #888;
+            margin-bottom: 15px;
+            font-size: 11px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        .control-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .control-group h4 {
+            margin: 0 0 10px 0;
+            color: #6366f1;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .control-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+        .control-row label {
+            flex: 0 0 80px;
+            color: #aaa;
+            font-size: 12px;
+        }
+        .control-row input[type="number"] {
+            width: 70px;
+            padding: 6px 8px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #222;
+            color: white;
+            font-size: 12px;
+        }
+        .control-row input[type="color"] {
+            width: 50px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #222;
+            cursor: pointer;
+        }
+        .control-row select {
+            padding: 6px 8px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #222;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .apply-btn {
+            width: 100%;
+            padding: 12px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .apply-btn:hover {
+            background: #5558e3;
+        }
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h3>Basic Borders</h3>
+        <p class="subtitle">Adjust border properties and click Apply</p>
+
+        <div class="control-group">
+            <h4>Default State</h4>
+            <div class="control-row">
+                <label>Width (px)</label>
+                <input type="number" id="borderWidth" value="4" min="0" max="20">
+            </div>
+            <div class="control-row">
+                <label>Color</label>
+                <input type="color" id="borderColor" value="#6366f1">
+            </div>
+            <div class="control-row">
+                <label>Radius (px)</label>
+                <input type="number" id="borderRadius" value="16" min="0" max="50">
+            </div>
+            <div class="control-row">
+                <label>Style</label>
+                <select id="borderStyle">
+                    <option value="solid" selected>solid</option>
+                    <option value="dashed">dashed</option>
+                    <option value="dotted">dotted</option>
+                    <option value="none">none</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Hover State</h4>
+            <div class="control-row">
+                <label>Width (px)</label>
+                <input type="number" id="hoverBorderWidth" value="6" min="0" max="20">
+            </div>
+            <div class="control-row">
+                <label>Color</label>
+                <input type="color" id="hoverBorderColor" value="#8b5cf6">
+            </div>
+        </div>
+
+        <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+    </div>
+
+    <div class="container">
+        <div id="imageCloud"></div>
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
+            <div class="fbn-ic-spinner"></div>
+            <p>Loading images...</p>
+        </div>
+        <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../../dist/image-cloud.js';
+
+        let gallery = null;
+
+        const imageUrls = [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ];
+
+        function getConfig() {
+            return {
+                container: 'imageCloud',
+                loader: {
+                    type: 'static',
+                    static: {
+                        sources: [{ type: 'urls', urls: imageUrls }]
+                    }
+                },
+                styling: {
+                    default: {
+                        border: {
+                            width: parseInt(document.getElementById('borderWidth').value),
+                            color: document.getElementById('borderColor').value,
+                            radius: parseInt(document.getElementById('borderRadius').value),
+                            style: document.getElementById('borderStyle').value
+                        },
+                        shadow: 'md'
+                    },
+                    hover: {
+                        border: {
+                            width: parseInt(document.getElementById('hoverBorderWidth').value),
+                            color: document.getElementById('hoverBorderColor').value
+                        },
+                        shadow: 'lg'
+                    }
+                }
+            };
+        }
+
+        window.applyChanges = async function() {
+            if (gallery) {
+                gallery.destroy();
+            }
+            gallery = new ImageGallery(getConfig());
+            await gallery.init();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.applyChanges();
+        });
+    </script>
+</body>
+</html>

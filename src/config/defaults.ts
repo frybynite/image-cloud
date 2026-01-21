@@ -3,7 +3,48 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig } from './types';
+import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset } from './types';
+
+/**
+ * Shadow presets for image styling
+ */
+export const SHADOW_PRESETS: Record<ShadowPreset, string> = Object.freeze({
+  'none': 'none',
+  'sm': '0 2px 4px rgba(0,0,0,0.1)',
+  'md': '0 4px 16px rgba(0,0,0,0.4)',
+  'lg': '0 8px 32px rgba(0,0,0,0.5)',
+  'glow': '0 0 30px rgba(255,255,255,0.6)'
+});
+
+/**
+ * Default image styling configuration
+ */
+export const DEFAULT_STYLING: ImageStylingConfig = Object.freeze({
+  default: Object.freeze({
+    border: Object.freeze({
+      width: 0,
+      color: '#000000',
+      radius: 8,
+      style: 'solid' as const
+    }),
+    shadow: 'md' as ShadowPreset,
+    filter: Object.freeze({}),
+    opacity: 1,
+    cursor: 'pointer',
+    outline: Object.freeze({
+      width: 0,
+      color: '#000000',
+      style: 'solid' as const,
+      offset: 0
+    })
+  }),
+  hover: Object.freeze({
+    shadow: 'lg' as ShadowPreset
+  }),
+  focused: Object.freeze({
+    shadow: 'glow' as ShadowPreset
+  })
+});
 
 /**
  * Default configuration object
@@ -148,9 +189,97 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
     })
   }),
 
+  // Image styling
+  styling: DEFAULT_STYLING,
+
   // Debug mode
   debug: false
 });
+
+/**
+ * Deep merge a single style state (border, filter, outline, etc.)
+ */
+function deepMergeStyleState(
+  base: ImageStyleState | undefined,
+  override: Partial<ImageStyleState> | undefined
+): ImageStyleState {
+  if (!base) return override as ImageStyleState || {};
+  if (!override) return { ...base };
+
+  const merged: ImageStyleState = { ...base };
+
+  // Merge border
+  if (override.border !== undefined) {
+    merged.border = { ...base.border, ...override.border };
+  }
+
+  // Merge per-side borders
+  if (override.borderTop !== undefined) {
+    merged.borderTop = { ...base.borderTop, ...override.borderTop };
+  }
+  if (override.borderRight !== undefined) {
+    merged.borderRight = { ...base.borderRight, ...override.borderRight };
+  }
+  if (override.borderBottom !== undefined) {
+    merged.borderBottom = { ...base.borderBottom, ...override.borderBottom };
+  }
+  if (override.borderLeft !== undefined) {
+    merged.borderLeft = { ...base.borderLeft, ...override.borderLeft };
+  }
+
+  // Merge filter
+  if (override.filter !== undefined) {
+    merged.filter = { ...base.filter, ...override.filter };
+  }
+
+  // Merge outline
+  if (override.outline !== undefined) {
+    merged.outline = { ...base.outline, ...override.outline };
+  }
+
+  // Override simple properties
+  if (override.shadow !== undefined) merged.shadow = override.shadow;
+  if (override.opacity !== undefined) merged.opacity = override.opacity;
+  if (override.cursor !== undefined) merged.cursor = override.cursor;
+  if (override.className !== undefined) merged.className = override.className;
+  if (override.objectFit !== undefined) merged.objectFit = override.objectFit;
+  if (override.aspectRatio !== undefined) merged.aspectRatio = override.aspectRatio;
+
+  return merged;
+}
+
+/**
+ * Deep merge styling config with proper state inheritance
+ * - hover inherits from default, then applies overrides
+ * - focused inherits from default, then applies overrides
+ */
+function deepMergeStyling(
+  defaults: ImageStylingConfig,
+  userStyling: Partial<ImageStylingConfig> | undefined
+): ImageStylingConfig {
+  if (!userStyling) return { ...defaults };
+
+  // First, merge the default state
+  const mergedDefault = deepMergeStyleState(defaults.default, userStyling.default);
+
+  // Hover inherits from merged default, then user hover overrides
+  const mergedHover = deepMergeStyleState(
+    deepMergeStyleState(mergedDefault, defaults.hover),
+    userStyling.hover
+  );
+
+  // Focused inherits from merged default, then user focused overrides
+  const mergedFocused = deepMergeStyleState(
+    deepMergeStyleState(mergedDefault, defaults.focused),
+    userStyling.focused
+  );
+
+  return {
+    default: mergedDefault,
+    hover: mergedHover,
+    focused: mergedFocused
+  };
+}
 
 /**
  * Deep merge utility for config objects
@@ -165,6 +294,7 @@ export function mergeConfig(
     animation: { ...DEFAULT_CONFIG.animation },
     interaction: { ...DEFAULT_CONFIG.interaction },
     rendering: { ...DEFAULT_CONFIG.rendering },
+    styling: deepMergeStyling(DEFAULT_STYLING, userConfig.styling as Partial<ImageStylingConfig> | undefined),
     debug: DEFAULT_CONFIG.debug
   };
 

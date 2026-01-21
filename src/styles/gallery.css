@@ -43,25 +43,38 @@
     height: auto;
     max-width: 300px;
     max-height: 300px;
+    /* border-radius, box-shadow, filter, opacity, cursor are now configurable via styling config */
+    /* Inline styles from JS will override these fallbacks when styling config is provided */
     border-radius: 8px;
     box-shadow: var(--fbn-ic-shadow-md);
     cursor: pointer;
     transition: transform 0.6s var(--fbn-ic-transition-smooth),
         box-shadow 0.6s var(--fbn-ic-transition-smooth),
+        filter 0.3s var(--fbn-ic-transition-smooth),
+        opacity 0.3s var(--fbn-ic-transition-smooth),
+        border 0.3s var(--fbn-ic-transition-smooth),
+        outline 0.3s var(--fbn-ic-transition-smooth),
         z-index 0s 0.6s;
     will-change: transform;
     user-select: none;
 }
 
+/* Hover styles are applied via JS when styling config is provided */
+/* These CSS rules serve as fallbacks for default behavior */
 .fbn-ic-image:hover {
     box-shadow: var(--fbn-ic-shadow-lg);
 }
 
 .fbn-ic-image.fbn-ic-focused {
     z-index: 1000;
+    /* Focused styles are applied via JS when styling config is provided */
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), var(--fbn-ic-shadow-glow);
     transition: transform 0.6s var(--fbn-ic-transition-smooth),
         box-shadow 0.6s var(--fbn-ic-transition-smooth),
+        filter 0.3s var(--fbn-ic-transition-smooth),
+        opacity 0.3s var(--fbn-ic-transition-smooth),
+        border 0.3s var(--fbn-ic-transition-smooth),
+        outline 0.3s var(--fbn-ic-transition-smooth),
         z-index 0s 0s;
 }
 

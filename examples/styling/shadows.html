@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styling: Shadows</title>
+    <link rel="stylesheet" href="../../dist/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #18181b;
+        }
+        .container { width: 100%; height: 100%; }
+        #imageCloud { width: 100%; height: 100%; }
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px;
+            z-index: 2000;
+            max-width: 340px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .controls h3 { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
+        .controls .subtitle { color: #888; margin-bottom: 15px; font-size: 11px; }
+        .control-group { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .control-group h4 { margin: 0 0 10px 0; color: #fbbf24; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
+        .control-row label { flex: 0 0 80px; color: #aaa; font-size: 12px; }
+        .control-row select { flex: 1; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; cursor: pointer; }
+        .control-row input[type="text"] { flex: 1; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; }
+        .control-row input[type="number"] { width: 70px; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; }
+        .apply-btn { width: 100%; padding: 12px; background: #fbbf24; color: black; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        .apply-btn:hover { background: #f59e0b; }
+        .hint { color: #666; font-size: 10px; margin-top: 4px; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+        .tab { padding: 6px 12px; background: #333; border: none; border-radius: 6px; color: #888; cursor: pointer; font-size: 11px; }
+        .tab.active { background: #fbbf24; color: black; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h3>Shadow Configuration</h3>
+        <p class="subtitle">Presets or custom CSS shadows</p>
+
+        <div class="control-group">
+            <h4>Default Shadow</h4>
+            <div class="tabs">
+                <button class="tab active" onclick="setMode('default', 'preset')">Preset</button>
+                <button class="tab" onclick="setMode('default', 'custom')">Custom</button>
+            </div>
+            <div id="defaultPreset" class="control-row">
+                <label>Preset</label>
+                <select id="defaultShadowPreset">
+                    <option value="none">none</option>
+                    <option value="sm">sm</option>
+                    <option value="md" selected>md</option>
+                    <option value="lg">lg</option>
+                    <option value="glow">glow</option>
+                </select>
+            </div>
+            <div id="defaultCustom" class="control-row" style="display:none;">
+                <label>CSS</label>
+                <input type="text" id="defaultShadowCustom" value="0 0 20px rgba(251, 191, 36, 0.4)" placeholder="CSS box-shadow">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Hover Shadow</h4>
+            <div class="tabs">
+                <button class="tab active" onclick="setMode('hover', 'preset')">Preset</button>
+                <button class="tab" onclick="setMode('hover', 'custom')">Custom</button>
+            </div>
+            <div id="hoverPreset" class="control-row">
+                <label>Preset</label>
+                <select id="hoverShadowPreset">
+                    <option value="none">none</option>
+                    <option value="sm">sm</option>
+                    <option value="md">md</option>
+                    <option value="lg" selected>lg</option>
+                    <option value="glow">glow</option>
+                </select>
+            </div>
+            <div id="hoverCustom" class="control-row" style="display:none;">
+                <label>CSS</label>
+                <input type="text" id="hoverShadowCustom" value="0 0 40px rgba(251, 191, 36, 0.6)" placeholder="CSS box-shadow">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Focused Shadow</h4>
+            <div class="tabs">
+                <button class="tab active" onclick="setMode('focused', 'preset')">Preset</button>
+                <button class="tab" onclick="setMode('focused', 'custom')">Custom</button>
+            </div>
+            <div id="focusedPreset" class="control-row">
+                <label>Preset</label>
+                <select id="focusedShadowPreset">
+                    <option value="none">none</option>
+                    <option value="sm">sm</option>
+                    <option value="md">md</option>
+                    <option value="lg">lg</option>
+                    <option value="glow" selected>glow</option>
+                </select>
+            </div>
+            <div id="focusedCustom" class="control-row" style="display:none;">
+                <label>CSS</label>
+                <input type="text" id="focusedShadowCustom" value="0 0 60px rgba(251, 191, 36, 0.8)" placeholder="CSS box-shadow">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Border Radius</h4>
+            <div class="control-row">
+                <label>Radius (px)</label>
+                <input type="number" id="borderRadius" value="8" min="0" max="50">
+            </div>
+        </div>
+
+        <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+    </div>
+
+    <div class="container">
+        <div id="imageCloud"></div>
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
+            <div class="fbn-ic-spinner"></div>
+            <p>Loading images...</p>
+        </div>
+        <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../../dist/image-cloud.js';
+
+        let gallery = null;
+        const modes = { default: 'preset', hover: 'preset', focused: 'preset' };
+
+        window.setMode = function(state, mode) {
+            modes[state] = mode;
+            document.getElementById(state + 'Preset').style.display = mode === 'preset' ? 'flex' : 'none';
+            document.getElementById(state + 'Custom').style.display = mode === 'custom' ? 'flex' : 'none';
+            document.querySelectorAll(`#${state}Preset`).forEach(el => {
+                el.parentElement.querySelectorAll('.tab').forEach((tab, i) => {
+                    tab.classList.toggle('active', (i === 0 && mode === 'preset') || (i === 1 && mode === 'custom'));
+                });
+            });
+        };
+
+        const imageUrls = [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ];
+
+        function getShadow(state) {
+            if (modes[state] === 'preset') {
+                return document.getElementById(state + 'ShadowPreset').value;
+            }
+            return document.getElementById(state + 'ShadowCustom').value;
+        }
+
+        function getConfig() {
+            return {
+                container: 'imageCloud',
+                loader: {
+                    type: 'static',
+                    static: { sources: [{ type: 'urls', urls: imageUrls }] }
+                },
+                styling: {
+                    default: {
+                        border: { radius: parseInt(document.getElementById('borderRadius').value) },
+                        shadow: getShadow('default')
+                    },
+                    hover: { shadow: getShadow('hover') },
+                    focused: { shadow: getShadow('focused') }
+                }
+            };
+        }
+
+        window.applyChanges = async function() {
+            if (gallery) gallery.destroy();
+            gallery = new ImageGallery(getConfig());
+            await gallery.init();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => { window.applyChanges(); });
+    </script>
+</body>
+</html>

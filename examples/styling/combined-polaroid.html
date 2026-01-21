@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styling: Polaroid Effect</title>
+    <link rel="stylesheet" href="../../dist/style.css">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%); }
+        .container { width: 100%; height: 100%; }
+        #imageCloud { width: 100%; height: 100%; }
+        .controls { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.9); color: white; padding: 20px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; z-index: 2000; max-width: 340px; max-height: 90vh; overflow-y: auto; }
+        .controls h3 { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
+        .controls .subtitle { color: #888; margin-bottom: 15px; font-size: 11px; }
+        .control-group { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .control-group h4 { margin: 0 0 10px 0; color: #fbbf24; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
+        .control-row label { flex: 0 0 100px; color: #aaa; font-size: 12px; }
+        .control-row input[type="number"] { width: 60px; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; }
+        .control-row input[type="color"] { width: 50px; height: 30px; padding: 0; border: 1px solid #444; border-radius: 6px; background: #222; cursor: pointer; }
+        .control-row input[type="range"] { flex: 1; }
+        .control-row .value { width: 40px; text-align: right; color: #fbbf24; font-size: 12px; }
+        .apply-btn { width: 100%; padding: 12px; background: #fbbf24; color: black; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        .apply-btn:hover { background: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h3>Polaroid Effect</h3>
+        <p class="subtitle">Combines border, shadow, and filters</p>
+
+        <div class="control-group">
+            <h4>Frame</h4>
+            <div class="control-row">
+                <label>Border Width</label>
+                <input type="number" id="borderWidth" value="8" min="0" max="20">
+            </div>
+            <div class="control-row">
+                <label>Bottom Width</label>
+                <input type="number" id="bottomWidth" value="24" min="0" max="50">
+            </div>
+            <div class="control-row">
+                <label>Frame Color</label>
+                <input type="color" id="frameColor" value="#ffffff">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Warm Filter</h4>
+            <div class="control-row">
+                <label>Sepia</label>
+                <input type="range" id="sepia" min="0" max="0.5" step="0.05" value="0.1" oninput="updateValue(this)">
+                <span class="value">0.1</span>
+            </div>
+            <div class="control-row">
+                <label>Contrast</label>
+                <input type="range" id="contrast" min="0.8" max="1.3" step="0.05" value="1.05" oninput="updateValue(this)">
+                <span class="value">1.05</span>
+            </div>
+            <div class="control-row">
+                <label>Brightness</label>
+                <input type="range" id="brightness" min="0.8" max="1.2" step="0.02" value="1.02" oninput="updateValue(this)">
+                <span class="value">1.02</span>
+            </div>
+        </div>
+
+        <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+    </div>
+
+    <div class="container">
+        <div id="imageCloud"></div>
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden"><div class="fbn-ic-spinner"></div><p>Loading...</p></div>
+        <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../../dist/image-cloud.js';
+        let gallery = null;
+
+        window.updateValue = function(input) {
+            input.nextElementSibling.textContent = input.value;
+        };
+
+        const imageUrls = [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ];
+
+        function getConfig() {
+            const frameColor = document.getElementById('frameColor').value;
+            const borderWidth = parseInt(document.getElementById('borderWidth').value);
+            const bottomWidth = parseInt(document.getElementById('bottomWidth').value);
+
+            return {
+                container: 'imageCloud',
+                loader: { type: 'static', static: { sources: [{ type: 'urls', urls: imageUrls }] } },
+                styling: {
+                    default: {
+                        border: { width: borderWidth, color: frameColor, radius: 2, style: 'solid' },
+                        borderBottom: { width: bottomWidth, color: frameColor },
+                        shadow: '2px 4px 12px rgba(0, 0, 0, 0.2)',
+                        filter: {
+                            sepia: parseFloat(document.getElementById('sepia').value),
+                            contrast: parseFloat(document.getElementById('contrast').value),
+                            brightness: parseFloat(document.getElementById('brightness').value)
+                        },
+                        cursor: 'pointer'
+                    },
+                    hover: {
+                        shadow: '4px 8px 20px rgba(0, 0, 0, 0.3)',
+                        filter: { sepia: 0, contrast: 1.1, brightness: 1.05 }
+                    },
+                    focused: {
+                        shadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
+                        filter: { sepia: 0, contrast: 1, brightness: 1 }
+                    }
+                }
+            };
+        }
+
+        window.applyChanges = async function() {
+            if (gallery) gallery.destroy();
+            gallery = new ImageGallery(getConfig());
+            await gallery.init();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => { window.applyChanges(); });
+    </script>
+</body>
+</html>

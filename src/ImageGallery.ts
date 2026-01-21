@@ -13,6 +13,7 @@ import { ZoomEngine } from './engines/ZoomEngine';
 import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 import { StaticImageLoader } from './loaders/StaticImageLoader';
 import { ImageFilter } from './loaders/ImageFilter';
+import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
 
 export class ImageGallery {
   private containerId: string;
@@ -26,6 +27,12 @@ export class ImageGallery {
   private displayQueue: HTMLImageElement[];
   private queueInterval: number | null;
   private loadGeneration: number;
+
+  // Precomputed styling
+  private defaultStyles: StyleProperties;
+  private hoverStyles: StyleProperties;
+  private defaultClassName: string | string[] | undefined;
+  private hoverClassName: string | string[] | undefined;
 
   // Modules
   private animationEngine: AnimationEngine;
@@ -56,7 +63,13 @@ export class ImageGallery {
     // Initialize engines with new config structure
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
     this.layoutEngine = new LayoutEngine(this.fullConfig.layout);
-    this.zoomEngine = new ZoomEngine(this.fullConfig.interaction.focus, this.animationEngine);
+    this.zoomEngine = new ZoomEngine(this.fullConfig.interaction.focus, this.animationEngine, this.fullConfig.styling);
+
+    // Precompute styling properties
+    this.defaultStyles = buildStyleProperties(this.fullConfig.styling?.default);
+    this.hoverStyles = buildStyleProperties(this.fullConfig.styling?.hover);
+    this.defaultClassName = this.fullConfig.styling?.default?.className;
+    this.hoverClassName = this.fullConfig.styling?.hover?.className;
 
     // Initialize entry animation engine with layout-aware defaults
     const entryConfig = this.fullConfig.animation.entry || DEFAULT_CONFIG.animation.entry!;
@@ -312,7 +325,8 @@ export class ImageGallery {
 
             requestAnimationFrame(() => {
               void img.offsetWidth; // Force reflow
-              img.style.opacity = '1';
+              // Use configured default opacity, or 1 if not specified
+              img.style.opacity = this.defaultStyles.opacity ?? '1';
               const finalTransform = img.dataset.finalTransform || '';
               img.style.transform = finalTransform;
             });
@@ -360,11 +374,31 @@ export class ImageGallery {
       img.style.top = `${layout.y}px`;
       img.style.transform = `rotate(${layout.rotation}deg) scale(${layout.scale})`;
 
-      if (layout.borderColor) {
+      // Apply layout-specified border only if no styling config border is set
+      if (layout.borderColor && !this.fullConfig.styling?.default?.border) {
         img.style.border = `5px solid ${layout.borderColor}`;
         img.style.boxSizing = 'border-box';
       }
       if (layout.zIndex) img.style.zIndex = String(layout.zIndex);
+
+      // Apply default styling state
+      applyStylesToElement(img, this.defaultStyles);
+      applyClassNameToElement(img, this.defaultClassName);
+
+      // Hover event handlers
+      img.addEventListener('mouseenter', () => {
+        if (!this.zoomEngine.isFocused(img)) {
+          applyStylesToElement(img, this.hoverStyles);
+          applyClassNameToElement(img, this.hoverClassName);
+        }
+      });
+
+      img.addEventListener('mouseleave', () => {
+        if (!this.zoomEngine.isFocused(img)) {
+          applyStylesToElement(img, this.defaultStyles);
+          removeClassNameFromElement(img, this.hoverClassName);
+        }
+      });
 
       img.addEventListener('click', (e: MouseEvent) => {
         e.stopPropagation();

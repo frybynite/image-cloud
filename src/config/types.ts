@@ -306,6 +306,7 @@ export interface GalleryConfig {
   animation: AnimationConfig;
   interaction: InteractionConfig;
   rendering: RenderingConfig;
+  styling?: ImageStylingConfig;
   debug: boolean;
 }
 
@@ -316,6 +317,7 @@ export interface ImageGalleryOptions {
   animation?: Partial<AnimationConfig>;
   interaction?: Partial<InteractionConfig>;
   rendering?: Partial<RenderingConfig>;
+  styling?: Partial<ImageStylingConfig>;
   debug?: boolean;
 }
 
@@ -456,3 +458,74 @@ export interface GoogleDriveResponse {
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
+
+// ============================================================================
+// Image Styling Configuration
+// ============================================================================
+
+export type ShadowPreset = 'none' | 'sm' | 'md' | 'lg' | 'glow';
+
+export interface BorderConfig {
+  width?: number;             // pixels, default: 0
+  color?: string;             // CSS color, default: '#000'
+  radius?: number;            // pixels, default: 8
+  style?: 'solid' | 'dashed' | 'dotted' | 'none';  // default: 'solid'
+}
+
+export interface DropShadowConfig {
+  x: number;
+  y: number;
+  blur: number;
+  color: string;
+}
+
+export interface FilterConfig {
+  grayscale?: number;    // 0-1
+  blur?: number;         // pixels
+  brightness?: number;   // multiplier (1 = normal)
+  contrast?: number;     // multiplier
+  saturate?: number;     // multiplier
+  opacity?: number;      // 0-1
+  sepia?: number;        // 0-1
+  hueRotate?: number;    // degrees
+  invert?: number;       // 0-1
+  dropShadow?: DropShadowConfig | string;
+}
+
+export interface OutlineConfig {
+  width?: number;        // pixels
+  color?: string;        // CSS color
+  style?: 'solid' | 'dashed' | 'dotted' | 'none';
+  offset?: number;       // pixels
+}
+
+export interface ImageStyleState {
+  // CSS class names (space-separated string or array)
+  className?: string | string[];
+
+  // Border (shorthand applies to all sides)
+  border?: BorderConfig;
+  borderTop?: Partial<BorderConfig>;
+  borderRight?: Partial<BorderConfig>;
+  borderBottom?: Partial<BorderConfig>;
+  borderLeft?: Partial<BorderConfig>;
+
+  // Shadow (preset name or custom CSS string)
+  shadow?: ShadowPreset | string;
+
+  // Filters
+  filter?: FilterConfig;
+
+  // Other properties
+  opacity?: number;           // 0-1
+  cursor?: string;            // CSS cursor value
+  outline?: OutlineConfig;
+  objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  aspectRatio?: string;       // e.g., '16/9', '1/1'
+}
+
+export interface ImageStylingConfig {
+  default?: ImageStyleState;
+  hover?: Partial<ImageStyleState>;    // inherits from default
+  focused?: Partial<ImageStyleState>;  // inherits from default
+}

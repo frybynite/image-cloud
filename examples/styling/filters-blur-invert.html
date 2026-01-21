@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styling: Blur & Invert Filters</title>
+    <link rel="stylesheet" href="../../dist/style.css">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #0c0a09; }
+        .container { width: 100%; height: 100%; }
+        #imageCloud { width: 100%; height: 100%; }
+        .controls { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.9); color: white; padding: 20px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; z-index: 2000; max-width: 320px; max-height: 90vh; overflow-y: auto; }
+        .controls h3 { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
+        .controls .subtitle { color: #888; margin-bottom: 15px; font-size: 11px; }
+        .control-group { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .control-group h4 { margin: 0 0 10px 0; color: #fb923c; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
+        .control-row label { flex: 0 0 80px; color: #aaa; font-size: 12px; }
+        .control-row input[type="range"] { flex: 1; }
+        .control-row .value { width: 40px; text-align: right; color: #fb923c; font-size: 12px; }
+        .apply-btn { width: 100%; padding: 12px; background: #fb923c; color: black; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        .apply-btn:hover { background: #f97316; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h3>Blur & Opacity</h3>
+        <p class="subtitle">Blur and opacity filters</p>
+
+        <div class="control-group">
+            <h4>Default State</h4>
+            <div class="control-row">
+                <label>Blur (px)</label>
+                <input type="range" id="defaultBlur" min="0" max="10" step="0.5" value="1" oninput="updateValue(this)">
+                <span class="value">1</span>
+            </div>
+            <div class="control-row">
+                <label>Opacity</label>
+                <input type="range" id="defaultOpacity" min="0" max="1" step="0.1" value="0.8" oninput="updateValue(this)">
+                <span class="value">0.8</span>
+            </div>
+            <div class="control-row">
+                <label>Invert</label>
+                <input type="range" id="defaultInvert" min="0" max="1" step="0.1" value="0" oninput="updateValue(this)">
+                <span class="value">0</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Hover State</h4>
+            <div class="control-row">
+                <label>Blur (px)</label>
+                <input type="range" id="hoverBlur" min="0" max="10" step="0.5" value="0" oninput="updateValue(this)">
+                <span class="value">0</span>
+            </div>
+            <div class="control-row">
+                <label>Opacity</label>
+                <input type="range" id="hoverOpacity" min="0" max="1" step="0.1" value="1" oninput="updateValue(this)">
+                <span class="value">1</span>
+            </div>
+            <div class="control-row">
+                <label>Invert</label>
+                <input type="range" id="hoverInvert" min="0" max="1" step="0.1" value="0" oninput="updateValue(this)">
+                <span class="value">0</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Focused State</h4>
+            <div class="control-row">
+                <label>Blur (px)</label>
+                <input type="range" id="focusedBlur" min="0" max="10" step="0.5" value="0" oninput="updateValue(this)">
+                <span class="value">0</span>
+            </div>
+            <div class="control-row">
+                <label>Opacity</label>
+                <input type="range" id="focusedOpacity" min="0" max="1" step="0.1" value="1" oninput="updateValue(this)">
+                <span class="value">1</span>
+            </div>
+        </div>
+
+        <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+    </div>
+
+    <div class="container">
+        <div id="imageCloud"></div>
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden"><div class="fbn-ic-spinner"></div><p>Loading...</p></div>
+        <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../../dist/image-cloud.js';
+        let gallery = null;
+
+        window.updateValue = function(input) {
+            input.nextElementSibling.textContent = input.value;
+        };
+
+        const imageUrls = [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ];
+
+        function getConfig() {
+            return {
+                container: 'imageCloud',
+                loader: { type: 'static', static: { sources: [{ type: 'urls', urls: imageUrls }] } },
+                styling: {
+                    default: {
+                        border: { radius: 8 },
+                        shadow: 'sm',
+                        filter: {
+                            blur: parseFloat(document.getElementById('defaultBlur').value),
+                            opacity: parseFloat(document.getElementById('defaultOpacity').value),
+                            invert: parseFloat(document.getElementById('defaultInvert').value)
+                        }
+                    },
+                    hover: {
+                        shadow: 'md',
+                        filter: {
+                            blur: parseFloat(document.getElementById('hoverBlur').value),
+                            opacity: parseFloat(document.getElementById('hoverOpacity').value),
+                            invert: parseFloat(document.getElementById('hoverInvert').value)
+                        }
+                    },
+                    focused: {
+                        shadow: 'lg',
+                        filter: {
+                            blur: parseFloat(document.getElementById('focusedBlur').value),
+                            opacity: parseFloat(document.getElementById('focusedOpacity').value),
+                            brightness: 1.05
+                        }
+                    }
+                }
+            };
+        }
+
+        window.applyChanges = async function() {
+            if (gallery) gallery.destroy();
+            gallery = new ImageGallery(getConfig());
+            await gallery.init();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => { window.applyChanges(); });
+    </script>
+</body>
+</html>

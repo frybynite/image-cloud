@@ -11,8 +11,9 @@
  * - reset()
  */
 
-import type { FocusInteractionConfig, ContainerBounds, ImageLayout, TransformParams } from '../config/types';
+import type { FocusInteractionConfig, ContainerBounds, ImageLayout, TransformParams, ImageStylingConfig } from '../config/types';
 import { AnimationEngine } from './AnimationEngine';
+import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from '../utils/styleUtils';
 
 interface FocusData {
   element: HTMLElement;
@@ -26,12 +27,24 @@ export class ZoomEngine {
   private currentFocus: HTMLElement | null;
   private focusData: FocusData | null;
 
-  constructor(config: FocusInteractionConfig, animationEngine: AnimationEngine) {
+  // Styling
+  private defaultStyles: StyleProperties;
+  private focusedStyles: StyleProperties;
+  private defaultClassName: string | string[] | undefined;
+  private focusedClassName: string | string[] | undefined;
+
+  constructor(config: FocusInteractionConfig, animationEngine: AnimationEngine, styling?: ImageStylingConfig) {
     this.config = config;
 
     this.animationEngine = animationEngine;
     this.currentFocus = null;  // Currently focused image element
     this.focusData = null;  // Data about focused image
+
+    // Precompute styling properties
+    this.defaultStyles = buildStyleProperties(styling?.default);
+    this.focusedStyles = buildStyleProperties(styling?.focused);
+    this.defaultClassName = styling?.default?.className;
+    this.focusedClassName = styling?.focused?.className;
   }
 
   /**
@@ -79,6 +92,10 @@ export class ZoomEngine {
     imageElement.style.zIndex = String(this.config.zIndex);
     imageElement.classList.add('fbn-ic-focused');
 
+    // Apply focused styling state
+    applyStylesToElement(imageElement, this.focusedStyles);
+    applyClassNameToElement(imageElement, this.focusedClassName);
+
     // Animate to focused state
     this.currentFocus = imageElement;
 
@@ -112,6 +129,11 @@ export class ZoomEngine {
     // Reset z-index after animation completes
     element.style.zIndex = '';
     element.classList.remove('fbn-ic-focused');
+
+    // Revert to default styling state
+    removeClassNameFromElement(element, this.focusedClassName);
+    applyStylesToElement(element, this.defaultStyles);
+    applyClassNameToElement(element, this.defaultClassName);
 
     // Clear focus state
     this.currentFocus = null;

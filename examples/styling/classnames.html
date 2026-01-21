@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styling: CSS Class Names</title>
+    <link rel="stylesheet" href="../../dist/style.css">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #0a0a0a; }
+        .container { width: 100%; height: 100%; }
+        #imageCloud { width: 100%; height: 100%; }
+        .controls { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.9); color: white; padding: 20px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; z-index: 2000; max-width: 380px; max-height: 90vh; overflow-y: auto; }
+        .controls h3 { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
+        .controls .subtitle { color: #888; margin-bottom: 15px; font-size: 11px; }
+        .control-group { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .control-group h4 { margin: 0 0 10px 0; color: #60a5fa; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
+        .control-row label { flex: 0 0 100px; color: #aaa; font-size: 12px; }
+        .control-row input[type="text"] { flex: 1; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; background: #222; color: white; font-size: 12px; }
+        .apply-btn { width: 100%; padding: 12px; background: #60a5fa; color: black; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        .apply-btn:hover { background: #3b82f6; }
+        .hint { color: #666; font-size: 10px; margin-top: 4px; font-style: italic; }
+
+        /* Custom CSS classes that can be injected */
+        .custom-border-blue { border: 3px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3) !important; }
+        .custom-border-red { border: 3px solid #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3) !important; }
+        .custom-border-green { border: 3px solid #22c55e !important; box-shadow: 0 0 15px rgba(34, 197, 94, 0.3) !important; }
+        .custom-hover-glow { box-shadow: 0 0 25px rgba(96, 165, 250, 0.5) !important; }
+        .custom-focused-bright { filter: brightness(1.2) !important; box-shadow: 0 0 40px rgba(255, 255, 255, 0.5) !important; }
+        .custom-rounded { border-radius: 50% !important; }
+        .custom-sharp { border-radius: 0 !important; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h3>CSS Class Names</h3>
+        <p class="subtitle">Inject custom CSS classes per state</p>
+
+        <div class="control-group">
+            <h4>Available Classes</h4>
+            <p class="hint">custom-border-blue, custom-border-red, custom-border-green, custom-hover-glow, custom-focused-bright, custom-rounded, custom-sharp</p>
+        </div>
+
+        <div class="control-group">
+            <h4>Default State</h4>
+            <div class="control-row">
+                <label>Class Name</label>
+                <input type="text" id="defaultClass" value="custom-border-blue" placeholder="space-separated classes">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Hover State</h4>
+            <div class="control-row">
+                <label>Class Name</label>
+                <input type="text" id="hoverClass" value="custom-hover-glow" placeholder="space-separated classes">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h4>Focused State</h4>
+            <div class="control-row">
+                <label>Class Name</label>
+                <input type="text" id="focusedClass" value="custom-focused-bright" placeholder="space-separated classes">
+            </div>
+        </div>
+
+        <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
+    </div>
+
+    <div class="container">
+        <div id="imageCloud"></div>
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden"><div class="fbn-ic-spinner"></div><p>Loading...</p></div>
+        <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+    </div>
+
+    <script type="module">
+        import { ImageGallery } from '../../dist/image-cloud.js';
+        let gallery = null;
+
+        const imageUrls = [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ];
+
+        function getConfig() {
+            return {
+                container: 'imageCloud',
+                loader: { type: 'static', static: { sources: [{ type: 'urls', urls: imageUrls }] } },
+                styling: {
+                    default: {
+                        border: { radius: 12 },
+                        className: document.getElementById('defaultClass').value || undefined
+                    },
+                    hover: {
+                        className: document.getElementById('hoverClass').value || undefined
+                    },
+                    focused: {
+                        className: document.getElementById('focusedClass').value || undefined
+                    }
+                }
+            };
+        }
+
+        window.applyChanges = async function() {
+            if (gallery) gallery.destroy();
+            gallery = new ImageGallery(getConfig());
+            await gallery.init();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => { window.applyChanges(); });
+    </script>
+</body>
+</html>
