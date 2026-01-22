@@ -161,7 +161,16 @@ export interface ClusterAlgorithmConfig {
   distribution: 'gaussian' | 'uniform';
 }
 
-export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster';
+export interface WaveAlgorithmConfig {
+  rows: number;
+  amplitude: number;
+  frequency: number;
+  phaseShift: number;
+  synchronization: 'offset' | 'synchronized' | 'alternating';
+  orientation: 'follow' | 'upright';
+}
+
+export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster' | 'wave';
 
 export interface LayoutConfig {
   algorithm: LayoutAlgorithm;
@@ -172,6 +181,7 @@ export interface LayoutConfig {
   grid?: GridAlgorithmConfig;
   spiral?: SpiralAlgorithmConfig;
   cluster?: ClusterAlgorithmConfig;
+  wave?: WaveAlgorithmConfig;
 }
 
 // ============================================================================

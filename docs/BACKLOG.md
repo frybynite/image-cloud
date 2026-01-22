@@ -9,8 +9,9 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Discuss custom fly-in animations - allow configurable entrance animation styles for images.
 - [ ] Fix: Dragging window between screens triggers re-animation even when staying within same breakpoint.
 - [ ] Fix: Duplicate images still appearing when resizing window from desktop to mobile size (race condition not fully resolved).
-- [ ] Add ability to fully style images (border, border-color, shadow, border-radius, etc.) through config options or stylesheet.
 - [ ] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources).
+- [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
+- [ ] Review how images are placed - whether by corner or by image center (should be center).
 
 ---
 
@@ -48,10 +49,9 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 *Future feature ideas to explore*
 
-- Interactive configurator page - visual tool for choosing gallery settings, previewing layouts in real-time, and generating the JSON configuration
 - Vue component wrapper
 - Web Component wrapper
-- Additional layout algorithms (honeycomb, wave, physics-based)
+- Additional layout algorithms (honeycomb, physics-based)
 - Drag-to-reorder functionality
 - Lightbox mode
 - Thumbnail navigation
@@ -77,3 +77,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Change page title to "Resume Certifications Gallery"
 - [x] Move google drive API key out of config.js and into a parameter passed the outermost method.
 - [x] In smaller context windows we need more discrete control over the size of the image and the "full view" size.
+- [x] Add ability to fully style images (border, border-color, shadow, border-radius, etc.) through config options or stylesheet.
+- [x] Interactive configurator page - visual tool for choosing gallery settings, previewing layouts in real-time, and generating the JSON configuration.
+- [x] Wave layout algorithm - images positioned along flowing sine wave curves with configurable rows, amplitude, frequency, phase shift, synchronization modes, and orientation options.

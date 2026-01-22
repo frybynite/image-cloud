@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset } from './types';
+import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -44,6 +44,18 @@ export const DEFAULT_STYLING: ImageStylingConfig = Object.freeze({
   focused: Object.freeze({
     shadow: 'glow' as ShadowPreset
   })
+});
+
+/**
+ * Default wave layout configuration
+ */
+export const DEFAULT_WAVE_CONFIG: WaveAlgorithmConfig = Object.freeze({
+  rows: 1,
+  amplitude: 100,
+  frequency: 2,
+  phaseShift: 0,
+  synchronization: 'offset' as const,
+  orientation: 'follow' as const
 });
 
 /**

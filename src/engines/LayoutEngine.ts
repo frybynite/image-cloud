@@ -15,6 +15,7 @@ import { RadialPlacementGenerator } from '../generators/RadialPlacementGenerator
 import { GridPlacementGenerator } from '../generators/GridPlacementGenerator';
 import { SpiralPlacementGenerator } from '../generators/SpiralPlacementGenerator';
 import { ClusterPlacementGenerator } from '../generators/ClusterPlacementGenerator';
+import { WavePlacementGenerator } from '../generators/WavePlacementGenerator';
 
 export class LayoutEngine {
   private config: LayoutConfig;
@@ -44,6 +45,8 @@ export class LayoutEngine {
         return new SpiralPlacementGenerator(this.config);
       case 'cluster':
         return new ClusterPlacementGenerator(this.config);
+      case 'wave':
+        return new WavePlacementGenerator(this.config);
       case 'random':
       default:
         return new RandomPlacementGenerator(this.config);

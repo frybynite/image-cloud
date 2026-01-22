@@ -67,6 +67,7 @@ See `docs/PARAMETERS.md` for full configuration reference. Key config structure:
 }
 ```
 
+
 ## Code Style
 
 - TypeScript with strict mode enabled
@@ -84,3 +85,7 @@ Located in `examples/` folder:
 - `index.html` - Google Drive gallery
 - `index-static.html` - Static URL gallery
 - `layout-algorithms.html` - Compare all layout algorithms
+
+## Remember
+
+- Any time a new layout, style, etc. is created we must update the examples/ and the examples/configurator/

@@ -11,6 +11,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
   - [Grid Algorithm](#grid-algorithm)
   - [Spiral Algorithm](#spiral-algorithm)
   - [Cluster Algorithm](#cluster-algorithm)
+  - [Wave Algorithm](#wave-algorithm)
   - [Radial Algorithm](#radial-algorithm)
   - [Random Algorithm](#random-algorithm)
 - [Sizing Configuration](#sizing-layoutsizing)
@@ -84,14 +85,15 @@ Controls the positioning and sizing of images.
 
 ```typescript
 layout: {
-  algorithm: 'radial' | 'random' | 'grid' | 'spiral' | 'cluster',
+  algorithm: 'radial' | 'random' | 'grid' | 'spiral' | 'cluster' | 'wave',
   sizing: LayoutSizingConfig,
   rotation: LayoutRotationConfig,
   spacing: LayoutSpacingConfig,
   // Algorithm-specific options
   grid?: GridAlgorithmConfig,
   spiral?: SpiralAlgorithmConfig,
-  cluster?: ClusterAlgorithmConfig
+  cluster?: ClusterAlgorithmConfig,
+  wave?: WaveAlgorithmConfig
 }
 ```
 
@@ -99,7 +101,7 @@ layout: {
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'` |
+| `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'`, `'wave'` |
 | `debugRadials` | `boolean` | `false` | Visualize the radial layout structure (debug). |
 | `sizing` | `LayoutSizingConfig` | *See below* | Configuration for image dimensions. |
 | `rotation` | `LayoutRotationConfig` | *See below* | Configuration for image rotation. |
@@ -222,6 +224,86 @@ layout: {
 - Creates visual "islands" of content
 - Good for 15-100+ images
 - Images closer to cluster center have higher z-index
+
+---
+
+### Wave Algorithm
+
+Images positioned along flowing sine wave curves with extensive configuration.
+
+```typescript
+layout: {
+  algorithm: 'wave',
+  wave: {
+    rows: 3,                      // number of wave rows
+    amplitude: 100,               // wave height in pixels
+    frequency: 2,                 // complete waves across width
+    phaseShift: Math.PI / 3,      // phase offset between rows (radians)
+    synchronization: 'offset',    // 'offset' | 'synchronized' | 'alternating'
+    orientation: 'follow'         // 'follow' | 'upright'
+  }
+}
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `rows` | `number` | `1` | Number of horizontal wave rows to create |
+| `amplitude` | `number` | `100` | Height of wave oscillation in pixels |
+| `frequency` | `number` | `2` | Number of complete wave cycles across container width |
+| `phaseShift` | `number` | `0` | Phase offset between rows in radians (only for 'offset' sync) |
+| `synchronization` | `string` | `'offset'` | How waves align: `'offset'` (staggered), `'synchronized'` (peaks align), `'alternating'` (opposite directions) |
+| `orientation` | `string` | `'follow'` | Image rotation: `'follow'` (tilt with wave curve), `'upright'` (no wave-based rotation) |
+
+**Synchronization Modes:**
+- `'offset'` - Each row is shifted horizontally by `phaseShift`, creating a flowing, staggered pattern
+- `'synchronized'` - All rows have peaks at the same horizontal positions, creating vertical alignment
+- `'alternating'` - Adjacent rows go opposite directions (180° phase shift), creating a woven pattern
+
+**Orientation Modes:**
+- `'follow'` - Images rotate to follow the wave tangent, creating a flowing, dynamic effect
+- `'upright'` - Images remain horizontally oriented (standard rotation config still applies)
+
+**Visual characteristics:**
+- Flowing, rhythmic, dynamic feel
+- Creates horizontal movement across the display
+- Works well with 10-50+ images
+- Great for timeline-like displays or artistic presentations
+- `follow` orientation creates natural flow along curves
+- Multiple synchronization modes offer varied aesthetics
+
+**Examples:**
+
+Single gentle wave:
+```typescript
+wave: {
+  rows: 1,
+  amplitude: 80,
+  frequency: 1.5,
+  orientation: 'follow'
+}
+```
+
+Tightly packed alternating waves:
+```typescript
+wave: {
+  rows: 5,
+  amplitude: 120,
+  frequency: 3,
+  synchronization: 'alternating',
+  orientation: 'follow'
+}
+```
+
+Synchronized waves (vertical columns):
+```typescript
+wave: {
+  rows: 4,
+  amplitude: 100,
+  frequency: 2,
+  synchronization: 'synchronized',
+  orientation: 'upright'
+}
+```
 
 ---
 
@@ -579,7 +661,7 @@ All available parameters with example values:
   },
 
   "layout": {
-    "algorithm": "radial",                      // Default. "radial" | "random" | "grid" | "spiral" | "cluster"
+    "algorithm": "radial",                      // Default. "radial" | "random" | "grid" | "spiral" | "cluster" | "wave"
     "debugRadials": false,                      // Default
 
     "sizing": {
@@ -645,6 +727,16 @@ All available parameters with example values:
       "density": "uniform",                     // Default. "uniform" | "varied"
       "overlap": 0.3,                           // Default. 0-1 overlap within clusters
       "distribution": "gaussian"                // Default. "gaussian" | "uniform"
+    },
+
+    // Wave algorithm options
+    "wave": {
+      "rows": 1,                                // Default. Number of wave rows
+      "amplitude": 100,                         // Default. Wave height in pixels
+      "frequency": 2,                           // Default. Complete waves across width
+      "phaseShift": 0,                           // Default. Phase offset in radians
+      "synchronization": "offset",              // Default. "offset" | "synchronized" | "alternating"
+      "orientation": "follow"                   // Default. "follow" | "upright"
     }
   },
 
@@ -958,4 +1050,51 @@ const gallery = new ImageGallery({
     }
   }
 }
+```
+
+### Flowing Wave Layout
+
+```typescript
+const gallery = new ImageGallery({
+  container: 'my-gallery',
+  loader: { ... },
+  layout: {
+    algorithm: 'wave',
+    sizing: { base: 120 },
+    rotation: { enabled: false },  // Wave handles rotation
+    wave: {
+      rows: 4,
+      amplitude: 100,
+      frequency: 2.5,
+      synchronization: 'offset',
+      orientation: 'follow'  // Images tilt with wave curve
+    }
+  },
+  animation: {
+    entry: {
+      start: { position: 'left' },  // Enter from left for flow effect
+      timing: { duration: 800, stagger: 80 }
+    }
+  }
+});
+```
+
+### Alternating Wave Pattern
+
+```typescript
+const gallery = new ImageGallery({
+  container: 'my-gallery',
+  loader: { ... },
+  layout: {
+    algorithm: 'wave',
+    sizing: { base: 90 },
+    wave: {
+      rows: 5,
+      amplitude: 120,
+      frequency: 3,
+      synchronization: 'alternating',  // Woven pattern
+      orientation: 'follow'
+    }
+  }
+});
 ```

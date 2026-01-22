@@ -147,6 +147,25 @@
             </div>
         </div>
 
+        <!-- Wave Layout -->
+        <div class="gallery-section">
+            <h2>Wave Layout</h2>
+            <p>Images positioned along flowing sine wave curves</p>
+            <div id="gallery-wave" class="image-cloud"></div>
+            <div class="controls">
+                <select id="wave-sync">
+                    <option value="offset">Offset Waves</option>
+                    <option value="synchronized">Synchronized</option>
+                    <option value="alternating">Alternating</option>
+                </select>
+                <select id="wave-orientation">
+                    <option value="follow">Follow Wave</option>
+                    <option value="upright">Stay Upright</option>
+                </select>
+                <button id="wave-refresh">Try it</button>
+            </div>
+        </div>
+
         <!-- Radial Layout (existing) -->
         <div class="gallery-section">
             <h2>Radial Layout</h2>
@@ -240,6 +259,24 @@
             }
         });
 
+        // Wave Gallery
+        const waveGallery = new ImageGallery({
+            container: 'gallery-wave',
+            loader: loaderConfig,
+            layout: {
+                algorithm: 'wave',
+                sizing: { base: 100 },
+                rotation: { enabled: false },  // Wave handles rotation
+                wave: {
+                    rows: 3,
+                    amplitude: 80,
+                    frequency: 2,
+                    synchronization: 'offset',
+                    orientation: 'follow'
+                }
+            }
+        });
+
         // Radial Gallery (existing)
         const radialGallery = new ImageGallery({
             container: 'gallery-radial',
@@ -265,6 +302,7 @@
             grid: gridGallery,
             spiral: spiralGallery,
             cluster: clusterGallery,
+            wave: waveGallery,
             radial: radialGallery,
             random: randomGallery
         };
@@ -274,6 +312,7 @@
             gridGallery.init(),
             spiralGallery.init(),
             clusterGallery.init(),
+            waveGallery.init(),
             radialGallery.init(),
             randomGallery.init()
         ]).catch(error => {
@@ -348,6 +387,25 @@
                     clusterSpacing: 180,
                     overlap: 0.4,
                     distribution: distribution
+                }
+            });
+        });
+
+        // Wave refresh handler
+        document.getElementById('wave-refresh').addEventListener('click', async () => {
+            const synchronization = document.getElementById('wave-sync').value;
+            const orientation = document.getElementById('wave-orientation').value;
+
+            galleries.wave = await refreshGallery('gallery-wave', {
+                algorithm: 'wave',
+                sizing: { base: 100 },
+                rotation: { enabled: false },  // Wave handles rotation
+                wave: {
+                    rows: 3,
+                    amplitude: 80,
+                    frequency: 2,
+                    synchronization: synchronization,
+                    orientation: orientation
                 }
             });
         });
