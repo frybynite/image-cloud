@@ -6,6 +6,9 @@ The Image Cloud library offers a flexible configuration system to customize ever
 
 - [Pattern-Based Configuration](#pattern-based-configuration)
 - [Loader Configuration](#1-loader-configuration-loader)
+  - [Google Drive Loader](#google-drive-config-loadergoogledrive)
+  - [Static Loader](#static-loader-config-loaderstatic)
+  - [Composite Loader](#composite-loader-programmatic-only)
 - [Layout Configuration](#2-layout-configuration-layout)
   - [Layout Algorithms](#layout-algorithms)
   - [Grid Algorithm](#grid-algorithm)
@@ -46,9 +49,10 @@ Controls how images are fetched and validated.
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `type` | `'googleDrive' \| 'static'` | `'googleDrive'` | The primary source type for images. |
+| `type` | `'googleDrive' \| 'static' \| 'composite'` | `'googleDrive'` | The primary source type for images. |
 | `googleDrive` | `GoogleDriveLoaderConfig` | *See below* | Configuration for Google Drive loading. |
 | `static` | `StaticLoaderConfig` | *See below* | Configuration for static image loading. |
+| `composite` | `CompositeLoaderConfig` | *See below* | Configuration for combining multiple loaders. |
 
 #### Google Drive Config (`loader.googleDrive`)
 
@@ -78,6 +82,66 @@ Controls how images are fetched and validated.
 **Static Source Objects:**
 *   **URLs:** `{ type: 'urls', urls: string[] }`
 *   **Path:** `{ type: 'path', basePath: string, files: string[] }`
+
+#### Composite Loader (`loader.composite`)
+
+The `CompositeLoader` combines multiple loaders of any type and loads them in parallel. This is useful for combining images from different sources (e.g., Google Drive + static URLs).
+
+```typescript
+const gallery = new ImageGallery({
+  container: 'my-gallery',
+  loader: {
+    type: 'composite',
+    composite: {
+      loaders: [
+        {
+          type: 'googleDrive',
+          googleDrive: {
+            apiKey: 'YOUR_API_KEY',
+            sources: [{ type: 'folder', folders: ['https://drive.google.com/...'] }]
+          }
+        },
+        {
+          type: 'static',
+          static: {
+            sources: [{ type: 'urls', urls: ['https://example.com/image1.jpg'] }]
+          }
+        }
+      ],
+      debugLogging: false
+    }
+  }
+});
+```
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `loaders` | `LoaderConfig[]` | *Required* | Array of loader configurations (googleDrive, static, or nested composite). |
+| `debugLogging` | `boolean` | `false` | Enable debug logs for the composite loader. |
+
+**Behavior:**
+- All loaders are prepared in parallel using `Promise.all()`
+- If one loader fails, others continue (failed loader contributes 0 images)
+- URLs are combined in the order loaders appear in the array
+- Supports nesting (composite loaders can contain other composite loaders)
+
+**Programmatic Usage:**
+
+You can also create a CompositeLoader directly for more control:
+
+```typescript
+import { CompositeLoader, GoogleDriveLoader, StaticImageLoader, ImageFilter } from '@frybynite/image-cloud';
+
+const compositeLoader = new CompositeLoader({
+  loaders: [
+    new GoogleDriveLoader({ apiKey: '...', sources: [...] }),
+    new StaticImageLoader({ sources: [...] })
+  ]
+});
+
+await compositeLoader.prepare(new ImageFilter());
+console.log(compositeLoader.imageURLs());  // Combined URLs
+```
 
 ### 2. Layout Configuration (`layout`)
 
@@ -657,6 +721,20 @@ All available parameters with example values:
       "failOnAllMissing": true,                 // Default
       "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
       "debugLogging": false                     // Default
+    },
+
+    "composite": {
+      "loaders": [                              // Required. Array of loader configs
+        {
+          "type": "googleDrive",
+          "googleDrive": { /* ... */ }
+        },
+        {
+          "type": "static",
+          "static": { /* ... */ }
+        }
+      ],
+      "debugLogging": false                     // Default
     }
   },
 
@@ -940,6 +1018,47 @@ const gallery = new ImageGallery({
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg"
           ]
+        }
+      ]
+    }
+  }
+}
+```
+
+### Composite Loader (Multiple Sources)
+
+```jsonc
+{
+  "container": "imageCloud",
+  "loader": {
+    "type": "composite",
+    "composite": {
+      "loaders": [
+        {
+          "type": "googleDrive",
+          "googleDrive": {
+            "apiKey": "YOUR_API_KEY",
+            "sources": [
+              {
+                "type": "folder",
+                "folders": ["https://drive.google.com/drive/folders/FOLDER_ID"]
+              }
+            ]
+          }
+        },
+        {
+          "type": "static",
+          "static": {
+            "sources": [
+              {
+                "type": "urls",
+                "urls": [
+                  "https://example.com/extra1.jpg",
+                  "https://example.com/extra2.jpg"
+                ]
+              }
+            ]
+          }
         }
       ]
     }

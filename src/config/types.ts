@@ -80,10 +80,16 @@ export interface StaticLoaderConfig {
   debugLogging?: boolean;
 }
 
+export interface CompositeLoaderConfigJson {
+  loaders: LoaderConfig[];
+  debugLogging?: boolean;
+}
+
 export interface LoaderConfig {
-  type: 'googleDrive' | 'static';
+  type: 'googleDrive' | 'static' | 'composite';
   googleDrive?: GoogleDriveLoaderConfig;
   static?: StaticLoaderConfig;
+  composite?: CompositeLoaderConfigJson;
 }
 
 // ============================================================================

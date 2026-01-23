@@ -9,7 +9,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Discuss custom fly-in animations - allow configurable entrance animation styles for images.
 - [ ] Fix: Dragging window between screens triggers re-animation even when staying within same breakpoint.
 - [ ] Fix: Duplicate images still appearing when resizing window from desktop to mobile size (race condition not fully resolved).
-- [ ] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources).
+- [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
 

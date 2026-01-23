@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Composite Loader - Unit Test</title>
+</head>
+<body>
+  <script type="module">
+    import { CompositeLoader, GoogleDriveLoader, StaticImageLoader, ImageFilter } from '/dist/image-cloud.js';
+
+    // Expose loaders for unit tests
+    window.CompositeLoader = CompositeLoader;
+    window.GoogleDriveLoader = GoogleDriveLoader;
+    window.StaticImageLoader = StaticImageLoader;
+    window.ImageFilter = ImageFilter;
+  </script>
+</body>
+</html>

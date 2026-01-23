@@ -22,6 +22,7 @@ export type {
   ClusterAlgorithmConfig,
   GoogleDriveLoaderConfig,
   StaticLoaderConfig,
+  CompositeLoaderConfigJson,
   LoaderConfig,
   UIRenderingConfig,
   ResponsiveRenderingConfig,
@@ -53,4 +54,6 @@ export { ClusterPlacementGenerator } from './generators/ClusterPlacementGenerato
 // Export loaders for custom implementations
 export { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 export { StaticImageLoader } from './loaders/StaticImageLoader';
+export { CompositeLoader } from './loaders/CompositeLoader';
+export type { CompositeLoaderConfig } from './loaders/CompositeLoader';
 export { ImageFilter } from './loaders/ImageFilter';

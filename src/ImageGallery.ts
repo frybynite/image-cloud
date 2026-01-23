@@ -12,6 +12,7 @@ import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
 import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 import { StaticImageLoader } from './loaders/StaticImageLoader';
+import { CompositeLoader } from './loaders/CompositeLoader';
 import { ImageFilter } from './loaders/ImageFilter';
 import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
 
@@ -111,13 +112,29 @@ export class ImageGallery {
    * Create appropriate image loader based on config
    */
   private createLoader(): ImageLoader {
-    const loaderType = this.fullConfig.loader.type;
+    return this.createLoaderFromConfig(this.fullConfig.loader);
+  }
+
+  /**
+   * Create a loader from a LoaderConfig object (supports recursive composite loaders)
+   */
+  private createLoaderFromConfig(config: typeof this.fullConfig.loader): ImageLoader {
+    const loaderType = config.type;
 
     if (loaderType === 'static') {
-      const staticConfig = this.fullConfig.loader.static!;
+      const staticConfig = config.static!;
       return new StaticImageLoader(staticConfig);
+    } else if (loaderType === 'composite') {
+      const compositeConfig = config.composite!;
+      const childLoaders = compositeConfig.loaders.map(loaderConfig =>
+        this.createLoaderFromConfig(loaderConfig)
+      );
+      return new CompositeLoader({
+        loaders: childLoaders,
+        debugLogging: compositeConfig.debugLogging
+      });
     } else {
-      const driveConfig = this.fullConfig.loader.googleDrive!;
+      const driveConfig = config.googleDrive!;
       return new GoogleDriveLoader(driveConfig);
     }
   }
