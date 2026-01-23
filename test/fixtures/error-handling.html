@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Handling - Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    #imageCloud { width: 100%; height: 100%; position: relative; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+  <script type="module">
+    import { ImageGallery, GoogleDriveLoader, StaticImageLoader, CompositeLoader } from '/dist/image-cloud.js';
+    window.ImageGallery = ImageGallery;
+    window.GoogleDriveLoader = GoogleDriveLoader;
+    window.StaticImageLoader = StaticImageLoader;
+    window.CompositeLoader = CompositeLoader;
+  </script>
+</body>
+</html>

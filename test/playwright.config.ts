@@ -21,6 +21,10 @@ export default defineConfig({
     {
       name: 'mobile',
       use: { ...devices['iPhone 13'] },
+      testIgnore: [
+        '**/google-drive-loader.spec.ts', // API behavior identical across devices
+        '**/visual-regression.spec.ts',   // Visual tests control their own viewport sizes
+      ],
     },
   ],
   webServer: {

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Styling - Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    #imageCloud { width: 100%; height: 100%; position: relative; }
+    .custom-test-class { outline: 3px dashed blue !important; }
+    .another-class { opacity: 0.9 !important; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageGallery } from '/dist/image-cloud.js';
+    window.ImageGallery = ImageGallery;
+  </script>
+</body>
+</html>

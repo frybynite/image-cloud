@@ -102,7 +102,8 @@ test.describe('Responsive Behavior', () => {
       const img = page.locator('#imageCloud img').first();
       const beforeBox = await img.boundingBox();
 
-      await img.click();
+      // Force click in case images are overlapping
+      await img.click({ force: true });
       await waitForAnimation(page, 300);
 
       const afterBox = await img.boundingBox();

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid Layout - Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    #imageCloud { width: 100%; height: 100%; position: relative; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageGallery } from '/dist/image-cloud.js';
+
+    window.ImageGallery = ImageGallery;
+
+    // Default grid config - can be overridden via window.testConfig before page load
+    const defaultConfig = {
+      container: 'imageCloud',
+      loader: {
+        type: 'static',
+        static: {
+          sources: [
+            {
+              type: 'urls',
+              urls: [
+                '/test/fixtures/images/image1.jpg',
+                '/test/fixtures/images/image2.jpg',
+                '/test/fixtures/images/image3.jpg',
+                '/test/fixtures/images/food1.jpg',
+                '/test/fixtures/images/food2.jpg',
+                '/test/fixtures/images/food3.jpg',
+                '/test/fixtures/images/scenery1.jpg',
+                '/test/fixtures/images/scenery2.jpg',
+                '/test/fixtures/images/scenery3.jpg'
+              ]
+            }
+          ],
+          validateUrls: false
+        }
+      },
+      layout: {
+        algorithm: 'grid',
+        rotation: { enabled: false },
+        grid: {
+          columns: 'auto',
+          rows: 'auto',
+          stagger: 'none',
+          jitter: 0,
+          overlap: 0,
+          fillDirection: 'row',
+          alignment: 'center',
+          gap: 10
+        }
+      },
+      animation: {
+        duration: 300,
+        queue: { enabled: true, interval: 30 }
+      },
+      debug: false
+    };
+
+    // Allow test to override config
+    const config = window.testGridConfig || defaultConfig;
+
+    window.gallery = new ImageGallery(config);
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+    });
+  </script>
+</body>
+</html>

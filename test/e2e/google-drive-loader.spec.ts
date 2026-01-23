@@ -1,12 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { waitForGalleryInit } from '../utils/test-helpers';
 
-// Skip mobile tests - Google Drive API tests are network-dependent
-// and behavior is identical across devices
+// Note: Mobile tests excluded via playwright.config.ts (API behavior identical across devices)
 test.describe('Google Drive Loader', () => {
-  test.beforeEach(async ({}, testInfo) => {
-    test.skip(testInfo.project.name === 'mobile', 'Skip on mobile - API behavior identical');
-  });
 
   test.describe('Folder Loading', () => {
 
