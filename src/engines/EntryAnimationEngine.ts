@@ -120,8 +120,9 @@ export class EntryAnimationEngine {
     containerBounds: ContainerBounds,
     offset: number
   ): StartPosition {
-    const centerX = finalPosition.x + imageSize.width / 2;
-    const centerY = finalPosition.y + imageSize.height / 2;
+    // finalPosition now stores center position directly
+    const centerX = finalPosition.x;
+    const centerY = finalPosition.y;
 
     const distLeft = centerX;
     const distRight = containerBounds.width - centerX;
@@ -187,11 +188,11 @@ export class EntryAnimationEngine {
   private calculateCenterPosition(
     containerBounds: ContainerBounds,
     _finalPosition: { x: number; y: number },
-    imageSize: { width: number; height: number }
+    _imageSize: { width: number; height: number }
   ): StartPosition {
-    // Start at center of container
-    const centerX = containerBounds.width / 2 - imageSize.width / 2;
-    const centerY = containerBounds.height / 2 - imageSize.height / 2;
+    // Start at center of container (using center position, not top-left)
+    const centerX = containerBounds.width / 2;
+    const centerY = containerBounds.height / 2;
 
     return {
       x: centerX,
@@ -219,7 +220,7 @@ export class EntryAnimationEngine {
    */
   private calculateCircularPosition(
     _finalPosition: { x: number; y: number },
-    imageSize: { width: number; height: number },
+    _imageSize: { width: number; height: number },
     containerBounds: ContainerBounds,
     imageIndex: number,
     totalImages: number
@@ -254,8 +255,9 @@ export class EntryAnimationEngine {
     const centerX = containerBounds.width / 2;
     const centerY = containerBounds.height / 2;
 
-    const startX = centerX + Math.cos(angle) * radius - imageSize.width / 2;
-    const startY = centerY + Math.sin(angle) * radius - imageSize.height / 2;
+    // Return center position on circle (not top-left)
+    const startX = centerX + Math.cos(angle) * radius;
+    const startY = centerY + Math.sin(angle) * radius;
 
     return { x: startX, y: startY };
   }
@@ -278,31 +280,48 @@ export class EntryAnimationEngine {
 
   /**
    * Build a CSS transform string for the start position
+   * Uses pixel-based centering offset for reliable cross-browser behavior
    */
   buildStartTransform(
     startPosition: StartPosition,
     finalPosition: { x: number; y: number },
     finalRotation: number,
-    finalScale: number
+    finalScale: number,
+    imageWidth?: number,
+    imageHeight?: number
   ): string {
     // Calculate translation from final to start position
     const translateX = startPosition.x - finalPosition.x;
     const translateY = startPosition.y - finalPosition.y;
 
+    // Use pixel offset if dimensions provided
+    const centerOffsetX = imageWidth !== undefined ? -imageWidth / 2 : 0;
+    const centerOffsetY = imageHeight !== undefined ? -imageHeight / 2 : 0;
+    const centerTranslate = imageWidth !== undefined
+      ? `translate(${centerOffsetX}px, ${centerOffsetY}px)`
+      : `translate(-50%, -50%)`;
+
     if (startPosition.useScale) {
       // For center position: start at center with scale 0
-      return `translate(${translateX}px, ${translateY}px) rotate(${finalRotation}deg) scale(0)`;
+      return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${finalRotation}deg) scale(0)`;
     }
 
     // Standard entry: translate from edge, maintain rotation and scale
-    return `translate(${translateX}px, ${translateY}px) rotate(${finalRotation}deg) scale(${finalScale})`;
+    return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${finalRotation}deg) scale(${finalScale})`;
   }
 
   /**
    * Build the final CSS transform string
+   * Uses pixel-based centering offset for reliable cross-browser behavior
    */
-  buildFinalTransform(rotation: number, scale: number): string {
-    return `rotate(${rotation}deg) scale(${scale})`;
+  buildFinalTransform(rotation: number, scale: number, imageWidth?: number, imageHeight?: number): string {
+    // Use pixel offset if dimensions provided, otherwise fall back to percentage
+    if (imageWidth !== undefined && imageHeight !== undefined) {
+      const offsetX = -imageWidth / 2;
+      const offsetY = -imageHeight / 2;
+      return `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg) scale(${scale})`;
+    }
+    return `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`;
   }
 
   /**

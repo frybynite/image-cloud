@@ -34,14 +34,19 @@ export class RandomPlacementGenerator implements PlacementGenerator {
     const sizeVarianceMin = this.config.sizing.variance.min;
     const sizeVarianceMax = this.config.sizing.variance.max;
 
-    // Calculate safe bounds (accounting for image size and padding)
-    const maxX = width - baseImageSize - padding;
-    const maxY = height - baseImageSize - padding;
-    const minX = padding;
-    const minY = padding;
+    // Calculate safe bounds for center positions (accounting for half image size and padding)
+    // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
+    const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
+    const halfWidth = (baseImageSize * estAspectRatio) / 2;
+    const halfHeight = baseImageSize / 2;
+
+    const maxX = width - padding - halfWidth;
+    const maxY = height - padding - halfHeight;
+    const minX = padding + halfWidth;
+    const minY = padding + halfHeight;
 
     for (let i = 0; i < imageCount; i++) {
-      // Random position within safe bounds
+      // Random center position within safe bounds
       const x = this.random(minX, maxX);
       const y = this.random(minY, maxY);
 

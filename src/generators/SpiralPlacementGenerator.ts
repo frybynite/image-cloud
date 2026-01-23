@@ -58,9 +58,6 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
       cy - padding - baseImageSize / 2
     );
 
-    // Estimated image width for landscape images
-    const estimatedImageWidth = baseImageSize * 1.4;
-
     // Direction multiplier (1 for counterclockwise, -1 for clockwise)
     const directionMultiplier = spiralConfig.direction === 'clockwise' ? -1 : 1;
 
@@ -87,13 +84,9 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
         radius = this.calculateLogarithmicRadius(theta, imageCount, maxRadius, spiralConfig.tightness);
       }
 
-      // Convert polar to cartesian coordinates
-      const centerX = cx + Math.cos(angle) * radius;
-      const centerY = cy + Math.sin(angle) * radius;
-
-      // Top-left position
-      let x = centerX - estimatedImageWidth / 2;
-      let y = centerY - baseImageSize / 2;
+      // Convert polar to cartesian coordinates (store center position)
+      const x = cx + Math.cos(angle) * radius;
+      const y = cy + Math.sin(angle) * radius;
 
       // Calculate scale based on decay (center images larger)
       const normalizedRadius = radius / maxRadius;
@@ -103,14 +96,19 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
 
       // Apply scaled image size
       const scaledImageSize = baseImageSize * scale;
-      const scaledImageWidth = estimatedImageWidth * scale;
 
-      // Recalculate position with scaled size
-      x = centerX - scaledImageWidth / 2;
-      y = centerY - scaledImageSize / 2;
+      // Clamp center positions to keep images within bounds
+      // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
+      const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
+      const halfWidth = (scaledImageSize * estAspectRatio) / 2;
+      const halfHeight = scaledImageSize / 2;
+      const minX = padding + halfWidth;
+      const maxX = width - padding - halfWidth;
+      const minY = padding + halfHeight;
+      const maxY = height - padding - halfHeight;
 
-      // Note: No boundary clamping - maxRadius calculation already ensures images stay within bounds
-      // Clamping would cause asymmetric shifts making the spiral appear off-center
+      const clampedX = Math.max(minX, Math.min(x, maxX));
+      const clampedY = Math.max(minY, Math.min(y, maxY));
 
       // Rotation - slight variance that follows spiral direction
       const baseRotation = (angle * 180 / Math.PI) % 360;
@@ -124,8 +122,8 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
 
       layouts.push({
         id: i,
-        x,
-        y,
+        x: clampedX,
+        y: clampedY,
         rotation,
         scale,
         baseSize: scaledImageSize,

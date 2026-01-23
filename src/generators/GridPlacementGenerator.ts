@@ -76,9 +76,6 @@ export class GridPlacementGenerator implements PlacementGenerator {
       ? Math.min(options.fixedHeight, cellBasedSize)
       : cellBasedSize;
 
-    // Estimated width for landscape images
-    const estimatedImageWidth = imageSize * 1.4;
-
     // Calculate total grid dimensions for alignment
     const totalGridWidth = columns * cellWidth + (columns - 1) * gridConfig.gap;
     const totalGridHeight = rows * cellHeight + (rows - 1) * gridConfig.gap;
@@ -118,9 +115,9 @@ export class GridPlacementGenerator implements PlacementGenerator {
         cellCenterY += this.random(-maxJitterY, maxJitterY);
       }
 
-      // Convert center position to top-left corner
-      let x = cellCenterX - estimatedImageWidth / 2;
-      let y = cellCenterY - imageSize / 2;
+      // Store center position directly (not top-left)
+      let x = cellCenterX;
+      let y = cellCenterY;
 
       // Handle incomplete row alignment
       if (gridConfig.fillDirection === 'row') {
@@ -141,9 +138,18 @@ export class GridPlacementGenerator implements PlacementGenerator {
         }
       }
 
-      // Boundary clamping
-      x = Math.max(padding, Math.min(x, width - estimatedImageWidth - padding));
-      y = Math.max(padding, Math.min(y, height - imageSize - padding));
+      // Boundary clamping for center-based positioning
+      // Use 1.5 multiplier (3:2 aspect) as reasonable middle ground for mixed portrait/landscape
+      const estAspectRatio = 1.5;
+      const halfWidth = (imageSize * estAspectRatio) / 2;
+      const halfHeight = imageSize / 2;
+      const minX = padding + halfWidth;
+      const maxX = width - padding - halfWidth;
+      const minY = padding + halfHeight;
+      const maxY = height - padding - halfHeight;
+
+      x = Math.max(minX, Math.min(x, maxX));
+      y = Math.max(minY, Math.min(y, maxY));
 
       // Apply rotation (reduced for grid layouts to maintain structure)
       const rotation = gridConfig.jitter > 0

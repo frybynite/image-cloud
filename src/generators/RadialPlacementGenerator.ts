@@ -42,15 +42,12 @@ export class RadialPlacementGenerator implements PlacementGenerator {
     const cx = width / 2;
     const cy = height / 2;
 
-    // Initial placement at center
-    const startY = cy - imageSize / 2;
-
-    // Add center image
+    // Add center image (using center position)
     if (imageCount > 0) {
       layouts.push({
         id: 0,
-        x: cx - (this.estimateWidth(imageSize) / 2),
-        y: startY,
+        x: cx,
+        y: cy,
         rotation: this.random(-5, 5), // Less rotation for center
         scale: 1.0,
         baseSize: imageSize,
@@ -87,29 +84,29 @@ export class RadialPlacementGenerator implements PlacementGenerator {
       for (let i = 0; i < itemsInRing && processedCount < imageCount; i++) {
         const angle = (i * angleStep) + ringOffset;
 
-        // Calculate center position of image using elliptical formula
-        const centerX = cx + Math.cos(angle) * radiusX;
-        const centerY = cy + Math.sin(angle) * radiusY;
+        // Calculate center position of image using elliptical formula (store center, not top-left)
+        let x = cx + Math.cos(angle) * radiusX;
+        let y = cy + Math.sin(angle) * radiusY;
 
-        // Top-left position
-        let x = centerX - (estimatedItemWidth / 2);
-        let y = centerY - (imageSize / 2);
-
-        // Boundary Clamping
+        // Boundary Clamping - clamp center position with conservative estimate
+        // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
         const padding = this.config.spacing.padding ?? 50;
+        const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
+        const halfWidth = (imageSize * estAspectRatio) / 2;
+        const halfHeight = imageSize / 2;
 
-        // Clamp X
-        if (x < padding) {
-          x = padding;
-        } else if (x + estimatedItemWidth > width - padding) {
-          x = width - padding - estimatedItemWidth;
+        // Clamp X (center position)
+        if (x - halfWidth < padding) {
+          x = padding + halfWidth;
+        } else if (x + halfWidth > width - padding) {
+          x = width - padding - halfWidth;
         }
 
-        // Clamp Y
-        if (y < padding) {
-          y = padding;
-        } else if (y + imageSize > height - padding) {
-          y = height - padding - imageSize;
+        // Clamp Y (center position)
+        if (y - halfHeight < padding) {
+          y = padding + halfHeight;
+        } else if (y + halfHeight > height - padding) {
+          y = height - padding - halfHeight;
         }
 
         const rotation = this.random(-rotationRange, rotationRange);

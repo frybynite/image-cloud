@@ -752,6 +752,18 @@
                     </div>
                 </div>
 
+                <div class="preset-section">
+                    <label>Debug Centers</label>
+                    <div class="control-row" style="margin: 0;">
+                        <input type="checkbox" class="control-checkbox" id="enable-debug-centers" checked>
+                        <label class="control-label" data-label="Debug Centers" data-path="debugCenters" style="flex: 0;">Debug Centers</label>
+                        <div class="control-input">
+                            <input type="checkbox" id="debug-centers" checked>
+                            <span class="value-display" style="font-size: 11px; opacity: 0.7;">Show center markers</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Layout Section -->
                 <div class="accordion open" data-section="layout">
                     <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
@@ -1088,10 +1100,10 @@
                         <div class="control-group">
                             <h5 class="control-group-title" data-label="Rotation" data-path="layout.rotation">Rotation</h5>
                             <div class="subsection-toggle">
-                                <input type="checkbox" id="enable-rotation" checked onchange="toggleSubsection('rotation-content', this.checked)">
+                                <input type="checkbox" id="enable-rotation" onchange="toggleSubsection('rotation-content', this.checked)">
                                 <label for="enable-rotation" data-label="Enabled" data-path="rotation.enabled">Enabled</label>
                             </div>
-                            <div class="subsection-content" id="rotation-content">
+                            <div class="subsection-content" id="rotation-content" style="display: none;">
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-rotation-min">
                                     <label class="control-label" data-label="Min Degrees" data-path="rotation.range.min">Min Degrees</label>
@@ -1762,6 +1774,7 @@
         window.toggleSubsection = function(contentId, enabled) {
             const content = document.getElementById(contentId);
             if (content) {
+                content.style.display = enabled ? 'block' : 'none';
                 content.classList.toggle('disabled', !enabled);
             }
         };
@@ -1850,6 +1863,11 @@
             const algorithm = document.getElementById('layout-algorithm').value;
             if (document.getElementById('enable-algorithm')?.checked) {
                 layout.algorithm = algorithm;
+            }
+
+            // Debug Centers
+            if (document.getElementById('enable-debug-centers')?.checked) {
+                layout.debugCenters = document.getElementById('debug-centers')?.checked || false;
             }
 
             // Sizing

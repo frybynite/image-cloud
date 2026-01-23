@@ -329,6 +329,20 @@ export class ImageGallery {
               img.style.opacity = this.defaultStyles.opacity ?? '1';
               const finalTransform = img.dataset.finalTransform || '';
               img.style.transform = finalTransform;
+
+              // Debug: log final state for first few images
+              const imgIndex = parseInt(img.dataset.imageId || '0');
+              if (this.fullConfig.debug && imgIndex < 3) {
+                console.log(`Image ${imgIndex} final state:`, {
+                  left: img.style.left,
+                  top: img.style.top,
+                  width: img.style.width,
+                  height: img.style.height,
+                  computedWidth: img.offsetWidth,
+                  computedHeight: img.offsetHeight,
+                  transform: finalTransform
+                });
+              }
             });
 
             processedCount++;
@@ -359,20 +373,47 @@ export class ImageGallery {
       startQueueProcessing();
     }
 
+    // Debug: Draw center markers if debugCenters is enabled
+    if (this.fullConfig.layout.debugCenters && this.containerEl) {
+      // Remove any existing debug markers
+      this.containerEl.querySelectorAll('.fbn-ic-debug-center').forEach(el => el.remove());
+
+      layouts.forEach((layout, index) => {
+        const marker = document.createElement('div');
+        marker.className = 'fbn-ic-debug-center';
+        marker.style.position = 'absolute';
+        marker.style.width = '12px';
+        marker.style.height = '12px';
+        marker.style.borderRadius = '50%';
+        marker.style.backgroundColor = 'red';
+        marker.style.border = '2px solid yellow';
+        marker.style.zIndex = '9999';
+        marker.style.pointerEvents = 'none';
+        // Center position: layout.x and layout.y now store the center position directly
+        const centerX = layout.x;
+        const centerY = layout.y;
+        marker.style.left = `${centerX - 6}px`;  // Offset by half marker size
+        marker.style.top = `${centerY - 6}px`;
+        marker.title = `Image ${index}: center (${Math.round(centerX)}, ${Math.round(centerY)})`;
+        this.containerEl!.appendChild(marker);
+      });
+    }
+
     // Create elements
     imageUrls.forEach((url, index) => {
       const img = document.createElement('img');
-      img.src = url;
+      // NOTE: img.src is set AFTER onload handler to ensure handler catches cached images
       img.referrerPolicy = 'no-referrer';
       img.classList.add('fbn-ic-image');
       img.dataset.imageId = String(index);
 
       const layout = layouts[index];
+      img.style.position = 'absolute';
       img.style.width = 'auto';
       img.style.height = `${imageHeight}px`;
       img.style.left = `${layout.x}px`;
       img.style.top = `${layout.y}px`;
-      img.style.transform = `rotate(${layout.rotation}deg) scale(${layout.scale})`;
+      // Transform will be applied in onload after we know the actual dimensions
 
       // Apply layout-specified border only if no styling config border is set
       if (layout.borderColor && !this.fullConfig.styling?.default?.border) {
@@ -417,6 +458,9 @@ export class ImageGallery {
         const aspectRatio = img.naturalWidth / img.naturalHeight;
         const renderedWidth = imageHeight * aspectRatio;
 
+        // Set explicit width so transform calculations are accurate
+        img.style.width = `${renderedWidth}px`;
+
         // Use EntryAnimationEngine for start position calculation
         const finalPosition = { x: layout.x, y: layout.y };
         const imageSize = { width: renderedWidth, height: imageHeight };
@@ -431,14 +475,30 @@ export class ImageGallery {
 
         const finalTransform = this.entryAnimationEngine.buildFinalTransform(
           layout.rotation,
-          layout.scale
+          layout.scale,
+          renderedWidth,
+          imageHeight
         );
         const startTransform = this.entryAnimationEngine.buildStartTransform(
           startPosition,
           finalPosition,
           layout.rotation,
-          layout.scale
+          layout.scale,
+          renderedWidth,
+          imageHeight
         );
+
+        if (this.fullConfig.debug && index < 3) {
+          console.log(`Image ${index}:`, {
+            finalPosition,
+            imageSize,
+            left: layout.x,
+            top: layout.y,
+            finalTransform,
+            renderedWidth,
+            renderedHeight: imageHeight
+          });
+        }
 
         img.style.transform = startTransform;
         img.dataset.finalTransform = finalTransform;
@@ -447,6 +507,9 @@ export class ImageGallery {
       };
 
       img.onerror = () => processedCount++;
+
+      // Set src AFTER onload handler to ensure it catches cached images
+      img.src = url;
     });
   }
 

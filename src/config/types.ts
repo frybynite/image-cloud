@@ -178,6 +178,7 @@ export interface LayoutConfig {
   rotation: LayoutRotationConfig;
   spacing: LayoutSpacingConfig;
   debugRadials?: boolean;
+  debugCenters?: boolean;  // Show markers at calculated image center positions
   grid?: GridAlgorithmConfig;
   spiral?: SpiralAlgorithmConfig;
   cluster?: ClusterAlgorithmConfig;

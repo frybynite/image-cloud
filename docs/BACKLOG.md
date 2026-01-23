@@ -11,7 +11,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix: Duplicate images still appearing when resizing window from desktop to mobile size (race condition not fully resolved).
 - [ ] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources).
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
-- [ ] Review how images are placed - whether by corner or by image center (should be center).
+- [ ] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
 
 ---
 
@@ -62,6 +62,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 ## Completed
 
+- [x] Fix image centering - images now correctly center on their layout positions (using pixel-based translate transforms).
 - [x] Replace random image placement with a more organized layout.
 - [x] Reorganize images on window resize to ensure they stay within the visible screen area.
 - [x] Render images progressively as they load instead of waiting for all to complete.

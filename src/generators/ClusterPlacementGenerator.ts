@@ -70,9 +70,6 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
       clusterConfig
     );
 
-    // Estimated image width for landscape images
-    const estimatedImageWidth = baseImageSize * 1.4;
-
     // Assign images to clusters (round-robin for even distribution)
     const imagesPerCluster = new Array(clusterCount).fill(0);
     for (let i = 0; i < imageCount; i++) {
@@ -111,20 +108,20 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
         offsetX /= overlapMultiplier;
         offsetY /= overlapMultiplier;
 
-        const centerX = cluster.x + offsetX;
-        const centerY = cluster.y + offsetY;
-
         // Calculate image size with overlap factor
         const imageSize = baseImageSize * sizeMultiplier;
-        const imageWidth = estimatedImageWidth * sizeMultiplier;
 
-        // Top-left position
-        let x = centerX - imageWidth / 2;
-        let y = centerY - imageSize / 2;
+        // Store center position (not top-left)
+        let x = cluster.x + offsetX;
+        let y = cluster.y + offsetY;
 
-        // Boundary clamping
-        x = Math.max(padding, Math.min(x, width - imageWidth - padding));
-        y = Math.max(padding, Math.min(y, height - imageSize - padding));
+        // Boundary clamping with center position
+        // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
+        const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
+        const halfWidth = (imageSize * estAspectRatio) / 2;
+        const halfHeight = imageSize / 2;
+        x = Math.max(padding + halfWidth, Math.min(x, width - padding - halfWidth));
+        y = Math.max(padding + halfHeight, Math.min(y, height - padding - halfHeight));
 
         // Rotation - more variance for organic feel
         const rotation = this.random(-rotationRange, rotationRange);

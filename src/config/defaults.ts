@@ -108,7 +108,7 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
       })
     }),
     rotation: Object.freeze({
-      enabled: true,
+      enabled: false,
       range: Object.freeze({
         min: -15,  // degrees
         max: 15    // degrees
@@ -118,7 +118,8 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
       padding: 50,   // padding from viewport edges
       minGap: 20     // minimum spacing between images
     }),
-    debugRadials: false
+    debugRadials: false,
+    debugCenters: false
   }),
 
   // Pattern-based animation configuration

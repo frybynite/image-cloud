@@ -37,7 +37,8 @@ export class AnimationEngine {
       const animEasing = easing ?? this.config.easing.default;
 
       // Build transform string
-      const transforms: string[] = [];
+      // Always start with centering transform to match image positioning system
+      const transforms: string[] = ['translate(-50%, -50%)'];
 
       if (properties.x !== undefined || properties.y !== undefined) {
         const x = properties.x ?? 0;

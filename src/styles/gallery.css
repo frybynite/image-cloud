@@ -39,10 +39,7 @@
 /* Cloud Images */
 .fbn-ic-image {
     position: absolute;
-    width: auto;
-    height: auto;
-    max-width: 300px;
-    max-height: 300px;
+    /* width and height are set dynamically via JavaScript */
     /* border-radius, box-shadow, filter, opacity, cursor are now configurable via styling config */
     /* Inline styles from JS will override these fallbacks when styling config is provided */
     border-radius: 8px;
@@ -129,16 +126,4 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    .fbn-ic-image {
-        max-width: 150px;
-        max-height: 150px;
-    }
-}
-
-@media (max-width: 480px) {
-    .fbn-ic-image {
-        max-width: 120px;
-        max-height: 120px;
-    }
-}
+/* Image sizes are now controlled via JavaScript adaptive sizing, not CSS media queries */
