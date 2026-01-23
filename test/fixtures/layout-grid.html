@@ -13,9 +13,9 @@
 <body>
   <div id="imageCloud"></div>
   <script type="module">
-    import { ImageGallery } from '/dist/image-cloud.js';
+    import { ImageCloud } from '/dist/image-cloud.js';
 
-    window.ImageGallery = ImageGallery;
+    window.ImageCloud = ImageCloud;
 
     // Default grid config - can be overridden via window.testConfig before page load
     const defaultConfig = {
@@ -66,7 +66,7 @@
     // Allow test to override config
     const config = window.testGridConfig || defaultConfig;
 
-    window.gallery = new ImageGallery(config);
+    window.gallery = new ImageCloud(config);
     window.gallery.init().catch(error => {
       console.error('Gallery initialization failed:', error);
     });

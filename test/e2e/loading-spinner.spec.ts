@@ -186,7 +186,7 @@ declare global {
   interface Window {
     galleryInitPromise: Promise<void>;
     galleryInitError?: Error;
-    ImageGallery: any;
+    ImageCloud: any;
     gallery: any;
   }
 }

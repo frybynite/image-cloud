@@ -1,10 +1,10 @@
 /**
- * ImageGallery.js
+ * ImageCloud.js
  * Main application class
  * Manages dependencies, initialization, and coordination of the interactive image cloud
  */
 
-class ImageGallery {
+class ImageCloud {
     constructor(options = {}) {
         this.options = options;
         
@@ -127,7 +127,7 @@ class ImageGallery {
             this.setupEventListeners();
 
             // 7. Load Images
-            debugLog('ImageGallery initialized');
+            debugLog('ImageCloud initialized');
 
             // For static loader, sources are in config; for GoogleDrive, use folderUrl
             if (loaderType === 'static') {
@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const containers = document.querySelectorAll('[data-image-gallery]');
 
     if (containers.length === 0) {
-        console.warn('ImageGallery: No containers found with data-image-gallery attribute');
+        console.warn('ImageCloud: No containers found with data-image-gallery attribute');
         return;
     }
 
@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     containers.forEach(container => {
         // Container must have an ID for the gallery to work
         if (!container.id) {
-            console.error('ImageGallery: Container with data-image-gallery must have an id attribute');
+            console.error('ImageCloud: Container with data-image-gallery must have an id attribute');
             return;
         }
 
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
             JSON.parse(container.dataset.staticSources) : null;
 
         // Initialize gallery
-        const gallery = new ImageGallery({
+        const gallery = new ImageCloud({
             containerId: container.id,
             folderUrl: googleDriveFolderUrl,
             loaderType: loaderType,

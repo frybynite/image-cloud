@@ -1,5 +1,5 @@
 /**
- * Image Gallery Library - Main Entry Point
+ * Image Cloud Library - Main Entry Point
  *
  * Programmatic API for TypeScript/JavaScript applications
  */
@@ -8,11 +8,15 @@
 import './styles/gallery.css';
 
 // Main class export
-export { ImageGallery } from './ImageGallery';
+export { ImageCloud } from './ImageCloud';
+
+// Backwards compatibility alias
+export { ImageCloud as ImageGallery } from './ImageCloud';
 
 // Type exports
 export type {
-  ImageGalleryOptions,
+  ImageCloudOptions,
+  ImageGalleryOptions, // Backwards compatibility alias
   GalleryConfig,
   AnimationConfig,
   LayoutConfig,

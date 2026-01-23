@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "description": "TypeScript image cloud library with animated scattered layouts and zoom effects",
   "type": "module",
-  "main": "./dist/image-gallery.umd.js",
-  "module": "./dist/image-gallery.js",
+  "main": "./dist/image-cloud.umd.js",
+  "module": "./dist/image-cloud.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/image-gallery.js",
-      "require": "./dist/image-gallery.umd.js",
+      "import": "./dist/image-cloud.js",
+      "require": "./dist/image-cloud.umd.js",
       "types": "./dist/index.d.ts"
     },
     "./style.css": "./dist/style.css"

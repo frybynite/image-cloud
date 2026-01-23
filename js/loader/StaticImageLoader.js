@@ -1,7 +1,7 @@
 /**
  * StaticImageLoader.js
  * Loads images from predefined URL sources and local paths
- * Compatible with ImageGallery's loader interface
+ * Compatible with ImageCloud's loader interface
  */
 
 class StaticImageLoader {

@@ -29,7 +29,7 @@ async function initGallery(page: any, clusterConfig: object = {}, imageCount = 1
 
   await page.evaluate(async ({ urls, cluster }: { urls: string[], cluster: object }) => {
     // @ts-ignore
-    window.gallery = new window.ImageGallery({
+    window.gallery = new window.ImageCloud({
       container: 'imageCloud',
       loader: {
         type: 'static',

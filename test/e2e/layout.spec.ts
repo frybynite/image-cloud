@@ -92,7 +92,7 @@ test.describe('Layout Algorithms', () => {
         if (container) container.innerHTML = '';
 
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',

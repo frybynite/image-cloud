@@ -19,7 +19,7 @@ async function initGallery(page: any, config: object) {
     if (container) container.innerHTML = '';
 
     // @ts-ignore
-    window.gallery = new window.ImageGallery({
+    window.gallery = new window.ImageCloud({
       container: 'imageCloud',
       loader: {
         type: 'static',
@@ -294,7 +294,7 @@ test.describe('Visual Regression', () => {
 
       await page.evaluate(async (urls: string[]) => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',

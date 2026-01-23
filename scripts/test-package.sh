@@ -89,11 +89,11 @@ cat > index.html << 'EOF'
     <div id="gallery"></div>
 
     <script type="module">
-        import { ImageGallery } from './node_modules/@frybynite/image-gallery/dist/image-gallery.js';
+        import { ImageCloud } from './node_modules/@frybynite/image-gallery/dist/image-gallery.js';
 
         console.log('Package loaded successfully!');
 
-        const gallery = new ImageGallery({
+        const gallery = new ImageCloud({
             containerId: 'gallery',
             loaderType: 'static',
             staticLoader: {
@@ -125,10 +125,10 @@ EOF
 
 cat > test.js << 'EOF'
 // Node.js test file
-import { ImageGallery } from '@frybynite/image-gallery';
+import { ImageCloud } from '@frybynite/image-gallery';
 
 console.log('✓ Package imports successfully');
-console.log('✓ ImageGallery class available:', typeof ImageGallery);
+console.log('✓ ImageCloud class available:', typeof ImageCloud);
 
 // Type check
 const options = {

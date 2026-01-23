@@ -57,7 +57,7 @@ test.describe('Gallery Initialization', () => {
     await page.evaluate(() => {
       document.getElementById('imageCloud')?.remove();
       // @ts-ignore
-      const gallery = new window.ImageGallery({
+      const gallery = new window.ImageCloud({
         container: 'nonexistent',
         loader: {
           type: 'static',

@@ -30,11 +30,11 @@
     <!-- Load library via UMD bundle (works without module system) -->
     <script src="../dist/image-cloud.umd.js"></script>
     <script>
-        // Access via global ImageGallery object
-        const { ImageGallery } = window.ImageGallery;
+        // Access via global ImageCloud object
+        const { ImageCloud } = window.ImageCloud;
 
         // NEW FORMAT (v0.2.0+): Pattern-based configuration
-        const gallery = new ImageGallery({
+        const gallery = new ImageCloud({
             container: 'gallery',
             loader: {
                 type: 'static',

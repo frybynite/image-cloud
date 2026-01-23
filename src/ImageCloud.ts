@@ -1,10 +1,10 @@
 /**
- * ImageGallery.ts
+ * ImageCloud.ts
  * Main application class
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageGalleryOptions, GalleryConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig } from './config/types';
+import type { ImageCloudOptions, GalleryConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig } from './config/types';
 import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
@@ -17,7 +17,7 @@ import { CompositeLoader } from './loaders/CompositeLoader';
 import { ImageFilter } from './loaders/ImageFilter';
 import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
 
-export class ImageGallery {
+export class ImageCloud {
   private containerId: string;
 
   // Internal state
@@ -49,7 +49,7 @@ export class ImageGallery {
   private loadingEl: HTMLElement | null;
   private errorEl: HTMLElement | null;
 
-  constructor(options: ImageGalleryOptions = {}) {
+  constructor(options: ImageCloudOptions = {}) {
     this.fullConfig = mergeConfig(options);
     this.containerId = options.container || 'imageCloud';
 
@@ -161,7 +161,7 @@ export class ImageGallery {
       this.setupEventListeners();
 
       // 3. Load Images
-      this.logDebug('ImageGallery initialized');
+      this.logDebug('ImageCloud initialized');
       await this.loadImages();
 
     } catch (error) {

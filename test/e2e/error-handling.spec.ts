@@ -32,7 +32,7 @@ test.describe('Error Handling', () => {
       const error = await page.evaluate(async () => {
         try {
           // @ts-ignore
-          const gallery = new window.ImageGallery({
+          const gallery = new window.ImageCloud({
             container: 'nonexistent-container-id',
             loader: {
               type: 'static',
@@ -73,7 +73,7 @@ test.describe('Error Handling', () => {
       const error = await page.evaluate(async () => {
         try {
           // @ts-ignore
-          const gallery = new window.ImageGallery({
+          const gallery = new window.ImageCloud({
             container: 'imageCloud',
             loader: {
               type: 'static',
@@ -103,7 +103,7 @@ test.describe('Error Handling', () => {
 
       await page.evaluate(async (invalidUrls: string[]) => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -142,7 +142,7 @@ test.describe('Error Handling', () => {
 
       await page.evaluate(async (urls: string[]) => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -174,7 +174,7 @@ test.describe('Error Handling', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -322,7 +322,7 @@ test.describe('Error Handling', () => {
       // Use URLs that will be filtered out (e.g., PDFs)
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -357,7 +357,7 @@ test.describe('Error Handling', () => {
 
       const error = await page.evaluate(async () => {
         // @ts-ignore
-        const gallery = new window.ImageGallery({
+        const gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -386,7 +386,7 @@ test.describe('Error Handling', () => {
 
       const error = await page.evaluate(async () => {
         // @ts-ignore
-        const gallery = new window.ImageGallery({
+        const gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -472,7 +472,7 @@ test.describe('Error Handling', () => {
       const error = await page.evaluate(async () => {
         try {
           // @ts-ignore
-          window.gallery = new window.ImageGallery({
+          window.gallery = new window.ImageCloud({
             container: 'imageCloud',
             loader: {
               type: 'static',
@@ -518,7 +518,7 @@ test.describe('Error Handling', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -551,7 +551,7 @@ test.describe('Error Handling', () => {
       const error = await page.evaluate(async (urls: string[]) => {
         try {
           // @ts-ignore
-          window.gallery = new window.ImageGallery({
+          window.gallery = new window.ImageCloud({
             container: 'imageCloud',
             loader: {
               type: 'static',
@@ -588,7 +588,7 @@ test.describe('Error Handling', () => {
         try {
           for (let i = 0; i < 5; i++) {
             // @ts-ignore
-            const gallery = new window.ImageGallery({
+            const gallery = new window.ImageCloud({
               container: 'imageCloud',
               loader: {
                 type: 'static',

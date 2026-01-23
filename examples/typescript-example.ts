@@ -1,16 +1,16 @@
 /**
  * TypeScript Usage Example (v0.2.0+ with new pattern-based configuration)
  *
- * This example shows how to use the Image Gallery library in a TypeScript project.
+ * This example shows how to use the Image Cloud library in a TypeScript project.
  * Install: npm install @frybynite/image-cloud
  */
 
-import { ImageGallery, type ImageGalleryOptions } from '@frybynite/image-cloud';
+import { ImageCloud, type ImageCloudOptions } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
 
 // Example 1: Basic usage with static images (NEW FORMAT)
 function basicExample() {
-    const gallery = new ImageGallery({
+    const gallery = new ImageCloud({
         container: 'gallery',
         loader: {
             type: 'static',
@@ -33,7 +33,7 @@ function basicExample() {
 
 // Example 2: With full type safety and pattern-based config (NEW FORMAT)
 function typedExample() {
-    const options: ImageGalleryOptions = {
+    const options: ImageCloudOptions = {
         container: 'gallery',
         loader: {
             type: 'static',
@@ -81,13 +81,13 @@ function typedExample() {
         }
     };
 
-    const gallery = new ImageGallery(options);
+    const gallery = new ImageCloud(options);
     gallery.init();
 }
 
 // Example 3: Google Drive integration with multiple sources (NEW FORMAT)
 async function googleDriveExample() {
-    const gallery = new ImageGallery({
+    const gallery = new ImageCloud({
         container: 'gallery',
         loader: {
             type: 'googleDrive',
@@ -132,11 +132,11 @@ import { useEffect, useRef } from 'react';
 
 function GalleryComponent() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const galleryRef = useRef<ImageGallery | null>(null);
+    const galleryRef = useRef<ImageCloud | null>(null);
 
     useEffect(() => {
         if (containerRef.current) {
-            galleryRef.current = new ImageGallery({
+            galleryRef.current = new ImageCloud({
                 container: containerRef.current.id,
                 loader: {
                     type: 'static',
@@ -165,11 +165,11 @@ function GalleryComponent() {
 // Example 5: Vue 3 Composition API (NEW FORMAT)
 import { onMounted, onUnmounted, ref } from 'vue';
 
-function useImageGallery(containerId: string, options: Omit<ImageGalleryOptions, 'container'>) {
-    const gallery = ref<ImageGallery | null>(null);
+function useImageCloud(containerId: string, options: Omit<ImageCloudOptions, 'container'>) {
+    const gallery = ref<ImageCloud | null>(null);
 
     onMounted(async () => {
-        gallery.value = new ImageGallery({
+        gallery.value = new ImageCloud({
             container: containerId,
             ...options
         });
@@ -194,5 +194,5 @@ export {
     typedExample,
     googleDriveExample,
     GalleryComponent,
-    useImageGallery
+    useImageCloud
 };

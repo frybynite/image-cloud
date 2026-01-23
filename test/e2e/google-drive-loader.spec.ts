@@ -209,7 +209,7 @@ declare global {
     galleryInitPromise: Promise<void>;
     galleryInitError?: Error;
     GoogleDriveLoader: any;
-    ImageGallery: any;
+    ImageCloud: any;
     gallery: any;
   }
 }

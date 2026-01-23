@@ -19,7 +19,7 @@ async function initGallery(page: any, stylingConfig: object = {}) {
 
   await page.evaluate(async ({ urls, styling }: { urls: string[], styling: object }) => {
     // @ts-ignore
-    window.gallery = new window.ImageGallery({
+    window.gallery = new window.ImageCloud({
       container: 'imageCloud',
       loader: {
         type: 'static',

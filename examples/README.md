@@ -34,7 +34,7 @@ npx serve ..
 
 **Features:**
 - Traditional script tag loading
-- Access via global `window.ImageGallery`
+- Access via global `window.ImageCloud`
 - Works in older browsers
 - Radial layout configuration
 
@@ -51,10 +51,10 @@ Comprehensive TypeScript usage examples for various frameworks.
 
 **Usage:**
 ```typescript
-import { ImageGallery } from '@frybynite/image-gallery';
+import { ImageCloud } from '@frybynite/image-gallery';
 import '@frybynite/image-gallery/style.css';
 
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
     containerId: 'gallery',
     loaderType: 'static',
     staticLoader: {

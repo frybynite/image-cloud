@@ -30,10 +30,10 @@ The Image Cloud library offers a flexible configuration system to customize ever
 
 ## Pattern-Based Configuration
 
-Initialize the gallery using the `ImageGalleryOptions` structure.
+Initialize the gallery using the `ImageCloudOptions` structure.
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery-id', // optional, defaults to 'imageCloud'
   loader: { ... },
   layout: { ... },
@@ -89,7 +89,7 @@ Controls how images are fetched and validated.
 The `CompositeLoader` combines multiple loaders of any type and loads them in parallel. This is useful for combining images from different sources (e.g., Google Drive + static URLs).
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: {
     type: 'composite',
@@ -555,7 +555,7 @@ When you don't specify `start.position`, the library automatically chooses the b
 **Default behavior (no config needed):**
 ```typescript
 // Uses layout-aware defaults automatically
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: { algorithm: 'radial' }  // Will use 'center' entry by default
@@ -1083,7 +1083,7 @@ All available parameters with example values:
 ### Grid Gallery with Stagger
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: {
     type: 'static',
@@ -1108,7 +1108,7 @@ const gallery = new ImageGallery({
 ### Golden Spiral with Scale Decay
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {
@@ -1127,7 +1127,7 @@ const gallery = new ImageGallery({
 ### Clustered Photo Pile
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {
@@ -1151,7 +1151,7 @@ const gallery = new ImageGallery({
 ### Minimal Grid (No Overlap)
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {
@@ -1172,7 +1172,7 @@ const gallery = new ImageGallery({
 ### Archimedean Spiral
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {
@@ -1273,7 +1273,7 @@ const gallery = new ImageGallery({
 ### Entry Animation: Center Burst
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: {
     type: 'static',
@@ -1297,7 +1297,7 @@ const gallery = new ImageGallery({
 ### Entry Animation: Top Cascade (Grid)
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {
@@ -1318,7 +1318,7 @@ const gallery = new ImageGallery({
 ### Entry Animation: Circular Entrance
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {
@@ -1378,7 +1378,7 @@ const gallery = new ImageGallery({
 ### Flowing Wave Layout
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {
@@ -1405,7 +1405,7 @@ const gallery = new ImageGallery({
 ### Alternating Wave Pattern
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   layout: {

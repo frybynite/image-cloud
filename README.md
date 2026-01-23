@@ -1,11 +1,11 @@
-# Image Gallery Library
+# Image Cloud Library
 
-A TypeScript image gallery library with animated layouts and zoom effects. Supports both Google Drive and static image sources with radial and random placement strategies.
+A TypeScript library for creating interactive image galleries with animated scattered layouts and zoom effects. Supports multiple image sources (Google Drive, static URLs) and layout algorithms.
 
 ## Features
 
 - ✨ Animated image layouts with smooth transitions
-- 🎯 Radial and random placement algorithms
+- 🎯 Multiple layout algorithms (radial, grid, spiral, cluster, random)
 - 🔍 Zoom/focus interactions
 - 📱 Responsive design with breakpoint support
 - 🖼️ Multiple image sources (Google Drive, static URLs, local paths)
@@ -16,7 +16,7 @@ A TypeScript image gallery library with animated layouts and zoom effects. Suppo
 ## Installation
 
 ```bash
-npm install @frybynite/image-gallery
+npm install @frybynite/image-cloud
 ```
 
 ## Quick Start
@@ -24,10 +24,10 @@ npm install @frybynite/image-gallery
 ### TypeScript/JavaScript (Programmatic API)
 
 ```typescript
-import { ImageGallery } from '@frybynite/image-gallery';
-import '@frybynite/image-gallery/style.css';
+import { ImageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/style.css';
 
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'myGallery',
   loader: {
     type: 'static',
@@ -58,7 +58,7 @@ await gallery.init();
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="node_modules/@frybynite/image-gallery/dist/style.css">
+  <link rel="stylesheet" href="node_modules/@frybynite/image-cloud/dist/style.css">
 </head>
 <body>
   <!-- Note: Data attributes for auto-init need to be updated to match new structure if using complex config -->
@@ -68,7 +68,7 @@ await gallery.init();
   </div>
 
   <script type="module">
-    import { autoInitialize } from '@frybynite/image-gallery/auto-init';
+    import { autoInitialize } from '@frybynite/image-cloud/auto-init';
   </script>
 </body>
 </html>
@@ -80,15 +80,15 @@ await gallery.init();
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="https://unpkg.com/@frybynite/image-gallery/dist/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@frybynite/image-cloud/dist/style.css">
 </head>
 <body>
   <div id="gallery"></div>
 
-  <script src="https://unpkg.com/@frybynite/image-gallery/dist/image-gallery.umd.js"></script>
+  <script src="https://unpkg.com/@frybynite/image-cloud/dist/image-cloud.umd.js"></script>
   <script>
-    const { ImageGallery } = window.ImageGallery;
-    const gallery = new ImageGallery({
+    const { ImageCloud } = window.ImageCloud;
+    const gallery = new ImageCloud({
       container: 'gallery',
       loader: {
         type: 'static',
@@ -108,7 +108,7 @@ await gallery.init();
 ### Static Images from URLs
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'gallery',
   loader: {
     type: 'static',
@@ -133,7 +133,7 @@ await gallery.init();
 ### Static Images from Local Path
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'gallery',
   loader: {
     type: 'static',
@@ -155,7 +155,7 @@ await gallery.init();
 ### Google Drive Folder
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'gallery',
   loader: {
     type: 'googleDrive',
@@ -177,7 +177,7 @@ await gallery.init();
 ### Custom Configuration
 
 ```typescript
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'gallery',
   loader: {
     type: 'static',
@@ -186,7 +186,7 @@ const gallery = new ImageGallery({
     }
   },
   layout: {
-    algorithm: 'radial',  // or 'random'
+    algorithm: 'radial',  // 'radial' | 'grid' | 'spiral' | 'cluster' | 'random'
     sizing: {
       base: 250
     },
@@ -218,10 +218,10 @@ await gallery.init();
 
 See `docs/PARAMETERS.md` for full documentation of the configuration object.
 
-### ImageGalleryOptions
+### ImageCloudOptions
 
 ```typescript
-interface ImageGalleryOptions {
+interface ImageCloudOptions {
   container?: string;              // HTML element ID (default: 'imageCloud')
   loader?: Partial<LoaderConfig>;
   layout?: Partial<LayoutConfig>;
@@ -234,7 +234,7 @@ interface ImageGalleryOptions {
 
 ## API Reference
 
-### ImageGallery Class
+### ImageCloud Class
 
 #### Methods
 
@@ -254,7 +254,7 @@ interface ImageGalleryOptions {
 ### Custom Placement Generator
 
 ```typescript
-import { PlacementGenerator, ImageLayout, ContainerBounds } from '@frybynite/image-gallery';
+import { PlacementGenerator, ImageLayout, ContainerBounds } from '@frybynite/image-cloud';
 
 class CustomGenerator implements PlacementGenerator {
   generate(count: number, bounds: ContainerBounds): ImageLayout[] {
@@ -268,16 +268,16 @@ class CustomGenerator implements PlacementGenerator {
 
 ```tsx
 import { useEffect, useRef } from 'react';
-import { ImageGallery } from '@frybynite/image-gallery';
-import '@frybynite/image-gallery/style.css';
+import { ImageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/style.css';
 
 function GalleryComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const galleryRef = useRef<ImageGallery | null>(null);
+  const galleryRef = useRef<ImageCloud | null>(null);
 
   useEffect(() => {
     if (containerRef.current) {
-      galleryRef.current = new ImageGallery({
+      galleryRef.current = new ImageCloud({
         container: containerRef.current.id,
         loader: {
           type: 'static',

@@ -28,7 +28,7 @@ npm run preview      # Preview production build
 
 ```
 src/
-├── ImageGallery.ts      # Main entry point - orchestrates loaders, engines, generators
+├── ImageCloud.ts      # Main entry point - orchestrates loaders, engines, generators
 ├── index.ts             # Public exports
 ├── config/
 │   ├── types.ts         # TypeScript interfaces and types

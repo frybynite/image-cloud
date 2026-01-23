@@ -208,7 +208,7 @@
     </div>
 
     <script type="module">
-        import { ImageGallery } from '../dist/image-cloud.js';
+        import { ImageCloud } from '../dist/image-cloud.js';
 
         // Sample images from test fixtures
         const sampleImages = [
@@ -239,7 +239,7 @@
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            const gallery = new ImageGallery({
+            const gallery = new ImageCloud({
                 container: containerId,
                 loader: loaderConfig,
                 layout: {

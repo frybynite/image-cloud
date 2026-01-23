@@ -24,7 +24,7 @@ async function initGallery(page: any, spiralConfig: object = {}) {
 
   await page.evaluate(async ({ urls, spiral }: { urls: string[], spiral: object }) => {
     // @ts-ignore
-    window.gallery = new window.ImageGallery({
+    window.gallery = new window.ImageCloud({
       container: 'imageCloud',
       loader: {
         type: 'static',
@@ -245,7 +245,7 @@ test.describe('Spiral Layout Algorithm', () => {
       await page.goto('/test/fixtures/layout-spiral.html');
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -274,7 +274,7 @@ test.describe('Spiral Layout Algorithm', () => {
 
       await page.evaluate(async (imageUrls: string[]) => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',

@@ -47,7 +47,7 @@ const CONFIG = {
     
     // Google Drive API settings
     googleDrive: {
-        apiKey: '',  // Value provided by ImageGallery initialization
+        apiKey: '',  // Value provided by ImageCloud initialization
         apiEndpoint: 'https://www.googleapis.com/drive/v3/files',
         imageExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
     },

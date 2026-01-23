@@ -1525,7 +1525,7 @@
     </div>
 
     <script type="module">
-        import { ImageGallery } from '../../dist/image-cloud.js';
+        import { ImageCloud } from '../../dist/image-cloud.js';
 
         let gallery = null;
         let showingPaths = false;
@@ -2263,7 +2263,7 @@
                 gallery.destroy();
             }
             const config = buildConfig();
-            gallery = new ImageGallery(config);
+            gallery = new ImageCloud(config);
             await gallery.init();
         };
 

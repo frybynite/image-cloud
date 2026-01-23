@@ -5,7 +5,7 @@
  */
 
 import type {
-  ImageGalleryOptions,
+  ImageCloudOptions,
   LegacyImageGalleryOptions,
   GoogleDriveSource,
   LoaderConfig,
@@ -16,7 +16,7 @@ import type {
 } from './types';
 
 // Type aliases for clarity in the adapter
-type NewOptions = Partial<ImageGalleryOptions>;
+type NewOptions = Partial<ImageCloudOptions>;
 type OldOptions = LegacyImageGalleryOptions;
 
 /**
@@ -32,7 +32,7 @@ export class LegacyOptionsAdapter {
   /**
    * Detect if options are in legacy format
    */
-  static isLegacyFormat(options: ImageGalleryOptions | OldOptions): options is OldOptions {
+  static isLegacyFormat(options: ImageCloudOptions | OldOptions): options is OldOptions {
     const opts = options as any;
 
     // Check for legacy top-level properties
@@ -271,7 +271,7 @@ export class LegacyOptionsAdapter {
 
     if (typeof console !== 'undefined') {
       console.warn(
-        `[ImageGallery Deprecation Warning] ${message}\n` +
+        `[ImageCloud Deprecation Warning] ${message}\n` +
         `See migration guide: https://github.com/frybynite/image-cloud#migration-guide`
       );
     }

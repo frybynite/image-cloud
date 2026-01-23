@@ -107,7 +107,7 @@ Configure visual appearance for three states:
 ```javascript
 import { ImageGallery } from 'image-cloud';
 
-const gallery = new ImageGallery({
+const gallery = new ImageCloud({
   container: 'myGallery',
   loader: {
     type: 'static',

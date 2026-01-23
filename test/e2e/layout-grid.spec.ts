@@ -69,7 +69,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -143,7 +143,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -197,7 +197,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -267,7 +267,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -321,7 +321,7 @@ test.describe('Grid Layout Algorithm', () => {
 
         await page.evaluate(async () => {
           // @ts-ignore
-          window.gallery = new window.ImageGallery({
+          window.gallery = new window.ImageCloud({
             container: 'imageCloud',
             loader: {
               type: 'static',
@@ -388,7 +388,7 @@ test.describe('Grid Layout Algorithm', () => {
 
         await page.evaluate(async () => {
           // @ts-ignore
-          window.gallery = new window.ImageGallery({
+          window.gallery = new window.ImageCloud({
             container: 'imageCloud',
             loader: {
               type: 'static',
@@ -455,7 +455,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -511,7 +511,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -575,7 +575,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -633,7 +633,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -701,7 +701,7 @@ test.describe('Grid Layout Algorithm', () => {
 
         await page.evaluate(async (overlapValue) => {
           // @ts-ignore
-          window.gallery = new window.ImageGallery({
+          window.gallery = new window.ImageCloud({
             container: 'imageCloud',
             loader: {
               type: 'static',
@@ -764,7 +764,7 @@ test.describe('Grid Layout Algorithm', () => {
 
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',
@@ -821,7 +821,7 @@ test.describe('Grid Layout Algorithm', () => {
         }
 
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',

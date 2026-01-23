@@ -29,7 +29,7 @@ async function initGallery(page: any, waveConfig: object = {}, imageCount = 9) {
 
   await page.evaluate(async ({ urls, wave }: { urls: string[], wave: object }) => {
     // @ts-ignore
-    window.gallery = new window.ImageGallery({
+    window.gallery = new window.ImageCloud({
       container: 'imageCloud',
       loader: {
         type: 'static',
@@ -274,7 +274,7 @@ test.describe('Wave Layout Algorithm', () => {
       await page.goto('/test/fixtures/layout-wave.html');
       await page.evaluate(async () => {
         // @ts-ignore
-        window.gallery = new window.ImageGallery({
+        window.gallery = new window.ImageCloud({
           container: 'imageCloud',
           loader: {
             type: 'static',

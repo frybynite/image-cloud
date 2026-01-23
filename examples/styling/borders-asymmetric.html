@@ -112,7 +112,7 @@
     </div>
 
     <script type="module">
-        import { ImageGallery } from '../../dist/image-cloud.js';
+        import { ImageCloud } from '../../dist/image-cloud.js';
 
         let gallery = null;
         let showingPaths = false;
@@ -168,7 +168,7 @@
 
         window.applyChanges = async function() {
             if (gallery) gallery.destroy();
-            gallery = new ImageGallery(getConfig());
+            gallery = new ImageCloud(getConfig());
             await gallery.init();
         };
 

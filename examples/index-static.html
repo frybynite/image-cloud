@@ -39,13 +39,13 @@
         <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
     </div>
 
-    <!-- Load ImageGallery with new format (v0.2.0+) -->
+    <!-- Load ImageCloud with new format (v0.2.0+) -->
     <script type="module">
-        import { ImageGallery } from '../dist/image-cloud.js';
+        import { ImageCloud } from '../dist/image-cloud.js';
 
         document.addEventListener('DOMContentLoaded', () => {
             // NEW FORMAT: Pattern-based configuration
-            const gallery = new ImageGallery({
+            const gallery = new ImageCloud({
                 container: 'imageCloud',
                 loader: {
                     type: 'static',

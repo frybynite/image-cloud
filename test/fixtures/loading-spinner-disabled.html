@@ -28,11 +28,11 @@
   </div>
 
   <script type="module">
-    import { ImageGallery } from '/dist/image-cloud.js';
+    import { ImageCloud } from '/dist/image-cloud.js';
 
-    window.ImageGallery = ImageGallery;
+    window.ImageCloud = ImageCloud;
     // showLoadingSpinner defaults to false - spinner should never show
-    window.gallery = new ImageGallery({
+    window.gallery = new ImageCloud({
       container: 'imageCloud',
       loader: {
         type: 'static',

@@ -13,7 +13,7 @@
 <body>
   <div id="imageCloud"></div>
   <script type="module">
-    import { ImageGallery } from '/dist/image-cloud.js';
+    import { ImageCloud } from '/dist/image-cloud.js';
 
     // Get entry position from URL param (default: nearest-edge)
     const params = new URLSearchParams(window.location.search);
@@ -29,7 +29,7 @@
     const elasticPreset = params.get('elasticPreset') || null;
     const wavePreset = params.get('wavePreset') || null;
 
-    window.ImageGallery = ImageGallery;
+    window.ImageCloud = ImageCloud;
 
     const config = {
       container: 'imageCloud',
@@ -96,7 +96,7 @@
     }
 
     window.galleryConfig = config;
-    window.gallery = new ImageGallery(config);
+    window.gallery = new ImageCloud(config);
 
     window.gallery.init().catch(error => {
       console.error('Gallery initialization failed:', error);

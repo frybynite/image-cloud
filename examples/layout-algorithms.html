@@ -182,7 +182,7 @@
     </div>
 
     <script type="module">
-        import { ImageGallery } from '../dist/image-cloud.js';
+        import { ImageCloud } from '../dist/image-cloud.js';
 
         // Sample images from test fixtures
         const sampleImages = [
@@ -209,7 +209,7 @@
         };
 
         // Grid Gallery
-        const gridGallery = new ImageGallery({
+        const gridGallery = new ImageCloud({
             container: 'gallery-grid',
             loader: loaderConfig,
             layout: {
@@ -227,7 +227,7 @@
         });
 
         // Spiral Gallery
-        const spiralGallery = new ImageGallery({
+        const spiralGallery = new ImageCloud({
             container: 'gallery-spiral',
             loader: loaderConfig,
             layout: {
@@ -243,7 +243,7 @@
         });
 
         // Cluster Gallery
-        const clusterGallery = new ImageGallery({
+        const clusterGallery = new ImageCloud({
             container: 'gallery-cluster',
             loader: loaderConfig,
             layout: {
@@ -260,7 +260,7 @@
         });
 
         // Wave Gallery
-        const waveGallery = new ImageGallery({
+        const waveGallery = new ImageCloud({
             container: 'gallery-wave',
             loader: loaderConfig,
             layout: {
@@ -278,7 +278,7 @@
         });
 
         // Radial Gallery (existing)
-        const radialGallery = new ImageGallery({
+        const radialGallery = new ImageCloud({
             container: 'gallery-radial',
             loader: loaderConfig,
             layout: {
@@ -288,7 +288,7 @@
         });
 
         // Random Gallery (existing)
-        const randomGallery = new ImageGallery({
+        const randomGallery = new ImageCloud({
             container: 'gallery-random',
             loader: loaderConfig,
             layout: {
@@ -326,7 +326,7 @@
             container.innerHTML = '';
 
             // Create new gallery
-            const gallery = new ImageGallery({
+            const gallery = new ImageCloud({
                 container: containerId,
                 loader: loaderConfig,
                 layout: config

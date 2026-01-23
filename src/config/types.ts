@@ -370,7 +370,7 @@ export interface GalleryConfig {
   debug: boolean;
 }
 
-export interface ImageGalleryOptions {
+export interface ImageCloudOptions {
   container?: string;
   loader?: Partial<LoaderConfig>;
   layout?: Partial<LayoutConfig>;
@@ -380,6 +380,9 @@ export interface ImageGalleryOptions {
   styling?: Partial<ImageStylingConfig>;
   debug?: boolean;
 }
+
+// Backwards compatibility alias
+export type ImageGalleryOptions = ImageCloudOptions;
 
 // ============================================================================
 // Legacy Configuration Types (for backward compatibility)
