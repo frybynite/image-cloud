@@ -11,8 +11,12 @@ import type {
   EntryAnimationConfig,
   EntryStartPosition,
   ContainerBounds,
-  LayoutAlgorithm
+  LayoutAlgorithm,
+  EntryPathConfig,
+  EntryPathType
 } from '../config/types';
+import { DEFAULT_PATH_CONFIG } from '../config/defaults';
+import { requiresJSAnimation } from './PathAnimator';
 
 /** Layout-aware default start positions */
 const LAYOUT_ENTRY_DEFAULTS: Record<LayoutAlgorithm, EntryStartPosition> = {
@@ -41,6 +45,7 @@ export class EntryAnimationEngine {
   private config: EntryAnimationConfig;
   private layoutAlgorithm: LayoutAlgorithm;
   private resolvedStartPosition: EntryStartPosition;
+  private pathConfig: EntryPathConfig;
 
   constructor(config: EntryAnimationConfig, layoutAlgorithm: LayoutAlgorithm) {
     this.config = config;
@@ -48,6 +53,9 @@ export class EntryAnimationEngine {
 
     // Resolve the start position, using layout-aware defaults if not specified
     this.resolvedStartPosition = this.resolveStartPosition();
+
+    // Resolve path config
+    this.pathConfig = config.path || DEFAULT_PATH_CONFIG;
   }
 
   /**
@@ -326,10 +334,48 @@ export class EntryAnimationEngine {
 
   /**
    * Get the transition CSS for entry animation
+   * For JS-animated paths, only animate opacity (transform handled by JS)
    */
   getTransitionCSS(): string {
     const duration = this.config.timing.duration;
     const easing = this.config.easing;
+
+    // For paths that use JS animation, don't transition transform
+    if (this.requiresJSAnimation()) {
+      return `opacity ${duration}ms ease-out`;
+    }
+
     return `opacity ${duration}ms ease-out, transform ${duration}ms ${easing}`;
+  }
+
+  /**
+   * Check if the current path type requires JavaScript animation
+   */
+  requiresJSAnimation(): boolean {
+    return requiresJSAnimation(this.pathConfig.type);
+  }
+
+  /**
+   * Get the path configuration
+   */
+  getPathConfig(): EntryPathConfig {
+    return this.pathConfig;
+  }
+
+  /**
+   * Get the path type
+   */
+  getPathType(): EntryPathType {
+    return this.pathConfig.type;
+  }
+
+  /**
+   * Get animation timing configuration
+   */
+  getTiming(): { duration: number; stagger: number } {
+    return {
+      duration: this.config.timing.duration,
+      stagger: this.config.timing.stagger
+    };
   }
 }

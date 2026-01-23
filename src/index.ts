@@ -33,16 +33,32 @@ export type {
   PlacementGenerator,
   ImageLoader,
   IImageFilter,
-  TransformParams
+  TransformParams,
+  // Entry path animation types
+  EntryPathType,
+  EntryPathConfig,
+  BouncePathConfig,
+  ElasticPathConfig,
+  WavePathConfig,
+  BouncePreset,
+  ElasticPreset,
+  WavePathPreset
 } from './config/types';
 
 // Default config export
-export { DEFAULT_CONFIG } from './config/defaults';
+export {
+  DEFAULT_CONFIG,
+  BOUNCE_PRESETS,
+  ELASTIC_PRESETS,
+  WAVE_PATH_PRESETS
+} from './config/defaults';
 
 // Export engines for advanced usage
 export { AnimationEngine } from './engines/AnimationEngine';
 export { LayoutEngine } from './engines/LayoutEngine';
 export { ZoomEngine } from './engines/ZoomEngine';
+export { EntryAnimationEngine } from './engines/EntryAnimationEngine';
+export { animatePath, requiresJSAnimation } from './engines/PathAnimator';
 
 // Export generators for custom implementations
 export { RandomPlacementGenerator } from './generators/RandomPlacementGenerator';

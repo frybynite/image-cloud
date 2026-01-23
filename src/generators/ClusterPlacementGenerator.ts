@@ -50,7 +50,8 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
     const padding = this.config.spacing.padding;
     // Use fixedHeight if provided, otherwise use base size from config
     const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
-    const rotationRange = this.config.rotation.range.max;
+    const rotationEnabled = this.config.rotation.enabled;
+    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
 
     // Calculate number of clusters
     const clusterCount = this.calculateClusterCount(

@@ -20,6 +20,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
 - [Sizing Configuration](#sizing-layoutsizing)
 - [Animation Configuration](#3-animation-configuration-animation)
 - [Entry Animation](#entry-animation)
+- [Entry Animation Paths](#entry-animation-paths)
 - [Interaction Configuration](#4-interaction-configuration-interaction)
 - [Rendering Configuration](#5-rendering-configuration-rendering)
 - [Complete JSON Reference](#complete-json-reference)
@@ -637,6 +638,185 @@ animation: {
 
 ---
 
+## Entry Animation Paths
+
+Controls the trajectory that images follow during their entry animation. By default, images travel in a straight line (linear). Advanced path types add dynamic motion effects.
+
+### Configuration Structure
+
+```typescript
+animation: {
+  entry: {
+    start: { position: 'nearest-edge' },
+    timing: { duration: 600, stagger: 150 },
+    easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+    path: {
+      type: 'bounce',                    // Path type
+      bouncePreset: 'playful',           // Optional preset
+      bounce: { overshoot: 0.2 }         // Optional overrides
+    }
+  }
+}
+```
+
+### Path Types
+
+| Type | Description | Best For |
+|------|-------------|----------|
+| `linear` | Straight line from start to end (default) | Clean, professional animations |
+| `bounce` | Overshoot target, then settle back | Energetic, playful interfaces |
+| `elastic` | Spring-like oscillation at end | Organic, natural feel |
+| `wave` | Sinusoidal serpentine path | Dreamy, floating atmosphere |
+
+### Bounce Path
+
+Images travel past their target position, then settle back. Creates an energetic, playful feel.
+
+```typescript
+path: {
+  type: 'bounce',
+  bouncePreset: 'playful',     // 'energetic' | 'playful' | 'subtle'
+  bounce: {
+    overshoot: 0.15,           // 0.1-0.3, how far past target
+    bounces: 1,                // 1, 2, or 3 bounces
+    decayRatio: 0.5            // 0.3-0.7, each bounce reduces by this ratio
+  }
+}
+```
+
+**Presets:**
+
+| Preset | Overshoot | Bounces | Feel |
+|--------|-----------|---------|------|
+| `energetic` | 0.25 | 2 | High energy, attention-grabbing |
+| `playful` | 0.15 | 1 | Balanced, friendly |
+| `subtle` | 0.08 | 1 | Minimal, professional |
+
+**Example - Energetic bounce:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'top' },
+    timing: { duration: 800 },
+    path: { type: 'bounce', bouncePreset: 'energetic' }
+  }
+}
+```
+
+### Elastic Path
+
+Images arrive at their target and oscillate like a spring before settling. Creates an organic, physical feel.
+
+```typescript
+path: {
+  type: 'elastic',
+  elasticPreset: 'bouncy',     // 'gentle' | 'bouncy' | 'wobbly' | 'snappy'
+  elastic: {
+    stiffness: 200,            // 100-500, higher = faster oscillation
+    damping: 20,               // 10-50, higher = fewer oscillations
+    mass: 1,                   // 0.5-3, higher = more momentum
+    oscillations: 3            // 2-5, visible oscillation count
+  }
+}
+```
+
+**Presets:**
+
+| Preset | Stiffness | Damping | Feel |
+|--------|-----------|---------|------|
+| `gentle` | 150 | 30 | Soft, subtle spring |
+| `bouncy` | 300 | 15 | Lively, energetic |
+| `wobbly` | 180 | 12 | Jelly-like, playful |
+| `snappy` | 400 | 25 | Quick, responsive |
+
+**Example - Wobbly elastic:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'center' },
+    timing: { duration: 1000 },
+    path: { type: 'elastic', elasticPreset: 'wobbly' }
+  }
+}
+```
+
+### Wave Path
+
+Images follow a sinusoidal serpentine path from start to end. Creates a dreamy, floating atmosphere.
+
+```typescript
+path: {
+  type: 'wave',
+  wavePreset: 'playful',       // 'gentle' | 'playful' | 'serpentine' | 'flutter'
+  wave: {
+    amplitude: 40,             // 20-100px, wave height
+    frequency: 2,              // 1-4, number of complete waves
+    decay: true,               // Wave diminishes toward target
+    decayRate: 0.8,            // 0.5-1, how fast amplitude decreases
+    phase: 0                   // 0-2π, starting phase offset
+  }
+}
+```
+
+**Presets:**
+
+| Preset | Amplitude | Frequency | Decay | Feel |
+|--------|-----------|-----------|-------|------|
+| `gentle` | 30 | 1.5 | yes | Soft, subtle wave |
+| `playful` | 50 | 2.5 | yes | Fun, dynamic |
+| `serpentine` | 60 | 3 | no | Dramatic snake path |
+| `flutter` | 20 | 4 | yes | Light, quick oscillation |
+
+**Example - Serpentine wave:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'left' },
+    timing: { duration: 900 },
+    path: { type: 'wave', wavePreset: 'serpentine' }
+  }
+}
+```
+
+### Combining with Start Positions
+
+Path types work with all start positions:
+
+```typescript
+// Bounce from top
+animation: {
+  entry: {
+    start: { position: 'top' },
+    path: { type: 'bounce' }
+  }
+}
+
+// Elastic from center (radial burst with spring)
+animation: {
+  entry: {
+    start: { position: 'center' },
+    path: { type: 'elastic', elasticPreset: 'bouncy' }
+  }
+}
+
+// Wave from circular positions
+animation: {
+  entry: {
+    start: { position: 'circular', circular: { radius: '120%' } },
+    path: { type: 'wave', wavePreset: 'gentle' }
+  }
+}
+```
+
+### Performance Notes
+
+- **Linear/Arc**: Uses CSS transitions (most efficient)
+- **Bounce/Elastic/Wave**: Uses JavaScript animation (requestAnimationFrame)
+- All paths are optimized for smooth 60fps animation
+- For galleries with 50+ images, consider using linear path or longer stagger times
+
+---
+
 ### 4. Interaction Configuration (`interaction`)
 
 Controls user interactions like clicking and zooming.
@@ -845,7 +1025,31 @@ All available parameters with example values:
         "duration": 600,                        // Default. Entry animation duration
         "stagger": 150                          // Default. Delay between images
       },
-      "easing": "cubic-bezier(0.25, 1, 0.5, 1)" // Default. Entry animation easing
+      "easing": "cubic-bezier(0.25, 1, 0.5, 1)", // Default. Entry animation easing
+      "path": {
+        "type": "linear",                       // Default. "linear" | "bounce" | "elastic" | "wave"
+        "bouncePreset": "playful",              // "energetic" | "playful" | "subtle"
+        "elasticPreset": "gentle",              // "gentle" | "bouncy" | "wobbly" | "snappy"
+        "wavePreset": "gentle",                 // "gentle" | "playful" | "serpentine" | "flutter"
+        "bounce": {
+          "overshoot": 0.15,                    // Default. 0.1-0.3
+          "bounces": 1,                         // 1, 2, or 3
+          "decayRatio": 0.5                     // Default. 0.3-0.7
+        },
+        "elastic": {
+          "stiffness": 200,                     // Default. 100-500
+          "damping": 20,                        // Default. 10-50
+          "mass": 1,                            // Default. 0.5-3
+          "oscillations": 3                     // Default. 2-5
+        },
+        "wave": {
+          "amplitude": 40,                      // Default. 20-100px
+          "frequency": 2,                       // Default. 1-4
+          "decay": true,                        // Default
+          "decayRate": 0.8,                     // Default. 0.5-1
+          "phase": 0                            // Default. 0-2π
+        }
+      }
     }
   },
 

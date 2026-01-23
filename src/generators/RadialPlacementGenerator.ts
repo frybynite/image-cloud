@@ -32,7 +32,8 @@ export class RadialPlacementGenerator implements PlacementGenerator {
     const { width, height } = containerBounds;
     const { debugRadials } = this.config;
     const baseImageSize = this.config.sizing.base;
-    const rotationRange = this.config.rotation.range.max;
+    const rotationEnabled = this.config.rotation.enabled;
+    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
 
     // Debug color palette
     const debugPalette = ['green', 'blue', 'red', 'yellow', 'orange', 'purple'];

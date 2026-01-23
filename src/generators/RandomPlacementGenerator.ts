@@ -30,7 +30,8 @@ export class RandomPlacementGenerator implements PlacementGenerator {
     const padding = this.config.spacing.padding;
     // Use fixedHeight if provided, otherwise use base size from config
     const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
-    const rotationRange = this.config.rotation.range.max;
+    const rotationEnabled = this.config.rotation.enabled;
+    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
     const sizeVarianceMin = this.config.sizing.variance.min;
     const sizeVarianceMax = this.config.sizing.variance.max;
 

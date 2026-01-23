@@ -10,6 +10,7 @@ import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
+import { animatePath } from './engines/PathAnimator';
 import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 import { StaticImageLoader } from './loaders/StaticImageLoader';
 import { CompositeLoader } from './loaders/CompositeLoader';
@@ -344,12 +345,45 @@ export class ImageGallery {
               void img.offsetWidth; // Force reflow
               // Use configured default opacity, or 1 if not specified
               img.style.opacity = this.defaultStyles.opacity ?? '1';
-              const finalTransform = img.dataset.finalTransform || '';
-              img.style.transform = finalTransform;
+
+              // Check if we need JS animation for this path type
+              if (this.entryAnimationEngine.requiresJSAnimation() && img.dataset.startX) {
+                // Use animatePath for bounce, elastic, wave paths
+                const startPosition = {
+                  x: parseFloat(img.dataset.startX),
+                  y: parseFloat(img.dataset.startY!)
+                };
+                const endPosition = {
+                  x: parseFloat(img.dataset.endX!),
+                  y: parseFloat(img.dataset.endY!)
+                };
+                const imageWidth = parseFloat(img.dataset.imageWidth!);
+                const imageHeight = parseFloat(img.dataset.imageHeight!);
+                const rotation = parseFloat(img.dataset.rotation!);
+                const scale = parseFloat(img.dataset.scale!);
+                const timing = this.entryAnimationEngine.getTiming();
+
+                animatePath({
+                  element: img,
+                  startPosition,
+                  endPosition,
+                  pathConfig: this.entryAnimationEngine.getPathConfig(),
+                  duration: timing.duration,
+                  imageWidth,
+                  imageHeight,
+                  rotation,
+                  scale
+                });
+              } else {
+                // Use CSS transition for linear/arc paths
+                const finalTransform = img.dataset.finalTransform || '';
+                img.style.transform = finalTransform;
+              }
 
               // Debug: log final state for first few images
               const imgIndex = parseInt(img.dataset.imageId || '0');
               if (this.fullConfig.debug && imgIndex < 3) {
+                const finalTransform = img.dataset.finalTransform || '';
                 console.log(`Image ${imgIndex} final state:`, {
                   left: img.style.left,
                   top: img.style.top,
@@ -357,7 +391,8 @@ export class ImageGallery {
                   height: img.style.height,
                   computedWidth: img.offsetWidth,
                   computedHeight: img.offsetHeight,
-                  transform: finalTransform
+                  transform: finalTransform,
+                  pathType: this.entryAnimationEngine.getPathType()
                 });
               }
             });
@@ -519,6 +554,18 @@ export class ImageGallery {
 
         img.style.transform = startTransform;
         img.dataset.finalTransform = finalTransform;
+
+        // Store animation data for JS-animated paths (bounce, elastic, wave)
+        if (this.entryAnimationEngine.requiresJSAnimation()) {
+          img.dataset.startX = String(startPosition.x);
+          img.dataset.startY = String(startPosition.y);
+          img.dataset.endX = String(finalPosition.x);
+          img.dataset.endY = String(finalPosition.y);
+          img.dataset.imageWidth = String(renderedWidth);
+          img.dataset.imageHeight = String(imageHeight);
+          img.dataset.rotation = String(layout.rotation);
+          img.dataset.scale = String(layout.scale);
+        }
 
         this.displayQueue.push(img);
       };

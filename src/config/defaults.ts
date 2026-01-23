@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig } from './types';
+import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -14,6 +14,42 @@ export const SHADOW_PRESETS: Record<ShadowPreset, string> = Object.freeze({
   'md': '0 4px 16px rgba(0,0,0,0.4)',
   'lg': '0 8px 32px rgba(0,0,0,0.5)',
   'glow': '0 0 30px rgba(255,255,255,0.6)'
+});
+
+/**
+ * Bounce path presets - overshoot and settle animations
+ */
+export const BOUNCE_PRESETS: Record<BouncePreset, BouncePathConfig> = Object.freeze({
+  energetic: Object.freeze({ overshoot: 0.25, bounces: 2, decayRatio: 0.5 }),
+  playful: Object.freeze({ overshoot: 0.15, bounces: 1, decayRatio: 0.5 }),
+  subtle: Object.freeze({ overshoot: 0.08, bounces: 1, decayRatio: 0.5 })
+});
+
+/**
+ * Elastic path presets - spring-like oscillation animations
+ */
+export const ELASTIC_PRESETS: Record<ElasticPreset, ElasticPathConfig> = Object.freeze({
+  gentle: Object.freeze({ stiffness: 150, damping: 30, mass: 1, oscillations: 2 }),
+  bouncy: Object.freeze({ stiffness: 300, damping: 15, mass: 1, oscillations: 4 }),
+  wobbly: Object.freeze({ stiffness: 180, damping: 12, mass: 1.5, oscillations: 5 }),
+  snappy: Object.freeze({ stiffness: 400, damping: 25, mass: 0.8, oscillations: 2 })
+});
+
+/**
+ * Wave path presets - sinusoidal path animations
+ */
+export const WAVE_PATH_PRESETS: Record<WavePathPreset, WavePathConfig> = Object.freeze({
+  gentle: Object.freeze({ amplitude: 30, frequency: 1.5, decay: true, decayRate: 0.9, phase: 0 }),
+  playful: Object.freeze({ amplitude: 50, frequency: 2.5, decay: true, decayRate: 0.7, phase: 0 }),
+  serpentine: Object.freeze({ amplitude: 60, frequency: 3, decay: false, decayRate: 1, phase: 0 }),
+  flutter: Object.freeze({ amplitude: 20, frequency: 4, decay: true, decayRate: 0.5, phase: 0 })
+});
+
+/**
+ * Default path configuration (linear - no special path effects)
+ */
+export const DEFAULT_PATH_CONFIG: EntryPathConfig = Object.freeze({
+  type: 'linear' as const
 });
 
 /**
@@ -152,7 +188,8 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
         duration: 600,  // ms
         stagger: 150  // ms between images
       }),
-      easing: 'cubic-bezier(0.25, 1, 0.5, 1)'  // smooth deceleration
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)',  // smooth deceleration
+      path: DEFAULT_PATH_CONFIG
     })
   }),
 
@@ -430,7 +467,10 @@ export function mergeConfig(
           : DEFAULT_CONFIG.animation.entry!.start,
         timing: userConfig.animation.entry.timing
           ? { ...DEFAULT_CONFIG.animation.entry!.timing, ...userConfig.animation.entry.timing }
-          : DEFAULT_CONFIG.animation.entry!.timing
+          : DEFAULT_CONFIG.animation.entry!.timing,
+        path: userConfig.animation.entry.path
+          ? { ...DEFAULT_PATH_CONFIG, ...userConfig.animation.entry.path }
+          : DEFAULT_CONFIG.animation.entry!.path
       };
     }
   }
@@ -511,6 +551,39 @@ export function mergeConfig(
   }
 
   return merged;
+}
+
+/**
+ * Resolve bounce path config from preset and overrides
+ */
+export function resolveBounceConfig(
+  preset?: BouncePreset,
+  overrides?: Partial<BouncePathConfig>
+): BouncePathConfig {
+  const base = preset ? BOUNCE_PRESETS[preset] : BOUNCE_PRESETS.playful;
+  return { ...base, ...overrides };
+}
+
+/**
+ * Resolve elastic path config from preset and overrides
+ */
+export function resolveElasticConfig(
+  preset?: ElasticPreset,
+  overrides?: Partial<ElasticPathConfig>
+): ElasticPathConfig {
+  const base = preset ? ELASTIC_PRESETS[preset] : ELASTIC_PRESETS.gentle;
+  return { ...base, ...overrides };
+}
+
+/**
+ * Resolve wave path config from preset and overrides
+ */
+export function resolveWavePathConfig(
+  preset?: WavePathPreset,
+  overrides?: Partial<WavePathConfig>
+): WavePathConfig {
+  const base = preset ? WAVE_PATH_PRESETS[preset] : WAVE_PATH_PRESETS.gentle;
+  return { ...base, ...overrides };
 }
 
 /**

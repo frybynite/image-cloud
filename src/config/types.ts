@@ -195,6 +195,48 @@ export interface LayoutConfig {
 // Animation Configuration
 // ============================================================================
 
+// Entry Path Types
+export type EntryPathType = 'linear' | 'arc' | 'bounce' | 'elastic' | 'wave';
+
+export interface BouncePathConfig {
+  overshoot: number;        // 0.1-0.3, how far past target (default: 0.15)
+  bounces: 1 | 2 | 3;       // number of bounces before settling (default: 1)
+  decayRatio: number;       // 0.3-0.7, each bounce is this % of previous (default: 0.5)
+}
+
+export type BouncePreset = 'energetic' | 'playful' | 'subtle';
+
+export interface ElasticPathConfig {
+  stiffness: number;        // 100-500, higher = faster oscillation (default: 200)
+  damping: number;          // 10-50, higher = fewer oscillations (default: 20)
+  mass: number;             // 0.5-3, higher = slower, more momentum (default: 1)
+  oscillations: number;     // 2-5, visible oscillation count (default: 3)
+}
+
+export type ElasticPreset = 'gentle' | 'bouncy' | 'wobbly' | 'snappy';
+
+export interface WavePathConfig {
+  amplitude: number;        // 20-100px, wave height (default: 40)
+  frequency: number;        // 1-4, number of complete waves (default: 2)
+  decay: boolean;           // true = wave diminishes toward target (default: true)
+  decayRate: number;        // 0.5-1, how fast amplitude decreases (default: 0.8)
+  phase: number;            // 0-2π, starting phase offset (default: 0)
+}
+
+export type WavePathPreset = 'gentle' | 'playful' | 'serpentine' | 'flutter';
+
+export interface EntryPathConfig {
+  type: EntryPathType;
+  // Preset shortcuts (type-specific)
+  bouncePreset?: BouncePreset;
+  elasticPreset?: ElasticPreset;
+  wavePreset?: WavePathPreset;
+  // Type-specific detailed configs (override presets)
+  bounce?: Partial<BouncePathConfig>;
+  elastic?: Partial<ElasticPathConfig>;
+  wave?: Partial<WavePathConfig>;
+}
+
 export type EntryStartPosition =
   | 'nearest-edge'
   | 'top'
@@ -225,6 +267,7 @@ export interface EntryAnimationConfig {
   start: EntryStartConfig;
   timing: EntryTimingConfig;
   easing: string;  // CSS easing, default: 'cubic-bezier(0.25, 1, 0.5, 1)'
+  path?: EntryPathConfig;  // Animation path type (linear, bounce, elastic, wave)
 }
 
 export interface AnimationEasingConfig {

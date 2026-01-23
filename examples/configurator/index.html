@@ -1229,6 +1229,27 @@
                                     <span class="value-display">ms</span>
                                 </div>
                             </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-path">
+                                <label class="control-label" data-label="Path Type" data-path="entry.path.type">Path Type</label>
+                                <div class="control-input">
+                                    <select id="entry-path-type" onchange="updatePathPresets()">
+                                        <option value="linear">Linear (default)</option>
+                                        <option value="bounce">Bounce</option>
+                                        <option value="elastic">Elastic</option>
+                                        <option value="wave">Wave</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row" id="path-preset-row" style="display: none;">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-path-preset" checked>
+                                <label class="control-label" data-label="Preset" data-path="entry.path.preset">Preset</label>
+                                <div class="control-input">
+                                    <select id="entry-path-preset">
+                                        <!-- Options populated by updatePathPresets() -->
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1541,7 +1562,7 @@
             'https://images.pexels.com/photos/2104152/pexels-photo-2104152.jpeg?auto=compress&cs=tinysrgb&w=800',
             'https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=800',
             'https://images.pexels.com/photos/1179229/pexels-photo-1179229.jpeg?auto=compress&cs=tinysrgb&w=800',
-            'https://images.pexels.com/photos/2245436/pexels-photo-2245436.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=800',
             'https://images.pexels.com/photos/1591373/pexels-photo-1591373.jpeg?auto=compress&cs=tinysrgb&w=800',
             'https://images.pexels.com/photos/1366630/pexels-photo-1366630.jpeg?auto=compress&cs=tinysrgb&w=800',
             'https://images.pexels.com/photos/1402850/pexels-photo-1402850.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -1801,6 +1822,49 @@
             scheduleAutoApply();
         };
 
+        // Update path preset options based on selected path type
+        window.updatePathPresets = function() {
+            const pathType = document.getElementById('entry-path-type').value;
+            const presetRow = document.getElementById('path-preset-row');
+            const presetSelect = document.getElementById('entry-path-preset');
+
+            // Show/hide preset row based on path type
+            if (pathType === 'linear') {
+                presetRow.style.display = 'none';
+            } else {
+                presetRow.style.display = 'flex';
+
+                // Populate preset options based on path type
+                let presets = [];
+                if (pathType === 'bounce') {
+                    presets = [
+                        { value: 'playful', label: 'Playful (default)' },
+                        { value: 'energetic', label: 'Energetic' },
+                        { value: 'subtle', label: 'Subtle' }
+                    ];
+                } else if (pathType === 'elastic') {
+                    presets = [
+                        { value: 'gentle', label: 'Gentle (default)' },
+                        { value: 'bouncy', label: 'Bouncy' },
+                        { value: 'wobbly', label: 'Wobbly' },
+                        { value: 'snappy', label: 'Snappy' }
+                    ];
+                } else if (pathType === 'wave') {
+                    presets = [
+                        { value: 'gentle', label: 'Gentle (default)' },
+                        { value: 'playful', label: 'Playful' },
+                        { value: 'serpentine', label: 'Serpentine' },
+                        { value: 'flutter', label: 'Flutter' }
+                    ];
+                }
+
+                presetSelect.innerHTML = presets.map(p =>
+                    `<option value="${p.value}">${p.label}</option>`
+                ).join('');
+            }
+            scheduleAutoApply();
+        };
+
         // Schedule auto-apply with debouncing
         function scheduleAutoApply() {
             clearTimeout(debounceTimer);
@@ -2022,6 +2086,23 @@
             if (entryDuration !== undefined) entryTiming.duration = entryDuration;
             if (entryStagger !== undefined) entryTiming.stagger = entryStagger;
             if (Object.keys(entryTiming).length > 0) entry.timing = entryTiming;
+
+            // Path configuration
+            const pathEnabled = document.getElementById('enable-entry-path').checked;
+            if (pathEnabled) {
+                const pathType = document.getElementById('entry-path-type').value;
+                if (pathType !== 'linear') {
+                    const path = { type: pathType };
+                    const presetEnabled = document.getElementById('enable-entry-path-preset').checked;
+                    if (presetEnabled) {
+                        const preset = document.getElementById('entry-path-preset').value;
+                        if (pathType === 'bounce') path.bouncePreset = preset;
+                        else if (pathType === 'elastic') path.elasticPreset = preset;
+                        else if (pathType === 'wave') path.wavePreset = preset;
+                    }
+                    entry.path = path;
+                }
+            }
 
             if (Object.keys(entry).length > 0) animation.entry = entry;
             if (Object.keys(animation).length > 0) config.animation = animation;

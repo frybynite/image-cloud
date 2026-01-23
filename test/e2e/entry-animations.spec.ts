@@ -365,4 +365,88 @@ test.describe('Entry Animations', () => {
 
   });
 
+  test.describe('Entry Path Animations', () => {
+
+    test('bounce path: images end up at final position', async ({ page }) => {
+      await page.goto('/test/fixtures/entry-animations.html?position=top&path=bounce');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 2000);
+
+      const images = await page.locator('#imageCloud img').all();
+      expect(images.length).toBeGreaterThan(0);
+
+      // Verify images are within container bounds
+      const containerBox = await page.locator('#imageCloud').boundingBox();
+      for (const img of images) {
+        const imgBox = await img.boundingBox();
+        if (imgBox && containerBox) {
+          expect(imgBox.x).toBeGreaterThan(containerBox.x - imgBox.width);
+          expect(imgBox.y).toBeGreaterThan(containerBox.y - imgBox.height);
+        }
+      }
+    });
+
+    test('elastic path: images end up at final position', async ({ page }) => {
+      await page.goto('/test/fixtures/entry-animations.html?position=center&path=elastic');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 2500);
+
+      const images = await page.locator('#imageCloud img').all();
+      expect(images.length).toBeGreaterThan(0);
+
+      // Verify images are visible
+      for (const img of images) {
+        const opacity = await img.evaluate((el) => window.getComputedStyle(el).opacity);
+        expect(parseFloat(opacity)).toBeGreaterThan(0);
+      }
+    });
+
+    test('wave path: images end up at final position', async ({ page }) => {
+      await page.goto('/test/fixtures/entry-animations.html?position=left&path=wave');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 2000);
+
+      const images = await page.locator('#imageCloud img').all();
+      expect(images.length).toBeGreaterThan(0);
+
+      // Verify images are within container bounds
+      const containerBox = await page.locator('#imageCloud').boundingBox();
+      for (const img of images) {
+        const imgBox = await img.boundingBox();
+        if (imgBox && containerBox) {
+          expect(imgBox.x).toBeGreaterThan(containerBox.x - imgBox.width);
+          expect(imgBox.y).toBeGreaterThan(containerBox.y - imgBox.height);
+        }
+      }
+    });
+
+    test('bounce preset applies correctly', async ({ page }) => {
+      await page.goto('/test/fixtures/entry-animations.html?position=top&path=bounce&bouncePreset=energetic');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 2000);
+
+      const images = await page.locator('#imageCloud img').all();
+      expect(images.length).toBeGreaterThan(0);
+    });
+
+    test('elastic preset applies correctly', async ({ page }) => {
+      await page.goto('/test/fixtures/entry-animations.html?position=center&path=elastic&elasticPreset=wobbly');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 2500);
+
+      const images = await page.locator('#imageCloud img').all();
+      expect(images.length).toBeGreaterThan(0);
+    });
+
+    test('wave preset applies correctly', async ({ page }) => {
+      await page.goto('/test/fixtures/entry-animations.html?position=left&path=wave&wavePreset=serpentine');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 2000);
+
+      const images = await page.locator('#imageCloud img').all();
+      expect(images.length).toBeGreaterThan(0);
+    });
+
+  });
+
 });

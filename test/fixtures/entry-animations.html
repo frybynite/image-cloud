@@ -24,6 +24,10 @@
     const duration = parseInt(params.get('duration') || '600');
     const stagger = parseInt(params.get('stagger') || '150');
     const useDefault = params.get('useDefault') === 'true';
+    const pathType = params.get('path') || null;
+    const bouncePreset = params.get('bouncePreset') || null;
+    const elasticPreset = params.get('elasticPreset') || null;
+    const wavePreset = params.get('wavePreset') || null;
 
     window.ImageGallery = ImageGallery;
 
@@ -75,6 +79,19 @@
           radius: circularRadius,
           distribution: circularDistribution
         };
+      }
+
+      // Add path configuration if specified
+      if (pathType) {
+        const path = { type: pathType };
+        if (pathType === 'bounce' && bouncePreset) {
+          path.bouncePreset = bouncePreset;
+        } else if (pathType === 'elastic' && elasticPreset) {
+          path.elasticPreset = elasticPreset;
+        } else if (pathType === 'wave' && wavePreset) {
+          path.wavePreset = wavePreset;
+        }
+        config.animation.entry.path = path;
       }
     }
 
