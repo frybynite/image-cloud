@@ -93,46 +93,98 @@ export interface LoaderConfig {
 }
 
 // ============================================================================
-// Layout Configuration
+// Image Configuration (sizing and rotation)
 // ============================================================================
 
-export type OverflowBehavior = 'truncate' | 'minimize';
+/**
+ * Responsive base height configuration
+ * Can be a simple number or responsive breakpoint object
+ */
+export interface ResponsiveBaseHeight {
+  default: number;             // Base height for large screens
+  tablet?: number;             // Height for tablet (uses rendering.responsive.breakpoints)
+  mobile?: number;             // Height for mobile
+}
+
+/**
+ * Image variance configuration
+ * Controls random size variation applied to images
+ */
+export interface ImageVarianceConfig {
+  min: number;                 // > 0.1 and < 1 (e.g., 0.8)
+  max: number;                 // > 1 and < 2 (e.g., 1.2)
+}
+
+/**
+ * Image sizing configuration
+ */
+export interface ImageSizingConfig {
+  baseHeight?: number | ResponsiveBaseHeight;  // Optional - if not set, layouts auto-calculate
+  variance?: ImageVarianceConfig;               // Size variance (min > 0.1, max < 2)
+  scaleDecay?: number;                          // For Radial/Spiral - progressive size reduction (0-1)
+}
+
+/**
+ * Image rotation mode
+ */
+export type ImageRotationMode = 'none' | 'random' | 'tangent';
+
+/**
+ * Image rotation range configuration
+ */
+export interface ImageRotationRange {
+  min: number;                 // Negative degrees (-180 to 0)
+  max: number;                 // Positive degrees (0 to 180)
+}
+
+/**
+ * Image rotation configuration
+ */
+export interface ImageRotationConfig {
+  mode: ImageRotationMode;     // default: 'none'
+  range?: ImageRotationRange;  // Range for random mode
+}
+
+/**
+ * Combined image configuration
+ */
+export interface ImageConfig {
+  sizing?: ImageSizingConfig;
+  rotation?: ImageRotationConfig;
+}
+
+// ============================================================================
+// Layout Configuration
+// ============================================================================
 
 export interface AdaptiveSizingConfig {
   enabled: boolean;              // Enable auto-sizing (default: true)
   minSize: number;               // Minimum image height (default: 50px)
   maxSize: number;               // Maximum image height (default: 400px)
-  targetCoverage: number;        // Target % of container to fill (default: 0.6)
-  densityFactor: number;         // Packing density multiplier (default: 1.0)
-  overflowBehavior: OverflowBehavior;  // How to handle overflow (default: 'minimize')
 }
 
 export interface AdaptiveSizingResult {
   height: number;                // Calculated image height
-  truncateCount?: number;        // If truncate behavior, max images to show
 }
 
 export interface LayoutSizingConfig {
   base: number;
-  variance: {
-    min: number;
-    max: number;
-  };
   responsive: ResponsiveHeight[];
   adaptive?: AdaptiveSizingConfig;
-}
-
-export interface LayoutRotationConfig {
-  enabled: boolean;
-  range: {
-    min: number;
-    max: number;
-  };
 }
 
 export interface LayoutSpacingConfig {
   padding: number;
   minGap: number;
+}
+
+// Legacy interface kept for backward compatibility in LayoutEngine
+export interface LegacyLayoutRotationConfig {
+  enabled: boolean;
+  range: {
+    min: number;
+    max: number;
+  };
 }
 
 // ============================================================================
@@ -173,7 +225,7 @@ export interface WaveAlgorithmConfig {
   frequency: number;
   phaseShift: number;
   synchronization: 'offset' | 'synchronized' | 'alternating';
-  orientation: 'follow' | 'upright';
+  // Note: Image rotation along wave is now controlled via image.rotation.mode = 'tangent'
 }
 
 export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster' | 'wave';
@@ -181,10 +233,11 @@ export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster
 export interface LayoutConfig {
   algorithm: LayoutAlgorithm;
   sizing: LayoutSizingConfig;
-  rotation: LayoutRotationConfig;
   spacing: LayoutSpacingConfig;
+  targetCoverage?: number;       // 0-1, for auto-sizing when baseHeight not set (default: 0.6)
+  densityFactor?: number;        // Controls center point spacing (default: 1.0)
   debugRadials?: boolean;
-  debugCenters?: boolean;  // Show markers at calculated image center positions
+  debugCenters?: boolean;        // Show markers at calculated image center positions
   grid?: GridAlgorithmConfig;
   spiral?: SpiralAlgorithmConfig;
   cluster?: ClusterAlgorithmConfig;
@@ -362,6 +415,7 @@ export interface RenderingConfig {
 
 export interface GalleryConfig {
   loader: LoaderConfig;
+  image: ImageConfig;
   layout: LayoutConfig;
   animation: AnimationConfig;
   interaction: InteractionConfig;
@@ -373,6 +427,7 @@ export interface GalleryConfig {
 export interface ImageCloudOptions {
   container?: string;
   loader?: Partial<LoaderConfig>;
+  image?: Partial<ImageConfig>;
   layout?: Partial<LayoutConfig>;
   animation?: Partial<AnimationConfig>;
   interaction?: Partial<InteractionConfig>;

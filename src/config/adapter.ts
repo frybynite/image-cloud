@@ -12,7 +12,8 @@ import type {
   LayoutConfig,
   AnimationConfig,
   InteractionConfig,
-  RenderingConfig
+  RenderingConfig,
+  ImageConfig
 } from './types';
 
 // Type aliases for clarity in the adapter
@@ -61,9 +62,11 @@ export class LegacyOptionsAdapter {
     // Convert loader configuration
     newOptions.loader = this.convertLoader(oldOptions);
 
-    // Convert layout configuration
+    // Convert layout and image configuration
     if (oldOptions.config?.layout) {
-      newOptions.layout = this.convertLayout(oldOptions.config.layout);
+      const { layout, image } = this.convertLayout(oldOptions.config.layout);
+      newOptions.layout = layout;
+      newOptions.image = image;
     }
 
     // Convert animation configuration
@@ -146,33 +149,20 @@ export class LegacyOptionsAdapter {
 
   /**
    * Convert layout configuration to new pattern-based structure
+   * Returns both layout and image configs since legacy format combined them
    */
-  private static convertLayout(oldLayout: any): Partial<LayoutConfig> {
-    this.warn('layout', 'Flat layout configuration is deprecated. Use the pattern-based structure with sizing, rotation, and spacing groups.');
+  private static convertLayout(oldLayout: any): { layout: Partial<LayoutConfig>; image: Partial<ImageConfig> } {
+    this.warn('layout', 'Flat layout configuration is deprecated. Use the pattern-based structure with sizing in "image" config and spacing in "layout" config.');
 
     const newLayout: Partial<LayoutConfig> = {
       algorithm: oldLayout.type || 'radial',
       debugRadials: oldLayout.debugRadials
     };
 
-    // Convert sizing configuration
+    // Convert layout sizing configuration (base and responsive only)
     newLayout.sizing = {
       base: oldLayout.baseImageSize || 200,
-      variance: {
-        min: oldLayout.sizeVarianceMin ?? 1.0,
-        max: oldLayout.sizeVarianceMax ?? 1.0
-      },
       responsive: oldLayout.responsiveHeights || []
-    };
-
-    // Convert rotation configuration
-    const rotationEnabled = oldLayout.rotationRange !== undefined && oldLayout.rotationRange > 0;
-    newLayout.rotation = {
-      enabled: rotationEnabled,
-      range: {
-        min: oldLayout.minRotation ?? -15,
-        max: oldLayout.maxRotation ?? 15
-      }
     };
 
     // Convert spacing configuration
@@ -181,7 +171,28 @@ export class LegacyOptionsAdapter {
       minGap: oldLayout.minSpacing ?? 20
     };
 
-    return newLayout;
+    // Convert image configuration (variance and rotation now in image config)
+    const newImage: Partial<ImageConfig> = {};
+
+    // Convert sizing with variance
+    newImage.sizing = {
+      variance: {
+        min: oldLayout.sizeVarianceMin ?? 1.0,
+        max: oldLayout.sizeVarianceMax ?? 1.0
+      }
+    };
+
+    // Convert rotation configuration
+    const rotationEnabled = oldLayout.rotationRange !== undefined && oldLayout.rotationRange > 0;
+    newImage.rotation = {
+      mode: rotationEnabled ? 'random' : 'none',
+      range: {
+        min: oldLayout.minRotation ?? -15,
+        max: oldLayout.maxRotation ?? 15
+      }
+    };
+
+    return { layout: newLayout, image: newImage };
   }
 
   /**

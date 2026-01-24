@@ -3,7 +3,7 @@
  * Generates wave-based layouts for image cloud
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig } from '../config/types';
+import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
 import { DEFAULT_WAVE_CONFIG } from '../config/defaults';
 
 interface WaveLayoutOptions extends Partial<LayoutConfig> {
@@ -12,9 +12,11 @@ interface WaveLayoutOptions extends Partial<LayoutConfig> {
 
 export class WavePlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
+  private imageConfig: ImageConfig;
 
-  constructor(config: LayoutConfig) {
+  constructor(config: LayoutConfig, imageConfig: ImageConfig = {}) {
     this.config = config;
+    this.imageConfig = imageConfig;
   }
 
   /**
@@ -32,9 +34,18 @@ export class WavePlacementGenerator implements PlacementGenerator {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
     const baseImageSize = this.config.sizing.base;
-    const rotationEnabled = this.config.rotation?.enabled ?? true;
-    const rotationRange = this.config.rotation?.range?.max ?? 15;
     const padding = this.config.spacing.padding ?? 50;
+
+    // Get rotation config from image config
+    const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
+    const rotationRange = rotationMode === 'random'
+      ? (this.imageConfig.rotation?.range?.max ?? 15)
+      : 0;
+
+    // Get variance config from image config
+    const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
+    const varianceMax = this.imageConfig.sizing?.variance?.max ?? 1.0;
+    const hasVariance = varianceMin !== 1.0 || varianceMax !== 1.0;
 
     // Use override fixedHeight if provided, else baseImageSize
     const imageSize = options.fixedHeight ?? baseImageSize;
@@ -45,13 +56,24 @@ export class WavePlacementGenerator implements PlacementGenerator {
       ...this.config.wave
     };
 
-    const { rows, amplitude, frequency, phaseShift, synchronization, orientation } = waveConfig;
+    const { rows, amplitude, frequency, phaseShift, synchronization } = waveConfig;
 
     // Calculate images per row (distribute evenly)
     const imagesPerRow = Math.ceil(imageCount / rows);
 
-    // Calculate horizontal spacing
-    const horizontalSpacing = width / (imagesPerRow + 1);
+    // Estimate image width based on height and typical aspect ratio
+    const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
+    const estImageWidth = imageSize * estAspectRatio;
+    const halfImageWidth = estImageWidth / 2;
+
+    // Calculate available horizontal space (accounting for image width at edges)
+    // This ensures images don't get compressed against the edges
+    const startX = padding + halfImageWidth;
+    const endX = width - padding - halfImageWidth;
+    const availableWidth = endX - startX;
+
+    // Distribute images evenly between startX and endX
+    const horizontalSpacing = imagesPerRow > 1 ? availableWidth / (imagesPerRow - 1) : 0;
 
     // Calculate vertical distribution to fill the screen
     // Row centerlines need room for amplitude swing above and below
@@ -81,8 +103,11 @@ export class WavePlacementGenerator implements PlacementGenerator {
 
       // Place images along this wave row
       for (let imgInRow = 0; imgInRow < imagesPerRow && imageIndex < imageCount; imgInRow++) {
-        // Calculate center position for wave calculation (independent of image width)
-        const centerX = horizontalSpacing * (imgInRow + 1);
+        // Calculate center position - evenly distributed within available space
+        // For single image, center it; otherwise distribute from startX to endX
+        const centerX = imagesPerRow === 1
+          ? (startX + endX) / 2
+          : startX + (imgInRow * horizontalSpacing);
 
         // Calculate wave displacement based on center position
         const waveY = this.calculateWaveY(centerX, width, amplitude, frequency, phase);
@@ -91,22 +116,26 @@ export class WavePlacementGenerator implements PlacementGenerator {
         const x = centerX;
         const y = baseY + waveY;
 
-        // Calculate rotation based on orientation and rotation settings
+        // Apply variance
+        const varianceScale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;
+        const scaledImageSize = imageSize * varianceScale;
+
+        // Calculate rotation based on image.rotation.mode
         let rotation = 0;
-        if (orientation === 'follow') {
-          // Follow wave tangent (always applies for 'follow' mode)
+        if (rotationMode === 'tangent') {
+          // Follow wave tangent - images rotate to align with wave curve
           rotation = this.calculateRotation(centerX, width, amplitude, frequency, phase);
-        } else if (rotationEnabled) {
-          // Upright mode: apply random rotation only if rotation is enabled
+        } else if (rotationMode === 'random') {
+          // Random rotation within configured range
           rotation = this.random(-rotationRange, rotationRange);
         }
-        // If upright and rotation disabled, rotation stays 0
+        // If mode is 'none', rotation stays 0
 
         // Clamp center positions to keep images within bounds
         // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
         const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
-        const halfWidth = (imageSize * estAspectRatio) / 2;
-        const halfHeight = imageSize / 2;
+        const halfWidth = (scaledImageSize * estAspectRatio) / 2;
+        const halfHeight = scaledImageSize / 2;
         const minX = padding + halfWidth;
         const maxX = width - padding - halfWidth;
         const minY = padding + halfHeight;
@@ -117,8 +146,8 @@ export class WavePlacementGenerator implements PlacementGenerator {
           x: Math.max(minX, Math.min(x, maxX)),
           y: Math.max(minY, Math.min(y, maxY)),
           rotation,
-          scale: 1.0,
-          baseSize: imageSize,
+          scale: varianceScale,
+          baseSize: scaledImageSize,
           zIndex: imageIndex + 1
         });
 

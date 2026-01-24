@@ -3,7 +3,7 @@
  * Generates concentric radial layouts for image cloud
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig } from '../config/types';
+import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
 
 interface RadialLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
@@ -11,9 +11,11 @@ interface RadialLayoutOptions extends Partial<LayoutConfig> {
 
 export class RadialPlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
+  private imageConfig: ImageConfig;
 
-  constructor(config: LayoutConfig) {
+  constructor(config: LayoutConfig, imageConfig: ImageConfig = {}) {
     this.config = config;
+    this.imageConfig = imageConfig;
   }
 
   /**
@@ -32,8 +34,20 @@ export class RadialPlacementGenerator implements PlacementGenerator {
     const { width, height } = containerBounds;
     const { debugRadials } = this.config;
     const baseImageSize = this.config.sizing.base;
-    const rotationEnabled = this.config.rotation.enabled;
-    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
+
+    // Get rotation config from image config
+    const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
+    const rotationRange = rotationMode === 'random'
+      ? (this.imageConfig.rotation?.range?.max ?? 15)
+      : 0;
+
+    // Get variance config from image config
+    const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
+    const varianceMax = this.imageConfig.sizing?.variance?.max ?? 1.0;
+    const hasVariance = varianceMin !== 1.0 || varianceMax !== 1.0;
+
+    // Get scale decay for radial layouts
+    const scaleDecay = this.imageConfig.sizing?.scaleDecay ?? 0;
 
     // Debug color palette
     const debugPalette = ['green', 'blue', 'red', 'yellow', 'orange', 'purple'];
@@ -43,15 +57,22 @@ export class RadialPlacementGenerator implements PlacementGenerator {
     const cx = width / 2;
     const cy = height / 2;
 
+    // Calculate max rings for scale decay calculation
+    const estimatedMaxRings = Math.ceil(Math.sqrt(imageCount));
+
     // Add center image (using center position)
     if (imageCount > 0) {
+      // Apply variance to center image
+      const varianceScale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;
+      const centerSize = imageSize * varianceScale;
+
       layouts.push({
         id: 0,
         x: cx,
         y: cy,
-        rotation: this.random(-5, 5), // Less rotation for center
-        scale: 1.0,
-        baseSize: imageSize,
+        rotation: rotationMode === 'random' ? this.random(-5, 5) : 0, // Less rotation for center
+        scale: varianceScale,
+        baseSize: centerSize,
         zIndex: 100, // Center image is highest
         borderColor: debugRadials ? 'cyan' : undefined
       });
@@ -61,6 +82,12 @@ export class RadialPlacementGenerator implements PlacementGenerator {
     let currentRing = 1;
 
     while (processedCount < imageCount) {
+      // Calculate scale decay for this ring (center is largest, outer rings smaller)
+      const normalizedRing = currentRing / estimatedMaxRings;
+      const ringScale = scaleDecay > 0
+        ? 1 - (normalizedRing * scaleDecay * 0.5) // Max 50% size reduction
+        : 1.0;
+
       // Ring settings
       // Scale X more than Y to create horizontal oval shape
       const radiusY = currentRing * (imageSize * 0.8); // Reduce overlap by 20% (1.0 -> 0.8)
@@ -85,6 +112,11 @@ export class RadialPlacementGenerator implements PlacementGenerator {
       for (let i = 0; i < itemsInRing && processedCount < imageCount; i++) {
         const angle = (i * angleStep) + ringOffset;
 
+        // Apply variance and scale decay
+        const varianceScale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;
+        const combinedScale = ringScale * varianceScale;
+        const scaledImageSize = imageSize * combinedScale;
+
         // Calculate center position of image using elliptical formula (store center, not top-left)
         let x = cx + Math.cos(angle) * radiusX;
         let y = cy + Math.sin(angle) * radiusY;
@@ -93,8 +125,8 @@ export class RadialPlacementGenerator implements PlacementGenerator {
         // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
         const padding = this.config.spacing.padding ?? 50;
         const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
-        const halfWidth = (imageSize * estAspectRatio) / 2;
-        const halfHeight = imageSize / 2;
+        const halfWidth = (scaledImageSize * estAspectRatio) / 2;
+        const halfHeight = scaledImageSize / 2;
 
         // Clamp X (center position)
         if (x - halfWidth < padding) {
@@ -110,15 +142,15 @@ export class RadialPlacementGenerator implements PlacementGenerator {
           y = height - padding - halfHeight;
         }
 
-        const rotation = this.random(-rotationRange, rotationRange);
+        const rotation = rotationMode === 'random' ? this.random(-rotationRange, rotationRange) : 0;
 
         layouts.push({
           id: processedCount,
           x,
           y,
           rotation,
-          scale: 1.0,
-          baseSize: imageSize,
+          scale: combinedScale,
+          baseSize: scaledImageSize,
           zIndex: Math.max(1, 100 - currentRing), // Outer rings have lower z-index
           borderColor: debugRadials ? debugPalette[(currentRing - 1) % debugPalette.length] : undefined
         });

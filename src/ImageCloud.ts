@@ -64,7 +64,11 @@ export class ImageCloud {
 
     // Initialize engines with new config structure
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
-    this.layoutEngine = new LayoutEngine(this.fullConfig.layout);
+    this.layoutEngine = new LayoutEngine({
+      layout: this.fullConfig.layout,
+      image: this.fullConfig.image,
+      breakpoints: this.fullConfig.rendering.responsive.breakpoints
+    });
     this.zoomEngine = new ZoomEngine(this.fullConfig.interaction.focus, this.animationEngine, this.fullConfig.styling);
 
     // Precompute styling properties
@@ -263,23 +267,18 @@ export class ImageCloud {
       // Calculate adaptive sizing based on container and image count
       const containerBounds = this.getContainerBounds();
       const responsiveHeight = this.getImageHeight();
+      const viewportWidth = window.innerWidth;
 
       this.logDebug(`Adaptive sizing input: container=${containerBounds.width}x${containerBounds.height}px, images=${imageCount}, responsiveMax=${responsiveHeight}px`);
 
       const sizingResult = this.layoutEngine.calculateAdaptiveSize(
         containerBounds,
         imageCount,
-        this.fullConfig.layout.sizing,
-        responsiveHeight
+        responsiveHeight,
+        viewportWidth
       );
 
-      this.logDebug(`Adaptive sizing result: height=${sizingResult.height}px${sizingResult.truncateCount ? `, overflow=${this.fullConfig.layout.sizing.adaptive?.overflowBehavior}, truncateCount=${sizingResult.truncateCount}` : ''}`);
-
-      // Handle truncation if needed
-      if (sizingResult.truncateCount && sizingResult.truncateCount < imageUrls.length) {
-        this.logDebug(`Truncating from ${imageUrls.length} to ${sizingResult.truncateCount} images`);
-        imageUrls = imageUrls.slice(0, sizingResult.truncateCount);
-      }
+      this.logDebug(`Adaptive sizing result: height=${sizingResult.height}px`);
 
       await this.createImageCloud(imageUrls, sizingResult.height);
 

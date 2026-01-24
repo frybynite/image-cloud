@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig } from './types';
+import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -90,8 +90,39 @@ export const DEFAULT_WAVE_CONFIG: WaveAlgorithmConfig = Object.freeze({
   amplitude: 100,
   frequency: 2,
   phaseShift: 0,
-  synchronization: 'offset' as const,
-  orientation: 'follow' as const
+  synchronization: 'offset' as const
+  // Note: Image rotation along wave is now controlled via image.rotation.mode = 'tangent'
+});
+
+/**
+ * Default image sizing configuration
+ */
+export const DEFAULT_IMAGE_SIZING: ImageSizingConfig = Object.freeze({
+  // baseHeight not set - layouts will auto-calculate based on targetCoverage
+  variance: Object.freeze({
+    min: 1.0,  // No variance by default
+    max: 1.0
+  }),
+  scaleDecay: 0  // No decay by default
+});
+
+/**
+ * Default image rotation configuration
+ */
+export const DEFAULT_IMAGE_ROTATION: ImageRotationConfig = Object.freeze({
+  mode: 'none' as const,
+  range: Object.freeze({
+    min: -15,
+    max: 15
+  })
+});
+
+/**
+ * Default image configuration
+ */
+export const DEFAULT_IMAGE_CONFIG: ImageConfig = Object.freeze({
+  sizing: DEFAULT_IMAGE_SIZING,
+  rotation: DEFAULT_IMAGE_ROTATION
 });
 
 /**
@@ -120,15 +151,14 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
     })
   }),
 
+  // Image sizing and rotation configuration
+  image: DEFAULT_IMAGE_CONFIG,
+
   // Pattern-based layout configuration
   layout: Object.freeze({
     algorithm: 'radial' as const,
     sizing: Object.freeze({
-      base: 200,  // pixels
-      variance: Object.freeze({
-        min: 1.0,  // No variance for consistent height
-        max: 1.0   // No variance for consistent height
-      }),
+      base: 200,  // pixels - fallback when image.sizing.baseHeight not set
       responsive: [
         { minWidth: 1200, height: 225 },  // Large screens
         { minWidth: 768, height: 180 },   // Tablet / Small desktop
@@ -137,19 +167,11 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
       adaptive: Object.freeze({
         enabled: true,             // Enable adaptive sizing by default
         minSize: 50,               // Minimum 50px image height
-        maxSize: 400,              // Maximum 400px image height
-        targetCoverage: 0.6,       // Target 60% of container area
-        densityFactor: 1.0,        // Default density
-        overflowBehavior: 'minimize' as const  // Reduce size to fit, never truncate by default
+        maxSize: 400               // Maximum 400px image height
       })
     }),
-    rotation: Object.freeze({
-      enabled: false,
-      range: Object.freeze({
-        min: -15,  // degrees
-        max: 15    // degrees
-      })
-    }),
+    targetCoverage: 0.6,           // Target 60% of container area
+    densityFactor: 1.0,            // Default density
     spacing: Object.freeze({
       padding: 50,   // padding from viewport edges
       minGap: 20     // minimum spacing between images
@@ -335,11 +357,123 @@ function deepMergeStyling(
  * Deep merge utility for config objects
  * Merges user config with default config
  */
+/**
+ * Deep merge image config with validation
+ */
+function deepMergeImageConfig(
+  defaults: ImageConfig,
+  userImage: Partial<ImageConfig> | undefined
+): ImageConfig {
+  if (!userImage) return { ...defaults };
+
+  const merged: ImageConfig = { ...defaults };
+
+  // Deep merge sizing config
+  if (userImage.sizing !== undefined) {
+    merged.sizing = {
+      ...defaults.sizing,
+      ...userImage.sizing
+    };
+
+    // Deep merge variance with validation
+    if (userImage.sizing.variance) {
+      const userVariance = userImage.sizing.variance as ImageVarianceConfig;
+      const validMin = userVariance.min !== undefined && userVariance.min > 0.1 && userVariance.min < 1
+        ? userVariance.min
+        : defaults.sizing?.variance?.min ?? 1.0;
+      const validMax = userVariance.max !== undefined && userVariance.max > 1 && userVariance.max < 2
+        ? userVariance.max
+        : defaults.sizing?.variance?.max ?? 1.0;
+      merged.sizing!.variance = { min: validMin, max: validMax };
+    }
+  }
+
+  // Deep merge rotation config
+  if (userImage.rotation !== undefined) {
+    merged.rotation = {
+      ...defaults.rotation,
+      ...userImage.rotation
+    };
+
+    // Deep merge rotation range with validation
+    if (userImage.rotation.range) {
+      const userRange = userImage.rotation.range;
+      const validMin = userRange.min !== undefined && userRange.min >= -180 && userRange.min <= 0
+        ? userRange.min
+        : defaults.rotation?.range?.min ?? -15;
+      const validMax = userRange.max !== undefined && userRange.max >= 0 && userRange.max <= 180
+        ? userRange.max
+        : defaults.rotation?.range?.max ?? 15;
+      merged.rotation!.range = { min: validMin, max: validMax };
+    }
+  }
+
+  return merged;
+}
+
+/**
+ * Convert legacy layout.rotation config to new image.rotation format
+ * This provides backward compatibility with the old API
+ */
+function convertLegacyRotationConfig(userConfig: DeepPartial<GalleryConfig>): Partial<ImageConfig> | undefined {
+  const legacyRotation = (userConfig.layout as any)?.rotation;
+  if (!legacyRotation) return undefined;
+
+  // Legacy format: { enabled: boolean, range: { min, max } }
+  if ('enabled' in legacyRotation) {
+    return {
+      rotation: {
+        mode: legacyRotation.enabled ? 'random' : 'none',
+        range: legacyRotation.range
+      }
+    };
+  }
+
+  return undefined;
+}
+
+/**
+ * Convert legacy layout.sizing.variance config to new image.sizing.variance format
+ */
+function convertLegacyVarianceConfig(userConfig: DeepPartial<GalleryConfig>): Partial<ImageConfig> | undefined {
+  const legacyVariance = (userConfig.layout as any)?.sizing?.variance;
+  if (!legacyVariance) return undefined;
+
+  return {
+    sizing: {
+      variance: legacyVariance
+    }
+  };
+}
+
 export function mergeConfig(
   userConfig: DeepPartial<GalleryConfig> = {}
 ): GalleryConfig {
+  // Convert legacy configs to new format
+  const legacyRotation = convertLegacyRotationConfig(userConfig);
+  const legacyVariance = convertLegacyVarianceConfig(userConfig);
+
+  // Combine user image config with converted legacy configs
+  // User's explicit image config takes precedence over legacy conversions
+  let combinedImageConfig: Partial<ImageConfig> | undefined = userConfig.image as Partial<ImageConfig> | undefined;
+  if (legacyRotation || legacyVariance) {
+    combinedImageConfig = {
+      ...(legacyVariance || {}),
+      ...(legacyRotation || {}),
+      ...combinedImageConfig
+    };
+    // Deep merge the rotation config if both exist
+    if (combinedImageConfig.rotation && legacyRotation?.rotation && userConfig.image?.rotation) {
+      combinedImageConfig.rotation = {
+        ...legacyRotation.rotation,
+        ...(userConfig.image as any).rotation
+      };
+    }
+  }
+
   const merged: GalleryConfig = {
     loader: { ...DEFAULT_CONFIG.loader },
+    image: deepMergeImageConfig(DEFAULT_IMAGE_CONFIG, combinedImageConfig),
     layout: { ...DEFAULT_CONFIG.layout },
     animation: { ...DEFAULT_CONFIG.animation },
     interaction: { ...DEFAULT_CONFIG.interaction },
@@ -390,24 +524,10 @@ export function mergeConfig(
       merged.layout.sizing = {
         ...DEFAULT_CONFIG.layout.sizing,
         ...userConfig.layout.sizing,
-        variance: userConfig.layout.sizing.variance
-          ? { ...DEFAULT_CONFIG.layout.sizing.variance, ...userConfig.layout.sizing.variance }
-          : DEFAULT_CONFIG.layout.sizing.variance,
         responsive: (userConfig.layout.sizing.responsive as ResponsiveHeight[]) || DEFAULT_CONFIG.layout.sizing.responsive,
         adaptive: userConfig.layout.sizing.adaptive
           ? { ...DEFAULT_CONFIG.layout.sizing.adaptive!, ...(userConfig.layout.sizing.adaptive as AdaptiveSizingConfig) }
           : DEFAULT_CONFIG.layout.sizing.adaptive
-      };
-    }
-
-    // Deep merge rotation config
-    if (userConfig.layout.rotation) {
-      merged.layout.rotation = {
-        ...DEFAULT_CONFIG.layout.rotation,
-        ...userConfig.layout.rotation,
-        range: userConfig.layout.rotation.range
-          ? { ...DEFAULT_CONFIG.layout.rotation.range, ...userConfig.layout.rotation.range }
-          : DEFAULT_CONFIG.layout.rotation.range
       };
     }
 

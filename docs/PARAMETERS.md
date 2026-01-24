@@ -17,12 +17,12 @@ The Image Cloud library offers a flexible configuration system to customize ever
   - [Wave Algorithm](#wave-algorithm)
   - [Radial Algorithm](#radial-algorithm)
   - [Random Algorithm](#random-algorithm)
-- [Sizing Configuration](#sizing-layoutsizing)
-- [Animation Configuration](#3-animation-configuration-animation)
+- [Image Configuration](#3-image-configuration-image)
+- [Animation Configuration](#4-animation-configuration-animation)
 - [Entry Animation](#entry-animation)
 - [Entry Animation Paths](#entry-animation-paths)
-- [Interaction Configuration](#4-interaction-configuration-interaction)
-- [Rendering Configuration](#5-rendering-configuration-rendering)
+- [Interaction Configuration](#5-interaction-configuration-interaction)
+- [Rendering Configuration](#6-rendering-configuration-rendering)
 - [Complete JSON Reference](#complete-json-reference)
 - [Complete Examples](#complete-examples)
 
@@ -151,8 +151,9 @@ Controls the positioning and sizing of images.
 ```typescript
 layout: {
   algorithm: 'radial' | 'random' | 'grid' | 'spiral' | 'cluster' | 'wave',
+  targetCoverage?: number,         // 0-1, for auto-sizing when baseHeight not set (default: 0.6)
+  densityFactor?: number,          // Controls spacing density (default: 1.0)
   sizing: LayoutSizingConfig,
-  rotation: LayoutRotationConfig,
   spacing: LayoutSpacingConfig,
   // Algorithm-specific options
   grid?: GridAlgorithmConfig,
@@ -167,9 +168,10 @@ layout: {
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'`, `'wave'` |
+| `targetCoverage` | `number` | `0.6` | Target percentage of container to fill (0.0-1.0) when `image.sizing.baseHeight` is not set |
+| `densityFactor` | `number` | `1.0` | Multiplier for calculated sizes and spacing |
 | `debugRadials` | `boolean` | `false` | Visualize the radial layout structure (debug). |
 | `sizing` | `LayoutSizingConfig` | *See below* | Configuration for image dimensions. |
-| `rotation` | `LayoutRotationConfig` | *See below* | Configuration for image rotation. |
 | `spacing` | `LayoutSpacingConfig` | *See below* | Configuration for margins and gaps. |
 
 ---
@@ -415,18 +417,101 @@ No algorithm-specific options. Uses base `sizing` and `rotation` config.
 
 ---
 
-## Sizing (`layout.sizing`)
+---
 
-Controls image sizing behavior.
+### 3. Image Configuration (`image`)
+
+Controls image-specific sizing and rotation behavior. This is the recommended way to configure image properties.
+
+```typescript
+image: {
+  sizing: {
+    baseHeight?: number | {        // Optional - if not set, layouts auto-calculate
+      default: number,             // Base height for large screens
+      tablet?: number,             // Height for tablet
+      mobile?: number              // Height for mobile
+    },
+    variance?: {
+      min: number,                 // > 0.1 and < 1 (e.g., 0.8)
+      max: number                  // > 1 and < 2 (e.g., 1.2)
+    },
+    scaleDecay?: number            // For Radial/Spiral - progressive size reduction (0-1)
+  },
+  rotation: {
+    mode: 'none' | 'random' | 'tangent',  // default: 'none'
+    range?: {
+      min: number,                 // Negative degrees (-180 to 0)
+      max: number                  // Positive degrees (0 to 180)
+    }
+  }
+}
+```
+
+#### Image Sizing (`image.sizing`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `baseHeight` | `number \| ResponsiveBaseHeight` | *auto* | Base image height. If not set, layouts auto-calculate based on `targetCoverage`. |
+| `variance.min` | `number` | `1.0` | Minimum size multiplier. Must be > 0.1 and < 1.0. |
+| `variance.max` | `number` | `1.0` | Maximum size multiplier. Must be > 1.0 and < 2.0. |
+| `scaleDecay` | `number` | `0` | Progressive size reduction for Radial/Spiral layouts (0-1). |
+
+**Responsive baseHeight:**
+```typescript
+image: {
+  sizing: {
+    baseHeight: {
+      default: 200,   // Desktop
+      tablet: 150,    // Tablet (uses rendering.responsive.breakpoints.tablet)
+      mobile: 100     // Mobile (uses rendering.responsive.breakpoints.mobile)
+    }
+  }
+}
+```
+
+#### Image Rotation (`image.rotation`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `mode` | `'none' \| 'random' \| 'tangent'` | `'none'` | Rotation mode. |
+| `range.min` | `number` | `-15` | Minimum rotation degrees (-180 to 0). |
+| `range.max` | `number` | `15` | Maximum rotation degrees (0 to 180). |
+
+**Rotation Modes:**
+
+| Mode | Description | Applicable Layouts |
+|------|-------------|-------------------|
+| `none` | No rotation (default) | All |
+| `random` | Random rotation within range | All |
+| `tangent` | Align to curve tangent | Wave, Spiral |
+
+**Example - Classic scattered photos:**
+```typescript
+image: {
+  rotation: { mode: 'random', range: { min: -15, max: 15 } },
+  sizing: { variance: { min: 0.9, max: 1.1 } }
+}
+```
+
+**Example - Spiral with tangent rotation:**
+```typescript
+image: {
+  rotation: { mode: 'tangent' },
+  sizing: { scaleDecay: 0.5 }
+},
+layout: { algorithm: 'spiral' }
+```
+
+---
+
+## Layout Sizing (`layout.sizing`)
+
+Controls image sizing behavior at the layout level.
 
 ```typescript
 layout: {
   sizing: {
-    base: 200,           // Base height in pixels
-    variance: {
-      min: 1.0,          // Minimum scale multiplier
-      max: 1.0           // Maximum scale multiplier
-    },
+    base: 200,           // Base height in pixels (fallback)
     responsive: [
       { minWidth: 1200, height: 225 },
       { minWidth: 768, height: 180 },
@@ -435,10 +520,7 @@ layout: {
     adaptive: {
       enabled: true,
       minSize: 50,
-      maxSize: 400,
-      targetCoverage: 0.6,
-      densityFactor: 1.0,
-      overflowBehavior: 'minimize'
+      maxSize: 400
     }
   }
 }
@@ -447,22 +529,12 @@ layout: {
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `base` | `number` | `200` | Base height of images in pixels. |
-| `variance.min` | `number` | `1.0` | Minimum size multiplier. |
-| `variance.max` | `number` | `1.0` | Maximum size multiplier. |
 | `responsive` | `ResponsiveHeight[]` | *See above* | Array of `{ minWidth, height }` objects for responsive sizing. |
 | `adaptive.enabled` | `boolean` | `true` | Enable auto-sizing |
 | `adaptive.minSize` | `number` | `50` | Minimum image height |
 | `adaptive.maxSize` | `number` | `400` | Maximum image height |
-| `adaptive.targetCoverage` | `number` | `0.6` | Target % of container to fill |
-| `adaptive.overflowBehavior` | `string` | `'minimize'` | `'minimize'` or `'truncate'` |
 
-#### Rotation (`layout.rotation`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `enabled` | `boolean` | `true` | Whether images should be rotated. |
-| `range.min` | `number` | `-15` | Minimum rotation degrees. |
-| `range.max` | `number` | `15` | Maximum rotation degrees. |
+> **Note:** For image-specific sizing like `variance`, `baseHeight`, and `scaleDecay`, see [Image Configuration](#3-image-configuration-image).
 
 #### Spacing (`layout.spacing`)
 
@@ -471,7 +543,7 @@ layout: {
 | `padding` | `number` | `50` | Padding from container edges (px). |
 | `minGap` | `number` | `20` | Minimum space between images (px). |
 
-### 3. Animation Configuration (`animation`)
+### 4. Animation Configuration (`animation`)
 
 Controls entrance and interaction animations.
 
@@ -817,7 +889,7 @@ animation: {
 
 ---
 
-### 4. Interaction Configuration (`interaction`)
+### 5. Interaction Configuration (`interaction`)
 
 Controls user interactions like clicking and zooming.
 
@@ -828,7 +900,7 @@ Controls user interactions like clicking and zooming.
 | `focus.unfocusedOpacity`| `number` | `0.3` | Opacity of non-selected images. |
 | `focus.zIndex` | `number` | `1000` | Z-index of the focused image. |
 
-### 5. Rendering Configuration (`rendering`)
+### 6. Rendering Configuration (`rendering`)
 
 Controls UI elements and responsiveness.
 
@@ -918,16 +990,32 @@ All available parameters with example values:
     }
   },
 
+  "image": {
+    "sizing": {
+      "baseHeight": 200,                        // Optional. number or responsive object
+      "variance": {
+        "min": 1.0,                             // Default. Min scale (0.1-1.0)
+        "max": 1.0                              // Default. Max scale (1.0-2.0)
+      },
+      "scaleDecay": 0                           // Default. For Radial/Spiral (0-1)
+    },
+    "rotation": {
+      "mode": "none",                           // Default. "none" | "random" | "tangent"
+      "range": {
+        "min": -15,                             // Default. Degrees (-180 to 0)
+        "max": 15                               // Default. Degrees (0 to 180)
+      }
+    }
+  },
+
   "layout": {
     "algorithm": "radial",                      // Default. "radial" | "random" | "grid" | "spiral" | "cluster" | "wave"
+    "targetCoverage": 0.6,                      // Default. Target % of container to fill (0-1)
+    "densityFactor": 1.0,                       // Default. Multiplier for calculated sizes
     "debugRadials": false,                      // Default
 
     "sizing": {
       "base": 200,                              // Default. Base image size in px
-      "variance": {
-        "min": 1.0,                             // Default. Min scale multiplier
-        "max": 1.0                              // Default. Max scale multiplier
-      },
       "responsive": [                           // Default
         { "minWidth": 1200, "height": 225 },
         { "minWidth": 768, "height": 180 },
@@ -936,18 +1024,7 @@ All available parameters with example values:
       "adaptive": {
         "enabled": true,                        // Default
         "minSize": 50,                          // Default
-        "maxSize": 400,                         // Default
-        "targetCoverage": 0.6,                  // Default
-        "densityFactor": 1.0,                   // Default
-        "overflowBehavior": "minimize"          // Default. "minimize" | "truncate"
-      }
-    },
-
-    "rotation": {
-      "enabled": true,                          // Default
-      "range": {
-        "min": -15,                             // Default. Degrees
-        "max": 15                               // Default. Degrees
+        "maxSize": 400                          // Default
       }
     },
 
@@ -1130,13 +1207,15 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    rotation: {
+      mode: 'random',
+      range: { min: -20, max: 20 }  // More rotation for organic feel
+    }
+  },
   layout: {
     algorithm: 'cluster',
     sizing: { base: 90 },
-    rotation: {
-      enabled: true,
-      range: { min: -20, max: 20 }  // More rotation for organic feel
-    },
     cluster: {
       clusterCount: 3,
       clusterSpread: 100,
@@ -1154,9 +1233,11 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    rotation: { mode: 'none' }  // No rotation for clean grid
+  },
   layout: {
     algorithm: 'grid',
-    rotation: { enabled: false },
     grid: {
       columns: 'auto',
       rows: 'auto',
@@ -1381,16 +1462,18 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    rotation: { mode: 'tangent' }  // Images tilt along wave curve
+  },
   layout: {
     algorithm: 'wave',
     sizing: { base: 120 },
-    rotation: { enabled: false },  // Wave handles rotation
     wave: {
       rows: 4,
       amplitude: 100,
       frequency: 2.5,
       synchronization: 'offset',
-      orientation: 'follow'  // Images tilt with wave curve
+      orientation: 'follow'
     }
   },
   animation: {

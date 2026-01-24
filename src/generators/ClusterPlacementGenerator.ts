@@ -3,7 +3,7 @@
  * Generates organic cluster layouts with natural groupings
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ClusterAlgorithmConfig } from '../config/types';
+import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ClusterAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface ClusterCenter {
   x: number;
@@ -26,9 +26,11 @@ const DEFAULT_CLUSTER_CONFIG: ClusterAlgorithmConfig = {
 
 export class ClusterPlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
+  private imageConfig: ImageConfig;
 
-  constructor(config: LayoutConfig) {
+  constructor(config: LayoutConfig, imageConfig: ImageConfig = {}) {
     this.config = config;
+    this.imageConfig = imageConfig;
   }
 
   /**
@@ -50,8 +52,17 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
     const padding = this.config.spacing.padding;
     // Use fixedHeight if provided, otherwise use base size from config
     const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
-    const rotationEnabled = this.config.rotation.enabled;
-    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
+
+    // Get rotation config from image config
+    const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
+    const rotationRange = rotationMode === 'random'
+      ? (this.imageConfig.rotation?.range?.max ?? 15)
+      : 0;
+
+    // Get variance config from image config
+    const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
+    const varianceMax = this.imageConfig.sizing?.variance?.max ?? 1.0;
+    const hasVariance = varianceMin !== 1.0 || varianceMax !== 1.0;
 
     // Calculate number of clusters
     const clusterCount = this.calculateClusterCount(
@@ -109,8 +120,12 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
         offsetX /= overlapMultiplier;
         offsetY /= overlapMultiplier;
 
-        // Calculate image size with overlap factor
-        const imageSize = baseImageSize * sizeMultiplier;
+        // Apply variance
+        const varianceScale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;
+        const combinedScale = sizeMultiplier * varianceScale;
+
+        // Calculate image size with overlap factor and variance
+        const imageSize = baseImageSize * combinedScale;
 
         // Store center position (not top-left)
         let x = cluster.x + offsetX;
@@ -124,8 +139,8 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
         x = Math.max(padding + halfWidth, Math.min(x, width - padding - halfWidth));
         y = Math.max(padding + halfHeight, Math.min(y, height - padding - halfHeight));
 
-        // Rotation - more variance for organic feel
-        const rotation = this.random(-rotationRange, rotationRange);
+        // Rotation - more variance for organic feel (only when mode is random)
+        const rotation = rotationMode === 'random' ? this.random(-rotationRange, rotationRange) : 0;
 
         // Z-index: images closer to cluster center are on top
         const distanceFromCenter = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
@@ -137,7 +152,7 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
           x,
           y,
           rotation,
-          scale: 1.0,
+          scale: combinedScale,
           baseSize: imageSize,
           zIndex
         });

@@ -3,7 +3,7 @@
  * Generates random overlapping layouts for image cloud
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig } from '../config/types';
+import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
 
 interface RandomLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
@@ -11,9 +11,11 @@ interface RandomLayoutOptions extends Partial<LayoutConfig> {
 
 export class RandomPlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
+  private imageConfig: ImageConfig;
 
-  constructor(config: LayoutConfig) {
+  constructor(config: LayoutConfig, imageConfig: ImageConfig = {}) {
     this.config = config;
+    this.imageConfig = imageConfig;
   }
 
   /**
@@ -30,10 +32,17 @@ export class RandomPlacementGenerator implements PlacementGenerator {
     const padding = this.config.spacing.padding;
     // Use fixedHeight if provided, otherwise use base size from config
     const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
-    const rotationEnabled = this.config.rotation.enabled;
-    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
-    const sizeVarianceMin = this.config.sizing.variance.min;
-    const sizeVarianceMax = this.config.sizing.variance.max;
+
+    // Get rotation config from image config
+    const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
+    const rotationRange = rotationMode === 'random'
+      ? (this.imageConfig.rotation?.range?.max ?? 15)
+      : 0;
+
+    // Get variance config from image config
+    const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
+    const varianceMax = this.imageConfig.sizing?.variance?.max ?? 1.0;
+    const hasVariance = varianceMin !== 1.0 || varianceMax !== 1.0;
 
     // Calculate safe bounds for center positions (accounting for half image size and padding)
     // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
@@ -51,11 +60,12 @@ export class RandomPlacementGenerator implements PlacementGenerator {
       const x = this.random(minX, maxX);
       const y = this.random(minY, maxY);
 
-      // Random rotation within range
-      const rotation = this.random(-rotationRange, rotationRange);
+      // Random rotation within range (only when mode is random)
+      const rotation = rotationMode === 'random' ? this.random(-rotationRange, rotationRange) : 0;
 
       // Random size variance
-      const scale = this.random(sizeVarianceMin, sizeVarianceMax);
+      const scale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;
+      const scaledImageSize = baseImageSize * scale;
 
       const layout: ImageLayout = {
         id: i,
@@ -63,7 +73,7 @@ export class RandomPlacementGenerator implements PlacementGenerator {
         y,
         rotation,
         scale,
-        baseSize: baseImageSize
+        baseSize: scaledImageSize
       };
 
       layouts.push(layout);

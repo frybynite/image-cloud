@@ -3,7 +3,7 @@
  * Generates grid-based layouts with optional stagger and jitter
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, GridAlgorithmConfig } from '../config/types';
+import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, GridAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface GridLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
@@ -22,9 +22,11 @@ const DEFAULT_GRID_CONFIG: GridAlgorithmConfig = {
 
 export class GridPlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
+  private imageConfig: ImageConfig;
 
-  constructor(config: LayoutConfig) {
+  constructor(config: LayoutConfig, imageConfig: ImageConfig = {}) {
     this.config = config;
+    this.imageConfig = imageConfig;
   }
 
   /**
@@ -46,8 +48,14 @@ export class GridPlacementGenerator implements PlacementGenerator {
     const padding = this.config.spacing.padding;
     // Use fixedHeight if provided, otherwise use base size from config
     const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
-    const rotationEnabled = this.config.rotation.enabled;
-    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
+
+    // Get rotation config from image config
+    const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
+
+    // Get variance config from image config
+    const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
+    const varianceMax = this.imageConfig.sizing?.variance?.max ?? 1.0;
+    const hasVariance = varianceMin !== 1.0 || varianceMax !== 1.0;
 
     // Calculate available space
     const availableWidth = width - (2 * padding);
@@ -139,11 +147,15 @@ export class GridPlacementGenerator implements PlacementGenerator {
         }
       }
 
+      // Apply variance to create non-uniform look
+      const varianceScale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;
+      const scaledImageSize = imageSize * varianceScale;
+
       // Boundary clamping for center-based positioning
       // Use 1.5 multiplier (3:2 aspect) as reasonable middle ground for mixed portrait/landscape
       const estAspectRatio = 1.5;
-      const halfWidth = (imageSize * estAspectRatio) / 2;
-      const halfHeight = imageSize / 2;
+      const halfWidth = (scaledImageSize * estAspectRatio) / 2;
+      const halfHeight = scaledImageSize / 2;
       const minX = padding + halfWidth;
       const maxX = width - padding - halfWidth;
       const minY = padding + halfHeight;
@@ -152,18 +164,28 @@ export class GridPlacementGenerator implements PlacementGenerator {
       x = Math.max(minX, Math.min(x, maxX));
       y = Math.max(minY, Math.min(y, maxY));
 
-      // Apply rotation (reduced for grid layouts to maintain structure)
-      const rotation = gridConfig.jitter > 0
-        ? this.random(-rotationRange * gridConfig.jitter, rotationRange * gridConfig.jitter)
-        : 0;
+      // Apply rotation when mode is random
+      // If jitter > 0, scale rotation by jitter factor; otherwise use full rotation range
+      let rotation = 0;
+      if (rotationMode === 'random') {
+        const minRotation = this.imageConfig.rotation?.range?.min ?? -15;
+        const maxRotation = this.imageConfig.rotation?.range?.max ?? 15;
+        if (gridConfig.jitter > 0) {
+          // Scale rotation by jitter factor for more subtle effect
+          rotation = this.random(minRotation * gridConfig.jitter, maxRotation * gridConfig.jitter);
+        } else {
+          // Full rotation range even without jitter
+          rotation = this.random(minRotation, maxRotation);
+        }
+      }
 
       layouts.push({
         id: i,
         x,
         y,
         rotation,
-        scale: 1.0,
-        baseSize: imageSize,
+        scale: varianceScale,
+        baseSize: scaledImageSize,
         zIndex: i + 1
       });
     }

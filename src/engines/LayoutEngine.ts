@@ -9,7 +9,7 @@
  * - updateConfig(newConfig)
  */
 
-import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator, AdaptiveSizingResult, LayoutSizingConfig } from '../config/types';
+import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator, AdaptiveSizingResult, ImageConfig, ResponsiveBaseHeight } from '../config/types';
 import { RandomPlacementGenerator } from '../generators/RandomPlacementGenerator';
 import { RadialPlacementGenerator } from '../generators/RadialPlacementGenerator';
 import { GridPlacementGenerator } from '../generators/GridPlacementGenerator';
@@ -17,13 +17,26 @@ import { SpiralPlacementGenerator } from '../generators/SpiralPlacementGenerator
 import { ClusterPlacementGenerator } from '../generators/ClusterPlacementGenerator';
 import { WavePlacementGenerator } from '../generators/WavePlacementGenerator';
 
+export interface LayoutEngineConfig {
+  layout: LayoutConfig;
+  image: ImageConfig;
+  breakpoints?: {
+    mobile: number;
+    tablet?: number;
+  };
+}
+
 export class LayoutEngine {
   private config: LayoutConfig;
+  private imageConfig: ImageConfig;
+  private breakpoints: { mobile: number; tablet?: number };
   private layouts: Map<number, ImageLayout>;
   private generator: PlacementGenerator;
 
-  constructor(config: LayoutConfig) {
-    this.config = config;
+  constructor(config: LayoutEngineConfig) {
+    this.config = config.layout;
+    this.imageConfig = config.image;
+    this.breakpoints = config.breakpoints ?? { mobile: 768 };
 
     this.layouts = new Map();  // Store original states by image ID
 
@@ -38,18 +51,18 @@ export class LayoutEngine {
   private initGenerator(): PlacementGenerator {
     switch (this.config.algorithm) {
       case 'radial':
-        return new RadialPlacementGenerator(this.config);
+        return new RadialPlacementGenerator(this.config, this.imageConfig);
       case 'grid':
-        return new GridPlacementGenerator(this.config);
+        return new GridPlacementGenerator(this.config, this.imageConfig);
       case 'spiral':
-        return new SpiralPlacementGenerator(this.config);
+        return new SpiralPlacementGenerator(this.config, this.imageConfig);
       case 'cluster':
-        return new ClusterPlacementGenerator(this.config);
+        return new ClusterPlacementGenerator(this.config, this.imageConfig);
       case 'wave':
-        return new WavePlacementGenerator(this.config);
+        return new WavePlacementGenerator(this.config, this.imageConfig);
       case 'random':
       default:
-        return new RandomPlacementGenerator(this.config);
+        return new RandomPlacementGenerator(this.config, this.imageConfig);
     }
   }
 
@@ -91,32 +104,85 @@ export class LayoutEngine {
    * Update config dynamically (useful for responsive changes)
    * @param newConfig - Updated configuration
    */
-  updateConfig(newConfig: Partial<LayoutConfig>): void {
-    // Deep merge not implemented here, assuming simplified updates for now
-    // or that newConfig is structurally compatible with specific overrides
-    Object.assign(this.config, newConfig);
+  updateConfig(newConfig: Partial<LayoutEngineConfig>): void {
+    // Update layout config
+    if (newConfig.layout) {
+      Object.assign(this.config, newConfig.layout);
 
-    // Reinitialize generator if algorithm changed
-    if (newConfig.algorithm && newConfig.algorithm !== this.config.algorithm) {
-      this.generator = this.initGenerator();
+      // Reinitialize generator if algorithm changed
+      if (newConfig.layout.algorithm && newConfig.layout.algorithm !== this.config.algorithm) {
+        this.generator = this.initGenerator();
+      }
     }
+
+    // Update image config
+    if (newConfig.image) {
+      Object.assign(this.imageConfig, newConfig.image);
+    }
+
+    // Update breakpoints
+    if (newConfig.breakpoints) {
+      this.breakpoints = newConfig.breakpoints;
+    }
+  }
+
+  /**
+   * Resolve the effective base height based on image config and current viewport
+   * @param viewportWidth - Current viewport width
+   * @returns Resolved base height or undefined if should auto-calculate
+   */
+  resolveBaseHeight(viewportWidth: number): number | undefined {
+    const baseHeight = this.imageConfig.sizing?.baseHeight;
+
+    if (baseHeight === undefined) {
+      return undefined; // Signal to auto-calculate
+    }
+
+    if (typeof baseHeight === 'number') {
+      return baseHeight;
+    }
+
+    // Responsive base height
+    const responsive = baseHeight as ResponsiveBaseHeight;
+
+    if (viewportWidth <= this.breakpoints.mobile) {
+      return responsive.mobile ?? responsive.tablet ?? responsive.default;
+    }
+
+    if (this.breakpoints.tablet && viewportWidth <= this.breakpoints.tablet) {
+      return responsive.tablet ?? responsive.default;
+    }
+
+    return responsive.default;
   }
 
   /**
    * Calculate adaptive image size based on container dimensions and image count
    * @param containerBounds - Container dimensions {width, height}
    * @param imageCount - Number of images to display
-   * @param sizingConfig - Sizing configuration including responsive and adaptive settings
    * @param responsiveHeight - Current responsive breakpoint height (upper bound)
-   * @returns Calculated sizing result with height and optional truncate count
+   * @param viewportWidth - Current viewport width for baseHeight resolution
+   * @returns Calculated sizing result with height
    */
   calculateAdaptiveSize(
     containerBounds: ContainerBounds,
     imageCount: number,
-    sizingConfig: LayoutSizingConfig,
-    responsiveHeight: number
+    responsiveHeight: number,
+    viewportWidth: number
   ): AdaptiveSizingResult {
-    const adaptive = sizingConfig.adaptive;
+    const adaptive = this.config.sizing.adaptive;
+
+    // Check if user specified a baseHeight in image config
+    const userBaseHeight = this.resolveBaseHeight(viewportWidth);
+
+    // If user specified baseHeight, use it (clamped to responsive max and adaptive bounds)
+    if (userBaseHeight !== undefined) {
+      let height = Math.min(userBaseHeight, responsiveHeight);
+      if (adaptive) {
+        height = this.clamp(height, adaptive.minSize, adaptive.maxSize);
+      }
+      return { height };
+    }
 
     // If adaptive sizing is disabled, return responsive height
     if (!adaptive || !adaptive.enabled) {
@@ -124,7 +190,9 @@ export class LayoutEngine {
     }
 
     const { width, height } = containerBounds;
-    const { minSize, maxSize, targetCoverage, densityFactor, overflowBehavior } = adaptive;
+    const { minSize, maxSize } = adaptive;
+    const targetCoverage = this.config.targetCoverage ?? 0.6;
+    const densityFactor = this.config.densityFactor ?? 1.0;
 
     // Calculate area-based optimal size
     const containerArea = width * height;
@@ -144,21 +212,11 @@ export class LayoutEngine {
     // Apply min/max constraints
     let finalHeight = this.clamp(calculatedHeight, minSize, maxSize);
 
-    // Handle overflow behavior
+    // 'minimize' behavior: force fit below minimum if needed (0.05 floor)
     if (finalHeight === minSize && calculatedHeight < minSize) {
-      // Images still wouldn't fit at minimum size
-      if (overflowBehavior === 'truncate') {
-        // Calculate how many images can fit at minSize
-        const minImageArea = minSize * (minSize * aspectRatio);
-        const maxImages = Math.floor(targetArea / minImageArea);
-        return {
-          height: minSize,
-          truncateCount: Math.max(1, maxImages)
-        };
-      }
-      // 'minimize' behavior: force fit below minimum
-      // Recalculate without minimum constraint
-      finalHeight = Math.max(20, calculatedHeight); // Hard floor at 20px
+      // Minimum floor is 5% of calculated size
+      const floor = Math.max(minSize * 0.05, 20);
+      finalHeight = Math.max(floor, calculatedHeight);
     }
 
     return { height: finalHeight };

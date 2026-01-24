@@ -3,7 +3,7 @@
  * Generates spiral layouts (golden, archimedean, logarithmic)
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, SpiralAlgorithmConfig } from '../config/types';
+import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, SpiralAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface SpiralLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
@@ -22,9 +22,11 @@ const DEFAULT_SPIRAL_CONFIG: SpiralAlgorithmConfig = {
 
 export class SpiralPlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
+  private imageConfig: ImageConfig;
 
-  constructor(config: LayoutConfig) {
+  constructor(config: LayoutConfig, imageConfig: ImageConfig = {}) {
     this.config = config;
+    this.imageConfig = imageConfig;
   }
 
   /**
@@ -46,8 +48,20 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
     const padding = this.config.spacing.padding;
     // Use fixedHeight if provided, otherwise use base size from config
     const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
-    const rotationEnabled = this.config.rotation.enabled;
-    const rotationRange = rotationEnabled ? this.config.rotation.range.max : 0;
+
+    // Get rotation config from image config
+    const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
+    const rotationRange = rotationMode === 'random'
+      ? (this.imageConfig.rotation?.range?.max ?? 15)
+      : 0;
+
+    // Get variance config from image config
+    const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
+    const varianceMax = this.imageConfig.sizing?.variance?.max ?? 1.0;
+    const hasVariance = varianceMin !== 1.0 || varianceMax !== 1.0;
+
+    // Get scale decay from image config (overrides spiral config)
+    const scaleDecay = this.imageConfig.sizing?.scaleDecay ?? spiralConfig.scaleDecay;
 
     // Center of the spiral
     const cx = width / 2;
@@ -89,14 +103,18 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
       const x = cx + Math.cos(angle) * radius;
       const y = cy + Math.sin(angle) * radius;
 
-      // Calculate scale based on decay (center images larger)
+      // Calculate scale based on decay (center images larger) - use scaleDecay from image config
       const normalizedRadius = radius / maxRadius;
-      const scale = spiralConfig.scaleDecay > 0
-        ? 1 - (normalizedRadius * spiralConfig.scaleDecay * 0.5) // Max 50% size reduction
+      const decayScale = scaleDecay > 0
+        ? 1 - (normalizedRadius * scaleDecay * 0.5) // Max 50% size reduction
         : 1.0;
 
+      // Apply variance
+      const varianceScale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;
+      const combinedScale = decayScale * varianceScale;
+
       // Apply scaled image size
-      const scaledImageSize = baseImageSize * scale;
+      const scaledImageSize = baseImageSize * combinedScale;
 
       // Clamp center positions to keep images within bounds
       // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
@@ -111,12 +129,18 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
       const clampedX = Math.max(minX, Math.min(x, maxX));
       const clampedY = Math.max(minY, Math.min(y, maxY));
 
-      // Rotation - slight variance that follows spiral direction
-      const baseRotation = (angle * 180 / Math.PI) % 360;
-      const rotationVariance = this.random(-rotationRange, rotationRange);
-      const rotation = spiralConfig.spiralType === 'golden'
-        ? rotationVariance // Pure random for golden (more organic)
-        : (baseRotation * 0.1 + rotationVariance * 0.9); // Slight directional bias for others
+      // Rotation based on mode
+      let rotation = 0;
+      if (rotationMode === 'random') {
+        const baseRotation = (angle * 180 / Math.PI) % 360;
+        const rotationVariance = this.random(-rotationRange, rotationRange);
+        rotation = spiralConfig.spiralType === 'golden'
+          ? rotationVariance // Pure random for golden (more organic)
+          : (baseRotation * 0.1 + rotationVariance * 0.9); // Slight directional bias for others
+      } else if (rotationMode === 'tangent') {
+        // Tangent rotation: align image to spiral curve
+        rotation = this.calculateSpiralTangent(angle, radius, spiralConfig);
+      }
 
       // Z-index: center images on top
       const zIndex = imageCount - i;
@@ -126,13 +150,53 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
         x: clampedX,
         y: clampedY,
         rotation,
-        scale,
+        scale: combinedScale,
         baseSize: scaledImageSize,
         zIndex
       });
     }
 
     return layouts;
+  }
+
+  /**
+   * Calculate tangent angle for spiral curve at given position
+   * This aligns the image along the spiral's direction of travel
+   */
+  private calculateSpiralTangent(
+    angle: number,
+    radius: number,
+    spiralConfig: SpiralAlgorithmConfig
+  ): number {
+    // For different spiral types, the tangent calculation varies
+    // The tangent angle is the derivative of the spiral equation
+
+    let tangentAngle: number;
+
+    if (spiralConfig.spiralType === 'golden') {
+      // Golden spiral tangent is approximately perpendicular to radial line
+      // Plus a small offset based on the golden angle
+      tangentAngle = angle + Math.PI / 2;
+    } else if (spiralConfig.spiralType === 'archimedean') {
+      // Archimedean spiral: dr/dθ = constant = b
+      // tan(ψ) = r / (dr/dθ) = r / b
+      // For tightness = 1, b ≈ 1
+      const b = 1 / spiralConfig.tightness;
+      const psi = Math.atan(radius / b);
+      tangentAngle = angle + psi;
+    } else {
+      // Logarithmic spiral: tangent makes constant angle with radial line
+      // This angle depends on the growth rate b
+      const b = 0.15 / spiralConfig.tightness;
+      const psi = Math.atan(1 / b); // Constant pitch angle
+      tangentAngle = angle + psi;
+    }
+
+    // Convert to degrees and normalize
+    const degrees = (tangentAngle * 180 / Math.PI) % 360;
+
+    // Adjust so 0 degrees means pointing right
+    return degrees - 90;
   }
 
   /**
