@@ -49,6 +49,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 *Future feature ideas to explore*
 
+- Grid overflow mode - allow multiple items in the same cell with x/y offsets (stacking/layering effect)
 - Vue component wrapper
 - Web Component wrapper
 - Additional layout algorithms (honeycomb, physics-based)
