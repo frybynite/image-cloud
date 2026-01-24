@@ -408,6 +408,14 @@
             font-family: 'SF Mono', Monaco, monospace;
         }
 
+        .control-hint {
+            font-size: 10px;
+            color: #666;
+            font-style: italic;
+            margin-top: 4px;
+            padding-left: 24px;
+        }
+
         /* Buttons */
         .apply-btn {
             width: 100%;
@@ -747,8 +755,8 @@
                 <div class="preset-section">
                     <label>Image Count</label>
                     <div class="image-count-control">
-                        <input type="range" id="imageCount" min="5" max="50" step="1" value="8" oninput="updateImageCount(this)">
-                        <span class="image-count-value" id="imageCountValue">8</span>
+                        <input type="range" id="imageCount" min="5" max="100" step="1" value="20" oninput="updateImageCount(this)">
+                        <span class="image-count-value" id="imageCountValue">20</span>
                     </div>
                 </div>
 
@@ -1011,45 +1019,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-wave-orientation">
-                                    <label class="control-label" data-label="Orientation" data-path="wave.orientation">Orientation</label>
-                                    <div class="control-input">
-                                        <select id="wave-orientation">
-                                            <option value="follow">Follow Wave</option>
-                                            <option value="upright">Stay Upright</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sizing -->
-                        <div class="control-group">
-                            <h5 class="control-group-title" data-label="Sizing" data-path="layout.sizing">Sizing</h5>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-sizing-base">
-                                <label class="control-label" data-label="Base Height" data-path="sizing.base">Base Height</label>
-                                <div class="control-input">
-                                    <input type="number" id="sizing-base" value="200" min="50" max="500">
-                                    <span class="value-display">px</span>
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-variance-min">
-                                <label class="control-label" data-label="Variance Min" data-path="sizing.variance.min">Variance Min</label>
-                                <div class="control-input">
-                                    <input type="range" id="variance-min" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
-                                    <span class="value-display">1.0</span>
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-variance-max">
-                                <label class="control-label" data-label="Variance Max" data-path="sizing.variance.max">Variance Max</label>
-                                <div class="control-input">
-                                    <input type="range" id="variance-max" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
-                                    <span class="value-display">1.0</span>
-                                </div>
+                                <!-- Note: Wave orientation is now controlled via Image > Rotation > Mode = Tangent -->
                             </div>
                         </div>
 
@@ -1077,48 +1047,26 @@
                                         <span class="value-display">px</span>
                                     </div>
                                 </div>
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-coverage">
-                                    <label class="control-label" data-label="Target Coverage" data-path="adaptive.targetCoverage">Target Coverage</label>
-                                    <div class="control-input">
-                                        <input type="range" id="adaptive-coverage" min="0.3" max="0.9" step="0.05" value="0.6" oninput="updateRangeDisplay(this)">
-                                        <span class="value-display">0.6</span>
-                                    </div>
-                                </div>
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-density">
-                                    <label class="control-label" data-label="Density Factor" data-path="adaptive.densityFactor">Density Factor</label>
-                                    <div class="control-input">
-                                        <input type="range" id="adaptive-density" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
-                                        <span class="value-display">1.0</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
-                        <!-- Rotation -->
+                        <!-- Layout Controls -->
                         <div class="control-group">
-                            <h5 class="control-group-title" data-label="Rotation" data-path="layout.rotation">Rotation</h5>
-                            <div class="subsection-toggle">
-                                <input type="checkbox" id="enable-rotation" onchange="toggleSubsection('rotation-content', this.checked)">
-                                <label for="enable-rotation" data-label="Enabled" data-path="rotation.enabled">Enabled</label>
-                            </div>
-                            <div class="subsection-content" id="rotation-content" style="display: none;">
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-rotation-min">
-                                    <label class="control-label" data-label="Min Degrees" data-path="rotation.range.min">Min Degrees</label>
-                                    <div class="control-input">
-                                        <input type="range" id="rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
-                                        <span class="value-display">-15</span>
-                                    </div>
+                            <h5 class="control-group-title" data-label="Layout Controls" data-path="layout">Layout Controls</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-layout-coverage">
+                                <label class="control-label" data-label="Target Coverage" data-path="layout.targetCoverage">Target Coverage</label>
+                                <div class="control-input">
+                                    <input type="range" id="layout-coverage" min="0.3" max="0.9" step="0.05" value="0.6" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0.6</span>
                                 </div>
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-rotation-max">
-                                    <label class="control-label" data-label="Max Degrees" data-path="rotation.range.max">Max Degrees</label>
-                                    <div class="control-input">
-                                        <input type="range" id="rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
-                                        <span class="value-display">15</span>
-                                    </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-layout-density">
+                                <label class="control-label" data-label="Density Factor" data-path="layout.densityFactor">Density Factor</label>
+                                <div class="control-input">
+                                    <input type="range" id="layout-density" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1.0</span>
                                 </div>
                             </div>
                         </div>
@@ -1147,162 +1095,91 @@
                     </div>
                 </div>
 
-                <!-- Animation Section -->
-                <div class="accordion" data-section="animation">
+                <!-- Image: Size & Rotation Section -->
+                <div class="accordion" data-section="image">
                     <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <span class="accordion-title" data-label="Animation" data-path="animation">Animation</span>
+                        <span class="accordion-title" data-label="Image: Size & Rotation" data-path="image">Image: Size & Rotation</span>
                         <span class="accordion-arrow">▼</span>
                     </div>
                     <div class="accordion-content">
-                        <!-- General -->
+                        <!-- Image Sizing -->
                         <div class="control-group">
-                            <h5 class="control-group-title" data-label="General" data-path="animation">General</h5>
+                            <h5 class="control-group-title" data-label="Sizing" data-path="image.sizing">Sizing</h5>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-animation-duration">
-                                <label class="control-label" data-label="Duration" data-path="duration">Duration</label>
+                                <input type="checkbox" class="control-checkbox" id="enable-image-baseHeight">
+                                <label class="control-label" data-label="Base Height" data-path="image.sizing.baseHeight">Base Height</label>
                                 <div class="control-input">
-                                    <input type="number" id="animation-duration" value="600" min="100" max="2000" step="50">
-                                    <span class="value-display">ms</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Queue -->
-                        <div class="control-group">
-                            <h5 class="control-group-title" data-label="Queue" data-path="animation.queue">Queue</h5>
-                            <div class="subsection-toggle">
-                                <input type="checkbox" id="enable-queue" checked onchange="toggleSubsection('queue-content', this.checked)">
-                                <label for="enable-queue" data-label="Enabled" data-path="queue.enabled">Enabled</label>
-                            </div>
-                            <div class="subsection-content" id="queue-content">
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-queue-interval">
-                                    <label class="control-label" data-label="Interval" data-path="queue.interval">Interval</label>
-                                    <div class="control-input">
-                                        <input type="number" id="queue-interval" value="150" min="0" max="500" step="25">
-                                        <span class="value-display">ms</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Entry Animation -->
-                        <div class="control-group">
-                            <h5 class="control-group-title" data-label="Entry Animation" data-path="animation.entry">Entry Animation</h5>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-position">
-                                <label class="control-label" data-label="Start Position" data-path="entry.start.position">Start Position</label>
-                                <div class="control-input">
-                                    <select id="entry-position">
-                                        <option value="nearest-edge">Nearest Edge</option>
-                                        <option value="top">Top</option>
-                                        <option value="bottom">Bottom</option>
-                                        <option value="left">Left</option>
-                                        <option value="right">Right</option>
-                                        <option value="center">Center</option>
-                                        <option value="random-edge">Random Edge</option>
-                                        <option value="circular">Circular</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-offset">
-                                <label class="control-label" data-label="Offset" data-path="entry.start.offset">Offset</label>
-                                <div class="control-input">
-                                    <input type="number" id="entry-offset" value="100" min="0" max="300">
+                                    <input type="number" id="image-baseHeight" value="200" min="50" max="500">
                                     <span class="value-display">px</span>
                                 </div>
                             </div>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-duration">
-                                <label class="control-label" data-label="Duration" data-path="entry.timing.duration">Duration</label>
+                                <input type="checkbox" class="control-checkbox" id="enable-image-variance-min">
+                                <label class="control-label" data-label="Variance Min" data-path="image.sizing.variance.min">Variance Min</label>
                                 <div class="control-input">
-                                    <input type="number" id="entry-duration" value="600" min="100" max="2000" step="50">
-                                    <span class="value-display">ms</span>
+                                    <input type="range" id="image-variance-min" min="0.5" max="1.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1.0</span>
                                 </div>
                             </div>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-stagger">
-                                <label class="control-label" data-label="Stagger" data-path="entry.timing.stagger">Stagger</label>
+                                <input type="checkbox" class="control-checkbox" id="enable-image-variance-max">
+                                <label class="control-label" data-label="Variance Max" data-path="image.sizing.variance.max">Variance Max</label>
                                 <div class="control-input">
-                                    <input type="number" id="entry-stagger" value="150" min="0" max="500" step="25">
-                                    <span class="value-display">ms</span>
+                                    <input type="range" id="image-variance-max" min="1.0" max="2.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">1.0</span>
                                 </div>
                             </div>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-path">
-                                <label class="control-label" data-label="Path Type" data-path="entry.path.type">Path Type</label>
+                                <input type="checkbox" class="control-checkbox" id="enable-image-scaleDecay">
+                                <label class="control-label" data-label="Scale Decay" data-path="image.sizing.scaleDecay">Scale Decay</label>
                                 <div class="control-input">
-                                    <select id="entry-path-type" onchange="updatePathPresets()">
-                                        <option value="linear">Linear (default)</option>
-                                        <option value="bounce">Bounce</option>
-                                        <option value="elastic">Elastic</option>
-                                        <option value="wave">Wave</option>
-                                    </select>
+                                    <input type="range" id="image-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0</span>
                                 </div>
                             </div>
-                            <div class="control-row" id="path-preset-row" style="display: none;">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-path-preset" checked>
-                                <label class="control-label" data-label="Preset" data-path="entry.path.preset">Preset</label>
-                                <div class="control-input">
-                                    <select id="entry-path-preset">
-                                        <!-- Options populated by updatePathPresets() -->
-                                    </select>
-                                </div>
-                            </div>
+                            <p class="control-hint">Scale Decay: center images larger, outer smaller (Radial/Spiral)</p>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Interaction Section -->
-                <div class="accordion" data-section="interaction">
-                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <span class="accordion-title" data-label="Interaction" data-path="interaction">Interaction</span>
-                        <span class="accordion-arrow">▼</span>
-                    </div>
-                    <div class="accordion-content">
-                        <!-- Focus -->
+                        <!-- Image Rotation -->
                         <div class="control-group">
-                            <h5 class="control-group-title" data-label="Focus Behavior" data-path="interaction.focus">Focus Behavior</h5>
+                            <h5 class="control-group-title" data-label="Rotation" data-path="image.rotation">Rotation</h5>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focus-scale">
-                                <label class="control-label" data-label="Scale" data-path="focus.scale">Scale</label>
+                                <input type="checkbox" class="control-checkbox" id="enable-image-rotation-mode" checked>
+                                <label class="control-label" data-label="Mode" data-path="image.rotation.mode">Mode</label>
                                 <div class="control-input">
-                                    <input type="range" id="focus-scale" min="1.5" max="4.0" step="0.1" value="2.5" oninput="updateRangeDisplay(this)">
-                                    <span class="value-display">2.5</span>
+                                    <select id="image-rotation-mode" onchange="toggleRotationRange()">
+                                        <option value="none">None</option>
+                                        <option value="random">Random</option>
+                                        <option value="tangent">Tangent (Wave/Spiral)</option>
+                                    </select>
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focus-mobileScale">
-                                <label class="control-label" data-label="Mobile Scale" data-path="focus.mobileScale">Mobile Scale</label>
-                                <div class="control-input">
-                                    <input type="range" id="focus-mobileScale" min="1.2" max="3.0" step="0.1" value="2.0" oninput="updateRangeDisplay(this)">
-                                    <span class="value-display">2.0</span>
+                            <div id="rotation-range-controls" style="display: none;">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-image-rotation-min">
+                                    <label class="control-label" data-label="Min Degrees" data-path="image.rotation.range.min">Min Degrees</label>
+                                    <div class="control-input">
+                                        <input type="range" id="image-rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">-15°</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focus-unfocusedOpacity">
-                                <label class="control-label" data-label="Unfocused Opacity" data-path="focus.unfocusedOpacity">Unfocused Opacity</label>
-                                <div class="control-input">
-                                    <input type="range" id="focus-unfocusedOpacity" min="0" max="1" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
-                                    <span class="value-display">0.3</span>
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focus-zIndex">
-                                <label class="control-label" data-label="Z-Index" data-path="focus.zIndex">Z-Index</label>
-                                <div class="control-input">
-                                    <input type="number" id="focus-zIndex" value="1000" min="100" max="9999">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-image-rotation-max">
+                                    <label class="control-label" data-label="Max Degrees" data-path="image.rotation.range.max">Max Degrees</label>
+                                    <div class="control-input">
+                                        <input type="range" id="image-rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">15°</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Styling Section -->
+                <!-- Image: Style Section -->
                 <div class="accordion" data-section="styling">
                     <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <span class="accordion-title" data-label="Styling" data-path="styling">Styling</span>
+                        <span class="accordion-title" data-label="Image: Style" data-path="styling">Image: Style</span>
                         <span class="accordion-arrow">▼</span>
                     </div>
                     <div class="accordion-content">
@@ -1480,6 +1357,158 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Animation Section -->
+                <div class="accordion" data-section="animation">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="Animation" data-path="animation">Animation</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- General -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="General" data-path="animation">General</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-animation-duration">
+                                <label class="control-label" data-label="Duration" data-path="duration">Duration</label>
+                                <div class="control-input">
+                                    <input type="number" id="animation-duration" value="600" min="100" max="2000" step="50">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Queue -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Queue" data-path="animation.queue">Queue</h5>
+                            <div class="subsection-toggle">
+                                <input type="checkbox" id="enable-queue" checked onchange="toggleSubsection('queue-content', this.checked)">
+                                <label for="enable-queue" data-label="Enabled" data-path="queue.enabled">Enabled</label>
+                            </div>
+                            <div class="subsection-content" id="queue-content">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-queue-interval">
+                                    <label class="control-label" data-label="Interval" data-path="queue.interval">Interval</label>
+                                    <div class="control-input">
+                                        <input type="number" id="queue-interval" value="150" min="0" max="500" step="25">
+                                        <span class="value-display">ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Entry Animation -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Entry Animation" data-path="animation.entry">Entry Animation</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-position">
+                                <label class="control-label" data-label="Start Position" data-path="entry.start.position">Start Position</label>
+                                <div class="control-input">
+                                    <select id="entry-position">
+                                        <option value="nearest-edge">Nearest Edge</option>
+                                        <option value="top">Top</option>
+                                        <option value="bottom">Bottom</option>
+                                        <option value="left">Left</option>
+                                        <option value="right">Right</option>
+                                        <option value="center">Center</option>
+                                        <option value="random-edge">Random Edge</option>
+                                        <option value="circular">Circular</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-offset">
+                                <label class="control-label" data-label="Offset" data-path="entry.start.offset">Offset</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-offset" value="100" min="0" max="300">
+                                    <span class="value-display">px</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-duration">
+                                <label class="control-label" data-label="Duration" data-path="entry.timing.duration">Duration</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-duration" value="600" min="100" max="2000" step="50">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-stagger">
+                                <label class="control-label" data-label="Stagger" data-path="entry.timing.stagger">Stagger</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-stagger" value="150" min="0" max="500" step="25">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-path">
+                                <label class="control-label" data-label="Path Type" data-path="entry.path.type">Path Type</label>
+                                <div class="control-input">
+                                    <select id="entry-path-type" onchange="updatePathPresets()">
+                                        <option value="linear">Linear (default)</option>
+                                        <option value="bounce">Bounce</option>
+                                        <option value="elastic">Elastic</option>
+                                        <option value="wave">Wave</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row" id="path-preset-row" style="display: none;">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-path-preset" checked>
+                                <label class="control-label" data-label="Preset" data-path="entry.path.preset">Preset</label>
+                                <div class="control-input">
+                                    <select id="entry-path-preset">
+                                        <!-- Options populated by updatePathPresets() -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interaction Section -->
+                <div class="accordion" data-section="interaction">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="Interaction" data-path="interaction">Interaction</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- Focus -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Focus Behavior" data-path="interaction.focus">Focus Behavior</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-scale">
+                                <label class="control-label" data-label="Scale" data-path="focus.scale">Scale</label>
+                                <div class="control-input">
+                                    <input type="range" id="focus-scale" min="1.5" max="4.0" step="0.1" value="2.5" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">2.5</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-mobileScale">
+                                <label class="control-label" data-label="Mobile Scale" data-path="focus.mobileScale">Mobile Scale</label>
+                                <div class="control-input">
+                                    <input type="range" id="focus-mobileScale" min="1.2" max="3.0" step="0.1" value="2.0" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">2.0</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-unfocusedOpacity">
+                                <label class="control-label" data-label="Unfocused Opacity" data-path="focus.unfocusedOpacity">Unfocused Opacity</label>
+                                <div class="control-input">
+                                    <input type="range" id="focus-unfocusedOpacity" min="0" max="1" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0.3</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-zIndex">
+                                <label class="control-label" data-label="Z-Index" data-path="focus.zIndex">Z-Index</label>
+                                <div class="control-input">
+                                    <input type="number" id="focus-zIndex" value="1000" min="100" max="9999">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="sidebar-footer">
@@ -1615,11 +1644,12 @@
                 description: 'Classic scattered look with rotation',
                 config: {
                     'layout-algorithm': 'radial',
-                    'enable-rotation': true,
-                    'rotation-min': -15,
-                    'rotation-max': 15,
-                    'enable-rotation-min': true,
-                    'enable-rotation-max': true,
+                    'image-rotation-mode': 'random',
+                    'enable-image-rotation-mode': true,
+                    'image-rotation-min': -15,
+                    'image-rotation-max': 15,
+                    'enable-image-rotation-min': true,
+                    'enable-image-rotation-max': true,
                     'default-shadow': 'md',
                     'enable-default-shadow': true,
                     'default-border-radius': 4,
@@ -1632,7 +1662,8 @@
                 config: {
                     'layout-algorithm': 'grid',
                     'enable-algorithm': true,
-                    'enable-rotation': false,
+                    'image-rotation-mode': 'none',
+                    'enable-image-rotation-mode': true,
                     'grid-columns': 4,
                     'enable-grid-columns': true,
                     'default-shadow': 'sm',
@@ -1646,11 +1677,12 @@
                 description: 'White borders, warm filter tones',
                 config: {
                     'layout-algorithm': 'radial',
-                    'enable-rotation': true,
-                    'rotation-min': -12,
-                    'rotation-max': 12,
-                    'enable-rotation-min': true,
-                    'enable-rotation-max': true,
+                    'image-rotation-mode': 'random',
+                    'enable-image-rotation-mode': true,
+                    'image-rotation-min': -12,
+                    'image-rotation-max': 12,
+                    'enable-image-rotation-min': true,
+                    'enable-image-rotation-max': true,
                     'default-border-width': 8,
                     'enable-default-border-width': true,
                     'default-border-color': '#ffffff',
@@ -1670,11 +1702,12 @@
                 description: 'Sepia tones, reduced saturation',
                 config: {
                     'layout-algorithm': 'radial',
-                    'enable-rotation': true,
-                    'rotation-min': -8,
-                    'rotation-max': 8,
-                    'enable-rotation-min': true,
-                    'enable-rotation-max': true,
+                    'image-rotation-mode': 'random',
+                    'enable-image-rotation-mode': true,
+                    'image-rotation-min': -8,
+                    'image-rotation-max': 8,
+                    'enable-image-rotation-min': true,
+                    'enable-image-rotation-max': true,
                     'default-sepia': 0.4,
                     'enable-default-sepia': true,
                     'default-saturate': 0.8,
@@ -1694,11 +1727,12 @@
                 description: 'Cyberpunk aesthetic with glowing borders',
                 config: {
                     'layout-algorithm': 'radial',
-                    'enable-rotation': true,
-                    'rotation-min': -5,
-                    'rotation-max': 5,
-                    'enable-rotation-min': true,
-                    'enable-rotation-max': true,
+                    'image-rotation-mode': 'random',
+                    'enable-image-rotation-mode': true,
+                    'image-rotation-min': -5,
+                    'image-rotation-max': 5,
+                    'enable-image-rotation-min': true,
+                    'enable-image-rotation-max': true,
                     'default-border-width': 2,
                     'enable-default-border-width': true,
                     'default-border-color': '#00ffff',
@@ -1721,7 +1755,8 @@
                 config: {
                     'layout-algorithm': 'grid',
                     'enable-algorithm': true,
-                    'enable-rotation': false,
+                    'image-rotation-mode': 'none',
+                    'enable-image-rotation-mode': true,
                     'default-shadow': 'none',
                     'enable-default-shadow': true,
                     'default-border-radius': 0,
@@ -1737,11 +1772,12 @@
                 description: 'High contrast with strong shadows',
                 config: {
                     'layout-algorithm': 'radial',
-                    'enable-rotation': true,
-                    'rotation-min': -20,
-                    'rotation-max': 20,
-                    'enable-rotation-min': true,
-                    'enable-rotation-max': true,
+                    'image-rotation-mode': 'random',
+                    'enable-image-rotation-mode': true,
+                    'image-rotation-min': -20,
+                    'image-rotation-max': 20,
+                    'enable-image-rotation-min': true,
+                    'enable-image-rotation-max': true,
                     'default-contrast': 1.3,
                     'enable-default-contrast': true,
                     'default-brightness': 0.95,
@@ -1798,6 +1834,16 @@
                 content.style.display = enabled ? 'block' : 'none';
                 content.classList.toggle('disabled', !enabled);
             }
+        };
+
+        // Toggle rotation range controls based on mode
+        window.toggleRotationRange = function() {
+            const mode = document.getElementById('image-rotation-mode').value;
+            const rangeControls = document.getElementById('rotation-range-controls');
+            if (rangeControls) {
+                rangeControls.style.display = mode === 'random' ? 'block' : 'none';
+            }
+            scheduleAutoApply();
         };
 
         // Update range display value
@@ -1934,17 +1980,48 @@
                 layout.debugCenters = document.getElementById('debug-centers')?.checked || false;
             }
 
-            // Sizing
-            const sizing = {};
-            const base = getEnabledValue('enable-sizing-base', 'sizing-base', parseInt);
-            if (base !== undefined) sizing.base = base;
+            // Image Config (new structure)
+            const image = {};
+
+            // Image Sizing
+            const imageSizing = {};
+            const baseHeight = getEnabledValue('enable-image-baseHeight', 'image-baseHeight', parseInt);
+            if (baseHeight !== undefined) imageSizing.baseHeight = baseHeight;
 
             const variance = {};
-            const vMin = getEnabledValue('enable-variance-min', 'variance-min', parseFloat);
-            const vMax = getEnabledValue('enable-variance-max', 'variance-max', parseFloat);
+            const vMin = getEnabledValue('enable-image-variance-min', 'image-variance-min', parseFloat);
+            const vMax = getEnabledValue('enable-image-variance-max', 'image-variance-max', parseFloat);
             if (vMin !== undefined) variance.min = vMin;
             if (vMax !== undefined) variance.max = vMax;
-            if (Object.keys(variance).length > 0) sizing.variance = variance;
+            if (Object.keys(variance).length > 0) imageSizing.variance = variance;
+
+            const scaleDecay = getEnabledValue('enable-image-scaleDecay', 'image-scaleDecay', parseFloat);
+            if (scaleDecay !== undefined) imageSizing.scaleDecay = scaleDecay;
+
+            if (Object.keys(imageSizing).length > 0) image.sizing = imageSizing;
+
+            // Image Rotation
+            const imageRotation = {};
+            const rotationMode = document.getElementById('image-rotation-mode')?.value;
+            if (document.getElementById('enable-image-rotation-mode')?.checked && rotationMode) {
+                imageRotation.mode = rotationMode;
+
+                // Range only applies to 'random' mode
+                if (rotationMode === 'random') {
+                    const range = {};
+                    const rMin = getEnabledValue('enable-image-rotation-min', 'image-rotation-min', parseInt);
+                    const rMax = getEnabledValue('enable-image-rotation-max', 'image-rotation-max', parseInt);
+                    if (rMin !== undefined) range.min = rMin;
+                    if (rMax !== undefined) range.max = rMax;
+                    if (Object.keys(range).length > 0) imageRotation.range = range;
+                }
+            }
+            if (Object.keys(imageRotation).length > 0) image.rotation = imageRotation;
+
+            if (Object.keys(image).length > 0) config.image = image;
+
+            // Layout Sizing (adaptive only now)
+            const sizing = {};
 
             // Adaptive
             const adaptiveEnabled = document.getElementById('enable-adaptive')?.checked;
@@ -1953,32 +2030,19 @@
                 if (adaptiveEnabled) {
                     const minSize = getEnabledValue('enable-adaptive-minSize', 'adaptive-minSize', parseInt);
                     const maxSize = getEnabledValue('enable-adaptive-maxSize', 'adaptive-maxSize', parseInt);
-                    const coverage = getEnabledValue('enable-adaptive-coverage', 'adaptive-coverage', parseFloat);
-                    const density = getEnabledValue('enable-adaptive-density', 'adaptive-density', parseFloat);
                     if (minSize !== undefined) adaptive.minSize = minSize;
                     if (maxSize !== undefined) adaptive.maxSize = maxSize;
-                    if (coverage !== undefined) adaptive.targetCoverage = coverage;
-                    if (density !== undefined) adaptive.densityFactor = density;
                 }
                 sizing.adaptive = adaptive;
             }
 
             if (Object.keys(sizing).length > 0) layout.sizing = sizing;
 
-            // Rotation
-            const rotationEnabled = document.getElementById('enable-rotation')?.checked;
-            if (rotationEnabled !== undefined) {
-                const rotation = { enabled: rotationEnabled };
-                if (rotationEnabled) {
-                    const range = {};
-                    const rMin = getEnabledValue('enable-rotation-min', 'rotation-min', parseInt);
-                    const rMax = getEnabledValue('enable-rotation-max', 'rotation-max', parseInt);
-                    if (rMin !== undefined) range.min = rMin;
-                    if (rMax !== undefined) range.max = rMax;
-                    if (Object.keys(range).length > 0) rotation.range = range;
-                }
-                layout.rotation = rotation;
-            }
+            // Layout-level targetCoverage and densityFactor
+            const coverage = getEnabledValue('enable-layout-coverage', 'layout-coverage', parseFloat);
+            const density = getEnabledValue('enable-layout-density', 'layout-density', parseFloat);
+            if (coverage !== undefined) layout.targetCoverage = coverage;
+            if (density !== undefined) layout.densityFactor = density;
 
             // Spacing
             const spacing = {};
@@ -2043,13 +2107,12 @@
                 const frequency = getEnabledValue('enable-wave-frequency', 'wave-frequency', parseFloat);
                 const phaseShift = getEnabledValue('enable-wave-phaseShift', 'wave-phaseShift', parseFloat);
                 const synchronization = getEnabledValue('enable-wave-synchronization', 'wave-synchronization');
-                const orientation = getEnabledValue('enable-wave-orientation', 'wave-orientation');
+                // Note: orientation removed - use image.rotation.mode = 'tangent' instead
                 if (rows !== undefined) wave.rows = rows;
                 if (amplitude !== undefined) wave.amplitude = amplitude;
                 if (frequency !== undefined) wave.frequency = frequency;
                 if (phaseShift !== undefined) wave.phaseShift = phaseShift;
                 if (synchronization !== undefined) wave.synchronization = synchronization;
-                if (orientation !== undefined) wave.orientation = orientation;
                 if (Object.keys(wave).length > 0) layout.wave = wave;
             }
 
@@ -2206,10 +2269,13 @@
             // Reset subsection toggles
             document.getElementById('enable-adaptive').checked = true;
             toggleSubsection('adaptive-content', true);
-            document.getElementById('enable-rotation').checked = true;
-            toggleSubsection('rotation-content', true);
             document.getElementById('enable-queue').checked = true;
             toggleSubsection('queue-content', true);
+
+            // Reset image rotation to default
+            document.getElementById('image-rotation-mode').value = 'none';
+            document.getElementById('enable-image-rotation-mode').checked = true;
+            toggleRotationRange();
 
             // Reset algorithm
             document.getElementById('layout-algorithm').value = 'radial';
@@ -2224,9 +2290,7 @@
                     if (element.type === 'checkbox') {
                         element.checked = value;
                         // Handle subsection toggles
-                        if (key === 'enable-rotation') {
-                            toggleSubsection('rotation-content', value);
-                        } else if (key === 'enable-adaptive') {
+                        if (key === 'enable-adaptive') {
                             toggleSubsection('adaptive-content', value);
                         } else if (key === 'enable-queue') {
                             toggleSubsection('queue-content', value);
@@ -2243,6 +2307,10 @@
                             if (display) {
                                 display.textContent = element.id === 'default-hueRotate' ? value + '°' : value;
                             }
+                        }
+                        // Handle rotation mode change
+                        if (key === 'image-rotation-mode') {
+                            toggleRotationRange();
                         }
                     }
                 }
