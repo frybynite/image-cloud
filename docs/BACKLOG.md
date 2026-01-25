@@ -57,7 +57,11 @@ Reduce boilerplate and complexity for clients getting started with the library.
   - `zIndex` - bring hovered/focused images to front
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
-- Grid overflow mode - allow multiple items in the same cell with x/y offsets (stacking/layering effect)
+- Grid overflow mode - when grid rows × columns < image count, distribute extra images across cells with offset patterns:
+  - Cycle through cells row-by-row, adding overflow images with positional offsets
+  - Offset pattern sequence: left, right, down, up, upper-right, lower-left, upper-left, lower-right
+  - Configurable offset percentage (e.g., 10% of cell size)
+  - Creates natural stacking/layering effect within grid structure
 - Vue component wrapper
 - Web Component wrapper
 - Additional layout algorithms (honeycomb, physics-based)
