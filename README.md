@@ -350,9 +350,6 @@ Also see:
 - `index.html` - Production Google Drive gallery
 - `index-static.html` - Static image sources example
 
-# Sample Data
-- frybynite Google Drive folder: https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing
-- frybynite OAUTH Key (GD only): AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

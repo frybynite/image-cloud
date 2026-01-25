@@ -17,6 +17,7 @@ export { ImageCloud as ImageGallery } from './ImageCloud';
 export type {
   ImageCloudOptions,
   ImageGalleryOptions, // Backwards compatibility alias
+  ImageCloudConfig,
   GalleryConfig,
   AnimationConfig,
   LayoutConfig,

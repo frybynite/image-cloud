@@ -31,7 +31,7 @@ Launched 3 parallel exploration agents to understand:
   - Messy configuration merging from top-level and nested paths
 - Type definitions: `src/config/types.ts` (182 lines)
   - Current flat interfaces: AnimationConfig, LayoutConfig, ZoomConfig, etc.
-  - `ImageGalleryOptions` at top level with nested `config: Partial<GalleryConfig>`
+  - `ImageGalleryOptions` at top level with nested `config: Partial<ImageCloudConfig>`
 - Default config: `src/config/defaults.ts` (165 lines)
   - Uses Object.freeze for immutability
   - `mergeConfig()` function for deep merging
@@ -73,7 +73,7 @@ Created detailed plan with Plan agent (ae4ee86):
 - ✅ Added `AnimationEasingConfig`, `AnimationQueueConfig`, `AnimationPerformanceConfig`, `NewAnimationConfig`
 - ✅ Added `FocusInteractionConfig`, `NavigationInteractionConfig` (stub), `GestureInteractionConfig` (stub), `NewInteractionConfig`
 - ✅ Added `ResponsiveRenderingConfig`, `UIRenderingConfig`, `PerformanceRenderingConfig` (stub), `NewRenderingConfig`
-- ✅ Added `NewGalleryConfig` and `NewImageGalleryOptions` top-level types
+- ✅ Added `ImageCloudConfig` (formerly `NewGalleryConfig`) and `NewImageGalleryOptions` top-level types
 - ✅ All existing interfaces preserved for backward compatibility
 
 **Phase 1.2 - New Defaults** (`src/config/defaults.ts:167-392`):

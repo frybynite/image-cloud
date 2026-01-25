@@ -417,24 +417,6 @@
         }
 
         /* Buttons */
-        .apply-btn {
-            width: 100%;
-            padding: 12px;
-            background: #8b5cf6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-bottom: 8px;
-        }
-
-        .apply-btn:hover {
-            background: #7c3aed;
-        }
-
         .show-config-btn {
             width: 100%;
             padding: 10px;
@@ -1512,7 +1494,6 @@
             </div>
 
             <div class="sidebar-footer">
-                <button class="apply-btn" onclick="applyChanges()">Apply Changes</button>
                 <button class="show-config-btn" onclick="showConfig()">Show Config JSON</button>
             </div>
         </aside>
@@ -1546,7 +1527,6 @@
                 <li><strong>Presets:</strong> Start with a preset to quickly apply common styles</li>
                 <li><strong>Checkboxes:</strong> Enable settings to include them in the config</li>
                 <li><strong>Eye Toggle:</strong> Switch between friendly labels and JSON paths</li>
-                <li><strong>Apply Changes:</strong> Update the preview with your settings</li>
                 <li><strong>Show Config JSON:</strong> View and copy the generated config</li>
             </ul>
             <p>Only enabled (checked) settings are included in the generated configuration.</p>

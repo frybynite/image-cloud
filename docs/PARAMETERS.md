@@ -9,7 +9,8 @@ The Image Cloud library offers a flexible configuration system to customize ever
   - [Google Drive Loader](#google-drive-config-loadergoogledrive)
   - [Static Loader](#static-loader-config-loaderstatic)
   - [Composite Loader](#composite-loader-programmatic-only)
-- [Layout Configuration](#2-layout-configuration-layout)
+- [Image Configuration](#2-image-configuration-image)
+- [Layout Configuration](#3-layout-configuration-layout)
   - [Layout Algorithms](#layout-algorithms)
   - [Grid Algorithm](#grid-algorithm)
   - [Spiral Algorithm](#spiral-algorithm)
@@ -17,7 +18,6 @@ The Image Cloud library offers a flexible configuration system to customize ever
   - [Wave Algorithm](#wave-algorithm)
   - [Radial Algorithm](#radial-algorithm)
   - [Random Algorithm](#random-algorithm)
-- [Image Configuration](#3-image-configuration-image)
 - [Animation Configuration](#4-animation-configuration-animation)
 - [Entry Animation](#entry-animation)
 - [Entry Animation Paths](#entry-animation-paths)
@@ -36,6 +36,7 @@ Initialize the gallery using the `ImageCloudOptions` structure.
 const gallery = new ImageCloud({
   container: 'my-gallery-id', // optional, defaults to 'imageCloud'
   loader: { ... },
+  image: { ... },
   layout: { ... },
   animation: { ... },
   interaction: { ... },
@@ -144,7 +145,92 @@ await compositeLoader.prepare(new ImageFilter());
 console.log(compositeLoader.imageURLs());  // Combined URLs
 ```
 
-### 2. Layout Configuration (`layout`)
+### 2. Image Configuration (`image`)
+
+Controls image-specific sizing and rotation behavior. This is the recommended way to configure image properties.
+
+```typescript
+image: {
+  sizing: {
+    baseHeight?: number | {        // Optional - if not set, layouts auto-calculate
+      default: number,             // Base height for large screens
+      tablet?: number,             // Height for tablet
+      mobile?: number              // Height for mobile
+    },
+    variance?: {
+      min: number,                 // > 0.1 and < 1 (e.g., 0.8)
+      max: number                  // > 1 and < 2 (e.g., 1.2)
+    },
+    scaleDecay?: number            // For Radial/Spiral - progressive size reduction (0-1)
+  },
+  rotation: {
+    mode: 'none' | 'random' | 'tangent',  // default: 'none'
+    range?: {
+      min: number,                 // Negative degrees (-180 to 0)
+      max: number                  // Positive degrees (0 to 180)
+    }
+  }
+}
+```
+
+#### Image Sizing (`image.sizing`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `baseHeight` | `number \| ResponsiveBaseHeight` | *auto* | Base image height. If not set, layouts auto-calculate based on `targetCoverage`. |
+| `variance.min` | `number` | `1.0` | Minimum size multiplier. Must be > 0.1 and < 1.0. |
+| `variance.max` | `number` | `1.0` | Maximum size multiplier. Must be > 1.0 and < 2.0. |
+| `scaleDecay` | `number` | `0` | Progressive size reduction for Radial/Spiral layouts (0-1). |
+
+**Responsive baseHeight:**
+```typescript
+image: {
+  sizing: {
+    baseHeight: {
+      default: 200,   // Desktop
+      tablet: 150,    // Tablet (uses rendering.responsive.breakpoints.tablet)
+      mobile: 100     // Mobile (uses rendering.responsive.breakpoints.mobile)
+    }
+  }
+}
+```
+
+#### Image Rotation (`image.rotation`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `mode` | `'none' \| 'random' \| 'tangent'` | `'none'` | Rotation mode. |
+| `range.min` | `number` | `-15` | Minimum rotation degrees (-180 to 0). |
+| `range.max` | `number` | `15` | Maximum rotation degrees (0 to 180). |
+
+**Rotation Modes:**
+
+| Mode | Description | Applicable Layouts |
+|------|-------------|-------------------|
+| `none` | No rotation (default) | All |
+| `random` | Random rotation within range | All |
+| `tangent` | Align to curve tangent | Wave, Spiral |
+
+**Example - Classic scattered photos:**
+```typescript
+image: {
+  rotation: { mode: 'random', range: { min: -15, max: 15 } },
+  sizing: { variance: { min: 0.9, max: 1.1 } }
+}
+```
+
+**Example - Spiral with tangent rotation:**
+```typescript
+image: {
+  rotation: { mode: 'tangent' },
+  sizing: { scaleDecay: 0.5 }
+},
+layout: { algorithm: 'spiral' }
+```
+
+---
+
+### 3. Layout Configuration (`layout`)
 
 Controls the positioning and sizing of images.
 
@@ -417,93 +503,6 @@ No algorithm-specific options. Uses base `sizing` and `rotation` config.
 
 ---
 
----
-
-### 3. Image Configuration (`image`)
-
-Controls image-specific sizing and rotation behavior. This is the recommended way to configure image properties.
-
-```typescript
-image: {
-  sizing: {
-    baseHeight?: number | {        // Optional - if not set, layouts auto-calculate
-      default: number,             // Base height for large screens
-      tablet?: number,             // Height for tablet
-      mobile?: number              // Height for mobile
-    },
-    variance?: {
-      min: number,                 // > 0.1 and < 1 (e.g., 0.8)
-      max: number                  // > 1 and < 2 (e.g., 1.2)
-    },
-    scaleDecay?: number            // For Radial/Spiral - progressive size reduction (0-1)
-  },
-  rotation: {
-    mode: 'none' | 'random' | 'tangent',  // default: 'none'
-    range?: {
-      min: number,                 // Negative degrees (-180 to 0)
-      max: number                  // Positive degrees (0 to 180)
-    }
-  }
-}
-```
-
-#### Image Sizing (`image.sizing`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `baseHeight` | `number \| ResponsiveBaseHeight` | *auto* | Base image height. If not set, layouts auto-calculate based on `targetCoverage`. |
-| `variance.min` | `number` | `1.0` | Minimum size multiplier. Must be > 0.1 and < 1.0. |
-| `variance.max` | `number` | `1.0` | Maximum size multiplier. Must be > 1.0 and < 2.0. |
-| `scaleDecay` | `number` | `0` | Progressive size reduction for Radial/Spiral layouts (0-1). |
-
-**Responsive baseHeight:**
-```typescript
-image: {
-  sizing: {
-    baseHeight: {
-      default: 200,   // Desktop
-      tablet: 150,    // Tablet (uses rendering.responsive.breakpoints.tablet)
-      mobile: 100     // Mobile (uses rendering.responsive.breakpoints.mobile)
-    }
-  }
-}
-```
-
-#### Image Rotation (`image.rotation`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `mode` | `'none' \| 'random' \| 'tangent'` | `'none'` | Rotation mode. |
-| `range.min` | `number` | `-15` | Minimum rotation degrees (-180 to 0). |
-| `range.max` | `number` | `15` | Maximum rotation degrees (0 to 180). |
-
-**Rotation Modes:**
-
-| Mode | Description | Applicable Layouts |
-|------|-------------|-------------------|
-| `none` | No rotation (default) | All |
-| `random` | Random rotation within range | All |
-| `tangent` | Align to curve tangent | Wave, Spiral |
-
-**Example - Classic scattered photos:**
-```typescript
-image: {
-  rotation: { mode: 'random', range: { min: -15, max: 15 } },
-  sizing: { variance: { min: 0.9, max: 1.1 } }
-}
-```
-
-**Example - Spiral with tangent rotation:**
-```typescript
-image: {
-  rotation: { mode: 'tangent' },
-  sizing: { scaleDecay: 0.5 }
-},
-layout: { algorithm: 'spiral' }
-```
-
----
-
 ## Layout Sizing (`layout.sizing`)
 
 Controls image sizing behavior at the layout level.
@@ -534,7 +533,7 @@ layout: {
 | `adaptive.minSize` | `number` | `50` | Minimum image height |
 | `adaptive.maxSize` | `number` | `400` | Maximum image height |
 
-> **Note:** For image-specific sizing like `variance`, `baseHeight`, and `scaleDecay`, see [Image Configuration](#3-image-configuration-image).
+> **Note:** For image-specific sizing like `variance`, `baseHeight`, and `scaleDecay`, see [Image Configuration](#2-image-configuration-image).
 
 #### Spacing (`layout.spacing`)
 

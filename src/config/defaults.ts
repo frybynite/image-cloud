@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { GalleryConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
+import type { ImageCloudConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -129,7 +129,7 @@ export const DEFAULT_IMAGE_CONFIG: ImageConfig = Object.freeze({
  * Default configuration object
  * Frozen to prevent accidental modifications
  */
-export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
+export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   // Unified loader configuration
   loader: Object.freeze({
     type: 'googleDrive' as const,
@@ -189,8 +189,8 @@ export const DEFAULT_CONFIG: GalleryConfig = Object.freeze({
       focus: 'cubic-bezier(0.4, 0.0, 0.2, 1)'  // focus/zoom easing
     }),
     queue: Object.freeze({
-      enabled: true,
-      interval: 150,  // ms between processing queue items
+      enabled: true,  // When false, all images display simultaneously
+      interval: 150,  // ms between processing queue items (when enabled)
       maxConcurrent: undefined  // STUB: Not implemented yet
     }),
     performance: Object.freeze({
@@ -415,7 +415,7 @@ function deepMergeImageConfig(
  * Convert legacy layout.rotation config to new image.rotation format
  * This provides backward compatibility with the old API
  */
-function convertLegacyRotationConfig(userConfig: DeepPartial<GalleryConfig>): Partial<ImageConfig> | undefined {
+function convertLegacyRotationConfig(userConfig: DeepPartial<ImageCloudConfig>): Partial<ImageConfig> | undefined {
   const legacyRotation = (userConfig.layout as any)?.rotation;
   if (!legacyRotation) return undefined;
 
@@ -435,7 +435,7 @@ function convertLegacyRotationConfig(userConfig: DeepPartial<GalleryConfig>): Pa
 /**
  * Convert legacy layout.sizing.variance config to new image.sizing.variance format
  */
-function convertLegacyVarianceConfig(userConfig: DeepPartial<GalleryConfig>): Partial<ImageConfig> | undefined {
+function convertLegacyVarianceConfig(userConfig: DeepPartial<ImageCloudConfig>): Partial<ImageConfig> | undefined {
   const legacyVariance = (userConfig.layout as any)?.sizing?.variance;
   if (!legacyVariance) return undefined;
 
@@ -447,8 +447,8 @@ function convertLegacyVarianceConfig(userConfig: DeepPartial<GalleryConfig>): Pa
 }
 
 export function mergeConfig(
-  userConfig: DeepPartial<GalleryConfig> = {}
-): GalleryConfig {
+  userConfig: DeepPartial<ImageCloudConfig> = {}
+): ImageCloudConfig {
   // Convert legacy configs to new format
   const legacyRotation = convertLegacyRotationConfig(userConfig);
   const legacyVariance = convertLegacyVarianceConfig(userConfig);
@@ -471,7 +471,7 @@ export function mergeConfig(
     }
   }
 
-  const merged: GalleryConfig = {
+  const merged: ImageCloudConfig = {
     loader: { ...DEFAULT_CONFIG.loader },
     image: deepMergeImageConfig(DEFAULT_IMAGE_CONFIG, combinedImageConfig),
     layout: { ...DEFAULT_CONFIG.layout },
@@ -709,7 +709,7 @@ export function resolveWavePathConfig(
 /**
  * Debug logger
  */
-export function debugLog(config: GalleryConfig, ...args: unknown[]): void {
+export function debugLog(config: ImageCloudConfig, ...args: unknown[]): void {
   if (config.debug && typeof console !== 'undefined') {
     console.log(...args);
   }

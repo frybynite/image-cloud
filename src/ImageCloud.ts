@@ -4,7 +4,7 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageCloudOptions, GalleryConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig } from './config/types';
+import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig } from './config/types';
 import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
@@ -21,7 +21,7 @@ export class ImageCloud {
   private containerId: string;
 
   // Internal state
-  private fullConfig: GalleryConfig;
+  private fullConfig: ImageCloudConfig;
   private imagesLoaded: boolean;
   private imageElements: HTMLImageElement[];
   private currentImageHeight: number;
@@ -318,8 +318,87 @@ export class ImageCloud {
     this.displayQueue = [];
     let processedCount = 0;
 
+    // Helper to display a single image with animation
+    const displayImage = (img: HTMLImageElement) => {
+      if (!this.containerEl) return;
+
+      this.containerEl.appendChild(img);
+      this.imageElements.push(img);
+
+      requestAnimationFrame(() => {
+        void img.offsetWidth; // Force reflow
+        // Use configured default opacity, or 1 if not specified
+        img.style.opacity = this.defaultStyles.opacity ?? '1';
+
+        // Check if we need JS animation for this path type
+        if (this.entryAnimationEngine.requiresJSAnimation() && img.dataset.startX) {
+          // Use animatePath for bounce, elastic, wave paths
+          const startPosition = {
+            x: parseFloat(img.dataset.startX),
+            y: parseFloat(img.dataset.startY!)
+          };
+          const endPosition = {
+            x: parseFloat(img.dataset.endX!),
+            y: parseFloat(img.dataset.endY!)
+          };
+          const imageWidth = parseFloat(img.dataset.imageWidth!);
+          const imageHeight = parseFloat(img.dataset.imageHeight!);
+          const rotation = parseFloat(img.dataset.rotation!);
+          const scale = parseFloat(img.dataset.scale!);
+          const timing = this.entryAnimationEngine.getTiming();
+
+          animatePath({
+            element: img,
+            startPosition,
+            endPosition,
+            pathConfig: this.entryAnimationEngine.getPathConfig(),
+            duration: timing.duration,
+            imageWidth,
+            imageHeight,
+            rotation,
+            scale
+          });
+        } else {
+          // Use CSS transition for linear/arc paths
+          const finalTransform = img.dataset.finalTransform || '';
+          img.style.transform = finalTransform;
+        }
+
+        // Debug: log final state for first few images
+        const imgIndex = parseInt(img.dataset.imageId || '0');
+        if (this.fullConfig.debug && imgIndex < 3) {
+          const finalTransform = img.dataset.finalTransform || '';
+          console.log(`Image ${imgIndex} final state:`, {
+            left: img.style.left,
+            top: img.style.top,
+            width: img.style.width,
+            height: img.style.height,
+            computedWidth: img.offsetWidth,
+            computedHeight: img.offsetHeight,
+            transform: finalTransform,
+            pathType: this.entryAnimationEngine.getPathType()
+          });
+        }
+      });
+
+      processedCount++;
+    };
+
     const startQueueProcessing = () => {
-      this.logDebug('Starting queue processing');
+      this.logDebug('Starting queue processing, enabled:', this.fullConfig.animation.queue.enabled);
+
+      // If queue is disabled, display all images immediately
+      if (!this.fullConfig.animation.queue.enabled) {
+        while (this.displayQueue.length > 0) {
+          const img = this.displayQueue.shift();
+          if (img) {
+            displayImage(img);
+          }
+        }
+        return;
+      }
+
+      // Queue is enabled - stagger images with interval
       // Clear any existing interval before creating new one
       if (this.queueInterval !== null) {
         clearInterval(this.queueInterval);
@@ -334,69 +413,10 @@ export class ImageCloud {
           return;
         }
 
-        if (this.displayQueue.length > 0 && this.containerEl) {
+        if (this.displayQueue.length > 0) {
           const img = this.displayQueue.shift();
           if (img) {
-            this.containerEl.appendChild(img);
-            this.imageElements.push(img);
-
-            requestAnimationFrame(() => {
-              void img.offsetWidth; // Force reflow
-              // Use configured default opacity, or 1 if not specified
-              img.style.opacity = this.defaultStyles.opacity ?? '1';
-
-              // Check if we need JS animation for this path type
-              if (this.entryAnimationEngine.requiresJSAnimation() && img.dataset.startX) {
-                // Use animatePath for bounce, elastic, wave paths
-                const startPosition = {
-                  x: parseFloat(img.dataset.startX),
-                  y: parseFloat(img.dataset.startY!)
-                };
-                const endPosition = {
-                  x: parseFloat(img.dataset.endX!),
-                  y: parseFloat(img.dataset.endY!)
-                };
-                const imageWidth = parseFloat(img.dataset.imageWidth!);
-                const imageHeight = parseFloat(img.dataset.imageHeight!);
-                const rotation = parseFloat(img.dataset.rotation!);
-                const scale = parseFloat(img.dataset.scale!);
-                const timing = this.entryAnimationEngine.getTiming();
-
-                animatePath({
-                  element: img,
-                  startPosition,
-                  endPosition,
-                  pathConfig: this.entryAnimationEngine.getPathConfig(),
-                  duration: timing.duration,
-                  imageWidth,
-                  imageHeight,
-                  rotation,
-                  scale
-                });
-              } else {
-                // Use CSS transition for linear/arc paths
-                const finalTransform = img.dataset.finalTransform || '';
-                img.style.transform = finalTransform;
-              }
-
-              // Debug: log final state for first few images
-              const imgIndex = parseInt(img.dataset.imageId || '0');
-              if (this.fullConfig.debug && imgIndex < 3) {
-                const finalTransform = img.dataset.finalTransform || '';
-                console.log(`Image ${imgIndex} final state:`, {
-                  left: img.style.left,
-                  top: img.style.top,
-                  width: img.style.width,
-                  height: img.style.height,
-                  computedWidth: img.offsetWidth,
-                  computedHeight: img.offsetHeight,
-                  transform: finalTransform,
-                  pathType: this.entryAnimationEngine.getPathType()
-                });
-              }
-            });
-
-            processedCount++;
+            displayImage(img);
           }
         }
 

@@ -413,7 +413,7 @@ export interface RenderingConfig {
 // Main Gallery Configuration
 // ============================================================================
 
-export interface GalleryConfig {
+export interface ImageCloudConfig {
   loader: LoaderConfig;
   image: ImageConfig;
   layout: LayoutConfig;
@@ -423,6 +423,9 @@ export interface GalleryConfig {
   styling?: ImageStylingConfig;
   debug: boolean;
 }
+
+// Backwards compatibility alias
+export type GalleryConfig = ImageCloudConfig;
 
 export interface ImageCloudOptions {
   container?: string;
