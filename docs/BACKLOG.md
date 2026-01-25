@@ -12,6 +12,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
+- [ ] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Consider debouncing input events or only refreshing on blur for text fields.
 
 ---
 
