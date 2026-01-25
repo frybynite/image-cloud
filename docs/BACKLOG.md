@@ -13,6 +13,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
 - [ ] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Consider debouncing input events or only refreshing on blur for text fields.
+- [ ] Improve focus opacity behavior: default focus opacity should be 1, animate from default opacity to focus opacity on focus, and allow separate `focusOpacity` config (in addition to existing `unfocusedOpacity`).
 
 ---
 
