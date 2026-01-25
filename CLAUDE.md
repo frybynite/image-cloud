@@ -88,4 +88,4 @@ Located in `examples/` folder:
 
 ## Remember
 
-- Any time a new layout, style, etc. is created we must update the examples/ and the examples/configurator/
+- Any time a new layout, style, etc. is created we must update the examples/ and the configurator/

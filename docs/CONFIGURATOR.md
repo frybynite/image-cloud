@@ -6,7 +6,7 @@ The Gallery Configurator is a visual tool for creating and customizing Image Clo
 
 ```bash
 npm run serve
-# Navigate to http://localhost:8080/examples/configurator/
+# Navigate to http://localhost:8080/configurator/
 ```
 
 Or use any static file server to serve the project directory.
