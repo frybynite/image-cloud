@@ -23,6 +23,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
 - [Entry Animation Paths](#entry-animation-paths)
 - [Interaction Configuration](#5-interaction-configuration-interaction)
 - [Rendering Configuration](#6-rendering-configuration-rendering)
+- [Styling Configuration](#7-styling-configuration-styling)
 - [Complete JSON Reference](#complete-json-reference)
 - [Complete Examples](#complete-examples)
 
@@ -257,6 +258,7 @@ layout: {
 | `targetCoverage` | `number` | `0.6` | Target percentage of container to fill (0.0-1.0) when `image.sizing.baseHeight` is not set |
 | `densityFactor` | `number` | `1.0` | Multiplier for calculated sizes and spacing |
 | `debugRadials` | `boolean` | `false` | Visualize the radial layout structure (debug). |
+| `debugCenters` | `boolean` | `false` | Show markers at calculated image center positions (debug). |
 | `sizing` | `LayoutSizingConfig` | *See below* | Configuration for image dimensions. |
 | `spacing` | `LayoutSpacingConfig` | *See below* | Configuration for margins and gaps. |
 
@@ -392,9 +394,11 @@ layout: {
     amplitude: 100,               // wave height in pixels
     frequency: 2,                 // complete waves across width
     phaseShift: Math.PI / 3,      // phase offset between rows (radians)
-    synchronization: 'offset',    // 'offset' | 'synchronized' | 'alternating'
-    orientation: 'follow'         // 'follow' | 'upright'
+    synchronization: 'offset'     // 'offset' | 'synchronized' | 'alternating'
   }
+},
+image: {
+  rotation: { mode: 'tangent' }   // images follow wave curve (optional)
 }
 ```
 
@@ -405,57 +409,76 @@ layout: {
 | `frequency` | `number` | `2` | Number of complete wave cycles across container width |
 | `phaseShift` | `number` | `0` | Phase offset between rows in radians (only for 'offset' sync) |
 | `synchronization` | `string` | `'offset'` | How waves align: `'offset'` (staggered), `'synchronized'` (peaks align), `'alternating'` (opposite directions) |
-| `orientation` | `string` | `'follow'` | Image rotation: `'follow'` (tilt with wave curve), `'upright'` (no wave-based rotation) |
 
 **Synchronization Modes:**
 - `'offset'` - Each row is shifted horizontally by `phaseShift`, creating a flowing, staggered pattern
 - `'synchronized'` - All rows have peaks at the same horizontal positions, creating vertical alignment
 - `'alternating'` - Adjacent rows go opposite directions (180° phase shift), creating a woven pattern
 
-**Orientation Modes:**
-- `'follow'` - Images rotate to follow the wave tangent, creating a flowing, dynamic effect
-- `'upright'` - Images remain horizontally oriented (standard rotation config still applies)
+**Image Rotation Along Wave:**
+
+To make images rotate to follow the wave tangent (creating a flowing, dynamic effect), use the image rotation config:
+```typescript
+image: {
+  rotation: { mode: 'tangent' }
+}
+```
+
+When `mode: 'none'` (default), images remain horizontally oriented.
 
 **Visual characteristics:**
 - Flowing, rhythmic, dynamic feel
 - Creates horizontal movement across the display
 - Works well with 10-50+ images
 - Great for timeline-like displays or artistic presentations
-- `follow` orientation creates natural flow along curves
+- `image.rotation.mode: 'tangent'` creates natural flow along curves
 - Multiple synchronization modes offer varied aesthetics
 
 **Examples:**
 
-Single gentle wave:
+Single gentle wave with flowing rotation:
 ```typescript
-wave: {
-  rows: 1,
-  amplitude: 80,
-  frequency: 1.5,
-  orientation: 'follow'
+layout: {
+  algorithm: 'wave',
+  wave: {
+    rows: 1,
+    amplitude: 80,
+    frequency: 1.5
+  }
+},
+image: {
+  rotation: { mode: 'tangent' }  // Images follow wave curve
 }
 ```
 
 Tightly packed alternating waves:
 ```typescript
-wave: {
-  rows: 5,
-  amplitude: 120,
-  frequency: 3,
-  synchronization: 'alternating',
-  orientation: 'follow'
+layout: {
+  algorithm: 'wave',
+  wave: {
+    rows: 5,
+    amplitude: 120,
+    frequency: 3,
+    synchronization: 'alternating'
+  }
+},
+image: {
+  rotation: { mode: 'tangent' }
 }
 ```
 
-Synchronized waves (vertical columns):
+Synchronized waves (vertical columns, upright images):
 ```typescript
-wave: {
-  rows: 4,
-  amplitude: 100,
-  frequency: 2,
-  synchronization: 'synchronized',
-  orientation: 'upright'
+layout: {
+  algorithm: 'wave',
+  wave: {
+    rows: 4,
+    amplitude: 100,
+    frequency: 2,
+    synchronization: 'synchronized'
+  }
 }
+// image.rotation.mode defaults to 'none' - images stay upright
 ```
 
 ---
@@ -793,12 +816,12 @@ path: {
 
 **Presets:**
 
-| Preset | Stiffness | Damping | Feel |
-|--------|-----------|---------|------|
-| `gentle` | 150 | 30 | Soft, subtle spring |
-| `bouncy` | 300 | 15 | Lively, energetic |
-| `wobbly` | 180 | 12 | Jelly-like, playful |
-| `snappy` | 400 | 25 | Quick, responsive |
+| Preset | Stiffness | Damping | Oscillations | Feel |
+|--------|-----------|---------|--------------|------|
+| `gentle` | 150 | 30 | 2 | Soft, subtle spring |
+| `bouncy` | 300 | 15 | 4 | Lively, energetic |
+| `wobbly` | 180 | 12 | 5 | Jelly-like, playful |
+| `snappy` | 400 | 25 | 2 | Quick, responsive |
 
 **Example - Wobbly elastic:**
 ```typescript
@@ -927,7 +950,131 @@ Controls UI elements and responsiveness.
 | `ui.showLoadingSpinner` | `boolean` | `false` | Show a spinner while loading images. |
 | `responsive.breakpoints`| `object` | `{ mobile: 768 }`| Breakpoint definitions. |
 
-### 6. Debug (`debug`)
+### 7. Styling Configuration (`styling`)
+
+Controls the visual appearance of images in different states.
+
+```typescript
+styling: {
+  default: {
+    border: { width: 0, color: '#000', radius: 8, style: 'solid' },
+    shadow: 'md',               // 'none' | 'sm' | 'md' | 'lg' | 'glow' or custom CSS
+    opacity: 1,
+    cursor: 'pointer',
+    filter: { },
+    outline: { width: 0, color: '#000', style: 'solid', offset: 0 }
+  },
+  hover: {
+    shadow: 'lg'                // Applied on mouse hover
+  },
+  focused: {
+    shadow: 'glow'              // Applied when image is clicked/focused
+  }
+}
+```
+
+#### Style States
+
+| State | Description |
+|-------|-------------|
+| `default` | Base styling applied to all images |
+| `hover` | Inherits from default, applied on mouse hover |
+| `focused` | Inherits from default, applied when image is clicked/zoomed |
+
+#### Image Style Properties (`ImageStyleState`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `className` | `string \| string[]` | - | CSS class names to apply |
+| `border` | `BorderConfig` | *See below* | Border styling (shorthand for all sides) |
+| `borderTop` | `Partial<BorderConfig>` | - | Top border override |
+| `borderRight` | `Partial<BorderConfig>` | - | Right border override |
+| `borderBottom` | `Partial<BorderConfig>` | - | Bottom border override |
+| `borderLeft` | `Partial<BorderConfig>` | - | Left border override |
+| `shadow` | `ShadowPreset \| string` | `'md'` | Shadow preset or custom CSS shadow |
+| `filter` | `FilterConfig` | `{}` | CSS filter effects |
+| `opacity` | `number` | `1` | Image opacity (0-1) |
+| `cursor` | `string` | `'pointer'` | CSS cursor value |
+| `outline` | `OutlineConfig` | *See below* | Outline styling |
+| `objectFit` | `string` | - | CSS object-fit value |
+| `aspectRatio` | `string` | - | CSS aspect-ratio (e.g., '16/9') |
+
+#### Border Configuration (`BorderConfig`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `width` | `number` | `0` | Border width in pixels |
+| `color` | `string` | `'#000'` | Border color (CSS color) |
+| `radius` | `number` | `8` | Border radius in pixels |
+| `style` | `string` | `'solid'` | Border style: `'solid'`, `'dashed'`, `'dotted'`, `'none'` |
+
+#### Shadow Presets
+
+| Preset | CSS Value | Description |
+|--------|-----------|-------------|
+| `'none'` | `none` | No shadow |
+| `'sm'` | `0 2px 4px rgba(0,0,0,0.1)` | Small subtle shadow |
+| `'md'` | `0 4px 16px rgba(0,0,0,0.4)` | Medium shadow (default) |
+| `'lg'` | `0 8px 32px rgba(0,0,0,0.5)` | Large prominent shadow |
+| `'glow'` | `0 0 30px rgba(255,255,255,0.6)` | White glow effect |
+
+You can also pass a custom CSS box-shadow string instead of a preset.
+
+#### Filter Configuration (`FilterConfig`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `grayscale` | `number` | - | Grayscale filter (0-1) |
+| `blur` | `number` | - | Blur in pixels |
+| `brightness` | `number` | - | Brightness multiplier (1 = normal) |
+| `contrast` | `number` | - | Contrast multiplier (1 = normal) |
+| `saturate` | `number` | - | Saturation multiplier (1 = normal) |
+| `opacity` | `number` | - | Filter opacity (0-1) |
+| `sepia` | `number` | - | Sepia filter (0-1) |
+| `hueRotate` | `number` | - | Hue rotation in degrees |
+| `invert` | `number` | - | Invert filter (0-1) |
+| `dropShadow` | `DropShadowConfig \| string` | - | Drop shadow effect |
+
+#### Outline Configuration (`OutlineConfig`)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `width` | `number` | `0` | Outline width in pixels |
+| `color` | `string` | `'#000'` | Outline color |
+| `style` | `string` | `'solid'` | Outline style: `'solid'`, `'dashed'`, `'dotted'`, `'none'` |
+| `offset` | `number` | `0` | Outline offset in pixels |
+
+**Example - Vintage photo effect:**
+```typescript
+styling: {
+  default: {
+    border: { width: 8, color: '#f5f5dc', radius: 0 },
+    shadow: 'lg',
+    filter: { sepia: 0.3, contrast: 1.1 }
+  },
+  hover: {
+    filter: { sepia: 0, contrast: 1 }  // Remove effect on hover
+  }
+}
+```
+
+**Example - Polaroid style:**
+```typescript
+styling: {
+  default: {
+    border: { width: 0, radius: 4 },
+    borderBottom: { width: 40, color: 'white' },
+    borderTop: { width: 10, color: 'white' },
+    borderLeft: { width: 10, color: 'white' },
+    borderRight: { width: 10, color: 'white' },
+    shadow: 'md'
+  }
+}
+```
+
+---
+
+### 8. Debug (`debug`)
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
@@ -1031,6 +1178,7 @@ All available parameters with example values:
     "targetCoverage": 0.6,                      // Default. Target % of container to fill (0-1)
     "densityFactor": 1.0,                       // Default. Multiplier for calculated sizes
     "debugRadials": false,                      // Default
+    "debugCenters": false,                      // Default. Show markers at image center positions
 
     "sizing": {
       "base": 200,                              // Default. Base image size in px
@@ -1087,9 +1235,9 @@ All available parameters with example values:
       "rows": 1,                                // Default. Number of wave rows
       "amplitude": 100,                         // Default. Wave height in pixels
       "frequency": 2,                           // Default. Complete waves across width
-      "phaseShift": 0,                           // Default. Phase offset in radians
-      "synchronization": "offset",              // Default. "offset" | "synchronized" | "alternating"
-      "orientation": "follow"                   // Default. "follow" | "upright"
+      "phaseShift": 0,                          // Default. Phase offset in radians
+      "synchronization": "offset"               // Default. "offset" | "synchronized" | "alternating"
+      // Note: Wave image rotation is controlled via image.rotation.mode = 'tangent'
     }
   },
 
@@ -1165,6 +1313,50 @@ All available parameters with example values:
 
     "ui": {
       "showLoadingSpinner": false               // Default
+    }
+  },
+
+  "styling": {
+    "default": {
+      "className": "",                          // CSS class names (string or array)
+      "border": {
+        "width": 0,                             // Default. Border width in pixels
+        "color": "#000000",                     // Default. Border color
+        "radius": 8,                            // Default. Border radius in pixels
+        "style": "solid"                        // Default. "solid" | "dashed" | "dotted" | "none"
+      },
+      "borderTop": {},                          // Override for top border
+      "borderRight": {},                        // Override for right border
+      "borderBottom": {},                       // Override for bottom border
+      "borderLeft": {},                         // Override for left border
+      "shadow": "md",                           // Default. "none" | "sm" | "md" | "lg" | "glow" or CSS
+      "filter": {
+        "grayscale": 0,                         // 0-1
+        "blur": 0,                              // pixels
+        "brightness": 1,                        // multiplier
+        "contrast": 1,                          // multiplier
+        "saturate": 1,                          // multiplier
+        "opacity": 1,                           // 0-1
+        "sepia": 0,                             // 0-1
+        "hueRotate": 0,                         // degrees
+        "invert": 0                             // 0-1
+      },
+      "opacity": 1,                             // Default. 0-1
+      "cursor": "pointer",                      // Default. CSS cursor value
+      "outline": {
+        "width": 0,                             // Default. Outline width in pixels
+        "color": "#000000",                     // Default. Outline color
+        "style": "solid",                       // Default. "solid" | "dashed" | "dotted" | "none"
+        "offset": 0                             // Default. Outline offset in pixels
+      },
+      "objectFit": "cover",                     // CSS object-fit value
+      "aspectRatio": ""                         // CSS aspect-ratio (e.g., "16/9")
+    },
+    "hover": {
+      "shadow": "lg"                            // Default. Applied on mouse hover
+    },
+    "focused": {
+      "shadow": "glow"                          // Default. Applied when image is clicked/focused
     }
   }
 }
@@ -1489,8 +1681,7 @@ const gallery = new ImageCloud({
       rows: 4,
       amplitude: 100,
       frequency: 2.5,
-      synchronization: 'offset',
-      orientation: 'follow'
+      synchronization: 'offset'
     }
   },
   animation: {
@@ -1508,6 +1699,9 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    rotation: { mode: 'tangent' }  // Images follow wave curve
+  },
   layout: {
     algorithm: 'wave',
     sizing: { base: 90 },
@@ -1515,8 +1709,7 @@ const gallery = new ImageCloud({
       rows: 5,
       amplitude: 120,
       frequency: 3,
-      synchronization: 'alternating',  // Woven pattern
-      orientation: 'follow'
+      synchronization: 'alternating'  // Woven pattern
     }
   }
 });
