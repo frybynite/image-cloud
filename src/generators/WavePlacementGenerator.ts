@@ -38,9 +38,8 @@ export class WavePlacementGenerator implements PlacementGenerator {
 
     // Get rotation config from image config
     const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
-    const rotationRange = rotationMode === 'random'
-      ? (this.imageConfig.rotation?.range?.max ?? 15)
-      : 0;
+    const minRotation = this.imageConfig.rotation?.range?.min ?? -15;
+    const maxRotation = this.imageConfig.rotation?.range?.max ?? 15;
 
     // Get variance config from image config
     const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
@@ -127,7 +126,7 @@ export class WavePlacementGenerator implements PlacementGenerator {
           rotation = this.calculateRotation(centerX, width, amplitude, frequency, phase);
         } else if (rotationMode === 'random') {
           // Random rotation within configured range
-          rotation = this.random(-rotationRange, rotationRange);
+          rotation = this.random(minRotation, maxRotation);
         }
         // If mode is 'none', rotation stays 0
 

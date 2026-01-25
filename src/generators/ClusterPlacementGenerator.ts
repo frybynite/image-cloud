@@ -55,9 +55,8 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
 
     // Get rotation config from image config
     const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
-    const rotationRange = rotationMode === 'random'
-      ? (this.imageConfig.rotation?.range?.max ?? 15)
-      : 0;
+    const minRotation = this.imageConfig.rotation?.range?.min ?? -15;
+    const maxRotation = this.imageConfig.rotation?.range?.max ?? 15;
 
     // Get variance config from image config
     const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
@@ -140,7 +139,7 @@ export class ClusterPlacementGenerator implements PlacementGenerator {
         y = Math.max(padding + halfHeight, Math.min(y, height - padding - halfHeight));
 
         // Rotation - more variance for organic feel (only when mode is random)
-        const rotation = rotationMode === 'random' ? this.random(-rotationRange, rotationRange) : 0;
+        const rotation = rotationMode === 'random' ? this.random(minRotation, maxRotation) : 0;
 
         // Z-index: images closer to cluster center are on top
         const distanceFromCenter = Math.sqrt(offsetX * offsetX + offsetY * offsetY);

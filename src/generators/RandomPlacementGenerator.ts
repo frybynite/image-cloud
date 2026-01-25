@@ -35,9 +35,8 @@ export class RandomPlacementGenerator implements PlacementGenerator {
 
     // Get rotation config from image config
     const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
-    const rotationRange = rotationMode === 'random'
-      ? (this.imageConfig.rotation?.range?.max ?? 15)
-      : 0;
+    const minRotation = this.imageConfig.rotation?.range?.min ?? -15;
+    const maxRotation = this.imageConfig.rotation?.range?.max ?? 15;
 
     // Get variance config from image config
     const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
@@ -61,7 +60,7 @@ export class RandomPlacementGenerator implements PlacementGenerator {
       const y = this.random(minY, maxY);
 
       // Random rotation within range (only when mode is random)
-      const rotation = rotationMode === 'random' ? this.random(-rotationRange, rotationRange) : 0;
+      const rotation = rotationMode === 'random' ? this.random(minRotation, maxRotation) : 0;
 
       // Random size variance
       const scale = hasVariance ? this.random(varianceMin, varianceMax) : 1.0;

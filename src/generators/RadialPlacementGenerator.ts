@@ -37,9 +37,8 @@ export class RadialPlacementGenerator implements PlacementGenerator {
 
     // Get rotation config from image config
     const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
-    const rotationRange = rotationMode === 'random'
-      ? (this.imageConfig.rotation?.range?.max ?? 15)
-      : 0;
+    const minRotation = this.imageConfig.rotation?.range?.min ?? -15;
+    const maxRotation = this.imageConfig.rotation?.range?.max ?? 15;
 
     // Get variance config from image config
     const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
@@ -70,7 +69,7 @@ export class RadialPlacementGenerator implements PlacementGenerator {
         id: 0,
         x: cx,
         y: cy,
-        rotation: rotationMode === 'random' ? this.random(-5, 5) : 0, // Less rotation for center
+        rotation: rotationMode === 'random' ? this.random(minRotation * 0.33, maxRotation * 0.33) : 0, // Less rotation for center
         scale: varianceScale,
         baseSize: centerSize,
         zIndex: 100, // Center image is highest
@@ -142,7 +141,7 @@ export class RadialPlacementGenerator implements PlacementGenerator {
           y = height - padding - halfHeight;
         }
 
-        const rotation = rotationMode === 'random' ? this.random(-rotationRange, rotationRange) : 0;
+        const rotation = rotationMode === 'random' ? this.random(minRotation, maxRotation) : 0;
 
         layouts.push({
           id: processedCount,

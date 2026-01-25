@@ -51,9 +51,8 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
 
     // Get rotation config from image config
     const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
-    const rotationRange = rotationMode === 'random'
-      ? (this.imageConfig.rotation?.range?.max ?? 15)
-      : 0;
+    const minRotation = this.imageConfig.rotation?.range?.min ?? -15;
+    const maxRotation = this.imageConfig.rotation?.range?.max ?? 15;
 
     // Get variance config from image config
     const varianceMin = this.imageConfig.sizing?.variance?.min ?? 1.0;
@@ -133,7 +132,7 @@ export class SpiralPlacementGenerator implements PlacementGenerator {
       let rotation = 0;
       if (rotationMode === 'random') {
         const baseRotation = (angle * 180 / Math.PI) % 360;
-        const rotationVariance = this.random(-rotationRange, rotationRange);
+        const rotationVariance = this.random(minRotation, maxRotation);
         rotation = spiralConfig.spiralType === 'golden'
           ? rotationVariance // Pure random for golden (more organic)
           : (baseRotation * 0.1 + rotationVariance * 0.9); // Slight directional bias for others
