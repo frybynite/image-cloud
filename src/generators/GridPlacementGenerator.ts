@@ -70,9 +70,22 @@ export class GridPlacementGenerator implements PlacementGenerator {
       gridConfig
     );
 
-    // Calculate cell size
-    const cellWidth = (availableWidth - (gridConfig.gap * (columns - 1))) / columns;
-    const cellHeight = (availableHeight - (gridConfig.gap * (rows - 1))) / rows;
+    // For stagger layouts, we need n+0.5 cells to fit in available space
+    // Calculate cell size accounting for this extra half-cell
+    const hasRowStagger = gridConfig.stagger === 'row';
+    const hasColumnStagger = gridConfig.stagger === 'column';
+
+    // Effective columns/rows for sizing: add 0.5 for stagger
+    const effectiveColumns = hasRowStagger ? columns + 0.5 : columns;
+    const effectiveRows = hasColumnStagger ? rows + 0.5 : rows;
+
+    // Calculate cell size to fit effective count in available space
+    const cellWidth = (availableWidth - (gridConfig.gap * (columns - 1))) / effectiveColumns;
+    const cellHeight = (availableHeight - (gridConfig.gap * (rows - 1))) / effectiveRows;
+
+    // Stagger offset is half a cell
+    const staggerOffsetX = hasRowStagger ? cellWidth / 2 : 0;
+    const staggerOffsetY = hasColumnStagger ? cellHeight / 2 : 0;
 
     // Calculate image size with overlap factor
     // overlap: 0 = fit in cell, 0.5 = 50% larger, 1.0 = 2x cell size
@@ -85,9 +98,9 @@ export class GridPlacementGenerator implements PlacementGenerator {
       ? Math.min(options.fixedHeight, cellBasedSize)
       : cellBasedSize;
 
-    // Calculate total grid dimensions for alignment
-    const totalGridWidth = columns * cellWidth + (columns - 1) * gridConfig.gap;
-    const totalGridHeight = rows * cellHeight + (rows - 1) * gridConfig.gap;
+    // Calculate total grid dimensions for alignment (include stagger offset)
+    const totalGridWidth = columns * cellWidth + (columns - 1) * gridConfig.gap + staggerOffsetX;
+    const totalGridHeight = rows * cellHeight + (rows - 1) * gridConfig.gap + staggerOffsetY;
 
     // Center the grid in the container
     const gridOffsetX = padding + (availableWidth - totalGridWidth) / 2;
