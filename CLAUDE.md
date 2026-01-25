@@ -89,3 +89,4 @@ Located in `examples/` folder:
 ## Remember
 
 - Any time a new layout, style, etc. is created we must update the examples/ and the configurator/
+- DO NOT automatically commit or push changes to Github without my direct approval.
