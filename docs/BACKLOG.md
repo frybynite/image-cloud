@@ -49,6 +49,14 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 *Future feature ideas to explore*
 
+- Enhance `styling.hover` and `styling.focused` with additional style options:
+  - Note: `opacity` already works via `ImageStyleState.opacity` and `filter.opacity`
+  - `transform` - scale, rotate, translateX/Y for hover lift/grow effects
+  - `transition` - duration, timing, delay for per-state transition control
+  - `mixBlendMode` - multiply, screen, overlay for interesting overlap effects
+  - `zIndex` - bring hovered/focused images to front
+  - `backdropFilter` - frosted glass effects behind images
+  - `transformOrigin` - control where scale/rotate originates
 - Grid overflow mode - allow multiple items in the same cell with x/y offsets (stacking/layering effect)
 - Vue component wrapper
 - Web Component wrapper
