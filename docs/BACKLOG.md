@@ -12,9 +12,9 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
-- [ ] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Consider debouncing input events or only refreshing on blur for text fields.
+- [x] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skipping refresh when config unchanged.
 - [ ] Improve focus opacity behavior: default focus opacity should be 1, animate from default opacity to focus opacity on focus, and allow separate `focusOpacity` config (in addition to existing `unfocusedOpacity`).
-
+- [ ] for options like image border where the border can applied overall, or separately to top, bottom, left, right - list all the options available and discuss how we can give them overall control.
 ---
 
 ## Planned

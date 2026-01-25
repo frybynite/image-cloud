@@ -1548,6 +1548,7 @@
         let gallery = null;
         let showingPaths = false;
         let debounceTimer = null;
+        let lastAppliedConfig = null;
 
         // Field descriptions for tooltips
         let fieldDescriptions = {};
@@ -2391,10 +2392,19 @@
 
         // Apply changes to gallery
         window.applyChanges = async function() {
+            const config = buildConfig();
+            const configHash = JSON.stringify(config);
+
+            // Skip refresh if config hasn't changed since last apply
+            if (configHash === lastAppliedConfig) {
+                return;
+            }
+
+            lastAppliedConfig = configHash;
+
             if (gallery) {
                 gallery.destroy();
             }
-            const config = buildConfig();
             gallery = new ImageCloud(config);
             await gallery.init();
         };
