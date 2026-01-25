@@ -100,8 +100,8 @@
 
         /* Sidebar */
         .sidebar {
-            width: 360px;
-            min-width: 360px;
+            width: 400px;
+            min-width: 400px;
             height: calc(100% - 50px);
             margin-top: 50px;
             background: rgba(0, 0, 0, 0.95);
@@ -327,6 +327,7 @@
 
         .control-input {
             flex: 1;
+            min-width: 0;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -401,11 +402,12 @@
         }
 
         .value-display {
-            min-width: 40px;
+            min-width: 32px;
             text-align: right;
             font-size: 12px;
             color: #8b5cf6;
             font-family: 'SF Mono', Monaco, monospace;
+            flex-shrink: 0;
         }
 
         .control-hint {
@@ -818,16 +820,16 @@
                                     <input type="checkbox" class="control-checkbox" id="enable-grid-jitter">
                                     <label class="control-label" data-label="Jitter" data-path="grid.jitter">Jitter</label>
                                     <div class="control-input">
-                                        <input type="range" id="grid-jitter" min="0" max="50" step="5" value="0" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">0</span>
+                                        <input type="range" id="grid-jitter" min="0" max="50" step="5" value="0" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-grid-overlap">
                                     <label class="control-label" data-label="Overlap" data-path="grid.overlap">Overlap</label>
                                     <div class="control-input">
-                                        <input type="range" id="grid-overlap" min="0" max="0.5" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">0</span>
+                                        <input type="range" id="grid-overlap" min="0" max="0.5" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
@@ -880,24 +882,24 @@
                                     <input type="checkbox" class="control-checkbox" id="enable-spiral-tightness">
                                     <label class="control-label" data-label="Tightness" data-path="spiral.tightness">Tightness</label>
                                     <div class="control-input">
-                                        <input type="range" id="spiral-tightness" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">1.0</span>
+                                        <input type="range" id="spiral-tightness" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-spiral-scaleDecay">
                                     <label class="control-label" data-label="Scale Decay" data-path="spiral.scaleDecay">Scale Decay</label>
                                     <div class="control-input">
-                                        <input type="range" id="spiral-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">0</span>
+                                        <input type="range" id="spiral-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-spiral-startAngle">
                                     <label class="control-label" data-label="Start Angle" data-path="spiral.startAngle">Start Angle</label>
                                     <div class="control-input">
-                                        <input type="range" id="spiral-startAngle" min="0" max="360" step="15" value="0" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">0°</span>
+                                        <input type="range" id="spiral-startAngle" min="0" max="360" step="15" value="0" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                             </div>
@@ -915,24 +917,24 @@
                                     <input type="checkbox" class="control-checkbox" id="enable-cluster-spread">
                                     <label class="control-label" data-label="Cluster Spread" data-path="cluster.clusterSpread">Cluster Spread</label>
                                     <div class="control-input">
-                                        <input type="range" id="cluster-spread" min="50" max="300" step="10" value="150" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">150</span>
+                                        <input type="range" id="cluster-spread" min="50" max="300" step="10" value="150" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-cluster-spacing">
                                     <label class="control-label" data-label="Cluster Spacing" data-path="cluster.clusterSpacing">Cluster Spacing</label>
                                     <div class="control-input">
-                                        <input type="range" id="cluster-spacing" min="50" max="400" step="10" value="200" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">200</span>
+                                        <input type="range" id="cluster-spacing" min="50" max="400" step="10" value="200" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-cluster-overlap">
                                     <label class="control-label" data-label="Overlap" data-path="cluster.overlap">Overlap</label>
                                     <div class="control-input">
-                                        <input type="range" id="cluster-overlap" min="0" max="0.5" step="0.05" value="0.2" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">0.2</span>
+                                        <input type="range" id="cluster-overlap" min="0" max="0.5" step="0.05" value="0.2" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
@@ -970,24 +972,24 @@
                                     <input type="checkbox" class="control-checkbox" id="enable-wave-amplitude">
                                     <label class="control-label" data-label="Amplitude" data-path="wave.amplitude">Amplitude</label>
                                     <div class="control-input">
-                                        <input type="range" id="wave-amplitude" min="20" max="200" step="10" value="100" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">100</span>
+                                        <input type="range" id="wave-amplitude" min="20" max="200" step="10" value="100" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-wave-frequency">
                                     <label class="control-label" data-label="Frequency" data-path="wave.frequency">Frequency</label>
                                     <div class="control-input">
-                                        <input type="range" id="wave-frequency" min="0.5" max="5" step="0.5" value="2" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">2</span>
+                                        <input type="range" id="wave-frequency" min="0.5" max="5" step="0.5" value="2" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-wave-phaseShift">
                                     <label class="control-label" data-label="Phase Shift" data-path="wave.phaseShift">Phase Shift</label>
                                     <div class="control-input">
-                                        <input type="range" id="wave-phaseShift" min="0" max="6.28" step="0.1" value="1.047" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">1.0</span>
+                                        <input type="range" id="wave-phaseShift" min="0" max="6.28" step="0.1" value="1.047" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
@@ -1039,16 +1041,16 @@
                                 <input type="checkbox" class="control-checkbox" id="enable-layout-coverage">
                                 <label class="control-label" data-label="Target Coverage" data-path="layout.targetCoverage">Target Coverage</label>
                                 <div class="control-input">
-                                    <input type="range" id="layout-coverage" min="0.3" max="0.9" step="0.05" value="0.6" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0.6</span>
+                                    <input type="range" id="layout-coverage" min="0.3" max="0.9" step="0.05" value="0.6" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-layout-density">
                                 <label class="control-label" data-label="Density Factor" data-path="layout.densityFactor">Density Factor</label>
                                 <div class="control-input">
-                                    <input type="range" id="layout-density" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1.0</span>
+                                    <input type="range" id="layout-density" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                         </div>
@@ -1099,24 +1101,24 @@
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-min">
                                 <label class="control-label" data-label="Variance Min" data-path="image.sizing.variance.min">Variance Min</label>
                                 <div class="control-input">
-                                    <input type="range" id="image-variance-min" min="0.5" max="1.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1.0</span>
+                                    <input type="range" id="image-variance-min" min="0.5" max="1.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-max">
                                 <label class="control-label" data-label="Variance Max" data-path="image.sizing.variance.max">Variance Max</label>
                                 <div class="control-input">
-                                    <input type="range" id="image-variance-max" min="1.0" max="2.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1.0</span>
+                                    <input type="range" id="image-variance-max" min="1.0" max="2.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-scaleDecay">
                                 <label class="control-label" data-label="Scale Decay" data-path="image.sizing.scaleDecay">Scale Decay</label>
                                 <div class="control-input">
-                                    <input type="range" id="image-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0</span>
+                                    <input type="range" id="image-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <p class="control-hint">Scale Decay: center images larger, outer smaller (Radial/Spiral)</p>
@@ -1141,16 +1143,16 @@
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-min">
                                     <label class="control-label" data-label="Min Degrees" data-path="image.rotation.range.min">Min Degrees</label>
                                     <div class="control-input">
-                                        <input type="range" id="image-rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">-15°</span>
+                                        <input type="range" id="image-rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-max">
                                     <label class="control-label" data-label="Max Degrees" data-path="image.rotation.range.max">Max Degrees</label>
                                     <div class="control-input">
-                                        <input type="range" id="image-rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
                                         <span class="value-display">15°</span>
+                                        <input type="range" id="image-rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                             </div>
@@ -1214,8 +1216,8 @@
                                 <input type="checkbox" class="control-checkbox" id="enable-default-opacity">
                                 <label class="control-label" data-label="Opacity" data-path="default.opacity">Opacity</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1</span>
+                                    <input type="range" id="default-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
 
@@ -1224,56 +1226,56 @@
                                 <input type="checkbox" class="control-checkbox" id="enable-default-grayscale">
                                 <label class="control-label" data-label="Grayscale" data-path="default.filter.grayscale">Grayscale</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0</span>
+                                    <input type="range" id="default-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-default-blur">
                                 <label class="control-label" data-label="Blur" data-path="default.filter.blur">Blur</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0</span>
+                                    <input type="range" id="default-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-default-brightness">
                                 <label class="control-label" data-label="Brightness" data-path="default.filter.brightness">Brightness</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1</span>
+                                    <input type="range" id="default-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-default-contrast">
                                 <label class="control-label" data-label="Contrast" data-path="default.filter.contrast">Contrast</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1</span>
+                                    <input type="range" id="default-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-default-saturate">
                                 <label class="control-label" data-label="Saturate" data-path="default.filter.saturate">Saturate</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1</span>
+                                    <input type="range" id="default-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-default-sepia">
                                 <label class="control-label" data-label="Sepia" data-path="default.filter.sepia">Sepia</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0</span>
+                                    <input type="range" id="default-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-default-hueRotate">
                                 <label class="control-label" data-label="Hue Rotate" data-path="default.filter.hueRotate">Hue Rotate</label>
                                 <div class="control-input">
-                                    <input type="range" id="default-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0°</span>
+                                    <input type="range" id="default-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                         </div>
@@ -1298,16 +1300,16 @@
                                 <input type="checkbox" class="control-checkbox" id="enable-hover-grayscale">
                                 <label class="control-label" data-label="Grayscale" data-path="hover.filter.grayscale">Grayscale</label>
                                 <div class="control-input">
-                                    <input type="range" id="hover-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0</span>
+                                    <input type="range" id="hover-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-hover-brightness">
                                 <label class="control-label" data-label="Brightness" data-path="hover.filter.brightness">Brightness</label>
                                 <div class="control-input">
-                                    <input type="range" id="hover-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">1</span>
+                                    <input type="range" id="hover-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                         </div>
@@ -1332,8 +1334,8 @@
                                 <input type="checkbox" class="control-checkbox" id="enable-focused-grayscale">
                                 <label class="control-label" data-label="Grayscale" data-path="focused.filter.grayscale">Grayscale</label>
                                 <div class="control-input">
-                                    <input type="range" id="focused-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0</span>
+                                    <input type="range" id="focused-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                         </div>
@@ -1461,16 +1463,16 @@
                                 <input type="checkbox" class="control-checkbox" id="enable-focus-scalePercent">
                                 <label class="control-label" data-label="Scale %" data-path="focus.scalePercent">Scale %</label>
                                 <div class="control-input">
-                                    <input type="range" id="focus-scalePercent" min="0.3" max="1.0" step="0.05" value="0.8" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0.8</span>
+                                    <input type="range" id="focus-scalePercent" min="0.3" max="1.0" step="0.05" value="0.8" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-focus-unfocusedOpacity">
                                 <label class="control-label" data-label="Unfocused Opacity" data-path="focus.unfocusedOpacity">Unfocused Opacity</label>
                                 <div class="control-input">
-                                    <input type="range" id="focus-unfocusedOpacity" min="0" max="1" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
                                     <span class="value-display">0.3</span>
+                                    <input type="range" id="focus-unfocusedOpacity" min="0" max="1" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
