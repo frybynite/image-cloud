@@ -90,3 +90,8 @@ Located in `examples/` folder:
 
 - Any time a new layout, style, etc. is created we must update the examples/ and the configurator/
 - DO NOT automatically commit or push changes to Github without my direct approval.
+- When a parameter name, location, value, default, etc. is changed:
+  - update the Parameters.md file
+  - update configurator labels, values, help text.
+  - configurator help text should include defaults
+  

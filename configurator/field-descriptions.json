@@ -1,111 +1,111 @@
 {
-  "debugCenters": "Show center markers for debugging layout placement",
+  "debugCenters": "Show center markers for debugging layout placement (default: false)",
   "layout": {
     "_title": "Configure how images are arranged in the gallery",
     "algorithm": {
       "_title": "Algorithm settings for image placement",
-      "type": "The algorithm used to arrange images in the gallery"
+      "type": "The algorithm used to arrange images in the gallery (default: radial)"
     },
     "sizing": {
       "_title": "Control how image sizes are calculated",
       "adaptive": {
         "_title": "Automatically adjust sizes based on container and image count",
-        "enabled": "Enable automatic size adjustment",
-        "minSize": "Smallest allowed image size in pixels",
-        "maxSize": "Largest allowed image size in pixels"
+        "enabled": "Enable automatic size adjustment (default: true)",
+        "minSize": "Smallest allowed image size in pixels (default: 50)",
+        "maxSize": "Largest allowed image size in pixels (default: 400)"
       }
     },
-    "targetCoverage": "How much of the container area images should fill (0.3-0.9)",
-    "densityFactor": "Multiplier affecting how tightly images are packed",
+    "targetCoverage": "How much of the container area images should fill, 0.3-0.9 (default: 0.6)",
+    "densityFactor": "Multiplier affecting how tightly images are packed (default: 1.0)",
     "spacing": {
       "_title": "Control spacing around and between images",
-      "padding": "Space between images and container edges",
-      "minGap": "Minimum space between adjacent images"
+      "padding": "Space between images and container edges (default: 50)",
+      "minGap": "Minimum space between adjacent images (default: 20)"
     },
     "grid": {
       "_title": "Grid-specific layout options",
-      "columns": "Number of columns in the grid layout",
-      "rows": "Number of rows in the grid layout",
-      "gap": "Space between grid cells in pixels",
-      "stagger": "Offset every other row for a staggered pattern",
-      "jitter": "Random offset applied to image positions",
-      "overlap": "How much images can overlap each other",
-      "fillDirection": "Order in which grid cells are filled",
-      "alignment": "Alignment of images within their cells"
+      "columns": "Number of columns in the grid layout (default: auto)",
+      "rows": "Number of rows in the grid layout (default: auto)",
+      "gap": "Space between grid cells in pixels (default: 10)",
+      "stagger": "Offset every other row for a staggered pattern (default: none)",
+      "jitter": "Random offset applied to image positions (default: 0)",
+      "overlap": "How much images can overlap each other (default: 0)",
+      "fillDirection": "Order in which grid cells are filled (default: row)",
+      "alignment": "Alignment of images within their cells (default: center)"
     },
     "spiral": {
       "_title": "Spiral-specific layout options",
-      "spiralType": "Mathematical curve used (golden, archimedean, logarithmic)",
-      "direction": "Clockwise or counter-clockwise spiral direction",
-      "tightness": "How close spiral arms are to each other",
-      "scaleDecay": "Images get smaller toward the outer spiral",
-      "startAngle": "Rotation offset for the spiral pattern in degrees"
+      "spiralType": "Mathematical curve used: golden, archimedean, logarithmic (default: golden)",
+      "direction": "Clockwise or counter-clockwise spiral direction (default: counterclockwise)",
+      "tightness": "How close spiral arms are to each other (default: 1.0)",
+      "scaleDecay": "Images get smaller toward the outer spiral (default: 0)",
+      "startAngle": "Rotation offset for the spiral pattern in degrees (default: 0)"
     },
     "cluster": {
       "_title": "Cluster-specific layout options",
-      "clusterCount": "Number of image clusters to create",
-      "clusterSpread": "How far images spread within each cluster",
-      "clusterSpacing": "Distance between cluster centers",
-      "overlap": "How much images can overlap within clusters",
-      "density": "Distribution of images within clusters",
-      "distribution": "Mathematical distribution for cluster placement"
+      "clusterCount": "Number of image clusters to create (default: auto)",
+      "clusterSpread": "How far images spread within each cluster (default: 150)",
+      "clusterSpacing": "Distance between cluster centers (default: 200)",
+      "overlap": "How much images can overlap within clusters (default: 0.3)",
+      "density": "Distribution of images within clusters (default: uniform)",
+      "distribution": "Mathematical distribution for cluster placement (default: gaussian)"
     },
     "wave": {
       "_title": "Wave-specific layout options",
-      "rows": "Number of wave rows",
-      "amplitude": "Height of the wave peaks and troughs",
-      "frequency": "Number of wave cycles across the container",
-      "phaseShift": "Offset between rows in the wave pattern",
-      "synchronization": "How wave phases align across rows"
+      "rows": "Number of wave rows (default: 1)",
+      "amplitude": "Height of the wave peaks and troughs (default: 100)",
+      "frequency": "Number of wave cycles across the container (default: 2)",
+      "phaseShift": "Offset between rows in the wave pattern (default: 0)",
+      "synchronization": "How wave phases align across rows (default: offset)"
     }
   },
-  "algorithm": "The algorithm used to arrange images in the gallery",
+  "algorithm": "The algorithm used to arrange images in the gallery (default: radial)",
   "grid": {
     "_title": "Grid-specific layout options",
-    "columns": "Number of columns in the grid layout",
-    "rows": "Number of rows in the grid layout",
-    "gap": "Space between grid cells in pixels",
-    "stagger": "Offset every other row for a staggered pattern",
-    "jitter": "Random offset applied to image positions",
-    "overlap": "How much images can overlap each other",
-    "fillDirection": "Order in which grid cells are filled",
-    "alignment": "Alignment of images within their cells"
+    "columns": "Number of columns in the grid layout (default: auto)",
+    "rows": "Number of rows in the grid layout (default: auto)",
+    "gap": "Space between grid cells in pixels (default: 10)",
+    "stagger": "Offset every other row for a staggered pattern (default: none)",
+    "jitter": "Random offset applied to image positions (default: 0)",
+    "overlap": "How much images can overlap each other (default: 0)",
+    "fillDirection": "Order in which grid cells are filled (default: row)",
+    "alignment": "Alignment of images within their cells (default: center)"
   },
   "spiral": {
     "_title": "Spiral-specific layout options",
-    "spiralType": "Mathematical curve used (golden, archimedean, logarithmic)",
-    "direction": "Clockwise or counter-clockwise spiral direction",
-    "tightness": "How close spiral arms are to each other",
-    "scaleDecay": "Images get smaller toward the outer spiral",
-    "startAngle": "Rotation offset for the spiral pattern in degrees"
+    "spiralType": "Mathematical curve used: golden, archimedean, logarithmic (default: golden)",
+    "direction": "Clockwise or counter-clockwise spiral direction (default: counterclockwise)",
+    "tightness": "How close spiral arms are to each other (default: 1.0)",
+    "scaleDecay": "Images get smaller toward the outer spiral (default: 0)",
+    "startAngle": "Rotation offset for the spiral pattern in degrees (default: 0)"
   },
   "cluster": {
     "_title": "Cluster-specific layout options",
-    "clusterCount": "Number of image clusters to create",
-    "clusterSpread": "How far images spread within each cluster",
-    "clusterSpacing": "Distance between cluster centers",
-    "overlap": "How much images can overlap within clusters",
-    "density": "Distribution of images within clusters",
-    "distribution": "Mathematical distribution for cluster placement"
+    "clusterCount": "Number of image clusters to create (default: auto)",
+    "clusterSpread": "How far images spread within each cluster (default: 150)",
+    "clusterSpacing": "Distance between cluster centers (default: 200)",
+    "overlap": "How much images can overlap within clusters (default: 0.3)",
+    "density": "Distribution of images within clusters (default: uniform)",
+    "distribution": "Mathematical distribution for cluster placement (default: gaussian)"
   },
   "wave": {
     "_title": "Wave-specific layout options",
-    "rows": "Number of wave rows",
-    "amplitude": "Height of the wave peaks and troughs",
-    "frequency": "Number of wave cycles across the container",
-    "phaseShift": "Offset between rows in the wave pattern",
-    "synchronization": "How wave phases align across rows"
+    "rows": "Number of wave rows (default: 1)",
+    "amplitude": "Height of the wave peaks and troughs (default: 100)",
+    "frequency": "Number of wave cycles across the container (default: 2)",
+    "phaseShift": "Offset between rows in the wave pattern (default: 0)",
+    "synchronization": "How wave phases align across rows (default: offset)"
   },
   "adaptive": {
     "_title": "Automatically adjust sizes based on container and image count",
-    "enabled": "Enable automatic size adjustment",
-    "minSize": "Smallest allowed image size in pixels",
-    "maxSize": "Largest allowed image size in pixels"
+    "enabled": "Enable automatic size adjustment (default: true)",
+    "minSize": "Smallest allowed image size in pixels (default: 50)",
+    "maxSize": "Largest allowed image size in pixels (default: 400)"
   },
   "spacing": {
     "_title": "Control spacing around and between images",
-    "padding": "Space between images and container edges",
-    "minGap": "Minimum space between adjacent images"
+    "padding": "Space between images and container edges (default: 50)",
+    "minGap": "Minimum space between adjacent images (default: 20)"
   },
   "image": {
     "_title": "Configure image appearance and sizing",
@@ -114,18 +114,18 @@
       "baseHeight": "Default height for images before variance",
       "variance": {
         "_title": "Random size variation range",
-        "min": "Minimum size multiplier for random sizing",
-        "max": "Maximum size multiplier for random sizing"
+        "min": "Minimum size multiplier for random sizing (default: 1.0)",
+        "max": "Maximum size multiplier for random sizing (default: 1.0)"
       },
-      "scaleDecay": "Center images larger, outer images smaller"
+      "scaleDecay": "Center images larger, outer images smaller (default: 0)"
     },
     "rotation": {
       "_title": "Control image rotation",
-      "mode": "How rotation is applied (none, random, tangent)",
+      "mode": "How rotation is applied: none, random, tangent (default: none)",
       "range": {
         "_title": "Random rotation angle range",
-        "min": "Minimum random rotation angle in degrees",
-        "max": "Maximum random rotation angle in degrees"
+        "min": "Minimum random rotation angle in degrees (default: -15)",
+        "max": "Maximum random rotation angle in degrees (default: 15)"
       }
     }
   },
@@ -135,26 +135,26 @@
       "_title": "Default appearance of images",
       "border": {
         "_title": "Image border settings",
-        "width": "Thickness of image border in pixels",
-        "color": "Color of image border",
-        "radius": "Corner rounding of images in pixels"
+        "width": "Thickness of image border in pixels (default: 0)",
+        "color": "Color of image border (default: #000000)",
+        "radius": "Corner rounding of images in pixels (default: 8)"
       },
-      "shadow": "Drop shadow preset (none, sm, md, lg, glow)",
-      "opacity": "Image transparency level (0-1)",
+      "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md)",
+      "opacity": "Image transparency level, 0-1 (default: 1)",
       "filter": {
         "_title": "CSS filter effects",
-        "grayscale": "Black and white filter intensity (0-1)",
-        "blur": "Blur filter intensity in pixels",
-        "brightness": "Image brightness adjustment (0.5-1.5)",
-        "contrast": "Image contrast adjustment (0.5-2)",
-        "saturate": "Color saturation adjustment (0-2)",
-        "sepia": "Vintage sepia tone filter (0-1)",
-        "hueRotate": "Color hue shift in degrees (0-360)"
+        "grayscale": "Black and white filter intensity, 0-1 (default: 0)",
+        "blur": "Blur filter intensity in pixels (default: 0)",
+        "brightness": "Image brightness adjustment, 0.5-1.5 (default: 1)",
+        "contrast": "Image contrast adjustment, 0.5-2 (default: 1)",
+        "saturate": "Color saturation adjustment, 0-2 (default: 1)",
+        "sepia": "Vintage sepia tone filter, 0-1 (default: 0)",
+        "hueRotate": "Color hue shift in degrees, 0-360 (default: 0)"
       }
     },
     "hover": {
       "_title": "Appearance when mouse hovers over image",
-      "shadow": "Shadow preset on hover",
+      "shadow": "Shadow preset on hover (default: lg)",
       "filter": {
         "_title": "Filter effects on hover",
         "grayscale": "Grayscale filter on hover",
@@ -163,7 +163,7 @@
     },
     "focused": {
       "_title": "Appearance when image is clicked/focused",
-      "shadow": "Shadow preset when focused",
+      "shadow": "Shadow preset when focused (default: glow)",
       "filter": {
         "_title": "Filter effects when focused",
         "grayscale": "Grayscale filter when focused"
@@ -174,26 +174,26 @@
     "_title": "Default appearance of images",
     "border": {
       "_title": "Image border settings",
-      "width": "Thickness of image border in pixels",
-      "color": "Color of image border",
-      "radius": "Corner rounding of images in pixels"
+      "width": "Thickness of image border in pixels (default: 0)",
+      "color": "Color of image border (default: #000000)",
+      "radius": "Corner rounding of images in pixels (default: 8)"
     },
-    "shadow": "Drop shadow preset (none, sm, md, lg, glow)",
-    "opacity": "Image transparency level (0-1)",
+    "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md)",
+    "opacity": "Image transparency level, 0-1 (default: 1)",
     "filter": {
       "_title": "CSS filter effects",
-      "grayscale": "Black and white filter intensity (0-1)",
-      "blur": "Blur filter intensity in pixels",
-      "brightness": "Image brightness adjustment (0.5-1.5)",
-      "contrast": "Image contrast adjustment (0.5-2)",
-      "saturate": "Color saturation adjustment (0-2)",
-      "sepia": "Vintage sepia tone filter (0-1)",
-      "hueRotate": "Color hue shift in degrees (0-360)"
+      "grayscale": "Black and white filter intensity, 0-1 (default: 0)",
+      "blur": "Blur filter intensity in pixels (default: 0)",
+      "brightness": "Image brightness adjustment, 0.5-1.5 (default: 1)",
+      "contrast": "Image contrast adjustment, 0.5-2 (default: 1)",
+      "saturate": "Color saturation adjustment, 0-2 (default: 1)",
+      "sepia": "Vintage sepia tone filter, 0-1 (default: 0)",
+      "hueRotate": "Color hue shift in degrees, 0-360 (default: 0)"
     }
   },
   "hover": {
     "_title": "Appearance when mouse hovers over image",
-    "shadow": "Shadow preset on hover",
+    "shadow": "Shadow preset on hover (default: lg)",
     "filter": {
       "_title": "Filter effects on hover",
       "grayscale": "Grayscale filter on hover",
@@ -202,7 +202,7 @@
   },
   "focused": {
     "_title": "Appearance when image is clicked/focused",
-    "shadow": "Shadow preset when focused",
+    "shadow": "Shadow preset when focused (default: glow)",
     "filter": {
       "_title": "Filter effects when focused",
       "grayscale": "Grayscale filter when focused"
@@ -210,52 +210,52 @@
   },
   "animation": {
     "_title": "Configure entry animations",
-    "duration": "How long animations take to complete in milliseconds",
+    "duration": "How long animations take to complete in milliseconds (default: 600)",
     "queue": {
       "_title": "Animation queue settings",
-      "enabled": "Enable staggered animation queue",
-      "interval": "Delay between each image's animation start"
+      "enabled": "Enable staggered animation queue (default: true)",
+      "interval": "Delay between each image's animation start (default: 150)"
     },
     "entry": {
       "_title": "Entry animation settings",
       "start": {
         "_title": "Starting position for animations",
-        "position": "Where images animate in from",
-        "offset": "Distance from edge where animation begins"
+        "position": "Where images animate in from (default: nearest-edge)",
+        "offset": "Distance from edge where animation begins (default: 100)"
       },
       "timing": {
         "_title": "Animation timing settings",
-        "duration": "Duration of entry animation",
-        "stagger": "Delay increment between consecutive images"
+        "duration": "Duration of entry animation (default: 600)",
+        "stagger": "Delay increment between consecutive images (default: 150)"
       },
       "path": {
         "_title": "Animation path settings",
-        "type": "Animation trajectory (linear, bounce, elastic, wave)",
+        "type": "Animation trajectory: linear, bounce, elastic, wave (default: linear)",
         "preset": "Preset configuration for the selected path type"
       }
     }
   },
-  "duration": "How long animations take to complete in milliseconds",
+  "duration": "How long animations take to complete in milliseconds (default: 600)",
   "queue": {
     "_title": "Animation queue settings",
-    "enabled": "Enable staggered animation queue",
-    "interval": "Delay between each image's animation start"
+    "enabled": "Enable staggered animation queue (default: true)",
+    "interval": "Delay between each image's animation start (default: 150)"
   },
   "entry": {
     "_title": "Entry animation settings",
     "start": {
       "_title": "Starting position for animations",
-      "position": "Where images animate in from",
-      "offset": "Distance from edge where animation begins"
+      "position": "Where images animate in from (default: nearest-edge)",
+      "offset": "Distance from edge where animation begins (default: 100)"
     },
     "timing": {
       "_title": "Animation timing settings",
-      "duration": "Duration of entry animation",
-      "stagger": "Delay increment between consecutive images"
+      "duration": "Duration of entry animation (default: 600)",
+      "stagger": "Delay increment between consecutive images (default: 150)"
     },
     "path": {
       "_title": "Animation path settings",
-      "type": "Animation trajectory (linear, bounce, elastic, wave)",
+      "type": "Animation trajectory: linear, bounce, elastic, wave (default: linear)",
       "preset": "Preset configuration for the selected path type"
     }
   },
@@ -263,15 +263,15 @@
     "_title": "Configure user interaction behavior",
     "focus": {
       "_title": "Focus/zoom behavior when clicking images",
-      "scalePercent": "Size of focused image relative to container",
-      "unfocusedOpacity": "Transparency of non-focused images when one is focused",
-      "zIndex": "Stack order of focused image"
+      "scalePercent": "Size of focused image relative to container (default: 0.8)",
+      "unfocusedOpacity": "Transparency of non-focused images when one is focused (default: 0.3)",
+      "zIndex": "Stack order of focused image (default: 1000)"
     }
   },
   "focus": {
     "_title": "Focus/zoom behavior when clicking images",
-    "scalePercent": "Size of focused image relative to container",
-    "unfocusedOpacity": "Transparency of non-focused images when one is focused",
-    "zIndex": "Stack order of focused image"
+    "scalePercent": "Size of focused image relative to container (default: 0.8)",
+    "unfocusedOpacity": "Transparency of non-focused images when one is focused (default: 0.3)",
+    "zIndex": "Stack order of focused image (default: 1000)"
   }
 }
