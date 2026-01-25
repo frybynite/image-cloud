@@ -48,7 +48,44 @@ export class ZoomEngine {
   }
 
   /**
-   * Focus (zoom) an image to center
+   * Normalize scalePercent value
+   * Values > 1 are treated as percentages (1-100) and divided by 100
+   * Values <= 1 are treated as fractions and used as-is
+   */
+  private normalizeScalePercent(value: number): number {
+    return value > 1 ? value / 100 : value;
+  }
+
+  /**
+   * Calculate scale factor for focused image based on container-relative sizing
+   * @param imageWidth - Original image width
+   * @param imageHeight - Original image height
+   * @param containerBounds - Container dimensions
+   * @returns Calculated scale factor
+   */
+  private calculateFocusScale(imageWidth: number, imageHeight: number, containerBounds: ContainerBounds): number {
+    // Normalize the scale percent
+    const normalizedPercent = this.normalizeScalePercent(this.config.scalePercent);
+
+    // Calculate target height
+    const targetHeight = containerBounds.height * normalizedPercent;
+
+    // Calculate scale factor based on height
+    let scale = targetHeight / imageHeight;
+
+    // Clamp if scaled width would exceed container bounds
+    const scaledWidth = imageWidth * scale;
+    const maxWidth = containerBounds.width * normalizedPercent;
+    if (scaledWidth > maxWidth) {
+      // Use width-constrained scale instead
+      scale = maxWidth / imageWidth;
+    }
+
+    return scale;
+  }
+
+  /**
+   * Focus (zoom) an image to center of container
    * @param imageElement - The image to focus
    * @param containerBounds - Container dimensions {width, height}
    * @param originalState - Original position/rotation from layout
@@ -60,7 +97,7 @@ export class ZoomEngine {
       await this.unfocusImage();
     }
 
-    // Calculate center position
+    // Calculate center position of container
     const centerX = containerBounds.width / 2;
     const centerY = containerBounds.height / 2;
 
@@ -68,13 +105,18 @@ export class ZoomEngine {
     const imageWidth = imageElement.offsetWidth;
     const imageHeight = imageElement.offsetHeight;
 
-    // Calculate position to center the image
-    // Target is simply center minus half size (to place top-left) minus current position
-    const currentX = originalState.x;
-    const currentY = originalState.y;
+    // Layout coordinates (originalState.x, originalState.y) are CENTER positions.
+    // The AnimationEngine prepends translate(-50%, -50%) to all transforms,
+    // so the visual center of the image is at (originalState.x, originalState.y).
+    // To move the visual center to (centerX, centerY), we need:
+    const currentCenterX = originalState.x;
+    const currentCenterY = originalState.y;
 
-    const targetX = centerX - (imageWidth / 2) - currentX;
-    const targetY = centerY - (imageHeight / 2) - currentY;
+    const targetX = centerX - currentCenterX;
+    const targetY = centerY - currentCenterY;
+
+    // Calculate scale based on container-relative sizing
+    const focusScale = this.calculateFocusScale(imageWidth, imageHeight, containerBounds);
 
     // Store focus data
     this.focusData = {
@@ -84,7 +126,7 @@ export class ZoomEngine {
         x: targetX,
         y: targetY,
         rotation: 0,  // Reset rotation when focused
-        scale: this.config.scale
+        scale: focusScale
       }
     };
 

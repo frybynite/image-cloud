@@ -223,14 +223,15 @@ export class LegacyOptionsAdapter {
 
   /**
    * Convert zoom configuration to interaction.focus
+   * Note: Old focusScale/mobileScale multipliers don't directly translate to scalePercent.
+   * Using default scalePercent of 0.8 for compatibility.
    */
   private static convertZoomToInteraction(oldZoom: any): Partial<InteractionConfig> {
-    this.warn('interaction', 'Zoom configuration is deprecated. Use "interaction.focus" instead.');
+    this.warn('interaction', 'Zoom configuration is deprecated. Use "interaction.focus" with scalePercent instead. Old focusScale/mobileScale values are not directly convertible.');
 
     return {
       focus: {
-        scale: oldZoom.focusScale ?? 2.5,
-        mobileScale: oldZoom.mobileScale ?? 2.0,
+        scalePercent: 0.8,  // Default - old scale values don't translate directly
         unfocusedOpacity: oldZoom.unfocusedOpacity,
         zIndex: oldZoom.focusZIndex ?? 1000
       }

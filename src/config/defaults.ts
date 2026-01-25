@@ -218,8 +218,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   // Pattern-based interaction configuration
   interaction: Object.freeze({
     focus: Object.freeze({
-      scale: 2.5,  // how much to scale focused image
-      mobileScale: 2.0,  // slightly smaller scale for mobile
+      scalePercent: 0.8,  // 80% of container height
       unfocusedOpacity: 0.3,  // opacity of other images when one is focused
       zIndex: 1000,
       animationDuration: undefined  // Use default animation duration

@@ -1458,19 +1458,11 @@
                         <div class="control-group">
                             <h5 class="control-group-title" data-label="Focus Behavior" data-path="interaction.focus">Focus Behavior</h5>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focus-scale">
-                                <label class="control-label" data-label="Scale" data-path="focus.scale">Scale</label>
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-scalePercent">
+                                <label class="control-label" data-label="Scale %" data-path="focus.scalePercent">Scale %</label>
                                 <div class="control-input">
-                                    <input type="range" id="focus-scale" min="1.5" max="4.0" step="0.1" value="2.5" oninput="updateRangeDisplay(this)">
-                                    <span class="value-display">2.5</span>
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focus-mobileScale">
-                                <label class="control-label" data-label="Mobile Scale" data-path="focus.mobileScale">Mobile Scale</label>
-                                <div class="control-input">
-                                    <input type="range" id="focus-mobileScale" min="1.2" max="3.0" step="0.1" value="2.0" oninput="updateRangeDisplay(this)">
-                                    <span class="value-display">2.0</span>
+                                    <input type="range" id="focus-scalePercent" min="0.3" max="1.0" step="0.05" value="0.8" oninput="updateRangeDisplay(this)">
+                                    <span class="value-display">0.8</span>
                                 </div>
                             </div>
                             <div class="control-row">
@@ -2153,12 +2145,10 @@
             // Interaction
             const interaction = {};
             const focus = {};
-            const scale = getEnabledValue('enable-focus-scale', 'focus-scale', parseFloat);
-            const mobileScale = getEnabledValue('enable-focus-mobileScale', 'focus-mobileScale', parseFloat);
+            const scalePercent = getEnabledValue('enable-focus-scalePercent', 'focus-scalePercent', parseFloat);
             const unfocusedOpacity = getEnabledValue('enable-focus-unfocusedOpacity', 'focus-unfocusedOpacity', parseFloat);
             const zIndex = getEnabledValue('enable-focus-zIndex', 'focus-zIndex', parseInt);
-            if (scale !== undefined) focus.scale = scale;
-            if (mobileScale !== undefined) focus.mobileScale = mobileScale;
+            if (scalePercent !== undefined) focus.scalePercent = scalePercent;
             if (unfocusedOpacity !== undefined) focus.unfocusedOpacity = unfocusedOpacity;
             if (zIndex !== undefined) focus.zIndex = zIndex;
             if (Object.keys(focus).length > 0) interaction.focus = focus;
