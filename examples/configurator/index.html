@@ -278,7 +278,6 @@
 
         .control-group-title {
             font-size: 11px;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #8b5cf6;
             margin: 0 0 10px 0;
@@ -701,6 +700,27 @@
             opacity: 0.4;
             pointer-events: none;
         }
+
+        /* Tooltip for label descriptions */
+        .tooltip {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            margin-top: 4px;
+            padding: 6px 10px;
+            background: #3a3a3a;
+            color: #ccc;
+            font-size: 11px;
+            font-style: normal;
+            font-weight: normal;
+            border-radius: 4px;
+            white-space: normal;
+            width: max-content;
+            max-width: 250px;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -745,14 +765,10 @@
                 </div>
 
                 <div class="preset-section">
-                    <label>Debug Centers</label>
+                    <label>Debug</label>
                     <div class="control-row" style="margin: 0;">
-                        <input type="checkbox" class="control-checkbox" id="enable-debug-centers" checked>
-                        <label class="control-label" data-label="Debug Centers" data-path="debugCenters" style="flex: 0;">Debug Centers</label>
-                        <div class="control-input">
-                            <input type="checkbox" id="debug-centers" checked>
-                            <span class="value-display" style="font-size: 11px; opacity: 0.7;">Show center markers</span>
-                        </div>
+                        <input type="checkbox" class="control-checkbox" id="debug-centers">
+                        <label class="control-label" data-label="Show center markers" data-path="debugCenters" style="flex: 0 0 auto;">Show center markers</label>
                     </div>
                 </div>
 
@@ -1121,7 +1137,6 @@
                                     <input type="range" id="image-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <p class="control-hint">Scale Decay: center images larger, outer smaller (Radial/Spiral)</p>
                         </div>
 
                         <!-- Image Rotation -->
@@ -1533,6 +1548,85 @@
         let gallery = null;
         let showingPaths = false;
         let debounceTimer = null;
+
+        // Field descriptions for tooltips
+        let fieldDescriptions = {};
+
+        async function loadFieldDescriptions() {
+            try {
+                const response = await fetch('field-descriptions.json');
+                fieldDescriptions = await response.json();
+                initTooltips();
+            } catch (error) {
+                console.warn('Could not load field descriptions:', error);
+            }
+        }
+
+        function getDescription(path) {
+            // Navigate the nested object using dot notation path
+            const parts = path.split('.');
+            let current = fieldDescriptions;
+            for (const part of parts) {
+                if (current && typeof current === 'object' && part in current) {
+                    current = current[part];
+                } else {
+                    return null;
+                }
+            }
+            // Return string value, or _title for objects
+            return typeof current === 'string' ? current : current?._title || null;
+        }
+
+        function initTooltips() {
+            const labels = document.querySelectorAll('[data-path]');
+            let activeTooltip = null;
+
+            function showTooltip(element) {
+                hideTooltip();
+                const path = element.getAttribute('data-path');
+                const description = getDescription(path);
+                if (!description) return;
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = description;
+
+                // Position relative to label
+                element.style.position = 'relative';
+                element.appendChild(tooltip);
+                activeTooltip = { element, tooltip };
+            }
+
+            function hideTooltip() {
+                if (activeTooltip) {
+                    activeTooltip.tooltip.remove();
+                    activeTooltip = null;
+                }
+            }
+
+            labels.forEach(label => {
+                // Desktop: mouse events
+                label.addEventListener('mouseenter', () => showTooltip(label));
+                label.addEventListener('mouseleave', hideTooltip);
+
+                // Mobile: tap to toggle
+                label.addEventListener('touchstart', (e) => {
+                    if (activeTooltip?.element === label) {
+                        hideTooltip();
+                    } else {
+                        e.preventDefault();
+                        showTooltip(label);
+                    }
+                }, { passive: false });
+            });
+
+            // Mobile: tap elsewhere to hide
+            document.addEventListener('touchstart', (e) => {
+                if (activeTooltip && !activeTooltip.element.contains(e.target)) {
+                    hideTooltip();
+                }
+            });
+        }
 
         // Sample images
         // Pool of 50 images from Pexels (nature/landscape photos)
@@ -1950,9 +2044,7 @@
             }
 
             // Debug Centers
-            if (document.getElementById('enable-debug-centers')?.checked) {
-                layout.debugCenters = document.getElementById('debug-centers')?.checked || false;
-            }
+            layout.debugCenters = document.getElementById('debug-centers')?.checked || false;
 
             // Image Config (new structure)
             const image = {};
@@ -2366,6 +2458,7 @@
             setupAutoApply();
             onAlgorithmChange();
             applyChanges();
+            loadFieldDescriptions();
         });
     </script>
 </body>

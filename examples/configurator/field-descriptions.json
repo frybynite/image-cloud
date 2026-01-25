@@ -1,0 +1,277 @@
+{
+  "debugCenters": "Show center markers for debugging layout placement",
+  "layout": {
+    "_title": "Configure how images are arranged in the gallery",
+    "algorithm": {
+      "_title": "Algorithm settings for image placement",
+      "type": "The algorithm used to arrange images in the gallery"
+    },
+    "sizing": {
+      "_title": "Control how image sizes are calculated",
+      "adaptive": {
+        "_title": "Automatically adjust sizes based on container and image count",
+        "enabled": "Enable automatic size adjustment",
+        "minSize": "Smallest allowed image size in pixels",
+        "maxSize": "Largest allowed image size in pixels"
+      }
+    },
+    "targetCoverage": "How much of the container area images should fill (0.3-0.9)",
+    "densityFactor": "Multiplier affecting how tightly images are packed",
+    "spacing": {
+      "_title": "Control spacing around and between images",
+      "padding": "Space between images and container edges",
+      "minGap": "Minimum space between adjacent images"
+    },
+    "grid": {
+      "_title": "Grid-specific layout options",
+      "columns": "Number of columns in the grid layout",
+      "rows": "Number of rows in the grid layout",
+      "gap": "Space between grid cells in pixels",
+      "stagger": "Offset every other row for a staggered pattern",
+      "jitter": "Random offset applied to image positions",
+      "overlap": "How much images can overlap each other",
+      "fillDirection": "Order in which grid cells are filled",
+      "alignment": "Alignment of images within their cells"
+    },
+    "spiral": {
+      "_title": "Spiral-specific layout options",
+      "spiralType": "Mathematical curve used (golden, archimedean, logarithmic)",
+      "direction": "Clockwise or counter-clockwise spiral direction",
+      "tightness": "How close spiral arms are to each other",
+      "scaleDecay": "Images get smaller toward the outer spiral",
+      "startAngle": "Rotation offset for the spiral pattern in degrees"
+    },
+    "cluster": {
+      "_title": "Cluster-specific layout options",
+      "clusterCount": "Number of image clusters to create",
+      "clusterSpread": "How far images spread within each cluster",
+      "clusterSpacing": "Distance between cluster centers",
+      "overlap": "How much images can overlap within clusters",
+      "density": "Distribution of images within clusters",
+      "distribution": "Mathematical distribution for cluster placement"
+    },
+    "wave": {
+      "_title": "Wave-specific layout options",
+      "rows": "Number of wave rows",
+      "amplitude": "Height of the wave peaks and troughs",
+      "frequency": "Number of wave cycles across the container",
+      "phaseShift": "Offset between rows in the wave pattern",
+      "synchronization": "How wave phases align across rows"
+    }
+  },
+  "algorithm": "The algorithm used to arrange images in the gallery",
+  "grid": {
+    "_title": "Grid-specific layout options",
+    "columns": "Number of columns in the grid layout",
+    "rows": "Number of rows in the grid layout",
+    "gap": "Space between grid cells in pixels",
+    "stagger": "Offset every other row for a staggered pattern",
+    "jitter": "Random offset applied to image positions",
+    "overlap": "How much images can overlap each other",
+    "fillDirection": "Order in which grid cells are filled",
+    "alignment": "Alignment of images within their cells"
+  },
+  "spiral": {
+    "_title": "Spiral-specific layout options",
+    "spiralType": "Mathematical curve used (golden, archimedean, logarithmic)",
+    "direction": "Clockwise or counter-clockwise spiral direction",
+    "tightness": "How close spiral arms are to each other",
+    "scaleDecay": "Images get smaller toward the outer spiral",
+    "startAngle": "Rotation offset for the spiral pattern in degrees"
+  },
+  "cluster": {
+    "_title": "Cluster-specific layout options",
+    "clusterCount": "Number of image clusters to create",
+    "clusterSpread": "How far images spread within each cluster",
+    "clusterSpacing": "Distance between cluster centers",
+    "overlap": "How much images can overlap within clusters",
+    "density": "Distribution of images within clusters",
+    "distribution": "Mathematical distribution for cluster placement"
+  },
+  "wave": {
+    "_title": "Wave-specific layout options",
+    "rows": "Number of wave rows",
+    "amplitude": "Height of the wave peaks and troughs",
+    "frequency": "Number of wave cycles across the container",
+    "phaseShift": "Offset between rows in the wave pattern",
+    "synchronization": "How wave phases align across rows"
+  },
+  "adaptive": {
+    "_title": "Automatically adjust sizes based on container and image count",
+    "enabled": "Enable automatic size adjustment",
+    "minSize": "Smallest allowed image size in pixels",
+    "maxSize": "Largest allowed image size in pixels"
+  },
+  "spacing": {
+    "_title": "Control spacing around and between images",
+    "padding": "Space between images and container edges",
+    "minGap": "Minimum space between adjacent images"
+  },
+  "image": {
+    "_title": "Configure image appearance and sizing",
+    "sizing": {
+      "_title": "Control base image dimensions",
+      "baseHeight": "Default height for images before variance",
+      "variance": {
+        "_title": "Random size variation range",
+        "min": "Minimum size multiplier for random sizing",
+        "max": "Maximum size multiplier for random sizing"
+      },
+      "scaleDecay": "Center images larger, outer images smaller"
+    },
+    "rotation": {
+      "_title": "Control image rotation",
+      "mode": "How rotation is applied (none, random, tangent)",
+      "range": {
+        "_title": "Random rotation angle range",
+        "min": "Minimum random rotation angle in degrees",
+        "max": "Maximum random rotation angle in degrees"
+      }
+    }
+  },
+  "styling": {
+    "_title": "Configure visual styling for images",
+    "default": {
+      "_title": "Default appearance of images",
+      "border": {
+        "_title": "Image border settings",
+        "width": "Thickness of image border in pixels",
+        "color": "Color of image border",
+        "radius": "Corner rounding of images in pixels"
+      },
+      "shadow": "Drop shadow preset (none, sm, md, lg, glow)",
+      "opacity": "Image transparency level (0-1)",
+      "filter": {
+        "_title": "CSS filter effects",
+        "grayscale": "Black and white filter intensity (0-1)",
+        "blur": "Blur filter intensity in pixels",
+        "brightness": "Image brightness adjustment (0.5-1.5)",
+        "contrast": "Image contrast adjustment (0.5-2)",
+        "saturate": "Color saturation adjustment (0-2)",
+        "sepia": "Vintage sepia tone filter (0-1)",
+        "hueRotate": "Color hue shift in degrees (0-360)"
+      }
+    },
+    "hover": {
+      "_title": "Appearance when mouse hovers over image",
+      "shadow": "Shadow preset on hover",
+      "filter": {
+        "_title": "Filter effects on hover",
+        "grayscale": "Grayscale filter on hover",
+        "brightness": "Brightness adjustment on hover"
+      }
+    },
+    "focused": {
+      "_title": "Appearance when image is clicked/focused",
+      "shadow": "Shadow preset when focused",
+      "filter": {
+        "_title": "Filter effects when focused",
+        "grayscale": "Grayscale filter when focused"
+      }
+    }
+  },
+  "default": {
+    "_title": "Default appearance of images",
+    "border": {
+      "_title": "Image border settings",
+      "width": "Thickness of image border in pixels",
+      "color": "Color of image border",
+      "radius": "Corner rounding of images in pixels"
+    },
+    "shadow": "Drop shadow preset (none, sm, md, lg, glow)",
+    "opacity": "Image transparency level (0-1)",
+    "filter": {
+      "_title": "CSS filter effects",
+      "grayscale": "Black and white filter intensity (0-1)",
+      "blur": "Blur filter intensity in pixels",
+      "brightness": "Image brightness adjustment (0.5-1.5)",
+      "contrast": "Image contrast adjustment (0.5-2)",
+      "saturate": "Color saturation adjustment (0-2)",
+      "sepia": "Vintage sepia tone filter (0-1)",
+      "hueRotate": "Color hue shift in degrees (0-360)"
+    }
+  },
+  "hover": {
+    "_title": "Appearance when mouse hovers over image",
+    "shadow": "Shadow preset on hover",
+    "filter": {
+      "_title": "Filter effects on hover",
+      "grayscale": "Grayscale filter on hover",
+      "brightness": "Brightness adjustment on hover"
+    }
+  },
+  "focused": {
+    "_title": "Appearance when image is clicked/focused",
+    "shadow": "Shadow preset when focused",
+    "filter": {
+      "_title": "Filter effects when focused",
+      "grayscale": "Grayscale filter when focused"
+    }
+  },
+  "animation": {
+    "_title": "Configure entry animations",
+    "duration": "How long animations take to complete in milliseconds",
+    "queue": {
+      "_title": "Animation queue settings",
+      "enabled": "Enable staggered animation queue",
+      "interval": "Delay between each image's animation start"
+    },
+    "entry": {
+      "_title": "Entry animation settings",
+      "start": {
+        "_title": "Starting position for animations",
+        "position": "Where images animate in from",
+        "offset": "Distance from edge where animation begins"
+      },
+      "timing": {
+        "_title": "Animation timing settings",
+        "duration": "Duration of entry animation",
+        "stagger": "Delay increment between consecutive images"
+      },
+      "path": {
+        "_title": "Animation path settings",
+        "type": "Animation trajectory (linear, bounce, elastic, wave)",
+        "preset": "Preset configuration for the selected path type"
+      }
+    }
+  },
+  "duration": "How long animations take to complete in milliseconds",
+  "queue": {
+    "_title": "Animation queue settings",
+    "enabled": "Enable staggered animation queue",
+    "interval": "Delay between each image's animation start"
+  },
+  "entry": {
+    "_title": "Entry animation settings",
+    "start": {
+      "_title": "Starting position for animations",
+      "position": "Where images animate in from",
+      "offset": "Distance from edge where animation begins"
+    },
+    "timing": {
+      "_title": "Animation timing settings",
+      "duration": "Duration of entry animation",
+      "stagger": "Delay increment between consecutive images"
+    },
+    "path": {
+      "_title": "Animation path settings",
+      "type": "Animation trajectory (linear, bounce, elastic, wave)",
+      "preset": "Preset configuration for the selected path type"
+    }
+  },
+  "interaction": {
+    "_title": "Configure user interaction behavior",
+    "focus": {
+      "_title": "Focus/zoom behavior when clicking images",
+      "scalePercent": "Size of focused image relative to container",
+      "unfocusedOpacity": "Transparency of non-focused images when one is focused",
+      "zIndex": "Stack order of focused image"
+    }
+  },
+  "focus": {
+    "_title": "Focus/zoom behavior when clicking images",
+    "scalePercent": "Size of focused image relative to container",
+    "unfocusedOpacity": "Transparency of non-focused images when one is focused",
+    "zIndex": "Stack order of focused image"
+  }
+}
