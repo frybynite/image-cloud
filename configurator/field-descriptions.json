@@ -132,60 +132,18 @@
     }
   },
   "styling": {
-    "_title": "Configure visual styling for images",
-    "default": {
-      "_title": "Default appearance of images",
-      "border": {
-        "_title": "Image border settings",
-        "width": "Thickness of image border in pixels (default: 0)",
-        "color": "Color of image border (default: #000000)",
-        "radius": "Corner rounding of images in pixels (default: 8)",
-        "style": "Border line style: solid, dashed, dotted, double, none, groove, ridge, inset, outset, hidden (default: solid)"
-      },
-      "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md)",
-      "opacity": "Image transparency level, 0-1 (default: 1)",
-      "filter": {
-        "_title": "CSS filter effects",
-        "grayscale": "Black and white filter intensity, 0-1 (default: 0)",
-        "blur": "Blur filter intensity in pixels (default: 0)",
-        "brightness": "Image brightness adjustment, 0.5-1.5 (default: 1)",
-        "contrast": "Image contrast adjustment, 0.5-2 (default: 1)",
-        "saturate": "Color saturation adjustment, 0-2 (default: 1)",
-        "sepia": "Vintage sepia tone filter, 0-1 (default: 0)",
-        "hueRotate": "Color hue shift in degrees, 0-360 (default: 0)"
-      }
-    },
-    "hover": {
-      "_title": "Appearance when mouse hovers over image",
-      "shadow": "Shadow preset on hover (default: lg)",
-      "filter": {
-        "_title": "Filter effects on hover",
-        "grayscale": "Grayscale filter on hover",
-        "brightness": "Brightness adjustment on hover"
-      }
-    },
-    "focused": {
-      "_title": "Appearance when image is clicked/focused",
-      "shadow": "Shadow preset when focused (default: glow)",
-      "filter": {
-        "_title": "Filter effects when focused",
-        "grayscale": "Grayscale filter when focused"
-      }
-    }
-  },
-  "default": {
-    "_title": "Default appearance of images",
+    "_title": "Configure visual styling for images. Use the state selector to switch between Default, Hover, and Focused states. All properties are available for all states - hover and focused inherit from default when not explicitly set.",
     "border": {
-      "_title": "Image border settings",
+      "_title": "Image border settings (available for all states)",
       "width": "Thickness of image border in pixels (default: 0)",
       "color": "Color of image border (default: #000000)",
       "radius": "Corner rounding of images in pixels (default: 8)",
       "style": "Border line style: solid, dashed, dotted, double, none, groove, ridge, inset, outset, hidden (default: solid)"
     },
-    "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md)",
+    "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md for default state, lg for hover, glow for focused)",
     "opacity": "Image transparency level, 0-1 (default: 1)",
     "filter": {
-      "_title": "CSS filter effects",
+      "_title": "CSS filter effects (available for all states)",
       "grayscale": "Black and white filter intensity, 0-1 (default: 0)",
       "blur": "Blur filter intensity in pixels (default: 0)",
       "brightness": "Image brightness adjustment, 0.5-1.5 (default: 1)",
@@ -193,24 +151,25 @@
       "saturate": "Color saturation adjustment, 0-2 (default: 1)",
       "sepia": "Vintage sepia tone filter, 0-1 (default: 0)",
       "hueRotate": "Color hue shift in degrees, 0-360 (default: 0)"
+    },
+    "default": {
+      "_title": "Default appearance of images"
+    },
+    "hover": {
+      "_title": "Appearance when mouse hovers over image. Inherits from default when not explicitly set."
+    },
+    "focused": {
+      "_title": "Appearance when image is clicked/focused. Inherits from default when not explicitly set."
     }
+  },
+  "default": {
+    "_title": "Default appearance of images - base styling that hover and focused inherit from"
   },
   "hover": {
-    "_title": "Appearance when mouse hovers over image",
-    "shadow": "Shadow preset on hover (default: lg)",
-    "filter": {
-      "_title": "Filter effects on hover",
-      "grayscale": "Grayscale filter on hover",
-      "brightness": "Brightness adjustment on hover"
-    }
+    "_title": "Appearance when mouse hovers over image. Inherits from default when not explicitly set."
   },
   "focused": {
-    "_title": "Appearance when image is clicked/focused",
-    "shadow": "Shadow preset when focused (default: glow)",
-    "filter": {
-      "_title": "Filter effects when focused",
-      "grayscale": "Grayscale filter when focused"
-    }
+    "_title": "Appearance when image is clicked/focused. Inherits from default when not explicitly set."
   },
   "animation": {
     "_title": "Configure entry animations",

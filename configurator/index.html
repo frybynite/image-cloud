@@ -743,6 +743,96 @@
             pointer-events: none;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
+
+        /* State Selector (Segmented Control) */
+        .state-selector {
+            display: flex;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 8px;
+        }
+
+        /* Styling path prefix */
+        .styling-path-prefix {
+            display: none;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 11px;
+            color: #8b5cf6;
+            margin-bottom: 12px;
+            padding: 4px 8px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 4px;
+        }
+
+        .styling-path-prefix.show-path {
+            display: block;
+        }
+
+        .state-selector-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: #888;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .state-selector-btn:hover {
+            color: #ccc;
+        }
+
+        .state-selector-btn.active {
+            background: #8b5cf6;
+            color: #fff;
+        }
+
+        /* Inheritance indicator for styling controls */
+        .control-row.inherited .control-label {
+            color: #666;
+        }
+
+        .control-row.inherited .control-input {
+            opacity: 0.5;
+        }
+
+        .control-row.inherited .value-display {
+            color: #666;
+        }
+
+        /* Clear overrides button */
+        .clear-overrides-btn {
+            width: 100%;
+            padding: 8px 12px;
+            margin-top: 15px;
+            background: transparent;
+            border: 1px solid #555;
+            border-radius: 6px;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-overrides-btn:hover {
+            border-color: #f87171;
+            color: #f87171;
+        }
+
+        .clear-overrides-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .clear-overrides-btn:disabled:hover {
+            border-color: #555;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -1212,31 +1302,39 @@
                         <span class="accordion-arrow">▼</span>
                     </div>
                     <div class="accordion-content">
-                        <!-- Default State -->
-                        <div class="control-group">
-                            <h5 class="control-group-title" data-label="Default State" data-path="styling.default">Default State</h5>
+                        <!-- State Selector -->
+                        <div class="state-selector" id="styling-state-selector">
+                            <button type="button" class="state-selector-btn active" data-state="default" onclick="selectStylingState('default')">Default</button>
+                            <button type="button" class="state-selector-btn" data-state="hover" onclick="selectStylingState('hover')">Hover</button>
+                            <button type="button" class="state-selector-btn" data-state="focused" onclick="selectStylingState('focused')">Focused</button>
+                        </div>
 
+                        <!-- Path Prefix (shown when paths mode is active) -->
+                        <div class="styling-path-prefix" id="styling-path-prefix">styling.default</div>
+
+                        <!-- Unified Style Controls -->
+                        <div class="control-group" id="styling-controls">
                             <!-- Border -->
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-border-width">
-                                <label class="control-label" data-label="Border Width" data-path="default.border.width">Border Width</label>
+                            <div class="control-row" data-property="border.width">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-width">
+                                <label class="control-label" data-label="Border Width" data-path="border.width">Border Width</label>
                                 <div class="control-input">
-                                    <input type="number" id="default-border-width" value="0" min="0" max="20">
+                                    <input type="number" id="style-border-width" value="0" min="0" max="20">
                                     <span class="value-display">px</span>
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-border-color">
-                                <label class="control-label" data-label="Border Color" data-path="default.border.color">Border Color</label>
+                            <div class="control-row" data-property="border.color">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-color">
+                                <label class="control-label" data-label="Border Color" data-path="border.color">Border Color</label>
                                 <div class="control-input">
-                                    <input type="color" id="default-border-color" value="#000000">
+                                    <input type="color" id="style-border-color" value="#000000">
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-border-style">
-                                <label class="control-label" data-label="Border Style" data-path="default.border.style">Border Style</label>
+                            <div class="control-row" data-property="border.style">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-style">
+                                <label class="control-label" data-label="Border Style" data-path="border.style">Border Style</label>
                                 <div class="control-input">
-                                    <select id="default-border-style">
+                                    <select id="style-border-style">
                                         <option value="solid" selected>Solid</option>
                                         <option value="dashed">Dashed</option>
                                         <option value="dotted">Dotted</option>
@@ -1250,21 +1348,21 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-border-radius">
-                                <label class="control-label" data-label="Border Radius" data-path="default.border.radius">Border Radius</label>
+                            <div class="control-row" data-property="border.radius">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-radius">
+                                <label class="control-label" data-label="Border Radius" data-path="border.radius">Border Radius</label>
                                 <div class="control-input">
-                                    <input type="number" id="default-border-radius" value="8" min="0" max="50">
+                                    <input type="number" id="style-border-radius" value="8" min="0" max="50">
                                     <span class="value-display">px</span>
                                 </div>
                             </div>
 
                             <!-- Shadow -->
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-shadow">
-                                <label class="control-label" data-label="Shadow" data-path="default.shadow">Shadow</label>
+                            <div class="control-row" data-property="shadow">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-shadow">
+                                <label class="control-label" data-label="Shadow" data-path="shadow">Shadow</label>
                                 <div class="control-input">
-                                    <select id="default-shadow">
+                                    <select id="style-shadow">
                                         <option value="none">None</option>
                                         <option value="sm">Small</option>
                                         <option value="md" selected>Medium</option>
@@ -1275,132 +1373,77 @@
                             </div>
 
                             <!-- Opacity -->
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-opacity">
-                                <label class="control-label" data-label="Opacity" data-path="default.opacity">Opacity</label>
+                            <div class="control-row" data-property="opacity">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-opacity">
+                                <label class="control-label" data-label="Opacity" data-path="opacity">Opacity</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
-                                    <input type="range" id="default-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
 
                             <!-- Filters -->
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-grayscale">
-                                <label class="control-label" data-label="Grayscale" data-path="default.filter.grayscale">Grayscale</label>
+                            <div class="control-row" data-property="filter.grayscale">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-grayscale">
+                                <label class="control-label" data-label="Grayscale" data-path="filter.grayscale">Grayscale</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
-                                    <input type="range" id="default-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-blur">
-                                <label class="control-label" data-label="Blur" data-path="default.filter.blur">Blur</label>
+                            <div class="control-row" data-property="filter.blur">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-blur">
+                                <label class="control-label" data-label="Blur" data-path="filter.blur">Blur</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
-                                    <input type="range" id="default-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-brightness">
-                                <label class="control-label" data-label="Brightness" data-path="default.filter.brightness">Brightness</label>
+                            <div class="control-row" data-property="filter.brightness">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-brightness">
+                                <label class="control-label" data-label="Brightness" data-path="filter.brightness">Brightness</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
-                                    <input type="range" id="default-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-contrast">
-                                <label class="control-label" data-label="Contrast" data-path="default.filter.contrast">Contrast</label>
+                            <div class="control-row" data-property="filter.contrast">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-contrast">
+                                <label class="control-label" data-label="Contrast" data-path="filter.contrast">Contrast</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
-                                    <input type="range" id="default-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-saturate">
-                                <label class="control-label" data-label="Saturate" data-path="default.filter.saturate">Saturate</label>
+                            <div class="control-row" data-property="filter.saturate">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-saturate">
+                                <label class="control-label" data-label="Saturate" data-path="filter.saturate">Saturate</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
-                                    <input type="range" id="default-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-sepia">
-                                <label class="control-label" data-label="Sepia" data-path="default.filter.sepia">Sepia</label>
+                            <div class="control-row" data-property="filter.sepia">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-sepia">
+                                <label class="control-label" data-label="Sepia" data-path="filter.sepia">Sepia</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
-                                    <input type="range" id="default-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-default-hueRotate">
-                                <label class="control-label" data-label="Hue Rotate" data-path="default.filter.hueRotate">Hue Rotate</label>
+                            <div class="control-row" data-property="filter.hueRotate">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-hueRotate">
+                                <label class="control-label" data-label="Hue Rotate" data-path="filter.hueRotate">Hue Rotate</label>
                                 <div class="control-input">
                                     <span class="value-display">0°</span>
-                                    <input type="range" id="default-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="style-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Hover State -->
-                        <div class="control-group">
-                            <h5 class="control-group-title" data-label="Hover State" data-path="styling.hover">Hover State</h5>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-hover-shadow">
-                                <label class="control-label" data-label="Shadow" data-path="hover.shadow">Shadow</label>
-                                <div class="control-input">
-                                    <select id="hover-shadow">
-                                        <option value="none">None</option>
-                                        <option value="sm">Small</option>
-                                        <option value="md">Medium</option>
-                                        <option value="lg" selected>Large</option>
-                                        <option value="glow">Glow</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-hover-grayscale">
-                                <label class="control-label" data-label="Grayscale" data-path="hover.filter.grayscale">Grayscale</label>
-                                <div class="control-input">
-                                    <span class="value-display">0</span>
-                                    <input type="range" id="hover-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-hover-brightness">
-                                <label class="control-label" data-label="Brightness" data-path="hover.filter.brightness">Brightness</label>
-                                <div class="control-input">
-                                    <span class="value-display">1</span>
-                                    <input type="range" id="hover-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Focused State -->
-                        <div class="control-group">
-                            <h5 class="control-group-title" data-label="Focused State" data-path="styling.focused">Focused State</h5>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focused-shadow">
-                                <label class="control-label" data-label="Shadow" data-path="focused.shadow">Shadow</label>
-                                <div class="control-input">
-                                    <select id="focused-shadow">
-                                        <option value="none">None</option>
-                                        <option value="sm">Small</option>
-                                        <option value="md">Medium</option>
-                                        <option value="lg">Large</option>
-                                        <option value="glow" selected>Glow</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-focused-grayscale">
-                                <label class="control-label" data-label="Grayscale" data-path="focused.filter.grayscale">Grayscale</label>
-                                <div class="control-input">
-                                    <span class="value-display">0</span>
-                                    <input type="range" id="focused-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
-                                </div>
-                            </div>
+                            <!-- Clear Overrides Button (only for hover/focused) -->
+                            <button type="button" class="clear-overrides-btn" id="clear-style-overrides" onclick="clearStyleOverrides()" disabled>
+                                Clear Overrides
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1603,6 +1646,188 @@
         let showingPaths = false;
         let debounceTimer = null;
         let lastAppliedConfig = null;
+
+        // Styling state management
+        let currentStylingState = 'default';
+
+        // Default values for each property
+        const styleDefaults = {
+            'border.width': 0,
+            'border.color': '#000000',
+            'border.style': 'solid',
+            'border.radius': 8,
+            'shadow': 'md',
+            'opacity': 1,
+            'filter.grayscale': 0,
+            'filter.blur': 0,
+            'filter.brightness': 1,
+            'filter.contrast': 1,
+            'filter.saturate': 1,
+            'filter.sepia': 0,
+            'filter.hueRotate': 0
+        };
+
+        // Per-state styling configuration
+        // Each state tracks: { enabled: boolean, value: any } for each property
+        const stylingState = {
+            default: {},
+            hover: {},
+            focused: {}
+        };
+
+        // Initialize styling state with defaults for 'default' state
+        function initStylingState() {
+            for (const prop of Object.keys(styleDefaults)) {
+                stylingState.default[prop] = { enabled: false, value: styleDefaults[prop] };
+                stylingState.hover[prop] = { enabled: false, value: styleDefaults[prop] };
+                stylingState.focused[prop] = { enabled: false, value: styleDefaults[prop] };
+            }
+        }
+
+        // Get effective value for a property (considers inheritance)
+        function getEffectiveValue(state, property) {
+            if (stylingState[state][property]?.enabled) {
+                return stylingState[state][property].value;
+            }
+            if (state !== 'default' && stylingState.default[property]?.enabled) {
+                return stylingState.default[property].value;
+            }
+            return styleDefaults[property];
+        }
+
+        // Check if a property is inherited (not explicitly set for this state)
+        function isInherited(state, property) {
+            return state !== 'default' && !stylingState[state][property]?.enabled;
+        }
+
+        // Select styling state
+        window.selectStylingState = function(state) {
+            currentStylingState = state;
+
+            // Update selector buttons
+            document.querySelectorAll('.state-selector-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.state === state);
+            });
+
+            // Update clear overrides button
+            const clearBtn = document.getElementById('clear-style-overrides');
+            clearBtn.disabled = state === 'default';
+
+            // Update path prefix
+            const stylingPrefix = document.getElementById('styling-path-prefix');
+            if (stylingPrefix) {
+                stylingPrefix.textContent = `styling.${state}`;
+            }
+
+            // Populate form with state values
+            populateStylingForm(state);
+        };
+
+        // Populate form with values for the selected state
+        function populateStylingForm(state) {
+            const controls = document.querySelectorAll('#styling-controls .control-row');
+
+            controls.forEach(row => {
+                const property = row.dataset.property;
+                if (!property) return;
+
+                const checkbox = row.querySelector('.styling-checkbox');
+                const controlId = checkbox?.id.replace('enable-', '');
+                const control = document.getElementById(controlId);
+
+                if (!checkbox || !control) return;
+
+                const stateData = stylingState[state][property];
+                const effectiveValue = getEffectiveValue(state, property);
+                const inherited = isInherited(state, property);
+
+                // Set checkbox state
+                checkbox.checked = stateData?.enabled || false;
+
+                // Set control value
+                control.value = effectiveValue;
+
+                // Update range display if applicable
+                if (control.type === 'range') {
+                    const display = control.parentElement?.querySelector('.value-display');
+                    if (display) {
+                        display.textContent = property === 'filter.hueRotate' ? effectiveValue + '°' : effectiveValue;
+                    }
+                }
+
+                // Update visual state
+                row.classList.toggle('disabled', !checkbox.checked);
+                row.classList.toggle('inherited', inherited && !checkbox.checked);
+            });
+        }
+
+        // Handle styling checkbox change
+        function onStylingCheckboxChange(checkbox) {
+            const row = checkbox.closest('.control-row');
+            const property = row?.dataset.property;
+            if (!property) return;
+
+            const controlId = checkbox.id.replace('enable-', '');
+            const control = document.getElementById(controlId);
+
+            stylingState[currentStylingState][property] = {
+                enabled: checkbox.checked,
+                value: control ? (control.type === 'range' ? parseFloat(control.value) :
+                       control.type === 'number' ? parseInt(control.value) : control.value) : styleDefaults[property]
+            };
+
+            row.classList.toggle('disabled', !checkbox.checked);
+            row.classList.toggle('inherited', isInherited(currentStylingState, property) && !checkbox.checked);
+
+            scheduleAutoApply();
+        }
+
+        // Handle styling control value change
+        function onStylingControlChange(control) {
+            const row = control.closest('.control-row');
+            const property = row?.dataset.property;
+            if (!property) return;
+
+            const checkbox = row.querySelector('.styling-checkbox');
+            if (!checkbox?.checked) return;
+
+            stylingState[currentStylingState][property] = {
+                enabled: true,
+                value: control.type === 'range' ? parseFloat(control.value) :
+                       control.type === 'number' ? parseInt(control.value) : control.value
+            };
+
+            scheduleAutoApply();
+        }
+
+        // Clear all overrides for current state (hover/focused only)
+        window.clearStyleOverrides = function() {
+            if (currentStylingState === 'default') return;
+
+            for (const prop of Object.keys(styleDefaults)) {
+                stylingState[currentStylingState][prop] = {
+                    enabled: false,
+                    value: styleDefaults[prop]
+                };
+            }
+
+            populateStylingForm(currentStylingState);
+            scheduleAutoApply();
+        };
+
+        // Setup styling control listeners
+        function setupStylingListeners() {
+            // Checkbox listeners
+            document.querySelectorAll('.styling-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', () => onStylingCheckboxChange(checkbox));
+            });
+
+            // Control value listeners
+            document.querySelectorAll('#styling-controls input:not(.styling-checkbox), #styling-controls select').forEach(control => {
+                const eventType = control.type === 'range' ? 'input' : 'change';
+                control.addEventListener(eventType, () => onStylingControlChange(control));
+            });
+        }
 
         // Field descriptions for tooltips
         let fieldDescriptions = {};
@@ -1948,6 +2173,12 @@
                     el.classList.remove('show-path');
                 }
             });
+
+            // Toggle styling path prefix visibility
+            const stylingPrefix = document.getElementById('styling-path-prefix');
+            if (stylingPrefix) {
+                stylingPrefix.classList.toggle('show-path', showingPaths);
+            }
         };
 
         // Toggle subsection enabled/disabled
@@ -2305,71 +2536,43 @@
             if (Object.keys(focus).length > 0) interaction.focus = focus;
             if (Object.keys(interaction).length > 0) config.interaction = interaction;
 
-            // Styling
+            // Styling - build from stylingState
             const styling = {};
 
-            // Default state
-            const defaultState = {};
-            const defaultBorder = {};
-            const borderWidth = getEnabledValue('enable-default-border-width', 'default-border-width', parseInt);
-            const borderColor = getEnabledValue('enable-default-border-color', 'default-border-color');
-            const borderRadius = getEnabledValue('enable-default-border-radius', 'default-border-radius', parseInt);
-            const borderStyle = getEnabledValue('enable-default-border-style', 'default-border-style');
-            if (borderWidth !== undefined) defaultBorder.width = borderWidth;
-            if (borderColor !== undefined) defaultBorder.color = borderColor;
-            if (borderRadius !== undefined) defaultBorder.radius = borderRadius;
-            if (borderStyle !== undefined) defaultBorder.style = borderStyle;
-            if (Object.keys(defaultBorder).length > 0) defaultState.border = defaultBorder;
+            // Helper to build state config from stylingState
+            function buildStateConfig(stateName) {
+                const stateConfig = {};
+                const border = {};
+                const filter = {};
 
-            const defaultShadow = getEnabledValue('enable-default-shadow', 'default-shadow');
-            if (defaultShadow !== undefined) defaultState.shadow = defaultShadow;
+                for (const [prop, data] of Object.entries(stylingState[stateName])) {
+                    if (!data.enabled) continue;
 
-            const defaultOpacity = getEnabledValue('enable-default-opacity', 'default-opacity', parseFloat);
-            if (defaultOpacity !== undefined) defaultState.opacity = defaultOpacity;
+                    if (prop.startsWith('border.')) {
+                        const borderProp = prop.replace('border.', '');
+                        border[borderProp] = data.value;
+                    } else if (prop.startsWith('filter.')) {
+                        const filterProp = prop.replace('filter.', '');
+                        filter[filterProp] = data.value;
+                    } else if (prop === 'shadow') {
+                        stateConfig.shadow = data.value;
+                    } else if (prop === 'opacity') {
+                        stateConfig.opacity = data.value;
+                    }
+                }
 
-            const defaultFilter = {};
-            const grayscale = getEnabledValue('enable-default-grayscale', 'default-grayscale', parseFloat);
-            const blur = getEnabledValue('enable-default-blur', 'default-blur', parseFloat);
-            const brightness = getEnabledValue('enable-default-brightness', 'default-brightness', parseFloat);
-            const contrast = getEnabledValue('enable-default-contrast', 'default-contrast', parseFloat);
-            const saturate = getEnabledValue('enable-default-saturate', 'default-saturate', parseFloat);
-            const sepia = getEnabledValue('enable-default-sepia', 'default-sepia', parseFloat);
-            const hueRotate = getEnabledValue('enable-default-hueRotate', 'default-hueRotate', parseInt);
-            if (grayscale !== undefined) defaultFilter.grayscale = grayscale;
-            if (blur !== undefined) defaultFilter.blur = blur;
-            if (brightness !== undefined) defaultFilter.brightness = brightness;
-            if (contrast !== undefined) defaultFilter.contrast = contrast;
-            if (saturate !== undefined) defaultFilter.saturate = saturate;
-            if (sepia !== undefined) defaultFilter.sepia = sepia;
-            if (hueRotate !== undefined) defaultFilter.hueRotate = hueRotate;
-            if (Object.keys(defaultFilter).length > 0) defaultState.filter = defaultFilter;
+                if (Object.keys(border).length > 0) stateConfig.border = border;
+                if (Object.keys(filter).length > 0) stateConfig.filter = filter;
+
+                return stateConfig;
+            }
+
+            const defaultState = buildStateConfig('default');
+            const hoverState = buildStateConfig('hover');
+            const focusedState = buildStateConfig('focused');
 
             if (Object.keys(defaultState).length > 0) styling.default = defaultState;
-
-            // Hover state
-            const hoverState = {};
-            const hoverShadow = getEnabledValue('enable-hover-shadow', 'hover-shadow');
-            if (hoverShadow !== undefined) hoverState.shadow = hoverShadow;
-
-            const hoverFilter = {};
-            const hoverGrayscale = getEnabledValue('enable-hover-grayscale', 'hover-grayscale', parseFloat);
-            const hoverBrightness = getEnabledValue('enable-hover-brightness', 'hover-brightness', parseFloat);
-            if (hoverGrayscale !== undefined) hoverFilter.grayscale = hoverGrayscale;
-            if (hoverBrightness !== undefined) hoverFilter.brightness = hoverBrightness;
-            if (Object.keys(hoverFilter).length > 0) hoverState.filter = hoverFilter;
-
             if (Object.keys(hoverState).length > 0) styling.hover = hoverState;
-
-            // Focused state
-            const focusedState = {};
-            const focusedShadow = getEnabledValue('enable-focused-shadow', 'focused-shadow');
-            if (focusedShadow !== undefined) focusedState.shadow = focusedShadow;
-
-            const focusedFilter = {};
-            const focusedGrayscale = getEnabledValue('enable-focused-grayscale', 'focused-grayscale', parseFloat);
-            if (focusedGrayscale !== undefined) focusedFilter.grayscale = focusedGrayscale;
-            if (Object.keys(focusedFilter).length > 0) focusedState.filter = focusedFilter;
-
             if (Object.keys(focusedState).length > 0) styling.focused = focusedState;
 
             if (Object.keys(styling).length > 0) config.styling = styling;
@@ -2382,12 +2585,15 @@
             const preset = presets[presetKey];
             if (!preset) return;
 
-            // Reset all checkboxes
-            document.querySelectorAll('.control-checkbox').forEach(cb => {
+            // Reset all checkboxes (except styling ones which we handle separately)
+            document.querySelectorAll('.control-checkbox:not(.styling-checkbox)').forEach(cb => {
                 cb.checked = false;
                 const row = cb.closest('.control-row');
                 if (row) row.classList.add('disabled');
             });
+
+            // Reset styling state
+            initStylingState();
 
             // Reset subsection toggles
             document.getElementById('enable-adaptive').checked = true;
@@ -2405,9 +2611,69 @@
             document.getElementById('enable-algorithm').checked = true;
             onAlgorithmChange();
 
+            // Map old preset keys to new styling state
+            const stylingKeyMap = {
+                'default-border-width': { state: 'default', prop: 'border.width' },
+                'default-border-color': { state: 'default', prop: 'border.color' },
+                'default-border-style': { state: 'default', prop: 'border.style' },
+                'default-border-radius': { state: 'default', prop: 'border.radius' },
+                'default-shadow': { state: 'default', prop: 'shadow' },
+                'default-opacity': { state: 'default', prop: 'opacity' },
+                'default-grayscale': { state: 'default', prop: 'filter.grayscale' },
+                'default-blur': { state: 'default', prop: 'filter.blur' },
+                'default-brightness': { state: 'default', prop: 'filter.brightness' },
+                'default-contrast': { state: 'default', prop: 'filter.contrast' },
+                'default-saturate': { state: 'default', prop: 'filter.saturate' },
+                'default-sepia': { state: 'default', prop: 'filter.sepia' },
+                'default-hueRotate': { state: 'default', prop: 'filter.hueRotate' },
+                'hover-border-width': { state: 'hover', prop: 'border.width' },
+                'hover-border-color': { state: 'hover', prop: 'border.color' },
+                'hover-border-style': { state: 'hover', prop: 'border.style' },
+                'hover-border-radius': { state: 'hover', prop: 'border.radius' },
+                'hover-shadow': { state: 'hover', prop: 'shadow' },
+                'hover-opacity': { state: 'hover', prop: 'opacity' },
+                'hover-grayscale': { state: 'hover', prop: 'filter.grayscale' },
+                'hover-blur': { state: 'hover', prop: 'filter.blur' },
+                'hover-brightness': { state: 'hover', prop: 'filter.brightness' },
+                'hover-contrast': { state: 'hover', prop: 'filter.contrast' },
+                'hover-saturate': { state: 'hover', prop: 'filter.saturate' },
+                'hover-sepia': { state: 'hover', prop: 'filter.sepia' },
+                'hover-hueRotate': { state: 'hover', prop: 'filter.hueRotate' },
+                'focused-border-width': { state: 'focused', prop: 'border.width' },
+                'focused-border-color': { state: 'focused', prop: 'border.color' },
+                'focused-border-style': { state: 'focused', prop: 'border.style' },
+                'focused-border-radius': { state: 'focused', prop: 'border.radius' },
+                'focused-shadow': { state: 'focused', prop: 'shadow' },
+                'focused-opacity': { state: 'focused', prop: 'opacity' },
+                'focused-grayscale': { state: 'focused', prop: 'filter.grayscale' },
+                'focused-blur': { state: 'focused', prop: 'filter.blur' },
+                'focused-brightness': { state: 'focused', prop: 'filter.brightness' },
+                'focused-contrast': { state: 'focused', prop: 'filter.contrast' },
+                'focused-saturate': { state: 'focused', prop: 'filter.saturate' },
+                'focused-sepia': { state: 'focused', prop: 'filter.sepia' },
+                'focused-hueRotate': { state: 'focused', prop: 'filter.hueRotate' }
+            };
+
             // Apply preset config
             const cfg = preset.config;
             for (const [key, value] of Object.entries(cfg)) {
+                // Handle styling keys
+                if (stylingKeyMap[key]) {
+                    const { state, prop } = stylingKeyMap[key];
+                    stylingState[state][prop] = { enabled: false, value: value };
+                    continue;
+                }
+
+                // Handle enable-* styling keys
+                if (key.startsWith('enable-')) {
+                    const valueKey = key.replace('enable-', '');
+                    if (stylingKeyMap[valueKey]) {
+                        const { state, prop } = stylingKeyMap[valueKey];
+                        stylingState[state][prop].enabled = value;
+                        continue;
+                    }
+                }
+
                 const element = document.getElementById(key);
                 if (element) {
                     if (element.type === 'checkbox') {
@@ -2428,7 +2694,7 @@
                         if (element.type === 'range') {
                             const display = element.parentElement?.querySelector('.value-display');
                             if (display) {
-                                display.textContent = element.id === 'default-hueRotate' ? value + '°' : value;
+                                display.textContent = element.id === 'style-hueRotate' ? value + '°' : value;
                             }
                         }
                         // Handle rotation mode change
@@ -2444,6 +2710,9 @@
                 document.getElementById('layout-algorithm').value = cfg['layout-algorithm'];
                 onAlgorithmChange();
             }
+
+            // Reset to default state view and populate form
+            selectStylingState('default');
 
             applyChanges();
         };
@@ -2533,9 +2802,12 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            initStylingState();
             setupCheckboxListeners();
+            setupStylingListeners();
             setupAutoApply();
             onAlgorithmChange();
+            populateStylingForm('default');
             applyChanges();
             loadFieldDescriptions();
         });

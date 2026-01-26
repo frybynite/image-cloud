@@ -993,6 +993,8 @@ styling: {
 | `hover` | Inherits from default, applied on mouse hover |
 | `focused` | Inherits from default, applied when image is clicked/zoomed |
 
+> **Note:** All properties from `ImageStyleState` are available for all three states. When a property is not explicitly set in `hover` or `focused`, it inherits the value from `default`. This allows you to override only the specific properties you want to change for each state.
+
 #### Image Style Properties (`ImageStyleState`)
 
 | Parameter | Type | Default | Description |
