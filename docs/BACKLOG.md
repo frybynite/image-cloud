@@ -12,7 +12,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix: Duplicate images still appearing when resizing window from desktop to mobile size (race condition not fully resolved).
 - [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
-- [x] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skipping refresh when config unchanged.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 ---
 
@@ -64,7 +63,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Drag-to-reorder functionality
 - Lightbox mode
 - Thumbnail navigation
-- Keyboard navigation
 - Touch gesture improvements
 - Improve focus opacity behavior: default focus opacity should be 1, animate from default opacity to focus opacity on focus, and allow separate `focusOpacity` config (in addition to existing `unfocusedOpacity`).
 - For options like image border where the border can be applied overall, or separately to top, bottom, left, right - list all the options available and discuss how we can give them overall control.
@@ -94,3 +92,5 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Wave layout algorithm - images positioned along flowing sine wave curves with configurable rows, amplitude, frequency, phase shift, synchronization modes, and orientation options.
 - [x] Grid overflow mode - when grid rows × columns < image count, extra images distribute across cells with offset patterns (bottom-right, upper-left, upper-right, bottom-left, then cardinals). Overflow images render below base images with lower z-index. Z-index properly restored after focus/unfocus cycles.
 - [x] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
+- [x] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skipping refresh when config unchanged.
+- [x] Keyboard navigation - Left/Right arrow keys navigate between focused images with wrap-around. Escape unfocuses.

@@ -24,7 +24,9 @@ export class ImageCloud {
   private fullConfig: ImageCloudConfig;
   private imagesLoaded: boolean;
   private imageElements: HTMLImageElement[];
+  private imageLayouts: ImageLayout[];
   private currentImageHeight: number;
+  private currentFocusIndex: number | null;
   private resizeTimeout: number | null;
   private displayQueue: HTMLImageElement[];
   private queueInterval: number | null;
@@ -56,7 +58,9 @@ export class ImageCloud {
     // Internal state
     this.imagesLoaded = false;
     this.imageElements = [];
+    this.imageLayouts = [];
     this.currentImageHeight = 225;
+    this.currentFocusIndex = null;
     this.resizeTimeout = null;
     this.displayQueue = [];
     this.queueInterval = null;
@@ -183,19 +187,62 @@ export class ImageCloud {
   }
 
   private setupEventListeners(): void {
-    // Global events
+    // Global keyboard events
     document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Escape') this.zoomEngine.unfocusImage();
+      if (e.key === 'Escape') {
+        this.zoomEngine.unfocusImage();
+        this.currentFocusIndex = null;
+      } else if (e.key === 'ArrowRight') {
+        this.navigateToNextImage();
+      } else if (e.key === 'ArrowLeft') {
+        this.navigateToPreviousImage();
+      }
     });
 
     document.addEventListener('click', (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest('.fbn-ic-image')) {
         this.zoomEngine.unfocusImage();
+        this.currentFocusIndex = null;
       }
     });
 
     // Resize handler
     window.addEventListener('resize', () => this.handleResize());
+  }
+
+  /**
+   * Navigate to the next image (Right arrow)
+   */
+  private navigateToNextImage(): void {
+    if (this.currentFocusIndex === null || this.imageElements.length === 0) return;
+
+    const nextIndex = (this.currentFocusIndex + 1) % this.imageElements.length;
+    this.navigateToImage(nextIndex);
+  }
+
+  /**
+   * Navigate to the previous image (Left arrow)
+   */
+  private navigateToPreviousImage(): void {
+    if (this.currentFocusIndex === null || this.imageElements.length === 0) return;
+
+    const prevIndex = (this.currentFocusIndex - 1 + this.imageElements.length) % this.imageElements.length;
+    this.navigateToImage(prevIndex);
+  }
+
+  /**
+   * Navigate to a specific image by index
+   */
+  private async navigateToImage(index: number): Promise<void> {
+    if (index < 0 || index >= this.imageElements.length) return;
+
+    const imageElement = this.imageElements[index];
+    const layout = this.imageLayouts[index];
+
+    if (!imageElement || !layout) return;
+
+    // Reuse the same focus mechanism as clicking
+    await this.handleImageClick(imageElement, layout);
   }
 
   private handleResize(): void {
@@ -314,6 +361,7 @@ export class ImageCloud {
 
     // Generate layout
     const layouts = this.layoutEngine.generateLayout(imageUrls.length, containerBounds, { fixedHeight: imageHeight } as any);
+    this.imageLayouts = layouts;
 
     this.displayQueue = [];
     let processedCount = 0;
@@ -608,7 +656,11 @@ export class ImageCloud {
 
     if (isFocused) {
       await this.zoomEngine.unfocusImage();
+      this.currentFocusIndex = null;
     } else {
+      // Track the focused image index for keyboard navigation
+      const imageId = imageElement.dataset.imageId;
+      this.currentFocusIndex = imageId !== undefined ? parseInt(imageId, 10) : null;
       await this.zoomEngine.focusImage(imageElement, bounds, originalLayout);
     }
   }
@@ -630,6 +682,8 @@ export class ImageCloud {
       this.containerEl.innerHTML = '';
     }
     this.imageElements = [];
+    this.imageLayouts = [];
+    this.currentFocusIndex = null;
     this.layoutEngine.reset();
     this.zoomEngine.reset();
     this.imagesLoaded = false;
