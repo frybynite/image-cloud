@@ -517,7 +517,6 @@
         }
 
         .config-content .copy-btn {
-            margin-top: 15px;
             padding: 10px 20px;
             background: #8b5cf6;
             color: white;
@@ -534,6 +533,29 @@
 
         .config-content .copy-btn.copied {
             background: #22c55e;
+        }
+
+        .config-options {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .config-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .config-options input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #8b5cf6;
+            cursor: pointer;
         }
 
         /* Help Modal */
@@ -1548,7 +1570,13 @@
             <button class="close-btn" onclick="hideConfig()">&times;</button>
             <h4>Generated Configuration</h4>
             <pre id="configOutput"></pre>
-            <button class="copy-btn" onclick="copyConfig()">Copy to Clipboard</button>
+            <div class="config-options">
+                <button class="copy-btn" onclick="copyConfig()">Copy to Clipboard</button>
+                <label>
+                    <input type="checkbox" id="singleLineJson" onchange="updateConfigDisplay()">
+                    Single line JSON
+                </label>
+            </div>
         </div>
     </div>
 
@@ -2448,10 +2476,22 @@
             return config;
         }
 
+        // Get JSON string based on format toggle
+        function getConfigJsonString() {
+            const config = getDisplayConfig();
+            const singleLine = document.getElementById('singleLineJson').checked;
+            return singleLine ? JSON.stringify(config) : JSON.stringify(config, null, 2);
+        }
+
+        // Update config display when format changes
+        window.updateConfigDisplay = function() {
+            document.getElementById('configOutput').textContent = getConfigJsonString();
+        };
+
         // Show config modal
         window.showConfig = function() {
-            const config = getDisplayConfig();
-            document.getElementById('configOutput').textContent = JSON.stringify(config, null, 2);
+            document.getElementById('singleLineJson').checked = false;
+            document.getElementById('configOutput').textContent = getConfigJsonString();
             document.getElementById('configModal').classList.add('active');
         };
 
@@ -2462,8 +2502,7 @@
 
         // Copy config to clipboard
         window.copyConfig = function() {
-            const config = getDisplayConfig();
-            navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => {
+            navigator.clipboard.writeText(getConfigJsonString()).then(() => {
                 const btn = document.querySelector('.copy-btn');
                 btn.textContent = 'Copied!';
                 btn.classList.add('copied');
