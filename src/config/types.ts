@@ -586,11 +586,23 @@ export type DeepPartial<T> = {
 
 export type ShadowPreset = 'none' | 'sm' | 'md' | 'lg' | 'glow';
 
+export type BorderStyle =
+  | 'solid'      // Most common - continuous line
+  | 'dashed'     // Series of dashes
+  | 'dotted'     // Series of dots
+  | 'double'     // Two parallel lines
+  | 'none'       // No border
+  | 'groove'     // 3D carved into page
+  | 'ridge'      // 3D raised from page
+  | 'inset'      // 3D embedded look
+  | 'outset'     // 3D raised look
+  | 'hidden';    // Same as none (for table border conflict resolution)
+
 export interface BorderConfig {
   width?: number;             // pixels, default: 0
   color?: string;             // CSS color, default: '#000'
   radius?: number;            // pixels, default: 8
-  style?: 'solid' | 'dashed' | 'dotted' | 'none';  // default: 'solid'
+  style?: BorderStyle;        // default: 'solid'
 }
 
 export interface DropShadowConfig {
@@ -616,7 +628,7 @@ export interface FilterConfig {
 export interface OutlineConfig {
   width?: number;        // pixels
   color?: string;        // CSS color
-  style?: 'solid' | 'dashed' | 'dotted' | 'none';
+  style?: BorderStyle;   // reuses BorderStyle type
   offset?: number;       // pixels
 }
 

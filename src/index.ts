@@ -47,7 +47,9 @@ export type {
   WavePathConfig,
   BouncePreset,
   ElasticPreset,
-  WavePathPreset
+  WavePathPreset,
+  // Styling types
+  BorderStyle
 } from './config/types';
 
 // Default config export

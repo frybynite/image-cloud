@@ -1018,7 +1018,22 @@ styling: {
 | `width` | `number` | `0` | Border width in pixels |
 | `color` | `string` | `'#000'` | Border color (CSS color) |
 | `radius` | `number` | `8` | Border radius in pixels |
-| `style` | `string` | `'solid'` | Border style: `'solid'`, `'dashed'`, `'dotted'`, `'none'` |
+| `style` | `BorderStyle` | `'solid'` | Border line style (see table below) |
+
+**Border Style Options** (ordered by practicality):
+
+| Style | Description |
+|-------|-------------|
+| `'solid'` | Continuous line (default) |
+| `'dashed'` | Series of dashes |
+| `'dotted'` | Series of dots |
+| `'double'` | Two parallel lines |
+| `'none'` | No border |
+| `'groove'` | 3D carved into page effect |
+| `'ridge'` | 3D raised from page effect |
+| `'inset'` | 3D embedded look |
+| `'outset'` | 3D raised look |
+| `'hidden'` | Same as none (for table border conflict resolution) |
 
 #### Shadow Presets
 
@@ -1336,7 +1351,7 @@ All available parameters with example values:
         "width": 0,                             // Default. Border width in pixels
         "color": "#000000",                     // Default. Border color
         "radius": 8,                            // Default. Border radius in pixels
-        "style": "solid"                        // Default. "solid" | "dashed" | "dotted" | "none"
+        "style": "solid"                        // Default. "solid" | "dashed" | "dotted" | "double" | "none" | "groove" | "ridge" | "inset" | "outset" | "hidden"
       },
       "borderTop": {},                          // Override for top border
       "borderRight": {},                        // Override for right border

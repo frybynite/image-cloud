@@ -1211,6 +1211,24 @@
                                 </div>
                             </div>
                             <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-default-border-style">
+                                <label class="control-label" data-label="Border Style" data-path="default.border.style">Border Style</label>
+                                <div class="control-input">
+                                    <select id="default-border-style">
+                                        <option value="solid" selected>Solid</option>
+                                        <option value="dashed">Dashed</option>
+                                        <option value="dotted">Dotted</option>
+                                        <option value="double">Double</option>
+                                        <option value="none">None</option>
+                                        <option value="groove">Groove</option>
+                                        <option value="ridge">Ridge</option>
+                                        <option value="inset">Inset</option>
+                                        <option value="outset">Outset</option>
+                                        <option value="hidden">Hidden</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-default-border-radius">
                                 <label class="control-label" data-label="Border Radius" data-path="default.border.radius">Border Radius</label>
                                 <div class="control-input">
@@ -2268,9 +2286,11 @@
             const borderWidth = getEnabledValue('enable-default-border-width', 'default-border-width', parseInt);
             const borderColor = getEnabledValue('enable-default-border-color', 'default-border-color');
             const borderRadius = getEnabledValue('enable-default-border-radius', 'default-border-radius', parseInt);
+            const borderStyle = getEnabledValue('enable-default-border-style', 'default-border-style');
             if (borderWidth !== undefined) defaultBorder.width = borderWidth;
             if (borderColor !== undefined) defaultBorder.color = borderColor;
             if (borderRadius !== undefined) defaultBorder.radius = borderRadius;
+            if (borderStyle !== undefined) defaultBorder.style = borderStyle;
             if (Object.keys(defaultBorder).length > 0) defaultState.border = defaultBorder;
 
             const defaultShadow = getEnabledValue('enable-default-shadow', 'default-shadow');

@@ -139,7 +139,8 @@
         "_title": "Image border settings",
         "width": "Thickness of image border in pixels (default: 0)",
         "color": "Color of image border (default: #000000)",
-        "radius": "Corner rounding of images in pixels (default: 8)"
+        "radius": "Corner rounding of images in pixels (default: 8)",
+        "style": "Border line style: solid, dashed, dotted, double, none, groove, ridge, inset, outset, hidden (default: solid)"
       },
       "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md)",
       "opacity": "Image transparency level, 0-1 (default: 1)",
@@ -178,7 +179,8 @@
       "_title": "Image border settings",
       "width": "Thickness of image border in pixels (default: 0)",
       "color": "Color of image border (default: #000000)",
-      "radius": "Corner rounding of images in pixels (default: 8)"
+      "radius": "Corner rounding of images in pixels (default: 8)",
+      "style": "Border line style: solid, dashed, dotted, double, none, groove, ridge, inset, outset, hidden (default: solid)"
     },
     "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md)",
     "opacity": "Image transparency level, 0-1 (default: 1)",
