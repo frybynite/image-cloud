@@ -13,6 +13,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
 - [x] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skipping refresh when config unchanged.
+- [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 ---
 
 ## Planned
@@ -57,11 +58,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
   - `zIndex` - bring hovered/focused images to front
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
-- Grid overflow mode - when grid rows × columns < image count, distribute extra images across cells with offset patterns:
-  - Cycle through cells row-by-row, adding overflow images with positional offsets
-  - Offset pattern sequence: left, right, down, up, upper-right, lower-left, upper-left, lower-right
-  - Configurable offset percentage (e.g., 10% of cell size)
-  - Creates natural stacking/layering effect within grid structure
 - Vue component wrapper
 - Web Component wrapper
 - Additional layout algorithms (honeycomb, physics-based)
@@ -96,3 +92,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Add ability to fully style images (border, border-color, shadow, border-radius, etc.) through config options or stylesheet.
 - [x] Interactive configurator page - visual tool for choosing gallery settings, previewing layouts in real-time, and generating the JSON configuration.
 - [x] Wave layout algorithm - images positioned along flowing sine wave curves with configurable rows, amplitude, frequency, phase shift, synchronization modes, and orientation options.
+- [x] Grid overflow mode - when grid rows × columns < image count, extra images distribute across cells with offset patterns (bottom-right, upper-left, upper-right, bottom-left, then cardinals). Overflow images render below base images with lower z-index. Z-index properly restored after focus/unfocus cycles.
