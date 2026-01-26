@@ -19,6 +19,7 @@ interface FocusData {
   element: HTMLElement;
   originalState: ImageLayout;
   focusTransform: TransformParams;
+  originalZIndex: string;  // Store original z-index to restore on unfocus
 }
 
 export class ZoomEngine {
@@ -118,7 +119,7 @@ export class ZoomEngine {
     // Calculate scale based on container-relative sizing
     const focusScale = this.calculateFocusScale(imageWidth, imageHeight, containerBounds);
 
-    // Store focus data
+    // Store focus data (including original z-index for restoration)
     this.focusData = {
       element: imageElement,
       originalState: originalState,
@@ -127,10 +128,11 @@ export class ZoomEngine {
         y: targetY,
         rotation: 0,  // Reset rotation when focused
         scale: focusScale
-      }
+      },
+      originalZIndex: imageElement.style.zIndex || ''
     };
 
-    // Update z-index
+    // Update z-index to bring to front
     imageElement.style.zIndex = String(this.config.zIndex);
     imageElement.classList.add('fbn-ic-focused');
 
@@ -168,8 +170,8 @@ export class ZoomEngine {
       scale: originalState.scale
     });
 
-    // Reset z-index after animation completes
-    element.style.zIndex = '';
+    // Restore original z-index after animation completes
+    element.style.zIndex = this.focusData.originalZIndex;
     element.classList.remove('fbn-ic-focused');
 
     // Revert to default styling state
