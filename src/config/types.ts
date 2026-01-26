@@ -710,4 +710,6 @@ export interface AnimatingImage {
   originalState: ImageLayout;
   animationHandle: AnimationHandle;
   direction: 'in' | 'out';
+  originalWidth?: number;
+  originalHeight?: number;
 }

@@ -4,6 +4,7 @@ Future enhancements and feature ideas for Image Cloud.
 
 ## Active Issues
 
+- [x] Blurry images on zoom: CSS transform scale() scales rendered pixels, not source images. When images render at ~150-200px and zoom to 80% of container, they're scaled 3-4x causing blurriness. Fix: change ZoomEngine to resize actual image dimensions instead of using transform scale.
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
 - [ ] Discuss custom fly-in animations - allow configurable entrance animation styles for images.

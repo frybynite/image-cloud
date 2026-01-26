@@ -54,6 +54,9 @@
         z-index 0s 0.6s;
     will-change: transform;
     user-select: none;
+    /* GPU compositing for smooth animations and better zoom quality */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 /* Hover styles are applied via JS when styling config is provided */
@@ -73,6 +76,8 @@
         border 0.3s var(--fbn-ic-transition-smooth),
         outline 0.3s var(--fbn-ic-transition-smooth),
         z-index 0s 0s;
+    /* Remove will-change to allow browser to re-rasterize at zoom scale */
+    will-change: auto;
 }
 
 /* Loading State */

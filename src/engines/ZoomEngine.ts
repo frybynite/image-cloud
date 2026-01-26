@@ -31,6 +31,10 @@ interface FocusData {
   originalState: ImageLayout;
   focusTransform: TransformParams;
   originalZIndex: string;
+  originalWidth: number;
+  originalHeight: number;
+  focusWidth: number;
+  focusHeight: number;
 }
 
 // Z-index constants for layering during animations
@@ -96,47 +100,111 @@ export class ZoomEngine {
   }
 
   /**
-   * Calculate scale factor for focused image
+   * Calculate target dimensions for focused image
+   * Returns actual pixel dimensions instead of scale factor for sharper rendering
    */
-  private calculateFocusScale(imageWidth: number, imageHeight: number, containerBounds: ContainerBounds): number {
+  private calculateFocusDimensions(imageWidth: number, imageHeight: number, containerBounds: ContainerBounds): { width: number; height: number } {
     const normalizedPercent = this.normalizeScalePercent(this.config.scalePercent);
     const targetHeight = containerBounds.height * normalizedPercent;
-    let scale = targetHeight / imageHeight;
+    const aspectRatio = imageWidth / imageHeight;
 
-    const scaledWidth = imageWidth * scale;
+    let focusHeight = targetHeight;
+    let focusWidth = focusHeight * aspectRatio;
+
     const maxWidth = containerBounds.width * normalizedPercent;
-    if (scaledWidth > maxWidth) {
-      scale = maxWidth / imageWidth;
+    if (focusWidth > maxWidth) {
+      focusWidth = maxWidth;
+      focusHeight = focusWidth / aspectRatio;
     }
 
-    return scale;
+    return { width: focusWidth, height: focusHeight };
   }
 
   /**
-   * Calculate the transform needed to center an image
+   * Calculate the transform needed to center an image (position only, no scale)
+   * Scale is handled by animating actual dimensions for sharper rendering
    */
   private calculateFocusTransform(
-    imageElement: HTMLElement,
     containerBounds: ContainerBounds,
     originalState: ImageLayout
   ): TransformParams {
     const centerX = containerBounds.width / 2;
     const centerY = containerBounds.height / 2;
 
-    const imageWidth = imageElement.offsetWidth;
-    const imageHeight = imageElement.offsetHeight;
-
     const targetX = centerX - originalState.x;
     const targetY = centerY - originalState.y;
-
-    const focusScale = this.calculateFocusScale(imageWidth, imageHeight, containerBounds);
 
     return {
       x: targetX,
       y: targetY,
       rotation: 0,
-      scale: focusScale
+      scale: 1  // No scale transform - dimensions are animated instead
     };
+  }
+
+  /**
+   * Build transform string for dimension-based zoom (no scale in transform)
+   */
+  private buildDimensionZoomTransform(params: TransformParams): string {
+    const transforms: string[] = ['translate(-50%, -50%)'];
+
+    if (params.x !== undefined || params.y !== undefined) {
+      const x = params.x ?? 0;
+      const y = params.y ?? 0;
+      transforms.push(`translate(${x}px, ${y}px)`);
+    }
+
+    if (params.rotation !== undefined) {
+      transforms.push(`rotate(${params.rotation}deg)`);
+    }
+
+    // Note: scale is intentionally omitted - we animate width/height instead
+
+    return transforms.join(' ');
+  }
+
+  /**
+   * Create a Web Animation that animates both transform (position) and dimensions
+   * This provides sharper zoom by re-rendering at target size instead of scaling pixels
+   */
+  private animateWithDimensions(
+    element: HTMLElement,
+    fromTransform: TransformParams,
+    toTransform: TransformParams,
+    fromWidth: number,
+    fromHeight: number,
+    toWidth: number,
+    toHeight: number,
+    duration: number
+  ): Animation {
+    const fromTransformStr = this.buildDimensionZoomTransform(fromTransform);
+    const toTransformStr = this.buildDimensionZoomTransform(toTransform);
+
+    // Clear any CSS transitions to avoid conflicts
+    element.style.transition = 'none';
+
+    // Create Web Animation with both transform and dimensions
+    const animation = element.animate(
+      [
+        {
+          transform: fromTransformStr,
+          width: `${fromWidth}px`,
+          height: `${fromHeight}px`
+        },
+        {
+          transform: toTransformStr,
+          width: `${toWidth}px`,
+          height: `${toHeight}px`
+        }
+      ],
+      {
+        duration: duration,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        fill: 'forwards'
+      }
+    );
+
+    return animation;
   }
 
   /**
@@ -161,85 +229,154 @@ export class ZoomEngine {
   }
 
   /**
-   * Start focus animation for an image
+   * Start focus animation for an image using dimension-based zoom
+   * Animates actual width/height for sharper rendering instead of transform scale
    * @param fromTransform - Optional starting transform (for mid-animation reversals)
+   * @param fromDimensions - Optional starting dimensions (for mid-animation reversals)
    */
   private startFocusAnimation(
     element: HTMLElement,
     containerBounds: ContainerBounds,
     originalState: ImageLayout,
-    fromTransform?: TransformParams
+    fromTransform?: TransformParams,
+    fromDimensions?: { width: number; height: number }
   ): AnimatingImage {
-    const focusTransform = this.calculateFocusTransform(element, containerBounds, originalState);
     const originalZIndex = element.style.zIndex || '';
+    const originalWidth = element.offsetWidth;
+    const originalHeight = element.offsetHeight;
+
+    // Calculate target dimensions and position
+    const focusDimensions = this.calculateFocusDimensions(originalWidth, originalHeight, containerBounds);
+    const focusTransform = this.calculateFocusTransform(containerBounds, originalState);
 
     // Apply focused styling immediately
     this.applyFocusedStyling(element, Z_INDEX.FOCUSING);
 
-    // Start animation from provided position or original position
-    const fromState: TransformParams = fromTransform ?? {
+    // Cancel any existing animation
+    this.animationEngine.cancelAllAnimations(element);
+
+    // Start animation from provided state or original position
+    const startTransform: TransformParams = fromTransform ?? {
       x: 0,
       y: 0,
       rotation: originalState.rotation,
-      scale: originalState.scale
+      scale: 1  // No scale - using dimensions
     };
 
-    const handle = this.animationEngine.animateTransformCancellable(
+    const startWidth = fromDimensions?.width ?? originalWidth;
+    const startHeight = fromDimensions?.height ?? originalHeight;
+
+    const duration = this.config.animationDuration ?? 600;
+
+    // Create dimension-based animation
+    const animation = this.animateWithDimensions(
       element,
-      fromState,
+      startTransform,
       focusTransform,
-      this.config.animationDuration
+      startWidth,
+      startHeight,
+      focusDimensions.width,
+      focusDimensions.height,
+      duration
     );
 
-    // Store focus data for later
+    // Create animation handle
+    const handle: AnimationHandle = {
+      id: `focus-${Date.now()}`,
+      element,
+      animation,
+      fromState: startTransform,
+      toState: focusTransform,
+      startTime: performance.now(),
+      duration
+    };
+
+    // Store focus data for later (including dimensions for unfocus)
     this.focusData = {
       element,
       originalState,
       focusTransform,
-      originalZIndex
+      originalZIndex,
+      originalWidth,
+      originalHeight,
+      focusWidth: focusDimensions.width,
+      focusHeight: focusDimensions.height
     };
 
     return {
       element,
       originalState,
       animationHandle: handle,
-      direction: 'in'
+      direction: 'in' as const,
+      originalWidth,
+      originalHeight
     };
   }
 
   /**
-   * Start unfocus animation for an image
+   * Start unfocus animation for an image using dimension-based zoom
+   * Animates back to original dimensions for consistent behavior
+   * @param fromDimensions - Optional starting dimensions (for mid-animation reversals)
    */
   private startUnfocusAnimation(
     element: HTMLElement,
     originalState: ImageLayout,
-    fromTransform?: TransformParams
+    fromTransform?: TransformParams,
+    fromDimensions?: { width: number; height: number }
   ): AnimatingImage {
     // Set z-index for unfocusing (below incoming)
     element.style.zIndex = String(Z_INDEX.UNFOCUSING);
 
-    // Start from current focused position (or provided position for interrupted animations)
-    const from = fromTransform ?? this.focusData?.focusTransform ?? { x: 0, y: 0, rotation: 0, scale: 1 };
+    // Cancel any existing animation
+    this.animationEngine.cancelAllAnimations(element);
 
+    // Start from current focused state (or provided state for interrupted animations)
+    const startTransform = fromTransform ?? this.focusData?.focusTransform ?? { x: 0, y: 0, rotation: 0, scale: 1 };
+    const startWidth = fromDimensions?.width ?? this.focusData?.focusWidth ?? element.offsetWidth;
+    const startHeight = fromDimensions?.height ?? this.focusData?.focusHeight ?? element.offsetHeight;
+
+    // Target is original position and dimensions
     const toState: TransformParams = {
       x: 0,
       y: 0,
       rotation: originalState.rotation,
-      scale: originalState.scale
+      scale: 1  // No scale - using dimensions
     };
 
-    const handle = this.animationEngine.animateTransformCancellable(
+    const targetWidth = this.focusData?.originalWidth ?? element.offsetWidth;
+    const targetHeight = this.focusData?.originalHeight ?? element.offsetHeight;
+    const duration = this.config.animationDuration ?? 600;
+
+    // Create dimension-based animation
+    const animation = this.animateWithDimensions(
       element,
-      from,
+      startTransform,
       toState,
-      this.config.animationDuration
+      startWidth,
+      startHeight,
+      targetWidth,
+      targetHeight,
+      duration
     );
+
+    // Create animation handle
+    const handle: AnimationHandle = {
+      id: `unfocus-${Date.now()}`,
+      element,
+      animation,
+      fromState: startTransform,
+      toState: toState,
+      startTime: performance.now(),
+      duration
+    };
 
     return {
       element,
       originalState,
       animationHandle: handle,
-      direction: 'out'
+      direction: 'out' as const,
+      originalWidth: targetWidth,
+      originalHeight: targetHeight
     };
   }
 
@@ -255,21 +392,32 @@ export class ZoomEngine {
   }
 
   /**
-   * Reset an element instantly to its original position (no animation)
+   * Reset an element instantly to its original position and dimensions (no animation)
    */
-  private resetElementInstantly(element: HTMLElement, originalState: ImageLayout, originalZIndex: string): void {
+  private resetElementInstantly(
+    element: HTMLElement,
+    originalState: ImageLayout,
+    originalZIndex: string,
+    originalWidth?: number,
+    originalHeight?: number
+  ): void {
     // Cancel any active animation (including completed animations with fill: 'forwards')
     this.animationEngine.cancelAllAnimations(element);
 
-    // Build transform string for original position
-    // Must include translate(0px, 0px) to match animation format
+    // Build transform string for original position (no scale - using dimensions)
     const transforms = ['translate(-50%, -50%)'];
     transforms.push('translate(0px, 0px)');
     transforms.push(`rotate(${originalState.rotation}deg)`);
-    transforms.push(`scale(${originalState.scale})`);
+    // No scale in transform - dimensions handle sizing
 
     element.style.transition = 'none';
     element.style.transform = transforms.join(' ');
+
+    // Restore original dimensions if provided
+    if (originalWidth !== undefined && originalHeight !== undefined) {
+      element.style.width = `${originalWidth}px`;
+      element.style.height = `${originalHeight}px`;
+    }
 
     // Remove focused styling
     this.removeFocusedStyling(element, originalZIndex);
@@ -291,19 +439,24 @@ export class ZoomEngine {
 
     // Same image clicked while it's animating in - reverse to unfocus
     if (this.incoming?.element === imageElement && this.state === ZoomState.FOCUSING) {
-      // Capture current position and reverse
+      // Capture current position and dimensions, then reverse
       const snapshot = this.animationEngine.cancelAnimation(this.incoming.animationHandle, true);
       const fromTransform: TransformParams = {
         x: snapshot.x,
         y: snapshot.y,
         rotation: snapshot.rotation,
-        scale: snapshot.scale
+        scale: 1  // No scale transform - using dimensions
+      };
+      const fromDimensions = {
+        width: imageElement.offsetWidth,
+        height: imageElement.offsetHeight
       };
 
       this.outgoing = this.startUnfocusAnimation(
         imageElement,
         this.incoming.originalState,
-        fromTransform
+        fromTransform,
+        fromDimensions
       );
       this.incoming = null;
       this.state = ZoomState.UNFOCUSING;
@@ -381,7 +534,9 @@ export class ZoomEngine {
           this.resetElementInstantly(
             this.incoming.element,
             this.incoming.originalState,
-            this.focusData?.originalZIndex || ''
+            this.focusData?.originalZIndex || '',
+            this.focusData?.originalWidth,
+            this.focusData?.originalHeight
           );
           this.incoming = null;
         }
@@ -434,13 +589,17 @@ export class ZoomEngine {
         // If clicking the same image that's animating out, let it become the new focus target
         // (reverse direction - it should animate back to focused)
         if (this.outgoing?.element === imageElement) {
-          // Cancel outgoing animation and make it the incoming
+          // Cancel outgoing animation and capture current state
           const snapshot = this.animationEngine.cancelAnimation(this.outgoing.animationHandle, true);
           const fromTransform: TransformParams = {
             x: snapshot.x,
             y: snapshot.y,
             rotation: snapshot.rotation,
-            scale: snapshot.scale
+            scale: 1  // No scale - using dimensions
+          };
+          const fromDimensions = {
+            width: imageElement.offsetWidth,
+            height: imageElement.offsetHeight
           };
 
           // Redirect current incoming to become outgoing
@@ -450,20 +609,25 @@ export class ZoomEngine {
               x: incomingSnapshot.x,
               y: incomingSnapshot.y,
               rotation: incomingSnapshot.rotation,
-              scale: incomingSnapshot.scale
+              scale: 1  // No scale - using dimensions
+            };
+            const incomingFromDimensions = {
+              width: this.incoming.element.offsetWidth,
+              height: this.incoming.element.offsetHeight
             };
             this.outgoing = this.startUnfocusAnimation(
               this.incoming.element,
               this.incoming.originalState,
-              incomingFrom
+              incomingFrom,
+              incomingFromDimensions
             );
           } else {
             this.outgoing = null;
           }
 
           // Start new incoming for the clicked (formerly outgoing) image
-          // Use fromTransform to continue from current position
-          this.incoming = this.startFocusAnimation(imageElement, containerBounds, originalState, fromTransform);
+          // Use fromTransform and fromDimensions to continue from current state
+          this.incoming = this.startFocusAnimation(imageElement, containerBounds, originalState, fromTransform, fromDimensions);
 
           await Promise.all([
             this.outgoing ? this.waitForAnimation(this.outgoing.animationHandle) : Promise.resolve(),
@@ -494,7 +658,9 @@ export class ZoomEngine {
           this.resetElementInstantly(
             this.outgoing.element,
             this.outgoing.originalState,
-            this.outgoing.originalState.zIndex?.toString() || ''
+            this.outgoing.originalState.zIndex?.toString() || '',
+            this.outgoing.originalWidth,
+            this.outgoing.originalHeight
           );
           this.outgoing = null;
         }
@@ -506,13 +672,18 @@ export class ZoomEngine {
             x: snapshot.x,
             y: snapshot.y,
             rotation: snapshot.rotation,
-            scale: snapshot.scale
+            scale: 1  // No scale - using dimensions
+          };
+          const fromDimensions = {
+            width: this.incoming.element.offsetWidth,
+            height: this.incoming.element.offsetHeight
           };
 
           this.outgoing = this.startUnfocusAnimation(
             this.incoming.element,
             this.incoming.originalState,
-            fromTransform
+            fromTransform,
+            fromDimensions
           );
         }
 
@@ -555,13 +726,18 @@ export class ZoomEngine {
           x: snapshot.x,
           y: snapshot.y,
           rotation: snapshot.rotation,
-          scale: snapshot.scale
+          scale: 1  // No scale - using dimensions
+        };
+        const fromDimensions = {
+          width: this.incoming.element.offsetWidth,
+          height: this.incoming.element.offsetHeight
         };
 
         this.outgoing = this.startUnfocusAnimation(
           this.incoming.element,
           this.incoming.originalState,
-          fromTransform
+          fromTransform,
+          fromDimensions
         );
         this.incoming = null;
         this.state = ZoomState.UNFOCUSING;
@@ -587,14 +763,19 @@ export class ZoomEngine {
           x: snapshot.x,
           y: snapshot.y,
           rotation: snapshot.rotation,
-          scale: snapshot.scale
+          scale: 1  // No scale - using dimensions
+        };
+        const fromDimensions = {
+          width: this.incoming.element.offsetWidth,
+          height: this.incoming.element.offsetHeight
         };
 
         // Start unfocus for incoming from its current position
         const incomingUnfocus = this.startUnfocusAnimation(
           this.incoming.element,
           this.incoming.originalState,
-          fromTransform
+          fromTransform,
+          fromDimensions
         );
 
         // Wait for both outgoing and the redirected incoming
@@ -694,7 +875,9 @@ export class ZoomEngine {
       this.resetElementInstantly(
         this.outgoing.element,
         this.outgoing.originalState,
-        this.outgoing.originalState.zIndex?.toString() || ''
+        this.outgoing.originalState.zIndex?.toString() || '',
+        this.outgoing.originalWidth,
+        this.outgoing.originalHeight
       );
     }
 
@@ -703,7 +886,9 @@ export class ZoomEngine {
       this.resetElementInstantly(
         this.incoming.element,
         this.incoming.originalState,
-        this.focusData?.originalZIndex || ''
+        this.focusData?.originalZIndex || '',
+        this.focusData?.originalWidth,
+        this.focusData?.originalHeight
       );
     }
 
@@ -711,7 +896,9 @@ export class ZoomEngine {
       this.resetElementInstantly(
         this.currentFocus,
         this.focusData.originalState,
-        this.focusData.originalZIndex
+        this.focusData.originalZIndex,
+        this.focusData.originalWidth,
+        this.focusData.originalHeight
       );
     }
 
