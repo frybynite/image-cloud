@@ -28,6 +28,35 @@ interface SpiralConfig {
 ### Grid
 Clean rows and columns with optional stagger. Supports alignment options (start, center, end).
 
+**Configuration options:**
+```typescript
+interface GridConfig {
+  columns: number | 'auto';     // Fixed or auto-calculate
+  rows: number | 'auto';        // Fixed or auto-calculate
+  stagger: 'none' | 'row' | 'column';  // Brick pattern offset
+  jitter: number;               // 0-1, random position variance
+  overlap: number;              // 0-1+, image size multiplier
+  fillDirection: 'row' | 'column';
+  alignment: 'start' | 'center' | 'end';
+  gap: number;                  // Pixels between cells
+  overflowOffset: number;       // 0-0.5, offset for overflow stacking
+}
+```
+
+**Visual characteristics:**
+- Clean, organized, professional
+- Great for galleries, portfolios, product displays
+- `stagger: 'row'` gives a brick/masonry feel
+- `jitter` + `overlap` creates a "scattered on table" look
+
+**Overflow Mode:**
+
+When both `columns` and `rows` are fixed and image count exceeds available cells:
+- Extra images are distributed across cells with positional offsets
+- Offset pattern: bottom-right, upper-left, upper-right, bottom-left, then left, right, up, down
+- Overflow images render **below** base images (lower z-index) creating a "flow under" effect
+- `overflowOffset` controls offset distance as percentage of cell size (default: 0.25 = 25%)
+
 ### Cluster
 Organic clumps with natural spacing. Images grouped into clusters positioned around the container.
 

@@ -3,6 +3,8 @@
  * Generates grid-based layouts with optional stagger and jitter
  */
 
+console.log('[GridPlacementGenerator] Module loaded');
+
 import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, GridAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface GridLayoutOptions extends Partial<LayoutConfig> {
@@ -17,8 +19,23 @@ const DEFAULT_GRID_CONFIG: GridAlgorithmConfig = {
   overlap: 0,
   fillDirection: 'row',
   alignment: 'center',
-  gap: 10
+  gap: 10,
+  overflowOffset: 0.25
 };
+
+// Offset pattern for stacking overflow images within cells
+// Each overflow layer cycles through these directions
+// Corners first, then cardinal directions
+const OVERFLOW_OFFSET_PATTERN = [
+  { x: 1, y: 1 },    // bottom-right
+  { x: -1, y: -1 },  // upper-left
+  { x: 1, y: -1 },   // upper-right
+  { x: -1, y: 1 },   // bottom-left
+  { x: -1, y: 0 },   // left
+  { x: 1, y: 0 },    // right
+  { x: 0, y: -1 },   // up
+  { x: 0, y: 1 },    // down
+];
 
 export class GridPlacementGenerator implements PlacementGenerator {
   private config: LayoutConfig;
@@ -106,16 +123,58 @@ export class GridPlacementGenerator implements PlacementGenerator {
     const gridOffsetX = padding + (availableWidth - totalGridWidth) / 2;
     const gridOffsetY = padding + (availableHeight - totalGridHeight) / 2;
 
+    // Detect overflow mode: when both dimensions are fixed and we have more images than cells
+    const cellCount = columns * rows;
+    const hasFixedGrid = gridConfig.columns !== 'auto' && gridConfig.rows !== 'auto';
+    const isOverflowMode = hasFixedGrid && imageCount > cellCount;
+
+    // Debug logging - temporary
+    console.log('[GridGen] generate called, imageCount:', imageCount, 'gridConfig:', JSON.stringify({ columns: gridConfig.columns, rows: gridConfig.rows }));
+    console.log('[GridGen] cellCount:', cellCount, 'hasFixedGrid:', hasFixedGrid, 'isOverflowMode:', isOverflowMode);
+    if (typeof window !== 'undefined') {
+      (window as any).__gridOverflowDebug = {
+        gridConfigColumns: gridConfig.columns,
+        gridConfigRows: gridConfig.rows,
+        columns, rows, cellCount,
+        hasFixedGrid, imageCount, isOverflowMode
+      };
+    }
+
+    // Track stack depth for each cell (used in overflow mode)
+    const cellStackCount: number[] = isOverflowMode ? new Array(cellCount).fill(0) : [];
+
+    // Calculate overflow offset in pixels
+    const overflowOffsetPx = Math.min(cellWidth, cellHeight) * gridConfig.overflowOffset;
+
     for (let i = 0; i < imageCount; i++) {
       let col: number;
       let row: number;
+      let stackLayer = 0;  // 0 = base image, 1+ = overflow layers
 
-      if (gridConfig.fillDirection === 'row') {
-        col = i % columns;
-        row = Math.floor(i / columns);
+      if (isOverflowMode && i >= cellCount) {
+        // Overflow image: determine target cell and stack layer
+        const overflowIndex = i - cellCount;
+        const targetCell = overflowIndex % cellCount;
+        stackLayer = Math.floor(overflowIndex / cellCount) + 1;
+        cellStackCount[targetCell]++;
+
+        // Get cell coordinates from target cell index
+        if (gridConfig.fillDirection === 'row') {
+          col = targetCell % columns;
+          row = Math.floor(targetCell / columns);
+        } else {
+          row = targetCell % rows;
+          col = Math.floor(targetCell / rows);
+        }
       } else {
-        row = i % rows;
-        col = Math.floor(i / rows);
+        // Base image: normal cell assignment
+        if (gridConfig.fillDirection === 'row') {
+          col = i % columns;
+          row = Math.floor(i / columns);
+        } else {
+          row = i % rows;
+          col = Math.floor(i / rows);
+        }
       }
 
       // Base cell position (center of cell)
@@ -127,6 +186,14 @@ export class GridPlacementGenerator implements PlacementGenerator {
         cellCenterX += cellWidth / 2;
       } else if (gridConfig.stagger === 'column' && col % 2 === 1) {
         cellCenterY += cellHeight / 2;
+      }
+
+      // Apply overflow offset for stacked images
+      if (stackLayer > 0) {
+        const patternIndex = (stackLayer - 1) % OVERFLOW_OFFSET_PATTERN.length;
+        const pattern = OVERFLOW_OFFSET_PATTERN[patternIndex];
+        cellCenterX += pattern.x * overflowOffsetPx;
+        cellCenterY += pattern.y * overflowOffsetPx;
       }
 
       // Apply jitter (random offset within cell bounds)
@@ -141,8 +208,8 @@ export class GridPlacementGenerator implements PlacementGenerator {
       let x = cellCenterX;
       let y = cellCenterY;
 
-      // Handle incomplete row alignment
-      if (gridConfig.fillDirection === 'row') {
+      // Handle incomplete row alignment (only for non-overflow mode)
+      if (!isOverflowMode && gridConfig.fillDirection === 'row') {
         const itemsInLastRow = imageCount % columns || columns;
         const isLastRow = row === Math.floor((imageCount - 1) / columns);
 
@@ -192,6 +259,19 @@ export class GridPlacementGenerator implements PlacementGenerator {
         }
       }
 
+      // Calculate z-index: in overflow mode, overflow images go BELOW base images
+      // Base images get higher z-index so they appear on top
+      // Overflow images get progressively lower z-index so they flow under
+      let zIndex: number;
+      if (isOverflowMode && stackLayer > 0) {
+        // Overflow images: lower z-index, decreasing with each layer
+        // Layer 1 = 50, Layer 2 = 49, etc.
+        zIndex = 50 - stackLayer;
+      } else {
+        // Base images: higher z-index (100+)
+        zIndex = isOverflowMode ? 100 + i : i + 1;
+      }
+
       layouts.push({
         id: i,
         x,
@@ -199,7 +279,7 @@ export class GridPlacementGenerator implements PlacementGenerator {
         rotation,
         scale: varianceScale,
         baseSize: scaledImageSize,
-        zIndex: i + 1
+        zIndex
       });
     }
 

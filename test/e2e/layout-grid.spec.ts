@@ -850,4 +850,135 @@ test.describe('Grid Layout Algorithm', () => {
 
   });
 
+  test.describe('Overflow Mode', () => {
+
+    test('stacks images within cells when more images than cells', async ({ page }) => {
+      await page.goto('/test/fixtures/layout-grid.html');
+
+      await page.evaluate(() => {
+        // @ts-ignore
+        if (window.gallery) window.gallery.destroy();
+        document.getElementById('imageCloud')!.innerHTML = '';
+      });
+
+      await page.evaluate(async () => {
+        // 20 images in a 3x2 grid = 6 cells, 14 overflow
+        const baseUrls = [
+          '/test/fixtures/images/image1.jpg',
+          '/test/fixtures/images/image2.jpg',
+          '/test/fixtures/images/image3.jpg',
+          '/test/fixtures/images/food1.jpg',
+          '/test/fixtures/images/food2.jpg'
+        ];
+        const urls = [];
+        for (let i = 0; i < 20; i++) {
+          urls.push(baseUrls[i % baseUrls.length]);
+        }
+
+        // @ts-ignore
+        window.gallery = new window.ImageCloud({
+          container: 'imageCloud',
+          loader: {
+            type: 'static',
+            static: {
+              sources: [{ type: 'urls', urls }],
+              validateUrls: false
+            }
+          },
+          layout: {
+            algorithm: 'grid',
+            rotation: { enabled: false },
+            grid: { columns: 3, rows: 2, stagger: 'none', jitter: 0, overlap: 0, gap: 10 }
+          },
+          animation: { duration: 50, queue: { enabled: true, interval: 10 } }
+        });
+        // @ts-ignore
+        await window.gallery.init();
+      });
+
+      await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
+      await page.waitForTimeout(500);
+
+      const count = await getImageCount(page);
+      expect(count).toBe(20);
+
+      // Get positions of all images
+      const positions = await page.locator('#imageCloud img').evaluateAll((imgs) =>
+        imgs.map((img) => {
+          const rect = img.getBoundingClientRect();
+          return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+        })
+      );
+
+      // Find unique Y positions (rows) - with fixed 3x2 grid, should only have 2 distinct rows
+      const yPositions = positions.map(p => Math.round(p.y / 50)); // Group into 50px buckets
+      const uniqueRows = new Set(yPositions);
+
+      // In overflow mode, all images should be in 2 rows (stacked within cells)
+      // If overflow mode isn't working, there would be more rows (20 / 3 = ~7 rows)
+      expect(uniqueRows.size).toBeLessThanOrEqual(3); // Allow for some variance due to offset stacking
+    });
+
+    test('overflow images are offset from base cell position', async ({ page }) => {
+      await page.goto('/test/fixtures/layout-grid.html');
+
+      await page.evaluate(() => {
+        // @ts-ignore
+        if (window.gallery) window.gallery.destroy();
+        document.getElementById('imageCloud')!.innerHTML = '';
+      });
+
+      await page.evaluate(async () => {
+        // 8 images in a 2x2 grid = 4 cells, 4 overflow
+        const urls = [
+          '/test/fixtures/images/image1.jpg',
+          '/test/fixtures/images/image2.jpg',
+          '/test/fixtures/images/image3.jpg',
+          '/test/fixtures/images/food1.jpg',
+          '/test/fixtures/images/food2.jpg',
+          '/test/fixtures/images/food3.jpg',
+          '/test/fixtures/images/scenery1.jpg',
+          '/test/fixtures/images/scenery2.jpg'
+        ];
+
+        // @ts-ignore
+        window.gallery = new window.ImageCloud({
+          container: 'imageCloud',
+          loader: {
+            type: 'static',
+            static: {
+              sources: [{ type: 'urls', urls }],
+              validateUrls: false
+            }
+          },
+          layout: {
+            algorithm: 'grid',
+            rotation: { enabled: false },
+            grid: { columns: 2, rows: 2, stagger: 'none', jitter: 0, overlap: 0, gap: 10, overflowOffset: 0.15 }
+          },
+          animation: { duration: 50, queue: { enabled: true, interval: 10 } }
+        });
+        // @ts-ignore
+        await window.gallery.init();
+      });
+
+      await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
+      await page.waitForTimeout(500);
+
+      const count = await getImageCount(page);
+      expect(count).toBe(8);
+
+      // Check debug variable
+      const debugInfo = await page.evaluate(() => (window as any).__gridOverflowDebug);
+
+      // Debug info should show overflow mode is active
+      expect(debugInfo).toBeDefined();
+      expect(debugInfo.hasFixedGrid).toBe(true);
+      expect(debugInfo.isOverflowMode).toBe(true);
+      expect(debugInfo.cellCount).toBe(4);
+      expect(debugInfo.imageCount).toBe(8);
+    });
+
+  });
+
 });

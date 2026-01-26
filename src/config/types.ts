@@ -200,6 +200,7 @@ export interface GridAlgorithmConfig {
   fillDirection: 'row' | 'column';
   alignment: 'start' | 'center' | 'end';
   gap: number;
+  overflowOffset: number;  // 0-0.5, percentage of cell size for stacking overflow images (default: 0.25)
 }
 
 export interface SpiralAlgorithmConfig {

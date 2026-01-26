@@ -869,6 +869,14 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-grid-overflowOffset">
+                                    <label class="control-label" data-label="Overflow Offset" data-path="grid.overflowOffset">Overflow Offset</label>
+                                    <div class="control-input">
+                                        <span class="value-display">0.25</span>
+                                        <input type="range" id="grid-overflowOffset" min="0" max="0.5" step="0.05" value="0.25" oninput="updateRangeDisplay(this)">
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Spiral-specific options -->
@@ -2130,6 +2138,7 @@
                 const overlap = getEnabledValue('enable-grid-overlap', 'grid-overlap', parseFloat);
                 const fillDirection = getEnabledValue('enable-grid-fillDirection', 'grid-fillDirection');
                 const alignment = getEnabledValue('enable-grid-alignment', 'grid-alignment');
+                const overflowOffset = getEnabledValue('enable-grid-overflowOffset', 'grid-overflowOffset', parseFloat);
                 if (columns !== undefined) grid.columns = columns;
                 if (rows !== undefined) grid.rows = rows;
                 if (gap !== undefined) grid.gap = gap;
@@ -2138,6 +2147,7 @@
                 if (overlap !== undefined) grid.overlap = overlap;
                 if (fillDirection !== undefined) grid.fillDirection = fillDirection;
                 if (alignment !== undefined) grid.alignment = alignment;
+                if (overflowOffset !== undefined) grid.overflowOffset = overflowOffset;
                 if (Object.keys(grid).length > 0) layout.grid = grid;
             } else if (algorithm === 'spiral') {
                 const spiral = {};

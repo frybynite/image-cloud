@@ -31,7 +31,8 @@
       "jitter": "Random offset applied to image positions (default: 0)",
       "overlap": "How much images can overlap each other (default: 0)",
       "fillDirection": "Order in which grid cells are filled (default: row)",
-      "alignment": "Alignment of images within their cells (default: center)"
+      "alignment": "Alignment of images within their cells (default: center)",
+      "overflowOffset": "Offset for overflow images when count exceeds cells (default: 0.25)"
     },
     "spiral": {
       "_title": "Spiral-specific layout options",
@@ -69,7 +70,8 @@
     "jitter": "Random offset applied to image positions (default: 0)",
     "overlap": "How much images can overlap each other (default: 0)",
     "fillDirection": "Order in which grid cells are filled (default: row)",
-    "alignment": "Alignment of images within their cells (default: center)"
+    "alignment": "Alignment of images within their cells (default: center)",
+    "overflowOffset": "Offset for overflow images when count exceeds cells (default: 0.25)"
   },
   "spiral": {
     "_title": "Spiral-specific layout options",

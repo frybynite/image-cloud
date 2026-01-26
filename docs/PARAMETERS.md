@@ -281,7 +281,8 @@ layout: {
     overlap: 0,           // 0-1+, image overlap factor
     fillDirection: 'row', // 'row' | 'column'
     alignment: 'center',  // 'start' | 'center' | 'end'
-    gap: 10               // pixels between cells
+    gap: 10,              // pixels between cells
+    overflowOffset: 0.25  // 0-0.5, offset for overflow stacking
   }
 }
 ```
@@ -296,12 +297,23 @@ layout: {
 | `fillDirection` | `string` | `'row'` | Primary fill direction: `'row'` or `'column'` |
 | `alignment` | `string` | `'center'` | Incomplete row alignment: `'start'`, `'center'`, `'end'` |
 | `gap` | `number` | `10` | Space between cells in pixels |
+| `overflowOffset` | `number` | `0.25` | Offset % of cell size for overflow stacking when images > cells |
 
 **Visual characteristics:**
 - Clean, organized, professional
 - Great for galleries, portfolios, product displays
 - `stagger: 'row'` gives a brick/masonry feel
 - `jitter` + `overlap` creates a "scattered on table" look
+
+**Overflow Mode:**
+
+When both `columns` and `rows` are fixed numbers and the image count exceeds `columns × rows`, overflow mode activates:
+
+- Extra images are distributed across cells with offset patterns
+- Overflow images appear **below** the base image (lower z-index)
+- Offset pattern cycles through: bottom-right → upper-left → upper-right → bottom-left → left → right → up → down
+- Creates a natural stacking/layering effect within grid structure
+- `overflowOffset` controls how far overflow images are offset from cell center (as % of cell size)
 
 ---
 
@@ -1208,7 +1220,8 @@ All available parameters with example values:
       "overlap": 0,                             // Default. 0-1+ size multiplier
       "fillDirection": "row",                   // Default. "row" | "column"
       "alignment": "center",                    // Default. "start" | "center" | "end"
-      "gap": 10                                 // Default. Pixels between cells
+      "gap": 10,                                // Default. Pixels between cells
+      "overflowOffset": 0.25                    // Default. 0-0.5 offset for overflow stacking
     },
 
     // Spiral algorithm options
