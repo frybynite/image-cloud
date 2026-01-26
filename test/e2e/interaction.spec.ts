@@ -223,4 +223,150 @@ test.describe('User Interactions', () => {
 
   });
 
+  test.describe('Cross-Animation', () => {
+
+    test('clicking different image triggers cross-animation', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 500);
+
+      // Focus first image
+      await forceClickImage(page, 0);
+      await waitForAnimation(page, 700);
+
+      expect(await isImageFocused(page, 0)).toBe(true);
+
+      // Click second image - triggers cross-animation
+      await forceClickImage(page, 1);
+      await waitForAnimation(page, 700);
+
+      // First should be unfocused, second should be focused
+      expect(await isImageFocused(page, 0)).toBe(false);
+      expect(await isImageFocused(page, 1)).toBe(true);
+    });
+
+    test('rapid clicks result in correct final focus', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 500);
+
+      // Focus first image and let it complete
+      await forceClickImage(page, 0);
+      await waitForAnimation(page, 700);
+
+      // Click second to start cross-animation, then click third mid-animation
+      // This tests the CROSS_ANIMATING interruption case
+      await forceClickImage(page, 1);
+      await waitForAnimation(page, 300); // Let cross-animation start
+
+      await forceClickImage(page, 2);
+      await waitForAnimation(page, 1200); // Wait for all animations to complete
+
+      // Final state: only one image should be focused
+      const focusedCount = (await Promise.all([
+        isImageFocused(page, 0),
+        isImageFocused(page, 1),
+        isImageFocused(page, 2)
+      ])).filter(Boolean).length;
+
+      // Either image 1 or 2 should be focused (depending on timing)
+      // but not image 0, and only one image total
+      expect(await isImageFocused(page, 0)).toBe(false);
+      expect(focusedCount).toBe(1);
+    });
+
+    test('ESC during cross-animation unfocuses all', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 500);
+
+      // Focus first image
+      await forceClickImage(page, 0);
+      await waitForAnimation(page, 700);
+
+      // Click second to start cross-animation
+      await forceClickImage(page, 1);
+      await waitForAnimation(page, 200); // Let animation start properly
+
+      // Press ESC during animation
+      await page.keyboard.press('Escape');
+      await waitForAnimation(page, 1000); // Wait for unfocus animations to complete
+
+      // Both should be unfocused
+      expect(await isImageFocused(page, 0)).toBe(false);
+      expect(await isImageFocused(page, 1)).toBe(false);
+    });
+
+    test('images return to original positions after rapid cancel', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 500);
+
+      // Get original positions
+      const images = page.locator('#imageCloud img');
+      const originalPos0 = await images.nth(0).boundingBox();
+      const originalPos1 = await images.nth(1).boundingBox();
+
+      // Focus first
+      await forceClickImage(page, 0);
+      await waitForAnimation(page, 700);
+
+      // Start cross-animation to second
+      await forceClickImage(page, 1);
+      await waitForAnimation(page, 200); // Let animation start
+
+      // Cancel with ESC
+      await page.keyboard.press('Escape');
+      await waitForAnimation(page, 1000); // Wait for unfocus animations
+
+      // Check positions returned to original (within tolerance)
+      // Use larger tolerance as images animate back from mid-animation positions
+      const finalPos0 = await images.nth(0).boundingBox();
+      const finalPos1 = await images.nth(1).boundingBox();
+
+      expect(Math.abs(finalPos0!.x - originalPos0!.x)).toBeLessThan(100);
+      expect(Math.abs(finalPos0!.y - originalPos0!.y)).toBeLessThan(100);
+      expect(Math.abs(finalPos1!.x - originalPos1!.x)).toBeLessThan(100);
+      expect(Math.abs(finalPos1!.y - originalPos1!.y)).toBeLessThan(100);
+    });
+
+    test('z-index layering after cross-animation', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 500);
+
+      // Focus first image
+      await forceClickImage(page, 0);
+      await waitForAnimation(page, 700);
+
+      // Verify first image has elevated z-index when focused
+      const images = page.locator('#imageCloud img');
+      const zIndexFocused = await images.nth(0).evaluate((el) =>
+        parseInt(window.getComputedStyle(el).zIndex) || 0
+      );
+      expect(zIndexFocused).toBeGreaterThanOrEqual(1000);
+
+      // Click second to trigger cross-animation and wait for completion
+      await forceClickImage(page, 1);
+      await waitForAnimation(page, 800);
+
+      // After cross-animation completes:
+      // - First image should have lower z-index (returned to original)
+      // - Second image should have elevated z-index (now focused)
+      const zIndex0After = await images.nth(0).evaluate((el) =>
+        parseInt(window.getComputedStyle(el).zIndex) || 0
+      );
+      const zIndex1After = await images.nth(1).evaluate((el) =>
+        parseInt(window.getComputedStyle(el).zIndex) || 0
+      );
+
+      // Second should be focused with elevated z-index
+      expect(await isImageFocused(page, 1)).toBe(true);
+      expect(zIndex1After).toBeGreaterThanOrEqual(1000);
+      // First should have lower z-index than second
+      expect(zIndex1After).toBeGreaterThan(zIndex0After);
+    });
+
+  });
+
 });

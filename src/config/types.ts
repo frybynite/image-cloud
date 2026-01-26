@@ -662,3 +662,52 @@ export interface ImageStylingConfig {
   hover?: Partial<ImageStyleState>;    // inherits from default
   focused?: Partial<ImageStyleState>;  // inherits from default
 }
+
+// ============================================================================
+// Focus Animation Types (Cross-Animation Support)
+// ============================================================================
+
+/**
+ * State machine states for zoom/focus animations
+ */
+export enum ZoomState {
+  IDLE = 'idle',                     // No focus, no animations
+  FOCUSING = 'focusing',             // Single image animating in
+  FOCUSED = 'focused',               // Stable focused state
+  UNFOCUSING = 'unfocusing',         // Single image animating out
+  CROSS_ANIMATING = 'cross_animating' // Two images: one out, one in
+}
+
+/**
+ * Handle for a cancellable animation using Web Animations API
+ */
+export interface AnimationHandle {
+  id: string;
+  element: HTMLElement;
+  animation: Animation;
+  fromState: TransformParams;
+  toState: TransformParams;
+  startTime: number;
+  duration: number;
+}
+
+/**
+ * Snapshot of an element's current transform state
+ * Used for capturing position mid-animation
+ */
+export interface AnimationSnapshot {
+  x: number;
+  y: number;
+  rotation: number;
+  scale: number;
+}
+
+/**
+ * Tracks an image that is currently animating
+ */
+export interface AnimatingImage {
+  element: HTMLElement;
+  originalState: ImageLayout;
+  animationHandle: AnimationHandle;
+  direction: 'in' | 'out';
+}

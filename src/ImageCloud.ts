@@ -498,15 +498,16 @@ export class ImageCloud {
       applyClassNameToElement(img, this.defaultClassName);
 
       // Hover event handlers
+      // Use isInvolved() to prevent hover styles on images that are focused or animating
       img.addEventListener('mouseenter', () => {
-        if (!this.zoomEngine.isFocused(img)) {
+        if (!this.zoomEngine.isInvolved(img)) {
           applyStylesToElement(img, this.hoverStyles);
           applyClassNameToElement(img, this.hoverClassName);
         }
       });
 
       img.addEventListener('mouseleave', () => {
-        if (!this.zoomEngine.isFocused(img)) {
+        if (!this.zoomEngine.isInvolved(img)) {
           applyStylesToElement(img, this.defaultStyles);
           removeClassNameFromElement(img, this.hoverClassName);
         }
