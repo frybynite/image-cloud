@@ -87,6 +87,10 @@ function buildSingleBorder(config: BorderConfig | undefined): string {
  */
 export interface StyleProperties {
   borderRadius?: string;
+  borderTopLeftRadius?: string;
+  borderTopRightRadius?: string;
+  borderBottomRightRadius?: string;
+  borderBottomLeftRadius?: string;
   border?: string;
   borderTop?: string;
   borderRight?: string;
@@ -110,8 +114,36 @@ export function buildStyleProperties(state: ImageStyleState | undefined): StyleP
 
   const styles: StyleProperties = {};
 
-  // Border radius
-  if (state.border?.radius !== undefined) {
+  // Border radius - check for per-corner overrides first
+  const hasPerCornerRadius = state.borderRadiusTopLeft !== undefined ||
+                             state.borderRadiusTopRight !== undefined ||
+                             state.borderRadiusBottomRight !== undefined ||
+                             state.borderRadiusBottomLeft !== undefined;
+
+  if (hasPerCornerRadius) {
+    // Use per-corner radius with fallback to base radius
+    const baseRadius = state.border?.radius ?? 0;
+    if (state.borderRadiusTopLeft !== undefined) {
+      styles.borderTopLeftRadius = `${state.borderRadiusTopLeft}px`;
+    } else if (baseRadius) {
+      styles.borderTopLeftRadius = `${baseRadius}px`;
+    }
+    if (state.borderRadiusTopRight !== undefined) {
+      styles.borderTopRightRadius = `${state.borderRadiusTopRight}px`;
+    } else if (baseRadius) {
+      styles.borderTopRightRadius = `${baseRadius}px`;
+    }
+    if (state.borderRadiusBottomRight !== undefined) {
+      styles.borderBottomRightRadius = `${state.borderRadiusBottomRight}px`;
+    } else if (baseRadius) {
+      styles.borderBottomRightRadius = `${baseRadius}px`;
+    }
+    if (state.borderRadiusBottomLeft !== undefined) {
+      styles.borderBottomLeftRadius = `${state.borderRadiusBottomLeft}px`;
+    } else if (baseRadius) {
+      styles.borderBottomLeftRadius = `${baseRadius}px`;
+    }
+  } else if (state.border?.radius !== undefined) {
     styles.borderRadius = `${state.border.radius}px`;
   }
 
@@ -186,6 +218,10 @@ export function buildStyleProperties(state: ImageStyleState | undefined): StyleP
  */
 export function applyStylesToElement(element: HTMLElement, styles: StyleProperties): void {
   if (styles.borderRadius !== undefined) element.style.borderRadius = styles.borderRadius;
+  if (styles.borderTopLeftRadius !== undefined) element.style.borderTopLeftRadius = styles.borderTopLeftRadius;
+  if (styles.borderTopRightRadius !== undefined) element.style.borderTopRightRadius = styles.borderTopRightRadius;
+  if (styles.borderBottomRightRadius !== undefined) element.style.borderBottomRightRadius = styles.borderBottomRightRadius;
+  if (styles.borderBottomLeftRadius !== undefined) element.style.borderBottomLeftRadius = styles.borderBottomLeftRadius;
   if (styles.border !== undefined) element.style.border = styles.border;
   if (styles.borderTop !== undefined) element.style.borderTop = styles.borderTop;
   if (styles.borderRight !== undefined) element.style.borderRight = styles.borderRight;

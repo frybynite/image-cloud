@@ -835,6 +835,46 @@
             border-color: #555;
             color: #888;
         }
+
+        /* Border Section Box */
+        .border-section-box {
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* Side Selector (smaller than state selector) */
+        .side-selector {
+            display: flex;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 2px;
+            margin-bottom: 12px;
+        }
+
+        .side-selector-btn {
+            flex: 1;
+            padding: 5px 6px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: #888;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .side-selector-btn:hover {
+            color: #ccc;
+        }
+
+        .side-selector-btn.active {
+            background: #8b5cf6;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -1316,58 +1356,84 @@
 
                         <!-- Unified Style Controls -->
                         <div class="control-group" id="styling-controls">
-                            <!-- Border -->
-                            <div class="control-row" data-property="border.width">
-                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-width">
-                                <label class="control-label" data-label="Border Width" data-path="styling.border.width">Border Width</label>
-                                <div class="control-input">
-                                    <input type="number" id="style-border-width" value="0" min="0" max="20">
-                                    <span class="value-display">px</span>
+                            <!-- Border Section Box -->
+                            <div class="border-section-box">
+                                <!-- Side Selector -->
+                                <div class="side-selector" id="border-side-selector">
+                                    <button type="button" class="side-selector-btn active" data-side="all" onclick="selectBorderSide('all')">All</button>
+                                    <button type="button" class="side-selector-btn" data-side="top" onclick="selectBorderSide('top')">Top</button>
+                                    <button type="button" class="side-selector-btn" data-side="right" onclick="selectBorderSide('right')">Right</button>
+                                    <button type="button" class="side-selector-btn" data-side="bottom" onclick="selectBorderSide('bottom')">Bottom</button>
+                                    <button type="button" class="side-selector-btn" data-side="left" onclick="selectBorderSide('left')">Left</button>
+                                </div>
+
+                                <!-- Border Controls -->
+                                <div class="control-row" data-property="border.width">
+                                    <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-width">
+                                    <label class="control-label" data-label="Border Width" data-path="border.width">Border Width</label>
+                                    <div class="control-input">
+                                        <input type="number" id="style-border-width" value="0" min="0" max="20">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row" data-property="border.color">
+                                    <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-color">
+                                    <label class="control-label" data-label="Border Color" data-path="border.color">Border Color</label>
+                                    <div class="control-input">
+                                        <input type="color" id="style-border-color" value="#000000">
+                                    </div>
+                                </div>
+                                <div class="control-row" data-property="border.style">
+                                    <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-style">
+                                    <label class="control-label" data-label="Border Style" data-path="border.style">Border Style</label>
+                                    <div class="control-input">
+                                        <select id="style-border-style">
+                                            <option value="solid" selected>Solid</option>
+                                            <option value="dashed">Dashed</option>
+                                            <option value="dotted">Dotted</option>
+                                            <option value="double">Double</option>
+                                            <option value="none">None</option>
+                                            <option value="groove">Groove</option>
+                                            <option value="ridge">Ridge</option>
+                                            <option value="inset">Inset</option>
+                                            <option value="outset">Outset</option>
+                                            <option value="hidden">Hidden</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="control-row" data-property="border.color">
-                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-color">
-                                <label class="control-label" data-label="Border Color" data-path="styling.border.color">Border Color</label>
-                                <div class="control-input">
-                                    <input type="color" id="style-border-color" value="#000000">
+
+                            <!-- Border Radius Section Box -->
+                            <div class="border-section-box">
+                                <!-- Corner Selector -->
+                                <div class="side-selector" id="border-radius-corner-selector">
+                                    <button type="button" class="side-selector-btn active" data-corner="all" onclick="selectBorderRadiusCorner('all')">All</button>
+                                    <button type="button" class="side-selector-btn" data-corner="ul" onclick="selectBorderRadiusCorner('ul')">UL</button>
+                                    <button type="button" class="side-selector-btn" data-corner="ur" onclick="selectBorderRadiusCorner('ur')">UR</button>
+                                    <button type="button" class="side-selector-btn" data-corner="br" onclick="selectBorderRadiusCorner('br')">BR</button>
+                                    <button type="button" class="side-selector-btn" data-corner="bl" onclick="selectBorderRadiusCorner('bl')">BL</button>
                                 </div>
-                            </div>
-                            <div class="control-row" data-property="border.style">
-                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-style">
-                                <label class="control-label" data-label="Border Style" data-path="styling.border.style">Border Style</label>
-                                <div class="control-input">
-                                    <select id="style-border-style">
-                                        <option value="solid" selected>Solid</option>
-                                        <option value="dashed">Dashed</option>
-                                        <option value="dotted">Dotted</option>
-                                        <option value="double">Double</option>
-                                        <option value="none">None</option>
-                                        <option value="groove">Groove</option>
-                                        <option value="ridge">Ridge</option>
-                                        <option value="inset">Inset</option>
-                                        <option value="outset">Outset</option>
-                                        <option value="hidden">Hidden</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-row" data-property="border.radius">
-                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-radius">
-                                <label class="control-label" data-label="Border Radius" data-path="styling.border.radius">Border Radius</label>
-                                <div class="control-input">
-                                    <input type="number" id="style-border-radius" value="8" min="0" max="50">
-                                    <span class="value-display">px</span>
+
+                                <!-- Border Radius Control -->
+                                <div class="control-row" data-property="border.radius">
+                                    <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-radius">
+                                    <label class="control-label" data-label="Border Radius" data-path="border.radius">Border Radius</label>
+                                    <div class="control-input">
+                                        <input type="number" id="style-border-radius" value="0" min="0" max="50">
+                                        <span class="value-display">px</span>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Shadow -->
                             <div class="control-row" data-property="shadow">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-shadow">
-                                <label class="control-label" data-label="Shadow" data-path="styling.shadow">Shadow</label>
+                                <label class="control-label" data-label="Shadow" data-path="shadow">Shadow</label>
                                 <div class="control-input">
                                     <select id="style-shadow">
-                                        <option value="none">None</option>
+                                        <option value="none" selected>None</option>
                                         <option value="sm">Small</option>
-                                        <option value="md" selected>Medium</option>
+                                        <option value="md">Medium</option>
                                         <option value="lg">Large</option>
                                         <option value="glow">Glow</option>
                                     </select>
@@ -1377,7 +1443,7 @@
                             <!-- Opacity -->
                             <div class="control-row" data-property="opacity">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-opacity">
-                                <label class="control-label" data-label="Opacity" data-path="styling.opacity">Opacity</label>
+                                <label class="control-label" data-label="Opacity" data-path="opacity">Opacity</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
@@ -1387,7 +1453,7 @@
                             <!-- Filters -->
                             <div class="control-row" data-property="filter.grayscale">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-grayscale">
-                                <label class="control-label" data-label="Grayscale" data-path="styling.filter.grayscale">Grayscale</label>
+                                <label class="control-label" data-label="Grayscale" data-path="filter.grayscale">Grayscale</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
@@ -1395,7 +1461,7 @@
                             </div>
                             <div class="control-row" data-property="filter.blur">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-blur">
-                                <label class="control-label" data-label="Blur" data-path="styling.filter.blur">Blur</label>
+                                <label class="control-label" data-label="Blur" data-path="filter.blur">Blur</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
@@ -1403,7 +1469,7 @@
                             </div>
                             <div class="control-row" data-property="filter.brightness">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-brightness">
-                                <label class="control-label" data-label="Brightness" data-path="styling.filter.brightness">Brightness</label>
+                                <label class="control-label" data-label="Brightness" data-path="filter.brightness">Brightness</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
@@ -1411,7 +1477,7 @@
                             </div>
                             <div class="control-row" data-property="filter.contrast">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-contrast">
-                                <label class="control-label" data-label="Contrast" data-path="styling.filter.contrast">Contrast</label>
+                                <label class="control-label" data-label="Contrast" data-path="filter.contrast">Contrast</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
@@ -1419,7 +1485,7 @@
                             </div>
                             <div class="control-row" data-property="filter.saturate">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-saturate">
-                                <label class="control-label" data-label="Saturate" data-path="styling.filter.saturate">Saturate</label>
+                                <label class="control-label" data-label="Saturate" data-path="filter.saturate">Saturate</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
@@ -1427,7 +1493,7 @@
                             </div>
                             <div class="control-row" data-property="filter.sepia">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-sepia">
-                                <label class="control-label" data-label="Sepia" data-path="styling.filter.sepia">Sepia</label>
+                                <label class="control-label" data-label="Sepia" data-path="filter.sepia">Sepia</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
@@ -1435,7 +1501,7 @@
                             </div>
                             <div class="control-row" data-property="filter.hueRotate">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-hueRotate">
-                                <label class="control-label" data-label="Hue Rotate" data-path="styling.filter.hueRotate">Hue Rotate</label>
+                                <label class="control-label" data-label="Hue Rotate" data-path="filter.hueRotate">Hue Rotate</label>
                                 <div class="control-input">
                                     <span class="value-display">0°</span>
                                     <input type="range" id="style-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
@@ -1643,14 +1709,34 @@
 
         // Styling state management
         let currentStylingState = 'default';
+        let currentBorderSide = 'all'; // 'all', 'top', 'right', 'bottom', 'left'
+        let currentBorderRadiusCorner = 'all'; // 'all', 'ul', 'ur', 'br', 'bl'
 
         // Default values for each property
         const styleDefaults = {
             'border.width': 0,
             'border.color': '#000000',
             'border.style': 'solid',
-            'border.radius': 8,
-            'shadow': 'md',
+            'border.radius': 0,
+            // Per-corner border radius (null means inherit from 'border.radius')
+            'borderRadiusTopLeft': null,
+            'borderRadiusTopRight': null,
+            'borderRadiusBottomRight': null,
+            'borderRadiusBottomLeft': null,
+            // Per-side border properties (null means inherit from 'border')
+            'borderTop.width': null,
+            'borderTop.color': null,
+            'borderTop.style': null,
+            'borderRight.width': null,
+            'borderRight.color': null,
+            'borderRight.style': null,
+            'borderBottom.width': null,
+            'borderBottom.color': null,
+            'borderBottom.style': null,
+            'borderLeft.width': null,
+            'borderLeft.color': null,
+            'borderLeft.style': null,
+            'shadow': 'none',
             'opacity': 1,
             'filter.grayscale': 0,
             'filter.blur': 0,
@@ -1717,13 +1803,221 @@
             populateStylingForm(state);
         };
 
+        // Get border property prefix based on current side
+        function getBorderPropertyPrefix(side) {
+            if (side === 'all') return 'border';
+            return 'border' + side.charAt(0).toUpperCase() + side.slice(1);
+        }
+
+        // Get the actual property key for border controls based on current side
+        function getBorderProperty(baseProp, side) {
+            if (!baseProp.startsWith('border.') || baseProp === 'border.radius') {
+                return baseProp; // Not a border side property
+            }
+            const subProp = baseProp.replace('border.', '');
+            if (side === 'all') return baseProp;
+            return getBorderPropertyPrefix(side) + '.' + subProp;
+        }
+
+        // Select border side
+        window.selectBorderSide = function(side) {
+            currentBorderSide = side;
+
+            // Update selector buttons
+            document.querySelectorAll('#border-side-selector .side-selector-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.side === side);
+            });
+
+            // Update path display for border controls
+            updateBorderControlPaths(side);
+
+            // Populate border controls with values for this side
+            populateBorderControls(currentStylingState, side);
+        };
+
+        // Update data-path attributes for border controls based on current side
+        function updateBorderControlPaths(side) {
+            const prefix = getBorderPropertyPrefix(side);
+            const borderProps = ['width', 'color', 'style'];
+
+            borderProps.forEach(prop => {
+                const row = document.querySelector(`[data-property="border.${prop}"]`);
+                if (row) {
+                    const label = row.querySelector('.control-label');
+                    if (label) {
+                        label.dataset.path = `${prefix}.${prop}`;
+                        // Update visible text if paths are showing
+                        if (showingPaths) {
+                            label.textContent = `${prefix}.${prop}`;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Populate border controls with values for the specified side
+        function populateBorderControls(state, side) {
+            const borderProps = ['width', 'color', 'style'];
+
+            borderProps.forEach(baseProp => {
+                const htmlProperty = `border.${baseProp}`;
+                const actualProperty = getBorderProperty(htmlProperty, side);
+
+                const row = document.querySelector(`[data-property="${htmlProperty}"]`);
+                if (!row) return;
+
+                const checkbox = row.querySelector('.styling-checkbox');
+                const controlId = checkbox?.id.replace('enable-', '');
+                const control = document.getElementById(controlId);
+
+                if (!checkbox || !control) return;
+
+                const stateData = stylingState[state][actualProperty];
+
+                // Get effective value: check this side, then 'all' side, then default
+                let effectiveValue;
+                if (stateData?.enabled) {
+                    effectiveValue = stateData.value;
+                } else if (side !== 'all' && stylingState[state][`border.${baseProp}`]?.enabled) {
+                    effectiveValue = stylingState[state][`border.${baseProp}`].value;
+                } else if (state !== 'default') {
+                    // Check default state
+                    if (stylingState.default[actualProperty]?.enabled) {
+                        effectiveValue = stylingState.default[actualProperty].value;
+                    } else if (side !== 'all' && stylingState.default[`border.${baseProp}`]?.enabled) {
+                        effectiveValue = stylingState.default[`border.${baseProp}`].value;
+                    } else {
+                        effectiveValue = styleDefaults[`border.${baseProp}`];
+                    }
+                } else {
+                    effectiveValue = styleDefaults[`border.${baseProp}`];
+                }
+
+                // Set checkbox state for this specific side property
+                checkbox.checked = stateData?.enabled || false;
+
+                // Set control value
+                control.value = effectiveValue;
+
+                // Update visual state
+                const inherited = state !== 'default' && !stateData?.enabled;
+                row.classList.toggle('disabled', !checkbox.checked);
+                row.classList.toggle('inherited', inherited && !checkbox.checked);
+            });
+        }
+
+        // Get border radius property name based on corner
+        function getBorderRadiusProperty(corner) {
+            const cornerMap = {
+                'all': 'border.radius',
+                'ul': 'borderRadiusTopLeft',
+                'ur': 'borderRadiusTopRight',
+                'br': 'borderRadiusBottomRight',
+                'bl': 'borderRadiusBottomLeft'
+            };
+            return cornerMap[corner] || 'border.radius';
+        }
+
+        // Get display path for border radius based on corner
+        function getBorderRadiusPath(corner) {
+            const pathMap = {
+                'all': 'border.radius',
+                'ul': 'borderRadiusTopLeft',
+                'ur': 'borderRadiusTopRight',
+                'br': 'borderRadiusBottomRight',
+                'bl': 'borderRadiusBottomLeft'
+            };
+            return pathMap[corner] || 'border.radius';
+        }
+
+        // Select border radius corner
+        window.selectBorderRadiusCorner = function(corner) {
+            currentBorderRadiusCorner = corner;
+
+            // Update selector buttons
+            document.querySelectorAll('#border-radius-corner-selector .side-selector-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.corner === corner);
+            });
+
+            // Update path display for border radius control
+            updateBorderRadiusControlPath(corner);
+
+            // Populate border radius control with value for this corner
+            populateBorderRadiusControl(currentStylingState, corner);
+        };
+
+        // Update data-path attribute for border radius control
+        function updateBorderRadiusControlPath(corner) {
+            const path = getBorderRadiusPath(corner);
+            const row = document.querySelector('[data-property="border.radius"]');
+            if (row) {
+                const label = row.querySelector('.control-label');
+                if (label) {
+                    label.dataset.path = path;
+                    if (showingPaths) {
+                        label.textContent = path;
+                    }
+                }
+            }
+        }
+
+        // Populate border radius control with value for the specified corner
+        function populateBorderRadiusControl(state, corner) {
+            const actualProperty = getBorderRadiusProperty(corner);
+            const row = document.querySelector('[data-property="border.radius"]');
+            if (!row) return;
+
+            const checkbox = row.querySelector('.styling-checkbox');
+            const control = document.getElementById('style-border-radius');
+
+            if (!checkbox || !control) return;
+
+            const stateData = stylingState[state][actualProperty];
+
+            // Get effective value: check this corner, then 'all' corners, then default
+            let effectiveValue;
+            if (stateData?.enabled) {
+                effectiveValue = stateData.value;
+            } else if (corner !== 'all' && stylingState[state]['border.radius']?.enabled) {
+                effectiveValue = stylingState[state]['border.radius'].value;
+            } else if (state !== 'default') {
+                // Check default state
+                if (stylingState.default[actualProperty]?.enabled) {
+                    effectiveValue = stylingState.default[actualProperty].value;
+                } else if (corner !== 'all' && stylingState.default['border.radius']?.enabled) {
+                    effectiveValue = stylingState.default['border.radius'].value;
+                } else {
+                    effectiveValue = styleDefaults['border.radius'];
+                }
+            } else {
+                effectiveValue = styleDefaults['border.radius'];
+            }
+
+            // Set checkbox state for this specific corner property
+            checkbox.checked = stateData?.enabled || false;
+
+            // Set control value
+            control.value = effectiveValue;
+
+            // Update visual state
+            const inherited = state !== 'default' && !stateData?.enabled;
+            row.classList.toggle('disabled', !checkbox.checked);
+            row.classList.toggle('inherited', inherited && !checkbox.checked);
+        }
+
         // Populate form with values for the selected state
         function populateStylingForm(state) {
             const controls = document.querySelectorAll('#styling-controls .control-row');
 
+            // Border side properties and radius are handled separately
+            const specialBorderProps = ['border.width', 'border.color', 'border.style', 'border.radius'];
+
             controls.forEach(row => {
                 const property = row.dataset.property;
                 if (!property) return;
+
+                // Skip special border properties - handled separately
+                if (specialBorderProps.includes(property)) return;
 
                 const checkbox = row.querySelector('.styling-checkbox');
                 const controlId = checkbox?.id.replace('enable-', '');
@@ -1753,25 +2047,44 @@
                 row.classList.toggle('disabled', !checkbox.checked);
                 row.classList.toggle('inherited', inherited && !checkbox.checked);
             });
+
+            // Populate border controls based on current side
+            populateBorderControls(state, currentBorderSide);
+
+            // Populate border radius control based on current corner
+            populateBorderRadiusControl(state, currentBorderRadiusCorner);
         }
 
         // Handle styling checkbox change
         function onStylingCheckboxChange(checkbox) {
             const row = checkbox.closest('.control-row');
-            const property = row?.dataset.property;
-            if (!property) return;
+            const htmlProperty = row?.dataset.property;
+            if (!htmlProperty) return;
+
+            // Get the actual property key (handles border side and corner selection)
+            let actualProperty;
+            if (htmlProperty === 'border.radius') {
+                actualProperty = getBorderRadiusProperty(currentBorderRadiusCorner);
+            } else {
+                actualProperty = getBorderProperty(htmlProperty, currentBorderSide);
+            }
 
             const controlId = checkbox.id.replace('enable-', '');
             const control = document.getElementById(controlId);
 
-            stylingState[currentStylingState][property] = {
+            // Get default value for the base property
+            const defaultValue = styleDefaults['border.radius'] !== undefined && htmlProperty === 'border.radius'
+                ? styleDefaults['border.radius']
+                : (styleDefaults[htmlProperty.replace(/^border(Top|Right|Bottom|Left)\./, 'border.')] ?? styleDefaults[htmlProperty]);
+
+            stylingState[currentStylingState][actualProperty] = {
                 enabled: checkbox.checked,
                 value: control ? (control.type === 'range' ? parseFloat(control.value) :
-                       control.type === 'number' ? parseInt(control.value) : control.value) : styleDefaults[property]
+                       control.type === 'number' ? parseInt(control.value) : control.value) : defaultValue
             };
 
             row.classList.toggle('disabled', !checkbox.checked);
-            row.classList.toggle('inherited', isInherited(currentStylingState, property) && !checkbox.checked);
+            row.classList.toggle('inherited', isInherited(currentStylingState, actualProperty) && !checkbox.checked);
 
             scheduleAutoApply();
         }
@@ -1779,13 +2092,21 @@
         // Handle styling control value change
         function onStylingControlChange(control) {
             const row = control.closest('.control-row');
-            const property = row?.dataset.property;
-            if (!property) return;
+            const htmlProperty = row?.dataset.property;
+            if (!htmlProperty) return;
+
+            // Get the actual property key (handles border side and corner selection)
+            let actualProperty;
+            if (htmlProperty === 'border.radius') {
+                actualProperty = getBorderRadiusProperty(currentBorderRadiusCorner);
+            } else {
+                actualProperty = getBorderProperty(htmlProperty, currentBorderSide);
+            }
 
             const checkbox = row.querySelector('.styling-checkbox');
             if (!checkbox?.checked) return;
 
-            stylingState[currentStylingState][property] = {
+            stylingState[currentStylingState][actualProperty] = {
                 enabled: true,
                 value: control.type === 'range' ? parseFloat(control.value) :
                        control.type === 'number' ? parseInt(control.value) : control.value
@@ -2533,14 +2854,38 @@
             function buildStateConfig(stateName) {
                 const stateConfig = {};
                 const border = {};
+                const borderTop = {};
+                const borderRight = {};
+                const borderBottom = {};
+                const borderLeft = {};
                 const filter = {};
 
                 for (const [prop, data] of Object.entries(stylingState[stateName])) {
                     if (!data.enabled) continue;
 
-                    if (prop.startsWith('border.')) {
+                    if (prop.startsWith('borderTop.')) {
+                        const borderProp = prop.replace('borderTop.', '');
+                        borderTop[borderProp] = data.value;
+                    } else if (prop.startsWith('borderRight.')) {
+                        const borderProp = prop.replace('borderRight.', '');
+                        borderRight[borderProp] = data.value;
+                    } else if (prop.startsWith('borderBottom.')) {
+                        const borderProp = prop.replace('borderBottom.', '');
+                        borderBottom[borderProp] = data.value;
+                    } else if (prop.startsWith('borderLeft.')) {
+                        const borderProp = prop.replace('borderLeft.', '');
+                        borderLeft[borderProp] = data.value;
+                    } else if (prop.startsWith('border.')) {
                         const borderProp = prop.replace('border.', '');
                         border[borderProp] = data.value;
+                    } else if (prop === 'borderRadiusTopLeft') {
+                        stateConfig.borderRadiusTopLeft = data.value;
+                    } else if (prop === 'borderRadiusTopRight') {
+                        stateConfig.borderRadiusTopRight = data.value;
+                    } else if (prop === 'borderRadiusBottomRight') {
+                        stateConfig.borderRadiusBottomRight = data.value;
+                    } else if (prop === 'borderRadiusBottomLeft') {
+                        stateConfig.borderRadiusBottomLeft = data.value;
                     } else if (prop.startsWith('filter.')) {
                         const filterProp = prop.replace('filter.', '');
                         filter[filterProp] = data.value;
@@ -2552,6 +2897,10 @@
                 }
 
                 if (Object.keys(border).length > 0) stateConfig.border = border;
+                if (Object.keys(borderTop).length > 0) stateConfig.borderTop = borderTop;
+                if (Object.keys(borderRight).length > 0) stateConfig.borderRight = borderRight;
+                if (Object.keys(borderBottom).length > 0) stateConfig.borderBottom = borderBottom;
+                if (Object.keys(borderLeft).length > 0) stateConfig.borderLeft = borderLeft;
                 if (Object.keys(filter).length > 0) stateConfig.filter = filter;
 
                 return stateConfig;

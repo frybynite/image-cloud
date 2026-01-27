@@ -968,18 +968,18 @@ Controls the visual appearance of images in different states.
 ```typescript
 styling: {
   default: {
-    border: { width: 0, color: '#000', radius: 8, style: 'solid' },
-    shadow: 'md',               // 'none' | 'sm' | 'md' | 'lg' | 'glow' or custom CSS
+    border: { width: 0, color: '#000', radius: 0, style: 'solid' },
+    shadow: 'none',             // 'none' | 'sm' | 'md' | 'lg' | 'glow' or custom CSS
     opacity: 1,
     cursor: 'pointer',
     filter: { },
     outline: { width: 0, color: '#000', style: 'solid', offset: 0 }
   },
   hover: {
-    shadow: 'lg'                // Applied on mouse hover
+    shadow: 'none'              // Applied on mouse hover
   },
   focused: {
-    shadow: 'glow'              // Applied when image is clicked/focused
+    shadow: 'none'              // Applied when image is clicked/focused
   }
 }
 ```
@@ -1004,7 +1004,7 @@ styling: {
 | `borderRight` | `Partial<BorderConfig>` | - | Right border override |
 | `borderBottom` | `Partial<BorderConfig>` | - | Bottom border override |
 | `borderLeft` | `Partial<BorderConfig>` | - | Left border override |
-| `shadow` | `ShadowPreset \| string` | `'md'` | Shadow preset or custom CSS shadow |
+| `shadow` | `ShadowPreset \| string` | `'none'` | Shadow preset or custom CSS shadow |
 | `filter` | `FilterConfig` | `{}` | CSS filter effects |
 | `opacity` | `number` | `1` | Image opacity (0-1) |
 | `cursor` | `string` | `'pointer'` | CSS cursor value |
@@ -1018,7 +1018,7 @@ styling: {
 | :--- | :--- | :--- | :--- |
 | `width` | `number` | `0` | Border width in pixels |
 | `color` | `string` | `'#000'` | Border color (CSS color) |
-| `radius` | `number` | `8` | Border radius in pixels |
+| `radius` | `number` | `0` | Border radius in pixels |
 | `style` | `BorderStyle` | `'solid'` | Border line style (see table below) |
 
 **Border Style Options** (ordered by practicality):
@@ -1350,14 +1350,14 @@ All available parameters with example values:
       "border": {
         "width": 0,                             // Default. Border width in pixels
         "color": "#000000",                     // Default. Border color
-        "radius": 8,                            // Default. Border radius in pixels
+        "radius": 0,                            // Default. Border radius in pixels
         "style": "solid"                        // Default. "solid" | "dashed" | "dotted" | "double" | "none" | "groove" | "ridge" | "inset" | "outset" | "hidden"
       },
       "borderTop": {},                          // Override for top border
       "borderRight": {},                        // Override for right border
       "borderBottom": {},                       // Override for bottom border
       "borderLeft": {},                         // Override for left border
-      "shadow": "md",                           // Default. "none" | "sm" | "md" | "lg" | "glow" or CSS
+      "shadow": "none",                          // Default. "none" | "sm" | "md" | "lg" | "glow" or CSS
       "filter": {
         "grayscale": 0,                         // 0-1
         "blur": 0,                              // pixels
@@ -1381,10 +1381,10 @@ All available parameters with example values:
       "aspectRatio": ""                         // CSS aspect-ratio (e.g., "16/9")
     },
     "hover": {
-      "shadow": "lg"                            // Default. Applied on mouse hover
+      "shadow": "none"                          // Default. Applied on mouse hover
     },
     "focused": {
-      "shadow": "glow"                          // Default. Applied when image is clicked/focused
+      "shadow": "none"                          // Default. Applied when image is clicked/focused
     }
   }
 }

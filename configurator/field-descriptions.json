@@ -134,13 +134,41 @@
   "styling": {
     "_title": "Configure visual styling for images. Use the state selector to switch between Default, Hover, and Focused states. All properties are available for all states - hover and focused inherit from default when not explicitly set.",
     "border": {
-      "_title": "Image border settings (available for all states)",
+      "_title": "Image border settings (available for all states). Use side selector to configure All sides or individual Top, Right, Bottom, Left sides.",
       "width": "Thickness of image border in pixels (default: 0)",
       "color": "Color of image border (default: #000000)",
-      "radius": "Corner rounding of images in pixels (default: 8)",
+      "radius": "Corner rounding of images in pixels. Use corner selector to configure All corners or individual UL, UR, BR, BL corners (default: 0)",
       "style": "Border line style: solid, dashed, dotted, double, none, groove, ridge, inset, outset, hidden (default: solid)"
     },
-    "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: md for default state, lg for hover, glow for focused)",
+    "borderTop": {
+      "_title": "Top border settings - overrides 'border' for the top side only",
+      "width": "Thickness of top border in pixels (inherits from border.width)",
+      "color": "Color of top border (inherits from border.color)",
+      "style": "Top border line style (inherits from border.style)"
+    },
+    "borderRight": {
+      "_title": "Right border settings - overrides 'border' for the right side only",
+      "width": "Thickness of right border in pixels (inherits from border.width)",
+      "color": "Color of right border (inherits from border.color)",
+      "style": "Right border line style (inherits from border.style)"
+    },
+    "borderBottom": {
+      "_title": "Bottom border settings - overrides 'border' for the bottom side only",
+      "width": "Thickness of bottom border in pixels (inherits from border.width)",
+      "color": "Color of bottom border (inherits from border.color)",
+      "style": "Bottom border line style (inherits from border.style)"
+    },
+    "borderLeft": {
+      "_title": "Left border settings - overrides 'border' for the left side only",
+      "width": "Thickness of left border in pixels (inherits from border.width)",
+      "color": "Color of left border (inherits from border.color)",
+      "style": "Left border line style (inherits from border.style)"
+    },
+    "borderRadiusTopLeft": "Top-left corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
+    "borderRadiusTopRight": "Top-right corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
+    "borderRadiusBottomRight": "Bottom-right corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
+    "borderRadiusBottomLeft": "Bottom-left corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
+    "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: none)",
     "opacity": "Image transparency level, 0-1 (default: 1)",
     "filter": {
       "_title": "CSS filter effects (available for all states)",

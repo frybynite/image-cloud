@@ -119,9 +119,6 @@ const gallery = new ImageCloud({
   layout: {
     algorithm: 'radial',
     rotation: { enabled: true, range: { min: -15, max: 15 } }
-  },
-  styling: {
-    default: { shadow: 'md' }
   }
 });
 

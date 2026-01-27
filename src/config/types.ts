@@ -641,6 +641,12 @@ export interface ImageStyleState {
   borderBottom?: Partial<BorderConfig>;
   borderLeft?: Partial<BorderConfig>;
 
+  // Per-corner border radius (overrides border.radius for specific corners)
+  borderRadiusTopLeft?: number;
+  borderRadiusTopRight?: number;
+  borderRadiusBottomRight?: number;
+  borderRadiusBottomLeft?: number;
+
   // Shadow (preset name or custom CSS string)
   shadow?: ShadowPreset | string;
 

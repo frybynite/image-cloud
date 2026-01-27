@@ -60,10 +60,10 @@ export const DEFAULT_STYLING: ImageStylingConfig = Object.freeze({
     border: Object.freeze({
       width: 0,
       color: '#000000',
-      radius: 8,
+      radius: 0,
       style: 'solid' as const
     }),
-    shadow: 'md' as ShadowPreset,
+    shadow: 'none' as ShadowPreset,
     filter: Object.freeze({}),
     opacity: 1,
     cursor: 'pointer',
@@ -75,10 +75,10 @@ export const DEFAULT_STYLING: ImageStylingConfig = Object.freeze({
     })
   }),
   hover: Object.freeze({
-    shadow: 'lg' as ShadowPreset
+    shadow: 'none' as ShadowPreset
   }),
   focused: Object.freeze({
-    shadow: 'glow' as ShadowPreset
+    shadow: 'none' as ShadowPreset
   })
 });
 
@@ -314,6 +314,12 @@ function deepMergeStyleState(
   if (override.className !== undefined) merged.className = override.className;
   if (override.objectFit !== undefined) merged.objectFit = override.objectFit;
   if (override.aspectRatio !== undefined) merged.aspectRatio = override.aspectRatio;
+
+  // Override per-corner border radius
+  if (override.borderRadiusTopLeft !== undefined) merged.borderRadiusTopLeft = override.borderRadiusTopLeft;
+  if (override.borderRadiusTopRight !== undefined) merged.borderRadiusTopRight = override.borderRadiusTopRight;
+  if (override.borderRadiusBottomRight !== undefined) merged.borderRadiusBottomRight = override.borderRadiusBottomRight;
+  if (override.borderRadiusBottomLeft !== undefined) merged.borderRadiusBottomLeft = override.borderRadiusBottomLeft;
 
   return merged;
 }
