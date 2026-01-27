@@ -25,6 +25,7 @@ jobs:
           cp index.html _site/
           cp -r docs _site/
           cp -r configurator _site/
+          cp -r dist _site/
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
