@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/claude-code) when working with code in this repository.
 
+## IMPORTANT RULES                                                                                                                                              
+  - **NEVER commit or push without explicit user approval**                                                                                                       
+  - Always ask "Should I commit this?" before any git commit/push    
+
 ## Project Overview
 
 Image Cloud is a TypeScript library for creating interactive image galleries with animated scattered layouts and zoom effects. It supports multiple layout algorithms and image sources (Google Drive, static URLs).
@@ -89,7 +93,7 @@ Located in `examples/` folder:
 ## Remember
 
 - Any time a new layout, style, etc. is created we must update the examples/ and the configurator/
-- DO NOT automatically commit or push changes to Github without my direct approval.
+- **⛔ CRITICAL: NEVER commit or push without my explicit approval. ASK FIRST.**       
 - When a parameter name, location, value, default, etc. is changed:
   - update the Parameters.md file
   - update configurator labels, values, help text.
