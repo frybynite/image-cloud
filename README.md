@@ -7,11 +7,13 @@ A TypeScript library for creating interactive image galleries with animated scat
 ## Features
 
 - ✨ Animated image layouts with smooth transitions
-- 🎯 Multiple layout algorithms (radial, grid, spiral, cluster, random)
-- 🔍 Zoom/focus interactions
-- 📱 Responsive design with breakpoint support
-- 🖼️ Multiple image sources (Google Drive, static URLs, local paths)
-- 🎨 Fully customizable configuration
+- 🎯 Multiple layout algorithms (radial, grid, spiral, cluster, wave, random)
+- 🎬 Rich entry animations (bounce, elastic, wave paths; spin, wobble rotations)
+- 🔍 Zoom/focus interactions with keyboard navigation
+- 🎨 State-based image styling (borders, shadows, filters for default/hover/focused)
+- 📱 Responsive design with adaptive sizing
+- 🖼️ Multiple image sources (Google Drive, static URLs, composite loaders)
+- 🛠️ Interactive configurator for visual configuration
 - 📦 Zero runtime dependencies
 - 🔷 Full TypeScript support
 
