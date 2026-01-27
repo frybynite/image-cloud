@@ -216,6 +216,171 @@ interface EntryEasingConfig {
 
 ---
 
+## 4. Entry Rotation
+
+Images can rotate as they animate into their final position, adding a dynamic "tumbling" or "spinning" effect.
+
+### Rotation Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `none` | No rotation during entry (default) | Clean, professional |
+| `settle` | Start rotated, settle to final rotation | Natural, organic feel |
+| `spin` | Full rotation(s) during flight | Dramatic, playful |
+| `wobble` | Oscillate rotation during entry | Bouncy, energetic |
+| `random` | Random start rotation per image | Scattered, casual |
+
+### Proposed Configuration
+
+```typescript
+interface EntryRotationConfig {
+  // Master toggle / mode
+  mode: 'none' | 'settle' | 'spin' | 'wobble' | 'random';
+
+  // Starting rotation in degrees (for 'settle' mode)
+  // Can be fixed or a range for per-image variance
+  startRotation?: number | { min: number; max: number };
+
+  // For 'spin' mode - number of full rotations
+  spinCount?: number;  // e.g., 1 = 360°, 0.5 = 180°
+
+  // Spin direction
+  direction?: 'clockwise' | 'counterclockwise' | 'auto' | 'random';
+  // 'auto' = based on entry direction (left->right = clockwise)
+
+  // For 'wobble' mode
+  wobble?: {
+    amplitude: number;   // degrees of oscillation, e.g., 15
+    frequency: number;   // oscillations during entry, e.g., 2
+    decay: boolean;      // reduce amplitude as it settles
+  };
+}
+```
+
+### Rotation Behavior by Mode
+
+**`settle` Mode:**
+- Image starts at `startRotation` degrees
+- Animates to its final layout rotation (from placement generator)
+- Creates a "falling into place" effect
+
+```typescript
+// Example: Images tumble in from random angles
+rotation: {
+  mode: 'settle',
+  startRotation: { min: -45, max: 45 },
+  direction: 'auto'
+}
+```
+
+**`spin` Mode:**
+- Image completes full rotation(s) during flight
+- Adds to any layout rotation at the end
+- Good for dramatic entrances
+
+```typescript
+// Example: Images spin once as they fly in
+rotation: {
+  mode: 'spin',
+  spinCount: 1,
+  direction: 'clockwise'
+}
+```
+
+**`wobble` Mode:**
+- Image oscillates back and forth during entry
+- Amplitude decreases as it approaches final position
+- Creates an energetic, bouncy feel
+
+```typescript
+// Example: Images wobble into place
+rotation: {
+  mode: 'wobble',
+  wobble: {
+    amplitude: 20,
+    frequency: 3,
+    decay: true
+  }
+}
+```
+
+**`random` Mode:**
+- Each image gets a random start rotation
+- Settles to final layout rotation
+- Quick way to add variety
+
+```typescript
+// Example: Casual scattered entrance
+rotation: {
+  mode: 'random'
+  // Defaults to ±30° range
+}
+```
+
+### Interaction with Layout Rotation
+
+Layout generators can assign a final rotation to each image (e.g., `layout.rotation`). Entry rotation works *in addition to* this:
+
+1. **Start rotation** = `entryRotation.startRotation` (or calculated for spin/wobble)
+2. **End rotation** = `layout.rotation` (from placement generator)
+3. **Animation** = interpolate from start to end during entry
+
+If layout rotation is 0° and entry mode is `settle` with `startRotation: 30`, the image rotates from 30° → 0°.
+
+If layout rotation is -5° and entry mode is `settle` with `startRotation: 30`, the image rotates from 30° → -5°.
+
+### Implementation Notes
+
+- Rotation is applied via CSS `transform: rotate()` combined with translate
+- For `wobble` mode, use JavaScript animation (not CSS) to calculate oscillation
+- Consider combining with path animation for complex effects:
+  - Arc path + settle rotation = swooping tumble
+  - Bounce path + wobble rotation = energetic bounce
+
+### Example Configurations
+
+**Tumbling Photos:**
+```typescript
+entry: {
+  start: { position: 'top' },
+  path: { type: 'arc', arcIntensity: 0.2 },
+  rotation: {
+    mode: 'settle',
+    startRotation: { min: -30, max: 30 }
+  },
+  timing: { duration: 800, stagger: 100 }
+}
+```
+
+**Dramatic Spin Entrance:**
+```typescript
+entry: {
+  start: { position: 'center' },
+  path: { type: 'linear' },
+  rotation: {
+    mode: 'spin',
+    spinCount: 1,
+    direction: 'random'
+  },
+  timing: { duration: 1000, stagger: 50 }
+}
+```
+
+**Bouncy Wobble:**
+```typescript
+entry: {
+  start: { position: 'bottom' },
+  path: { type: 'preset', preset: 'bounce' },
+  rotation: {
+    mode: 'wobble',
+    wobble: { amplitude: 15, frequency: 2, decay: true }
+  },
+  timing: { duration: 900, stagger: 80 }
+}
+```
+
+---
+
 ## Combined Configuration
 
 ```typescript
@@ -224,6 +389,7 @@ interface EntryAnimationConfig {
   path: EntryPathConfig;
   timing: EntryTimingConfig;
   easing: EntryEasingConfig;
+  rotation?: EntryRotationConfig;
 }
 
 // In main config
@@ -302,7 +468,14 @@ entry: {
 - [ ] Implement easing presets
 - [ ] Consider spring physics (future)
 
-### Phase 5: Polish
+### Phase 5: Entry Rotation
+- [ ] Implement `settle` mode (start rotated, animate to final)
+- [ ] Implement `spin` mode (full rotations during flight)
+- [ ] Implement `wobble` mode (oscillating rotation)
+- [ ] Implement `random` mode (random start rotation)
+- [ ] Integrate rotation with existing path animations
+
+### Phase 6: Polish
 - [ ] Performance optimization
 - [ ] Add debug visualization for paths
 - [ ] Documentation and examples
@@ -321,6 +494,10 @@ entry: {
 4. **Exit animations?** Should we also support exit animations for when images are removed/refreshed?
 
 5. **Interaction with resize?** When window resizes and images reposition, should they re-animate or just move?
+
+6. **Rotation + Path combinations?** Some path/rotation combos may look odd (e.g., spin + spiral). Should we warn or restrict certain combinations?
+
+7. **Rotation performance?** Wobble mode requires JS animation. Should we offer a CSS-only fallback for simpler rotation effects?
 
 ---
 
