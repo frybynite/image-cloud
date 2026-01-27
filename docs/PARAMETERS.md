@@ -930,7 +930,6 @@ Controls user interactions like clicking and zooming.
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `focus.scalePercent` | `number` | `0.8` | Target size as percentage of container. Values 0-1 are fractions (0.8 = 80%), values > 1 are treated as percentages (80 = 80%). |
-| `focus.unfocusedOpacity`| `number` | `0.3` | Opacity of non-selected images. |
 | `focus.zIndex` | `number` | `1000` | Z-index of the focused image. |
 
 **Focus Scaling Behavior:**
@@ -1329,7 +1328,6 @@ All available parameters with example values:
   "interaction": {
     "focus": {
       "scalePercent": 0.8,                      // Default. 0-1 as fraction, 1-100 as percent
-      "unfocusedOpacity": 0.3,                  // Default
       "zIndex": 1000                            // Default
     }
   },

@@ -227,14 +227,12 @@
     "focus": {
       "_title": "Focus/zoom behavior when clicking images",
       "scalePercent": "Size of focused image relative to container (default: 0.8)",
-      "unfocusedOpacity": "Transparency of non-focused images when one is focused (default: 0.3)",
       "zIndex": "Stack order of focused image (default: 1000)"
     }
   },
   "focus": {
     "_title": "Focus/zoom behavior when clicking images",
     "scalePercent": "Size of focused image relative to container (default: 0.8)",
-    "unfocusedOpacity": "Transparency of non-focused images when one is focused (default: 0.3)",
     "zIndex": "Stack order of focused image (default: 1000)"
   }
 }

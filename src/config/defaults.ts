@@ -219,7 +219,6 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   interaction: Object.freeze({
     focus: Object.freeze({
       scalePercent: 0.8,  // 80% of container height
-      unfocusedOpacity: 0.3,  // opacity of other images when one is focused
       zIndex: 1000,
       animationDuration: undefined  // Use default animation duration
     }),

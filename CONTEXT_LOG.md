@@ -561,7 +561,6 @@ All tasks 1-3 passed both reviews. Task 4 passed spec review but code quality re
 
 ```
 88 passed (14.7s)
-2 skipped (unfocusedOpacity feature not implemented)
 ```
 
 ### Test Files Created

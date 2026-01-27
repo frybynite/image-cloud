@@ -232,7 +232,6 @@ export class LegacyOptionsAdapter {
     return {
       focus: {
         scalePercent: 0.8,  // Default - old scale values don't translate directly
-        unfocusedOpacity: oldZoom.unfocusedOpacity,
         zIndex: oldZoom.focusZIndex ?? 1000
       }
     };

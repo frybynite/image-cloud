@@ -393,7 +393,7 @@ test.describe('Image Styling', () => {
       const image = page.locator('#imageCloud img').first();
       const opacity = await image.evaluate((el) => window.getComputedStyle(el).opacity);
 
-      // Opacity should be reduced (may be combined with unfocused opacity)
+      // Opacity should be reduced
       expect(parseFloat(opacity)).toBeLessThan(1);
     });
 

@@ -355,7 +355,6 @@ export interface AnimationConfig {
 
 export interface FocusInteractionConfig {
   scalePercent: number;           // Percentage of container (0-1 as fraction, 1-100 as percent)
-  unfocusedOpacity?: number;
   zIndex: number;
   animationDuration?: number;
 }
@@ -470,7 +469,6 @@ export interface LegacyAnimationConfig {
 export interface LegacyZoomConfig {
   focusScale?: number;
   mobileScale?: number;     // Deprecated: use scaleTo/scalePercent instead
-  unfocusedOpacity?: number;
   focusZIndex?: number;
 }
 

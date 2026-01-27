@@ -64,7 +64,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Lightbox mode
 - Thumbnail navigation
 - Touch gesture improvements
-- Improve focus opacity behavior: default focus opacity should be 1, animate from default opacity to focus opacity on focus, and allow separate `focusOpacity` config (in addition to existing `unfocusedOpacity`).
 - For options like image border where the border can be applied overall, or separately to top, bottom, left, right - list all the options available and discuss how we can give them overall control.
 
 ---

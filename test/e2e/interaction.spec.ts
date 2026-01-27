@@ -45,25 +45,6 @@ test.describe('User Interactions', () => {
       expect(afterBox!.height).toBeGreaterThan(beforeBox!.height);
     });
 
-    // Note: unfocusedOpacity feature exists in config but is not yet implemented in ZoomEngine
-    test.skip('unfocused images become dimmed', async ({ page }) => {
-      await page.goto('/test/fixtures/interactions.html');
-      await waitForGalleryInit(page);
-      await waitForAnimation(page, 500);
-
-      await forceClickImage(page, 0);
-      await waitForAnimation(page, 300);
-
-      // Check opacity of non-focused images
-      const secondImg = page.locator('#imageCloud img').nth(1);
-      const opacity = await secondImg.evaluate((el) =>
-        parseFloat(window.getComputedStyle(el).opacity)
-      );
-
-      expect(opacity).toBeLessThan(1);
-      expect(opacity).toBeCloseTo(0.3, 1);
-    });
-
     test('focused image has elevated z-index', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
       await waitForGalleryInit(page);
