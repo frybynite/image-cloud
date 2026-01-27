@@ -2,7 +2,8 @@
 
 A TypeScript library for creating interactive image galleries with animated scattered layouts and zoom effects. Supports multiple image sources (Google Drive, static URLs) and layout algorithms.
 
-> ⚠️ **Warning:** All minor versions of this library before 1.0 (e.g., 0.1, 0.2, ...) will include breaking changes during development. Please re-test every time before upgrading.
+> [!WARNING]
+> All minor versions of this library before 1.0 (e.g., 0.1, 0.2, ...) will include breaking changes during development. Please re-test every time before upgrading.
 
 ## Features
 
