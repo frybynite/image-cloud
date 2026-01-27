@@ -27,6 +27,7 @@ export class ImageCloud {
   private imageLayouts: ImageLayout[];
   private currentImageHeight: number;
   private currentFocusIndex: number | null;
+  private hoveredImage: { element: HTMLImageElement; layout: ImageLayout } | null;
   private resizeTimeout: number | null;
   private displayQueue: HTMLImageElement[];
   private queueInterval: number | null;
@@ -61,6 +62,7 @@ export class ImageCloud {
     this.imageLayouts = [];
     this.currentImageHeight = 225;
     this.currentFocusIndex = null;
+    this.hoveredImage = null;
     this.resizeTimeout = null;
     this.displayQueue = [];
     this.queueInterval = null;
@@ -196,6 +198,10 @@ export class ImageCloud {
         this.navigateToNextImage();
       } else if (e.key === 'ArrowLeft') {
         this.navigateToPreviousImage();
+      } else if ((e.key === 'Enter' || e.key === ' ') && this.hoveredImage) {
+        // Focus the hovered image (works whether or not another image is focused)
+        this.handleImageClick(this.hoveredImage.element, this.hoveredImage.layout);
+        e.preventDefault(); // Prevent space from scrolling the page
       }
     });
 
@@ -548,6 +554,7 @@ export class ImageCloud {
       // Hover event handlers
       // Use isInvolved() to prevent hover styles on images that are focused or animating
       img.addEventListener('mouseenter', () => {
+        this.hoveredImage = { element: img, layout };
         if (!this.zoomEngine.isInvolved(img)) {
           applyStylesToElement(img, this.hoverStyles);
           applyClassNameToElement(img, this.hoverClassName);
@@ -555,6 +562,7 @@ export class ImageCloud {
       });
 
       img.addEventListener('mouseleave', () => {
+        this.hoveredImage = null;
         if (!this.zoomEngine.isInvolved(img)) {
           applyStylesToElement(img, this.defaultStyles);
           removeClassNameFromElement(img, this.hoverClassName);
@@ -685,6 +693,7 @@ export class ImageCloud {
     this.imageElements = [];
     this.imageLayouts = [];
     this.currentFocusIndex = null;
+    this.hoveredImage = null;
     this.layoutEngine.reset();
     this.zoomEngine.reset();
     this.imagesLoaded = false;

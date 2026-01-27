@@ -17,7 +17,7 @@ Add keyboard navigation to allow users to move between images using arrow keys w
 | **Down Arrow** | Navigate down (grid/wave only) | Optional - grid layouts benefit |
 | **Home** | Jump to first image | Optional - quick access |
 | **End** | Jump to last image | Optional - quick access |
-| **Enter/Space** | Focus hovered image (when none focused) | Optional - accessibility |
+| **Enter/Space** | Focus hovered image | ✅ Implemented - works even when another image is focused |
 
 ### Minimal MVP
 - Left/Right arrows + Escape (already exists)
@@ -286,6 +286,7 @@ interface KeyboardNavigationConfig {
 - [x] **No focus behavior**: Do nothing - require click to focus first
 - [x] **Wrap around**: Yes, continuous cycling at ends
 - [x] Spatial navigation for cluster/random - deferred, using index-based for all layouts
+- [x] **Enter/Space**: Focus hovered image (works even when another image is focused)
 
 ---
 
