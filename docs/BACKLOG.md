@@ -13,6 +13,8 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
+- [ ] Review failing test: "unfocusing restores default state" - Escape key doesn't restore border to default state after unfocus.
+- [ ] Review failing test: "handles empty styling config" - Default shadow not being applied when styling config is empty.
 ---
 
 ## Planned

@@ -500,6 +500,133 @@ test.describe('Image Styling', () => {
       expect(filter).toContain('brightness');
     });
 
+    test('hover state changes opacity', async ({ page }) => {
+      await initGallery(page, {
+        default: { opacity: 0.5 },
+        hover: { opacity: 1 }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Get initial opacity (may be affected by entry animation)
+      await page.waitForTimeout(200);
+      const initialOpacity = await image.evaluate((el) => window.getComputedStyle(el).opacity);
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(200);
+
+      // Get hover opacity - should be higher than initial
+      const hoverOpacity = await image.evaluate((el) => window.getComputedStyle(el).opacity);
+      expect(parseFloat(hoverOpacity)).toBeGreaterThan(parseFloat(initialOpacity));
+    });
+
+    test('hover state applies grayscale filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { grayscale: 1 } },
+        hover: { filter: { grayscale: 0 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Get initial filter (grayscale)
+      const initialFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(initialFilter).toContain('grayscale');
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(100);
+
+      // Get hover filter (no grayscale or grayscale(0))
+      const hoverFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      // Either 'none' or grayscale(0) is acceptable
+      expect(hoverFilter === 'none' || hoverFilter.includes('grayscale(0)')).toBeTruthy();
+    });
+
+    test('hover state applies blur filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { blur: 0 } },
+        hover: { filter: { blur: 3 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(100);
+
+      const filter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(filter).toContain('blur');
+    });
+
+    test('hover state applies contrast filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { contrast: 1 } },
+        hover: { filter: { contrast: 1.5 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(100);
+
+      const filter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(filter).toContain('contrast');
+    });
+
+    test('hover state applies saturate filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { saturate: 0.5 } },
+        hover: { filter: { saturate: 1.5 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Get initial filter
+      const initialFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(initialFilter).toContain('saturate');
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(100);
+
+      const hoverFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(hoverFilter).toContain('saturate');
+    });
+
+    test('hover state applies sepia filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { sepia: 0 } },
+        hover: { filter: { sepia: 0.8 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(100);
+
+      const filter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(filter).toContain('sepia');
+    });
+
+    test('hover state applies hue-rotate filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { hueRotate: 0 } },
+        hover: { filter: { hueRotate: 180 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(100);
+
+      const filter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(filter).toContain('hue-rotate');
+    });
+
   });
 
   test.describe('Focused State', () => {
@@ -567,6 +694,118 @@ test.describe('Image Styling', () => {
       // Verify restored state
       const restoredBorder = await image.evaluate((el) => window.getComputedStyle(el).borderWidth);
       expect(restoredBorder).toBe(initialBorder);
+    });
+
+    test('focused state changes opacity', async ({ page }) => {
+      await initGallery(page, {
+        default: { opacity: 0.5 },
+        focused: { opacity: 1 }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Wait for entry animation to settle
+      await page.waitForTimeout(200);
+      const initialOpacity = await image.evaluate((el) => window.getComputedStyle(el).opacity);
+
+      // Click to focus
+      await image.click();
+      await page.waitForTimeout(400);
+
+      // Get focused opacity - should be higher than initial
+      const focusedOpacity = await image.evaluate((el) => window.getComputedStyle(el).opacity);
+      expect(parseFloat(focusedOpacity)).toBeGreaterThan(parseFloat(initialOpacity));
+    });
+
+    test('focused state applies brightness filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { brightness: 0.8 } },
+        focused: { filter: { brightness: 1.2 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Click to focus
+      await image.click();
+      await page.waitForTimeout(300);
+
+      const filter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(filter).toContain('brightness');
+    });
+
+    test('focused state applies grayscale filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { grayscale: 0.5 } },
+        focused: { filter: { grayscale: 0 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Get initial filter
+      const initialFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(initialFilter).toContain('grayscale');
+
+      // Click to focus
+      await image.click();
+      await page.waitForTimeout(300);
+
+      // Focused should have no grayscale
+      const focusedFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(focusedFilter === 'none' || focusedFilter.includes('grayscale(0)')).toBeTruthy();
+    });
+
+    test('focused state applies blur filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { blur: 2 } },
+        focused: { filter: { blur: 0 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Get initial filter (blurred)
+      const initialFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(initialFilter).toContain('blur');
+
+      // Click to focus
+      await image.click();
+      await page.waitForTimeout(300);
+
+      // Focused should have no blur
+      const focusedFilter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(focusedFilter === 'none' || focusedFilter.includes('blur(0')).toBeTruthy();
+    });
+
+    test('focused state applies contrast filter', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { contrast: 1 } },
+        focused: { filter: { contrast: 1.3 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Click to focus
+      await image.click();
+      await page.waitForTimeout(300);
+
+      const filter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(filter).toContain('contrast');
+    });
+
+    test('focused state applies multiple filters', async ({ page }) => {
+      await initGallery(page, {
+        default: { filter: { grayscale: 0.3, brightness: 0.9 } },
+        focused: { filter: { grayscale: 0, brightness: 1.1, saturate: 1.2 } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Click to focus
+      await image.click();
+      await page.waitForTimeout(300);
+
+      const filter = await image.evaluate((el) => window.getComputedStyle(el).filter);
+      expect(filter).toContain('brightness');
+      expect(filter).toContain('saturate');
     });
 
   });
