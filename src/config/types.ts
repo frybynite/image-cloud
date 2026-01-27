@@ -306,6 +306,21 @@ export interface EntryRotationConfig {
   };
 }
 
+// Entry Scale Types
+export type EntryScaleMode = 'none' | 'grow' | 'shrink' | 'pop' | 'random';
+
+export interface EntryScalePopConfig {
+  overshoot: number;      // How much to overshoot final scale (1.1-1.5, default: 1.2)
+  bounces: number;        // Number of bounces before settling (1-3, default: 1)
+}
+
+export interface EntryScaleConfig {
+  mode: EntryScaleMode;
+  startScale?: number;                        // Fixed start scale for grow/shrink (0.1-4.0)
+  range?: { min: number; max: number };       // Random range for 'random' mode
+  pop?: EntryScalePopConfig;                  // Config for 'pop' mode
+}
+
 export type EntryStartPosition =
   | 'nearest-edge'
   | 'top'
@@ -338,6 +353,7 @@ export interface EntryAnimationConfig {
   easing: string;  // CSS easing, default: 'cubic-bezier(0.25, 1, 0.5, 1)'
   path?: EntryPathConfig;  // Animation path type (linear, bounce, elastic, wave)
   rotation?: EntryRotationConfig;  // Entry rotation animation
+  scale?: EntryScaleConfig;  // Entry scale animation
 }
 
 export interface AnimationEasingConfig {

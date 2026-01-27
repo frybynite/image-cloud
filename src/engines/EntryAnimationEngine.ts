@@ -15,9 +15,11 @@ import type {
   EntryPathConfig,
   EntryPathType,
   EntryRotationConfig,
-  EntryRotationMode
+  EntryRotationMode,
+  EntryScaleConfig,
+  EntryScaleMode
 } from '../config/types';
-import { DEFAULT_PATH_CONFIG, DEFAULT_ENTRY_ROTATION } from '../config/defaults';
+import { DEFAULT_PATH_CONFIG, DEFAULT_ENTRY_ROTATION, DEFAULT_ENTRY_SCALE } from '../config/defaults';
 import { requiresJSAnimation } from './PathAnimator';
 
 /** Layout-aware default start positions */
@@ -49,6 +51,7 @@ export class EntryAnimationEngine {
   private resolvedStartPosition: EntryStartPosition;
   private pathConfig: EntryPathConfig;
   private rotationConfig: EntryRotationConfig;
+  private scaleConfig: EntryScaleConfig;
 
   constructor(config: EntryAnimationConfig, layoutAlgorithm: LayoutAlgorithm) {
     this.config = config;
@@ -62,6 +65,9 @@ export class EntryAnimationEngine {
 
     // Resolve rotation config
     this.rotationConfig = config.rotation || DEFAULT_ENTRY_ROTATION;
+
+    // Resolve scale config
+    this.scaleConfig = config.scale || DEFAULT_ENTRY_SCALE;
   }
 
   /**
@@ -303,7 +309,8 @@ export class EntryAnimationEngine {
     finalScale: number,
     imageWidth?: number,
     imageHeight?: number,
-    startRotation?: number
+    startRotation?: number,
+    startScale?: number
   ): string {
     // Calculate translation from final to start position
     const translateX = startPosition.x - finalPosition.x;
@@ -311,6 +318,9 @@ export class EntryAnimationEngine {
 
     // Use start rotation if provided, otherwise use final rotation
     const rotation = startRotation !== undefined ? startRotation : finalRotation;
+
+    // Use start scale if provided, otherwise use final scale
+    const scale = startScale !== undefined ? startScale : finalScale;
 
     // Use pixel offset if dimensions provided
     const centerOffsetX = imageWidth !== undefined ? -imageWidth / 2 : 0;
@@ -324,8 +334,8 @@ export class EntryAnimationEngine {
       return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(0)`;
     }
 
-    // Standard entry: translate from edge, maintain rotation and scale
-    return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(${finalScale})`;
+    // Standard entry: translate from edge, with configured start scale
+    return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(${scale})`;
   }
 
   /**
@@ -510,5 +520,154 @@ export class EntryAnimationEngine {
     const wobbleOffset = amplitude * oscillation * decayFactor;
 
     return finalRotation + wobbleOffset;
+  }
+
+  /**
+   * Get the scale configuration
+   */
+  getScaleConfig(): EntryScaleConfig {
+    return this.scaleConfig;
+  }
+
+  /**
+   * Get the scale mode
+   */
+  getScaleMode(): EntryScaleMode {
+    return this.scaleConfig.mode;
+  }
+
+  /**
+   * Calculate the starting scale for an entry animation
+   * @param finalScale - The final scale from the layout
+   * @returns The starting scale
+   */
+  calculateStartScale(finalScale: number): number {
+    const mode = this.scaleConfig.mode;
+
+    switch (mode) {
+      case 'none':
+        // No scale animation - start at final scale
+        return finalScale;
+
+      case 'grow': {
+        // Start smaller, grow to final
+        const startScale = this.scaleConfig.startScale ?? 0.3;
+        return startScale * finalScale;  // Apply relative to final scale
+      }
+
+      case 'shrink': {
+        // Start larger, shrink to final
+        const startScale = this.scaleConfig.startScale ?? 1.5;
+        return startScale * finalScale;  // Apply relative to final scale
+      }
+
+      case 'pop':
+        // Pop mode uses JS animation, start at final scale
+        // (the overshoot/bounce is handled in the animation tick)
+        return finalScale;
+
+      case 'random': {
+        // Random start scale in configured range
+        const range = this.scaleConfig.range ?? { min: 0.5, max: 1.0 };
+        const randomFactor = range.min + Math.random() * (range.max - range.min);
+        return randomFactor * finalScale;
+      }
+
+      default:
+        return finalScale;
+    }
+  }
+
+  /**
+   * Check if the current scale mode requires JavaScript animation
+   * (as opposed to CSS transitions)
+   */
+  requiresJSScale(): boolean {
+    return this.scaleConfig.mode === 'pop';
+  }
+
+  /**
+   * Calculate pop scale for a given animation progress
+   * @param progress - Animation progress from 0 to 1
+   * @param finalScale - The final scale value
+   * @returns The current scale value with bounce effect
+   */
+  calculatePopScale(progress: number, finalScale: number): number {
+    if (this.scaleConfig.mode !== 'pop') {
+      return finalScale;
+    }
+
+    const popConfig = this.scaleConfig.pop || {
+      overshoot: 1.2,
+      bounces: 1
+    };
+
+    const { overshoot, bounces } = popConfig;
+
+    // Create keyframes for bounce effect
+    // Similar to bounce path but for scale
+    const keyframes = this.generateScaleBounceKeyframes(bounces, overshoot);
+
+    // Find current segment
+    let currentScale = finalScale;
+    for (let i = 0; i < keyframes.length; i++) {
+      if (progress <= keyframes[i].time) {
+        const prevTime = i === 0 ? 0 : keyframes[i - 1].time;
+        const prevScale = i === 0 ? finalScale : keyframes[i - 1].scale;
+        const segmentProgress = (progress - prevTime) / (keyframes[i].time - prevTime);
+        // Smooth easing within segment
+        const easedProgress = this.easeOutQuad(segmentProgress);
+        currentScale = prevScale + (keyframes[i].scale - prevScale) * easedProgress;
+        break;
+      }
+    }
+
+    return currentScale * finalScale;
+  }
+
+  /**
+   * Generate keyframes for scale bounce animation
+   */
+  private generateScaleBounceKeyframes(
+    bounces: number,
+    overshoot: number
+  ): Array<{ time: number; scale: number }> {
+    const keyframes: Array<{ time: number; scale: number }> = [];
+
+    // Reach overshoot at 50% of animation
+    keyframes.push({ time: 0.5, scale: overshoot });
+
+    // Add bounces
+    let currentOvershoot = overshoot;
+    const bounceDecay = 0.5;  // Each bounce is 50% of previous
+    const remainingTime = 0.5;
+    const bounceTime = remainingTime / (bounces * 2);
+
+    let currentTime = 0.5;
+    for (let i = 0; i < bounces; i++) {
+      // Undershoot (go below 1)
+      const undershoot = 1 - (currentOvershoot - 1) * bounceDecay;
+      currentTime += bounceTime;
+      keyframes.push({ time: currentTime, scale: undershoot });
+
+      // Overshoot again (smaller)
+      currentOvershoot = 1 + (currentOvershoot - 1) * bounceDecay * bounceDecay;
+      currentTime += bounceTime;
+      if (i < bounces - 1) {
+        keyframes.push({ time: currentTime, scale: currentOvershoot });
+      }
+    }
+
+    // Final settle
+    keyframes.push({ time: 1, scale: 1 });
+
+    return keyframes;
+  }
+
+  /**
+   * Easing function for smooth transitions
+   */
+  private easeOutQuad(t: number): number {
+    return 1 - (1 - t) * (1 - t);
   }
 }

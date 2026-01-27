@@ -22,6 +22,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
 - [Entry Animation](#entry-animation)
 - [Entry Animation Paths](#entry-animation-paths)
 - [Entry Rotation Animation](#entry-rotation-animation)
+- [Entry Scale Animation](#entry-scale-animation)
 - [Interaction Configuration](#5-interaction-configuration-interaction)
 - [Rendering Configuration](#6-rendering-configuration-rendering)
 - [Styling Configuration](#7-styling-configuration-styling)
@@ -1082,6 +1083,156 @@ animation: {
 
 ---
 
+## Entry Scale Animation
+
+Controls how images scale during their entry animation. By default, images maintain their final scale throughout the animation (except for 'center' start position which scales from 0). Entry scale modes add dynamic scaling effects as images fly in.
+
+### Configuration Structure
+
+```typescript
+animation: {
+  entry: {
+    start: { position: 'nearest-edge' },
+    timing: { duration: 600, stagger: 150 },
+    path: { type: 'bounce' },
+    scale: {
+      mode: 'grow',                         // Scale mode
+      startScale: 0.3                       // For grow/shrink modes
+    }
+  }
+}
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `mode` | `string` | `'none'` | Scale animation mode |
+| `startScale` | `number` | `0.3` (grow) / `1.5` (shrink) | Starting scale multiplier 0.1-4.0 (for grow/shrink modes) |
+| `range.min` | `number` | `0.5` | Minimum scale for random mode |
+| `range.max` | `number` | `1.0` | Maximum scale for random mode |
+| `pop.overshoot` | `number` | `1.2` | How much to overshoot final scale (1.05-1.5) |
+| `pop.bounces` | `number` | `1` | Number of bounces before settling (1-3) |
+
+### Scale Modes
+
+| Mode | Description | Best For |
+|------|-------------|----------|
+| `none` | No scale change (default) | Clean, professional animations |
+| `grow` | Start smaller, grow to final size | Images "popping in" |
+| `shrink` | Start larger, shrink to final size | Images compressing into place |
+| `pop` | Overshoot then settle back | Bouncy, playful effect |
+| `random` | Random start scale in range | Organic, varied feel |
+
+### Grow Mode
+
+Images start at a smaller scale and grow to their final size. Creates a "pop in" effect.
+
+```typescript
+scale: {
+  mode: 'grow',
+  startScale: 0.3                    // Start at 30% of final size (default)
+}
+```
+
+### Shrink Mode
+
+Images start at a larger scale and shrink to their final size. Creates a "compression" effect.
+
+```typescript
+scale: {
+  mode: 'shrink',
+  startScale: 1.5                    // Start at 150% of final size (default)
+}
+```
+
+### Pop Mode
+
+Images reach their final size, overshoot slightly, then bounce back to settle. Works great with bounce or elastic paths.
+
+```typescript
+scale: {
+  mode: 'pop',
+  pop: {
+    overshoot: 1.2,                  // Overshoot to 120% (default)
+    bounces: 1                       // One bounce (default)
+  }
+}
+```
+
+### Random Mode
+
+Each image starts at a random scale within the configured range, creating an organic, varied feel.
+
+```typescript
+scale: {
+  mode: 'random',
+  range: {
+    min: 0.5,                        // Minimum 50% of final size
+    max: 1.0                         // Maximum 100% of final size
+  }
+}
+```
+
+### Examples
+
+**Growing pop-in effect:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'center' },
+    timing: { duration: 600 },
+    scale: {
+      mode: 'grow',
+      startScale: 0.2
+    }
+  }
+}
+```
+
+**Bouncy pop effect:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'nearest-edge' },
+    timing: { duration: 800 },
+    path: { type: 'bounce' },
+    scale: {
+      mode: 'pop',
+      pop: { overshoot: 1.3, bounces: 2 }
+    }
+  }
+}
+```
+
+**Combined rotation and scale:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'circular' },
+    timing: { duration: 1000, stagger: 100 },
+    path: { type: 'elastic' },
+    rotation: {
+      mode: 'spin',
+      spinCount: 1
+    },
+    scale: {
+      mode: 'grow',
+      startScale: 0.3
+    }
+  }
+}
+```
+
+### Performance Notes
+
+- **none/grow/shrink/random**: Scale is interpolated alongside position (efficient)
+- **pop**: Requires JavaScript animation per frame (slightly more CPU)
+- Combining scale with rotation and path animations works well but uses more CPU
+- For galleries with 50+ images, consider simpler scale modes
+
+---
+
 ### 5. Interaction Configuration (`interaction`)
 
 Controls user interactions like clicking and zooming.
@@ -1492,6 +1643,18 @@ All available parameters with example values:
         "wobble": {
           "amplitude": 15,                      // Default. Max wobble angle in degrees
           "frequency": 3                        // Default. Number of oscillations
+        }
+      },
+      "scale": {
+        "mode": "none",                         // Default. "none" | "grow" | "shrink" | "pop" | "random"
+        "startScale": 0.3,                      // Default for grow mode. Start scale multiplier
+        "range": {                              // For random mode
+          "min": 0.5,                           // Default. Min scale
+          "max": 1.0                            // Default. Max scale
+        },
+        "pop": {
+          "overshoot": 1.2,                     // Default. How much to overshoot (1.05-1.5)
+          "bounces": 1                          // Default. Number of bounces (1-3)
         }
       }
     }

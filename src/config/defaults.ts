@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
+import type { ImageCloudConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -57,6 +57,24 @@ export const DEFAULT_PATH_CONFIG: EntryPathConfig = Object.freeze({
  */
 export const DEFAULT_ENTRY_ROTATION: EntryRotationConfig = Object.freeze({
   mode: 'none' as const
+});
+
+/**
+ * Default entry scale configuration (no scale animation)
+ */
+export const DEFAULT_ENTRY_SCALE: EntryScaleConfig = Object.freeze({
+  mode: 'none' as const
+});
+
+/**
+ * Entry scale presets for common effects
+ */
+export const ENTRY_SCALE_PRESETS = Object.freeze({
+  grow: Object.freeze({ mode: 'grow' as const, startScale: 0.3 }),
+  shrink: Object.freeze({ mode: 'shrink' as const, startScale: 1.5 }),
+  pop: Object.freeze({ mode: 'pop' as const, pop: Object.freeze({ overshoot: 1.2, bounces: 1 }) }),
+  randomSubtle: Object.freeze({ mode: 'random' as const, range: Object.freeze({ min: 0.7, max: 1.0 }) }),
+  randomWide: Object.freeze({ mode: 'random' as const, range: Object.freeze({ min: 0.3, max: 1.5 }) })
 });
 
 /**
@@ -219,7 +237,8 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
       }),
       easing: 'cubic-bezier(0.25, 1, 0.5, 1)',  // smooth deceleration
       path: DEFAULT_PATH_CONFIG,
-      rotation: DEFAULT_ENTRY_ROTATION
+      rotation: DEFAULT_ENTRY_ROTATION,
+      scale: DEFAULT_ENTRY_SCALE
     })
   }),
 
@@ -605,7 +624,10 @@ export function mergeConfig(
           : DEFAULT_CONFIG.animation.entry!.path,
         rotation: userConfig.animation.entry.rotation
           ? { ...DEFAULT_ENTRY_ROTATION, ...userConfig.animation.entry.rotation }
-          : DEFAULT_CONFIG.animation.entry!.rotation
+          : DEFAULT_CONFIG.animation.entry!.rotation,
+        scale: userConfig.animation.entry.scale
+          ? { ...DEFAULT_ENTRY_SCALE, ...userConfig.animation.entry.scale }
+          : DEFAULT_CONFIG.animation.entry!.scale
       };
     }
   }

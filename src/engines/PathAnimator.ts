@@ -18,7 +18,8 @@ import type {
   WavePathConfig,
   EntryPathConfig,
   EntryPathType,
-  EntryRotationConfig
+  EntryRotationConfig,
+  EntryScaleConfig
 } from '../config/types';
 import {
   resolveBounceConfig,
@@ -40,11 +41,14 @@ export interface PathAnimationOptions {
   imageWidth: number;
   imageHeight: number;
   rotation: number;           // Final rotation
-  scale: number;
+  scale: number;              // Final scale
   onComplete?: () => void;
   // Rotation animation options
   rotationConfig?: EntryRotationConfig;
   startRotation?: number;     // Starting rotation (if different from final)
+  // Scale animation options
+  scaleConfig?: EntryScaleConfig;
+  startScale?: number;        // Starting scale (if different from final)
 }
 
 /**
@@ -265,6 +269,59 @@ function calculateWobbleRotation(
 }
 
 /**
+ * Calculate pop scale for a given animation progress
+ */
+function calculatePopScale(
+  progress: number,
+  finalScale: number,
+  popConfig: { overshoot: number; bounces: number }
+): number {
+  const { overshoot, bounces } = popConfig;
+
+  // Generate keyframes for bounce effect
+  const keyframes: Array<{ time: number; scale: number }> = [];
+
+  // Reach overshoot at 50% of animation
+  keyframes.push({ time: 0.5, scale: overshoot });
+
+  // Add bounces
+  let currentOvershoot = overshoot;
+  const bounceDecay = 0.5;
+  const remainingTime = 0.5;
+  const bounceTime = remainingTime / (bounces * 2);
+
+  let currentTime = 0.5;
+  for (let i = 0; i < bounces; i++) {
+    const undershoot = 1 - (currentOvershoot - 1) * bounceDecay;
+    currentTime += bounceTime;
+    keyframes.push({ time: currentTime, scale: undershoot });
+
+    currentOvershoot = 1 + (currentOvershoot - 1) * bounceDecay * bounceDecay;
+    currentTime += bounceTime;
+    if (i < bounces - 1) {
+      keyframes.push({ time: currentTime, scale: currentOvershoot });
+    }
+  }
+
+  keyframes.push({ time: 1, scale: 1 });
+
+  // Find current segment
+  let currentScale = 1;
+  for (let i = 0; i < keyframes.length; i++) {
+    if (progress <= keyframes[i].time) {
+      const prevTime = i === 0 ? 0 : keyframes[i - 1].time;
+      const prevScale = i === 0 ? 1 : keyframes[i - 1].scale;
+      const segmentProgress = (progress - prevTime) / (keyframes[i].time - prevTime);
+      const easedProgress = easeOutQuad(segmentProgress);
+      currentScale = prevScale + (keyframes[i].scale - prevScale) * easedProgress;
+      break;
+    }
+  }
+
+  return currentScale * finalScale;
+}
+
+/**
  * Animate an element along a path using requestAnimationFrame
  */
 export function animatePath(options: PathAnimationOptions): void {
@@ -277,10 +334,12 @@ export function animatePath(options: PathAnimationOptions): void {
     imageWidth,
     imageHeight,
     rotation: finalRotation,
-    scale,
+    scale: finalScale,
     onComplete,
     rotationConfig,
-    startRotation
+    startRotation,
+    scaleConfig,
+    startScale
   } = options;
 
   const pathType = pathConfig.type;
@@ -291,8 +350,14 @@ export function animatePath(options: PathAnimationOptions): void {
   const wobbleConfig = rotationConfig?.wobble || { amplitude: 15, frequency: 3, decay: true };
   const needsRotationAnimation = animateRotation || isWobbleMode;
 
-  // For linear/arc paths WITHOUT rotation animation, use CSS transitions (handled elsewhere)
-  if ((pathType === 'linear' || pathType === 'arc') && !needsRotationAnimation) {
+  // Determine if we need to animate scale
+  const animateScale = startScale !== undefined && startScale !== finalScale;
+  const isPopMode = scaleConfig?.mode === 'pop';
+  const popConfig = scaleConfig?.pop || { overshoot: 1.2, bounces: 1 };
+  const needsScaleAnimation = animateScale || isPopMode;
+
+  // For linear/arc paths WITHOUT rotation or scale animation, use CSS transitions (handled elsewhere)
+  if ((pathType === 'linear' || pathType === 'arc') && !needsRotationAnimation && !needsScaleAnimation) {
     if (onComplete) onComplete();
     return;
   }
@@ -349,29 +414,36 @@ export function animatePath(options: PathAnimationOptions): void {
     // Calculate current rotation
     let currentRotation: number;
     if (isWobbleMode) {
-      // Wobble mode: oscillating rotation
       currentRotation = calculateWobbleRotation(t, finalRotation, wobbleConfig);
     } else if (animateRotation) {
-      // Interpolate from start to final rotation
       currentRotation = lerp(startRotation!, finalRotation, t);
     } else {
-      // No rotation animation
       currentRotation = finalRotation;
+    }
+
+    // Calculate current scale
+    let currentScale: number;
+    if (isPopMode) {
+      currentScale = calculatePopScale(t, finalScale, popConfig);
+    } else if (animateScale) {
+      currentScale = lerp(startScale!, finalScale, t);
+    } else {
+      currentScale = finalScale;
     }
 
     // Apply transform
     element.style.transform =
       `translate(${centerOffsetX}px, ${centerOffsetY}px) ` +
       `translate(${translateX}px, ${translateY}px) ` +
-      `rotate(${currentRotation}deg) scale(${scale})`;
+      `rotate(${currentRotation}deg) scale(${currentScale})`;
 
     if (t < 1) {
       requestAnimationFrame(tick);
     } else {
-      // Ensure we end exactly at the final position and rotation
+      // Ensure we end exactly at the final position, rotation, and scale
       element.style.transform =
         `translate(${centerOffsetX}px, ${centerOffsetY}px) ` +
-        `rotate(${finalRotation}deg) scale(${scale})`;
+        `rotate(${finalRotation}deg) scale(${finalScale})`;
       if (onComplete) onComplete();
     }
   }

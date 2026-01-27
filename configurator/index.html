@@ -1633,50 +1633,103 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="control-row" id="spin-count-row" style="display: none;">
-                                <input type="checkbox" class="control-checkbox" id="enable-spin-count" checked>
-                                <label class="control-label" data-label="Spin Count" data-path="entry.rotation.spinCount">Spin Count</label>
-                                <div class="control-input">
-                                    <input type="number" id="entry-spin-count" value="1" min="1" max="5" step="1">
-                                    <span class="value-display">rotations</span>
+                            <div class="subsection-content" id="rotation-options-content">
+                                <div class="control-row" id="spin-count-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-spin-count" checked>
+                                    <label class="control-label" data-label="Spin Count" data-path="entry.rotation.spinCount">Spin Count</label>
+                                    <div class="control-input">
+                                        <input type="number" id="entry-spin-count" value="1" min="1" max="5" step="1">
+                                        <span class="value-display">rotations</span>
+                                    </div>
+                                </div>
+                                <div class="control-row" id="spin-direction-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-spin-direction" checked>
+                                    <label class="control-label" data-label="Direction" data-path="entry.rotation.direction">Direction</label>
+                                    <div class="control-input">
+                                        <select id="entry-spin-direction">
+                                            <option value="clockwise">Clockwise</option>
+                                            <option value="counterclockwise">Counter-clockwise</option>
+                                            <option value="auto">Auto</option>
+                                            <option value="random">Random</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-row" id="settle-min-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-settle-range" checked>
+                                    <label class="control-label" data-label="Start Range" data-path="entry.rotation.startRotation">Start Range</label>
+                                    <div class="control-input">
+                                        <input type="number" id="entry-settle-min" value="-45" min="-180" max="0" step="5">
+                                        <span class="value-display">to</span>
+                                        <input type="number" id="entry-settle-max" value="45" min="0" max="180" step="5">
+                                        <span class="value-display">deg</span>
+                                    </div>
+                                </div>
+                                <div class="control-row" id="wobble-amplitude-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-wobble-config" checked>
+                                    <label class="control-label" data-label="Wobble Amplitude" data-path="entry.rotation.wobble.amplitude">Wobble Amplitude</label>
+                                    <div class="control-input">
+                                        <input type="number" id="entry-wobble-amplitude" value="15" min="5" max="45" step="5">
+                                        <span class="value-display">deg</span>
+                                    </div>
+                                </div>
+                                <div class="control-row" id="wobble-frequency-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-wobble-frequency" checked>
+                                    <label class="control-label" data-label="Wobble Frequency" data-path="entry.rotation.wobble.frequency">Wobble Frequency</label>
+                                    <div class="control-input">
+                                        <input type="number" id="entry-wobble-frequency" value="3" min="1" max="8" step="1">
+                                        <span class="value-display">oscillations</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="control-row" id="spin-direction-row" style="display: none;">
-                                <input type="checkbox" class="control-checkbox" id="enable-spin-direction" checked>
-                                <label class="control-label" data-label="Direction" data-path="entry.rotation.direction">Direction</label>
+                            <!-- Entry Scale -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-scale">
+                                <label class="control-label" data-label="Scale Mode" data-path="entry.scale.mode">Scale Mode</label>
                                 <div class="control-input">
-                                    <select id="entry-spin-direction">
-                                        <option value="clockwise">Clockwise</option>
-                                        <option value="counterclockwise">Counter-clockwise</option>
-                                        <option value="auto">Auto</option>
+                                    <select id="entry-scale-mode" onchange="updateScaleOptions()">
+                                        <option value="none">None (default)</option>
+                                        <option value="grow">Grow</option>
+                                        <option value="shrink">Shrink</option>
+                                        <option value="pop">Pop</option>
                                         <option value="random">Random</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="control-row" id="settle-min-row" style="display: none;">
-                                <input type="checkbox" class="control-checkbox" id="enable-settle-range" checked>
-                                <label class="control-label" data-label="Start Range" data-path="entry.rotation.startRotation">Start Range</label>
-                                <div class="control-input">
-                                    <input type="number" id="entry-settle-min" value="-45" min="-180" max="0" step="5">
-                                    <span class="value-display">to</span>
-                                    <input type="number" id="entry-settle-max" value="45" min="0" max="180" step="5">
-                                    <span class="value-display">deg</span>
+                            <div class="subsection-content" id="scale-options-content">
+                                <div class="control-row" id="scale-start-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-scale-start" checked>
+                                    <label class="control-label" data-label="Start Scale" data-path="entry.scale.startScale">Start Scale</label>
+                                    <div class="control-input">
+                                        <span class="value-display">0.3</span>
+                                        <input type="range" id="entry-scale-start" min="0.1" max="4.0" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="control-row" id="wobble-amplitude-row" style="display: none;">
-                                <input type="checkbox" class="control-checkbox" id="enable-wobble-config" checked>
-                                <label class="control-label" data-label="Wobble Amplitude" data-path="entry.rotation.wobble.amplitude">Wobble Amplitude</label>
-                                <div class="control-input">
-                                    <input type="number" id="entry-wobble-amplitude" value="15" min="5" max="45" step="5">
-                                    <span class="value-display">deg</span>
+                                <div class="control-row" id="scale-pop-overshoot-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-pop-overshoot" checked>
+                                    <label class="control-label" data-label="Pop Overshoot" data-path="entry.scale.pop.overshoot">Pop Overshoot</label>
+                                    <div class="control-input">
+                                        <span class="value-display">1.2</span>
+                                        <input type="range" id="entry-pop-overshoot" min="1.05" max="1.5" step="0.05" value="1.2" oninput="updateRangeDisplay(this)">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="control-row" id="wobble-frequency-row" style="display: none;">
-                                <input type="checkbox" class="control-checkbox" id="enable-wobble-frequency" checked>
-                                <label class="control-label" data-label="Wobble Frequency" data-path="entry.rotation.wobble.frequency">Wobble Frequency</label>
-                                <div class="control-input">
-                                    <input type="number" id="entry-wobble-frequency" value="3" min="1" max="8" step="1">
-                                    <span class="value-display">oscillations</span>
+                                <div class="control-row" id="scale-pop-bounces-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-pop-bounces" checked>
+                                    <label class="control-label" data-label="Pop Bounces" data-path="entry.scale.pop.bounces">Pop Bounces</label>
+                                    <div class="control-input">
+                                        <input type="number" id="entry-pop-bounces" value="1" min="1" max="3" step="1">
+                                        <span class="value-display">bounces</span>
+                                    </div>
+                                </div>
+                                <div class="control-row" id="scale-random-min-row" style="display: none;">
+                                    <input type="checkbox" class="control-checkbox" id="enable-scale-range" checked>
+                                    <label class="control-label" data-label="Random Range" data-path="entry.scale.range">Random Range</label>
+                                    <div class="control-input">
+                                        <span class="value-display">0.5</span>
+                                        <input type="range" id="entry-scale-random-min" min="0.1" max="1.0" step="0.1" value="0.5" oninput="updateRangeDisplay(this)">
+                                        <span class="value-display">to</span>
+                                        <span class="value-display">1.0</span>
+                                        <input type="range" id="entry-scale-random-max" min="0.5" max="4.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2663,6 +2716,37 @@
             scheduleAutoApply();
         };
 
+        // Update scale options visibility based on selected scale mode
+        window.updateScaleOptions = function() {
+            const scaleMode = document.getElementById('entry-scale-mode').value;
+
+            // Hide all scale-specific rows first
+            document.getElementById('scale-start-row').style.display = 'none';
+            document.getElementById('scale-pop-overshoot-row').style.display = 'none';
+            document.getElementById('scale-pop-bounces-row').style.display = 'none';
+            document.getElementById('scale-random-min-row').style.display = 'none';
+
+            // Show relevant rows based on mode
+            if (scaleMode === 'grow') {
+                document.getElementById('scale-start-row').style.display = 'flex';
+                // Set default for grow mode
+                document.getElementById('entry-scale-start').value = '0.3';
+                updateRangeDisplay(document.getElementById('entry-scale-start'));
+            } else if (scaleMode === 'shrink') {
+                document.getElementById('scale-start-row').style.display = 'flex';
+                // Set default for shrink mode
+                document.getElementById('entry-scale-start').value = '1.5';
+                updateRangeDisplay(document.getElementById('entry-scale-start'));
+            } else if (scaleMode === 'pop') {
+                document.getElementById('scale-pop-overshoot-row').style.display = 'flex';
+                document.getElementById('scale-pop-bounces-row').style.display = 'flex';
+            } else if (scaleMode === 'random') {
+                document.getElementById('scale-random-min-row').style.display = 'flex';
+            }
+
+            scheduleAutoApply();
+        };
+
         // Schedule auto-apply with debouncing
         function scheduleAutoApply() {
             clearTimeout(debounceTimer);
@@ -2960,6 +3044,45 @@
                     }
 
                     entry.rotation = rotation;
+                }
+            }
+
+            // Scale configuration
+            const scaleEnabled = document.getElementById('enable-entry-scale').checked;
+            if (scaleEnabled) {
+                const scaleMode = document.getElementById('entry-scale-mode').value;
+                if (scaleMode !== 'none') {
+                    const scale = { mode: scaleMode };
+
+                    if (scaleMode === 'grow' || scaleMode === 'shrink') {
+                        const startScaleEnabled = document.getElementById('enable-scale-start').checked;
+                        if (startScaleEnabled) {
+                            scale.startScale = parseFloat(document.getElementById('entry-scale-start').value);
+                        }
+                    } else if (scaleMode === 'pop') {
+                        const pop = {};
+                        const overshootEnabled = document.getElementById('enable-pop-overshoot').checked;
+                        if (overshootEnabled) {
+                            pop.overshoot = parseFloat(document.getElementById('entry-pop-overshoot').value);
+                        }
+                        const bouncesEnabled = document.getElementById('enable-pop-bounces').checked;
+                        if (bouncesEnabled) {
+                            pop.bounces = parseInt(document.getElementById('entry-pop-bounces').value);
+                        }
+                        if (Object.keys(pop).length > 0) {
+                            scale.pop = pop;
+                        }
+                    } else if (scaleMode === 'random') {
+                        const rangeEnabled = document.getElementById('enable-scale-range').checked;
+                        if (rangeEnabled) {
+                            scale.range = {
+                                min: parseFloat(document.getElementById('entry-scale-random-min').value),
+                                max: parseFloat(document.getElementById('entry-scale-random-max').value)
+                            };
+                        }
+                    }
+
+                    entry.scale = scale;
                 }
             }
 
