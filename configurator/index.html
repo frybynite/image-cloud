@@ -723,6 +723,11 @@
             pointer-events: none;
         }
 
+        /* Allow tooltips on labels even when parent is disabled */
+        .subsection-content.disabled [data-path] {
+            pointer-events: auto;
+        }
+
         /* Tooltip for label descriptions */
         .tooltip {
             position: absolute;
@@ -1145,12 +1150,12 @@
                             <h5 class="control-group-title" data-label="Adaptive Sizing" data-path="layout.sizing.adaptive">Adaptive Sizing</h5>
                             <div class="subsection-toggle">
                                 <input type="checkbox" id="enable-adaptive" checked onchange="toggleSubsection('adaptive-content', this.checked)">
-                                <label for="enable-adaptive" data-label="Enabled" data-path="enabled">Enabled</label>
+                                <label for="enable-adaptive" data-label="Enabled" data-path="adaptive.enabled">Enabled</label>
                             </div>
                             <div class="subsection-content" id="adaptive-content">
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-adaptive-minSize">
-                                    <label class="control-label" data-label="Min Size" data-path="minSize">Min Size</label>
+                                    <label class="control-label" data-label="Min Size" data-path="adaptive.minSize">Min Size</label>
                                     <div class="control-input">
                                         <input type="number" id="adaptive-minSize" value="50" min="20" max="200">
                                         <span class="value-display">px</span>
@@ -1158,7 +1163,7 @@
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-adaptive-maxSize">
-                                    <label class="control-label" data-label="Max Size" data-path="maxSize">Max Size</label>
+                                    <label class="control-label" data-label="Max Size" data-path="adaptive.maxSize">Max Size</label>
                                     <div class="control-input">
                                         <input type="number" id="adaptive-maxSize" value="400" min="100" max="800">
                                         <span class="value-display">px</span>
@@ -1172,7 +1177,7 @@
                             <h5 class="control-group-title" data-label="Layout Controls" data-path="layout">Layout Controls</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-layout-coverage">
-                                <label class="control-label" data-label="Target Coverage" data-path="targetCoverage">Target Coverage</label>
+                                <label class="control-label" data-label="Target Coverage" data-path="layout.targetCoverage">Target Coverage</label>
                                 <div class="control-input">
                                     <span class="value-display">0.6</span>
                                     <input type="range" id="layout-coverage" min="0.3" max="0.9" step="0.05" value="0.6" oninput="updateRangeDisplay(this)">
@@ -1180,7 +1185,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-layout-density">
-                                <label class="control-label" data-label="Density Factor" data-path="densityFactor">Density Factor</label>
+                                <label class="control-label" data-label="Density Factor" data-path="layout.densityFactor">Density Factor</label>
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
                                     <input type="range" id="layout-density" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
@@ -1193,7 +1198,7 @@
                             <h5 class="control-group-title" data-label="Spacing" data-path="layout.spacing">Spacing</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-spacing-padding">
-                                <label class="control-label" data-label="Padding" data-path="padding">Padding</label>
+                                <label class="control-label" data-label="Padding" data-path="spacing.padding">Padding</label>
                                 <div class="control-input">
                                     <input type="number" id="spacing-padding" value="50" min="0" max="200">
                                     <span class="value-display">px</span>
@@ -1201,7 +1206,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-spacing-minGap">
-                                <label class="control-label" data-label="Min Gap" data-path="minGap">Min Gap</label>
+                                <label class="control-label" data-label="Min Gap" data-path="spacing.minGap">Min Gap</label>
                                 <div class="control-input">
                                     <input type="number" id="spacing-minGap" value="20" min="0" max="100">
                                     <span class="value-display">px</span>
@@ -1224,7 +1229,7 @@
                             <h5 class="control-group-title" data-label="Sizing" data-path="image.sizing">Sizing</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-baseHeight">
-                                <label class="control-label" data-label="Base Height" data-path="baseHeight">Base Height</label>
+                                <label class="control-label" data-label="Base Height" data-path="image.sizing.baseHeight">Base Height</label>
                                 <div class="control-input">
                                     <input type="number" id="image-baseHeight" value="200" min="50" max="500">
                                     <span class="value-display">px</span>
@@ -1232,7 +1237,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-min">
-                                <label class="control-label" data-label="Variance Min" data-path="variance.min">Variance Min</label>
+                                <label class="control-label" data-label="Variance Min" data-path="image.sizing.variance.min">Variance Min</label>
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
                                     <input type="range" id="image-variance-min" min="0.5" max="1.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
@@ -1240,7 +1245,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-max">
-                                <label class="control-label" data-label="Variance Max" data-path="variance.max">Variance Max</label>
+                                <label class="control-label" data-label="Variance Max" data-path="image.sizing.variance.max">Variance Max</label>
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
                                     <input type="range" id="image-variance-max" min="1.0" max="2.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
@@ -1248,7 +1253,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-scaleDecay">
-                                <label class="control-label" data-label="Scale Decay" data-path="scaleDecay">Scale Decay</label>
+                                <label class="control-label" data-label="Scale Decay" data-path="image.sizing.scaleDecay">Scale Decay</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="image-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
@@ -1261,7 +1266,7 @@
                             <h5 class="control-group-title" data-label="Rotation" data-path="image.rotation">Rotation</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-rotation-mode" checked>
-                                <label class="control-label" data-label="Mode" data-path="mode">Mode</label>
+                                <label class="control-label" data-label="Mode" data-path="image.rotation.mode">Mode</label>
                                 <div class="control-input">
                                     <select id="image-rotation-mode" onchange="toggleRotationRange()">
                                         <option value="none">None</option>
@@ -1273,7 +1278,7 @@
                             <div id="rotation-range-controls" style="display: none;">
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-min">
-                                    <label class="control-label" data-label="Min Degrees" data-path="range.min">Min Degrees</label>
+                                    <label class="control-label" data-label="Min Degrees" data-path="image.rotation.range.min">Min Degrees</label>
                                     <div class="control-input">
                                         <span class="value-display">-15°</span>
                                         <input type="range" id="image-rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
@@ -1281,7 +1286,7 @@
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-max">
-                                    <label class="control-label" data-label="Max Degrees" data-path="range.max">Max Degrees</label>
+                                    <label class="control-label" data-label="Max Degrees" data-path="image.rotation.range.max">Max Degrees</label>
                                     <div class="control-input">
                                         <span class="value-display">15°</span>
                                         <input type="range" id="image-rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
@@ -1314,7 +1319,7 @@
                             <!-- Border -->
                             <div class="control-row" data-property="border.width">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-width">
-                                <label class="control-label" data-label="Border Width" data-path="border.width">Border Width</label>
+                                <label class="control-label" data-label="Border Width" data-path="styling.border.width">Border Width</label>
                                 <div class="control-input">
                                     <input type="number" id="style-border-width" value="0" min="0" max="20">
                                     <span class="value-display">px</span>
@@ -1322,14 +1327,14 @@
                             </div>
                             <div class="control-row" data-property="border.color">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-color">
-                                <label class="control-label" data-label="Border Color" data-path="border.color">Border Color</label>
+                                <label class="control-label" data-label="Border Color" data-path="styling.border.color">Border Color</label>
                                 <div class="control-input">
                                     <input type="color" id="style-border-color" value="#000000">
                                 </div>
                             </div>
                             <div class="control-row" data-property="border.style">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-style">
-                                <label class="control-label" data-label="Border Style" data-path="border.style">Border Style</label>
+                                <label class="control-label" data-label="Border Style" data-path="styling.border.style">Border Style</label>
                                 <div class="control-input">
                                     <select id="style-border-style">
                                         <option value="solid" selected>Solid</option>
@@ -1347,7 +1352,7 @@
                             </div>
                             <div class="control-row" data-property="border.radius">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-radius">
-                                <label class="control-label" data-label="Border Radius" data-path="border.radius">Border Radius</label>
+                                <label class="control-label" data-label="Border Radius" data-path="styling.border.radius">Border Radius</label>
                                 <div class="control-input">
                                     <input type="number" id="style-border-radius" value="8" min="0" max="50">
                                     <span class="value-display">px</span>
@@ -1357,7 +1362,7 @@
                             <!-- Shadow -->
                             <div class="control-row" data-property="shadow">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-shadow">
-                                <label class="control-label" data-label="Shadow" data-path="shadow">Shadow</label>
+                                <label class="control-label" data-label="Shadow" data-path="styling.shadow">Shadow</label>
                                 <div class="control-input">
                                     <select id="style-shadow">
                                         <option value="none">None</option>
@@ -1372,7 +1377,7 @@
                             <!-- Opacity -->
                             <div class="control-row" data-property="opacity">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-opacity">
-                                <label class="control-label" data-label="Opacity" data-path="opacity">Opacity</label>
+                                <label class="control-label" data-label="Opacity" data-path="styling.opacity">Opacity</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
@@ -1382,7 +1387,7 @@
                             <!-- Filters -->
                             <div class="control-row" data-property="filter.grayscale">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-grayscale">
-                                <label class="control-label" data-label="Grayscale" data-path="filter.grayscale">Grayscale</label>
+                                <label class="control-label" data-label="Grayscale" data-path="styling.filter.grayscale">Grayscale</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
@@ -1390,7 +1395,7 @@
                             </div>
                             <div class="control-row" data-property="filter.blur">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-blur">
-                                <label class="control-label" data-label="Blur" data-path="filter.blur">Blur</label>
+                                <label class="control-label" data-label="Blur" data-path="styling.filter.blur">Blur</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
@@ -1398,7 +1403,7 @@
                             </div>
                             <div class="control-row" data-property="filter.brightness">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-brightness">
-                                <label class="control-label" data-label="Brightness" data-path="filter.brightness">Brightness</label>
+                                <label class="control-label" data-label="Brightness" data-path="styling.filter.brightness">Brightness</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
@@ -1406,7 +1411,7 @@
                             </div>
                             <div class="control-row" data-property="filter.contrast">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-contrast">
-                                <label class="control-label" data-label="Contrast" data-path="filter.contrast">Contrast</label>
+                                <label class="control-label" data-label="Contrast" data-path="styling.filter.contrast">Contrast</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
@@ -1414,7 +1419,7 @@
                             </div>
                             <div class="control-row" data-property="filter.saturate">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-saturate">
-                                <label class="control-label" data-label="Saturate" data-path="filter.saturate">Saturate</label>
+                                <label class="control-label" data-label="Saturate" data-path="styling.filter.saturate">Saturate</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
@@ -1422,7 +1427,7 @@
                             </div>
                             <div class="control-row" data-property="filter.sepia">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-sepia">
-                                <label class="control-label" data-label="Sepia" data-path="filter.sepia">Sepia</label>
+                                <label class="control-label" data-label="Sepia" data-path="styling.filter.sepia">Sepia</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
@@ -1430,7 +1435,7 @@
                             </div>
                             <div class="control-row" data-property="filter.hueRotate">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-hueRotate">
-                                <label class="control-label" data-label="Hue Rotate" data-path="filter.hueRotate">Hue Rotate</label>
+                                <label class="control-label" data-label="Hue Rotate" data-path="styling.filter.hueRotate">Hue Rotate</label>
                                 <div class="control-input">
                                     <span class="value-display">0°</span>
                                     <input type="range" id="style-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
@@ -1470,12 +1475,12 @@
                             <h5 class="control-group-title" data-label="Queue" data-path="animation.queue">Queue</h5>
                             <div class="subsection-toggle">
                                 <input type="checkbox" id="enable-queue" checked onchange="toggleSubsection('queue-content', this.checked)">
-                                <label for="enable-queue" data-label="Enabled" data-path="enabled">Enabled</label>
+                                <label for="enable-queue" data-label="Enabled" data-path="queue.enabled">Enabled</label>
                             </div>
                             <div class="subsection-content" id="queue-content">
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-queue-interval">
-                                    <label class="control-label" data-label="Interval" data-path="interval">Interval</label>
+                                    <label class="control-label" data-label="Interval" data-path="queue.interval">Interval</label>
                                     <div class="control-input">
                                         <input type="number" id="queue-interval" value="150" min="0" max="500" step="25">
                                         <span class="value-display">ms</span>
@@ -1489,7 +1494,7 @@
                             <h5 class="control-group-title" data-label="Entry Animation" data-path="animation.entry">Entry Animation</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-position">
-                                <label class="control-label" data-label="Start Position" data-path="start.position">Start Position</label>
+                                <label class="control-label" data-label="Start Position" data-path="entry.start.position">Start Position</label>
                                 <div class="control-input">
                                     <select id="entry-position">
                                         <option value="nearest-edge">Nearest Edge</option>
@@ -1505,7 +1510,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-offset">
-                                <label class="control-label" data-label="Offset" data-path="start.offset">Offset</label>
+                                <label class="control-label" data-label="Offset" data-path="entry.start.offset">Offset</label>
                                 <div class="control-input">
                                     <input type="number" id="entry-offset" value="100" min="0" max="300">
                                     <span class="value-display">px</span>
@@ -1513,7 +1518,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-duration">
-                                <label class="control-label" data-label="Duration" data-path="timing.duration">Duration</label>
+                                <label class="control-label" data-label="Duration" data-path="entry.timing.duration">Duration</label>
                                 <div class="control-input">
                                     <input type="number" id="entry-duration" value="600" min="100" max="2000" step="50">
                                     <span class="value-display">ms</span>
@@ -1521,7 +1526,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-stagger">
-                                <label class="control-label" data-label="Stagger" data-path="timing.stagger">Stagger</label>
+                                <label class="control-label" data-label="Stagger" data-path="entry.timing.stagger">Stagger</label>
                                 <div class="control-input">
                                     <input type="number" id="entry-stagger" value="150" min="0" max="500" step="25">
                                     <span class="value-display">ms</span>
@@ -1529,7 +1534,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-path">
-                                <label class="control-label" data-label="Path Type" data-path="path.type">Path Type</label>
+                                <label class="control-label" data-label="Path Type" data-path="entry.path.type">Path Type</label>
                                 <div class="control-input">
                                     <select id="entry-path-type" onchange="updatePathPresets()">
                                         <option value="linear">Linear (default)</option>
@@ -1541,7 +1546,7 @@
                             </div>
                             <div class="control-row" id="path-preset-row" style="display: none;">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-path-preset" checked>
-                                <label class="control-label" data-label="Preset" data-path="path.preset">Preset</label>
+                                <label class="control-label" data-label="Preset" data-path="entry.path.preset">Preset</label>
                                 <div class="control-input">
                                     <select id="entry-path-preset">
                                         <!-- Options populated by updatePathPresets() -->
@@ -1564,7 +1569,7 @@
                             <h5 class="control-group-title" data-label="Focus Behavior" data-path="interaction.focus">Focus Behavior</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-focus-scalePercent">
-                                <label class="control-label" data-label="Scale %" data-path="scalePercent">Scale %</label>
+                                <label class="control-label" data-label="Scale %" data-path="focus.scalePercent">Scale %</label>
                                 <div class="control-input">
                                     <span class="value-display">0.8</span>
                                     <input type="range" id="focus-scalePercent" min="0.3" max="1.0" step="0.05" value="0.8" oninput="updateRangeDisplay(this)">
@@ -1572,7 +1577,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-focus-unfocusedOpacity">
-                                <label class="control-label" data-label="Unfocused Opacity" data-path="unfocusedOpacity">Unfocused Opacity</label>
+                                <label class="control-label" data-label="Unfocused Opacity" data-path="focus.unfocusedOpacity">Unfocused Opacity</label>
                                 <div class="control-input">
                                     <span class="value-display">0.3</span>
                                     <input type="range" id="focus-unfocusedOpacity" min="0" max="1" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
@@ -1580,7 +1585,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-focus-zIndex">
-                                <label class="control-label" data-label="Z-Index" data-path="zIndex">Z-Index</label>
+                                <label class="control-label" data-label="Z-Index" data-path="focus.zIndex">Z-Index</label>
                                 <div class="control-input">
                                     <input type="number" id="focus-zIndex" value="1000" min="100" max="9999">
                                 </div>
