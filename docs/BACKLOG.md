@@ -15,6 +15,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Review failing test: "unfocusing restores default state" - Escape key doesn't restore border to default state after unfocus.
 - [ ] Review failing test: "handles empty styling config" - Default shadow not being applied when styling config is empty.
+- [ ] Fix auto-init export: README shows `import { autoInitialize } from '@frybynite/image-cloud/auto-init'` but this subpath is not exported in package.json and `autoInitialize` is not exported from main entry point.
 ---
 
 ## Planned
