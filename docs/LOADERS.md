@@ -59,9 +59,9 @@ Load from direct image URLs:
 {
   type: 'urls',
   urls: [
-    'https://example.com/image1.jpg',
-    'https://example.com/image2.png',
-    '/local/path/image3.jpg'
+    'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
+    'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800',
+    'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=800'
   ]
 }
 ```
@@ -264,7 +264,7 @@ const gallery = new ImageCloud({
         {
           type: 'static',
           static: {
-            sources: [{ type: 'urls', urls: ['https://example.com/extra.jpg'] }]
+            sources: [{ type: 'urls', urls: ['https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?w=800'] }]
           }
         }
       ],
