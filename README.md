@@ -3,7 +3,7 @@
 A TypeScript library for creating interactive image galleries with animated scattered layouts and zoom effects. Supports multiple image sources (Google Drive, static URLs) and layout algorithms.
 
 > [!WARNING]
-> All minor versions of this library before 1.0 (e.g., 0.1, 0.2, ...) will include breaking changes during development. Please re-test every time before upgrading.
+> All minor versions of this library before 1.0 (e.g., 0.1, 0.2, ...) will include breaking changes during development. Please re-test every time before upgrading until we have published v1.0.
 
 ## Features
 
@@ -319,30 +319,6 @@ MIT
 
 [frybynite](https://github.com/frybynite)
 
-## Build Scripts
-
-The project includes comprehensive build automation:
-
-```bash
-# Development
-npm run dev              # Start dev server
-npm run serve            # Serve on http://localhost:8080
-npm run type-check       # Check types only
-
-# Building
-npm run build            # Full production build
-npm run build:prod       # Build with validation
-npm run build:watch      # Watch mode
-npm run clean            # Remove dist/
-
-# Releasing
-npm run release:patch    # 0.1.0 → 0.1.1
-npm run release:minor    # 0.1.0 → 0.2.0
-npm run release:major    # 0.1.0 → 1.0.0
-```
-
-See `scripts/README.md` for detailed documentation.
-
 ## Examples
 
 Check out the `examples/` directory for various usage patterns:
@@ -358,3 +334,5 @@ Also see:
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+See [docs/DEVELOPER.md](docs/DEVELOPER.md) for build scripts, testing, and project structure.
