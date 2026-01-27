@@ -64,6 +64,7 @@ jobs:
           cp index.html _site/
           cp -r docs _site/
           cp -r configurator _site/
+          cp -r examples _site/
           cp -r dist _site/
 
       - name: List published files
