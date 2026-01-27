@@ -38,7 +38,14 @@ jobs:
           cp -r docs _site/
           cp -r configurator _site/
           cp -r dist _site/
-      
+
+      - name: List published files
+        run: |
+          echo "=== _site contents ==="
+          find _site -type f | head -50
+          echo "=== dist contents ==="
+          ls -la _site/dist/ || echo "dist not found"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
