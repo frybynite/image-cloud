@@ -21,6 +21,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
 - [Animation Configuration](#4-animation-configuration-animation)
 - [Entry Animation](#entry-animation)
 - [Entry Animation Paths](#entry-animation-paths)
+- [Entry Rotation Animation](#entry-rotation-animation)
 - [Interaction Configuration](#5-interaction-configuration-interaction)
 - [Rendering Configuration](#6-rendering-configuration-rendering)
 - [Styling Configuration](#7-styling-configuration-styling)
@@ -923,6 +924,164 @@ animation: {
 
 ---
 
+## Entry Rotation Animation
+
+Controls how images rotate during their entry animation. By default, images maintain their final rotation throughout the animation. Entry rotation modes add dynamic rotation effects as images fly in.
+
+### Configuration Structure
+
+```typescript
+animation: {
+  entry: {
+    start: { position: 'nearest-edge' },
+    timing: { duration: 600, stagger: 150 },
+    path: { type: 'bounce' },
+    rotation: {
+      mode: 'spin',                         // Rotation mode
+      spinCount: 1,                         // For spin mode
+      direction: 'clockwise'                // Spin direction
+    }
+  }
+}
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `mode` | `string` | `'none'` | Rotation animation mode |
+| `spinCount` | `number` | `1` | Number of full rotations (for spin mode) |
+| `direction` | `string` | `'clockwise'` | Spin direction: `'clockwise'`, `'counterclockwise'`, `'auto'`, `'random'` |
+| `startRotation` | `number \| { min, max }` | `{ min: -45, max: 45 }` | Starting rotation angle or range (for settle mode) |
+| `wobble.amplitude` | `number` | `15` | Maximum wobble angle in degrees |
+| `wobble.frequency` | `number` | `3` | Number of wobble oscillations during animation |
+
+### Rotation Modes
+
+| Mode | Description | Best For |
+|------|-------------|----------|
+| `none` | No rotation change (default) | Clean, professional animations |
+| `spin` | Full rotation(s) during entry | Energetic, playful interfaces |
+| `settle` | Start tilted, settle to final angle | Photos tumbling onto a table |
+| `random` | Random starting rotation | Organic, varied feel |
+| `wobble` | Oscillating rotation during entry | Bouncy, spring-like motion |
+
+### Spin Mode
+
+Images rotate a specified number of times as they enter. Great for energetic interfaces.
+
+```typescript
+rotation: {
+  mode: 'spin',
+  spinCount: 2,                    // Two full rotations
+  direction: 'clockwise'           // Or 'counterclockwise', 'auto', 'random'
+}
+```
+
+**Direction options:**
+- `'clockwise'` - Spin clockwise (default)
+- `'counterclockwise'` - Spin counter-clockwise
+- `'auto'` - Direction based on entry angle
+- `'random'` - Random direction per image
+
+### Settle Mode
+
+Images start at a tilted angle and settle to their final rotation. Creates a natural "photos falling on table" effect.
+
+```typescript
+rotation: {
+  mode: 'settle',
+  startRotation: { min: -45, max: 45 }   // Random start angle in range
+}
+```
+
+You can also use a fixed starting angle:
+```typescript
+rotation: {
+  mode: 'settle',
+  startRotation: -30                      // All images start at -30°
+}
+```
+
+### Random Mode
+
+Each image starts at a random rotation angle within ±30° of its final position.
+
+```typescript
+rotation: {
+  mode: 'random'
+}
+```
+
+### Wobble Mode
+
+Images oscillate back and forth as they enter, settling at their final rotation. Works best with bounce, elastic, or wave path types.
+
+```typescript
+rotation: {
+  mode: 'wobble',
+  wobble: {
+    amplitude: 15,               // Maximum angle of wobble
+    frequency: 3                 // Number of oscillations
+  }
+}
+```
+
+### Examples
+
+**Spinning entry from top:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'top' },
+    timing: { duration: 800 },
+    path: { type: 'bounce' },
+    rotation: {
+      mode: 'spin',
+      spinCount: 1,
+      direction: 'clockwise'
+    }
+  }
+}
+```
+
+**Tumbling photos effect:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'random-edge' },
+    timing: { duration: 600, stagger: 100 },
+    rotation: {
+      mode: 'settle',
+      startRotation: { min: -60, max: 60 }
+    }
+  }
+}
+```
+
+**Wobbly elastic entry:**
+```typescript
+animation: {
+  entry: {
+    start: { position: 'center' },
+    timing: { duration: 1000 },
+    path: { type: 'elastic', elasticPreset: 'wobbly' },
+    rotation: {
+      mode: 'wobble',
+      wobble: { amplitude: 20, frequency: 4 }
+    }
+  }
+}
+```
+
+### Performance Notes
+
+- **none/settle/spin/random**: Rotation is interpolated alongside position (efficient)
+- **wobble**: Requires JavaScript animation per frame (slightly more CPU)
+- For galleries with 50+ images, consider simpler rotation modes
+
+---
+
 ### 5. Interaction Configuration (`interaction`)
 
 Controls user interactions like clicking and zooming.
@@ -1320,6 +1479,19 @@ All available parameters with example values:
           "decay": true,                        // Default
           "decayRate": 0.8,                     // Default. 0.5-1
           "phase": 0                            // Default. 0-2π
+        }
+      },
+      "rotation": {
+        "mode": "none",                         // Default. "none" | "spin" | "settle" | "random" | "wobble"
+        "spinCount": 1,                         // Default. Full rotations for spin mode
+        "direction": "clockwise",               // Default. "clockwise" | "counterclockwise" | "auto" | "random"
+        "startRotation": {                      // For settle mode
+          "min": -45,                           // Default. Min start angle
+          "max": 45                             // Default. Max start angle
+        },
+        "wobble": {
+          "amplitude": 15,                      // Default. Max wobble angle in degrees
+          "frequency": 3                        // Default. Number of oscillations
         }
       }
     }

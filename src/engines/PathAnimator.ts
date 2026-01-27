@@ -17,7 +17,8 @@ import type {
   ElasticPathConfig,
   WavePathConfig,
   EntryPathConfig,
-  EntryPathType
+  EntryPathType,
+  EntryRotationConfig
 } from '../config/types';
 import {
   resolveBounceConfig,
@@ -38,9 +39,12 @@ export interface PathAnimationOptions {
   duration: number;
   imageWidth: number;
   imageHeight: number;
-  rotation: number;
+  rotation: number;           // Final rotation
   scale: number;
   onComplete?: () => void;
+  // Rotation animation options
+  rotationConfig?: EntryRotationConfig;
+  startRotation?: number;     // Starting rotation (if different from final)
 }
 
 /**
@@ -239,6 +243,28 @@ function easeOutCubic(t: number): number {
 }
 
 /**
+ * Calculate wobble rotation for a given animation progress
+ */
+function calculateWobbleRotation(
+  progress: number,
+  finalRotation: number,
+  wobbleConfig: { amplitude: number; frequency: number; decay: boolean }
+): number {
+  const { amplitude, frequency, decay } = wobbleConfig;
+
+  // Oscillation using sine wave
+  const oscillation = Math.sin(progress * frequency * Math.PI * 2);
+
+  // Apply decay if enabled (stronger decay toward end)
+  const decayFactor = decay ? Math.pow(1 - progress, 2) : 1;
+
+  // Calculate wobble offset
+  const wobbleOffset = amplitude * oscillation * decayFactor;
+
+  return finalRotation + wobbleOffset;
+}
+
+/**
  * Animate an element along a path using requestAnimationFrame
  */
 export function animatePath(options: PathAnimationOptions): void {
@@ -250,15 +276,23 @@ export function animatePath(options: PathAnimationOptions): void {
     duration,
     imageWidth,
     imageHeight,
-    rotation,
+    rotation: finalRotation,
     scale,
-    onComplete
+    onComplete,
+    rotationConfig,
+    startRotation
   } = options;
 
   const pathType = pathConfig.type;
 
-  // For linear/arc paths, use CSS transitions (handled elsewhere)
-  if (pathType === 'linear' || pathType === 'arc') {
+  // Determine if we need to animate rotation
+  const animateRotation = startRotation !== undefined && startRotation !== finalRotation;
+  const isWobbleMode = rotationConfig?.mode === 'wobble';
+  const wobbleConfig = rotationConfig?.wobble || { amplitude: 15, frequency: 3, decay: true };
+  const needsRotationAnimation = animateRotation || isWobbleMode;
+
+  // For linear/arc paths WITHOUT rotation animation, use CSS transitions (handled elsewhere)
+  if ((pathType === 'linear' || pathType === 'arc') && !needsRotationAnimation) {
     if (onComplete) onComplete();
     return;
   }
@@ -312,19 +346,32 @@ export function animatePath(options: PathAnimationOptions): void {
     const translateX = position.x - endPosition.x;
     const translateY = position.y - endPosition.y;
 
+    // Calculate current rotation
+    let currentRotation: number;
+    if (isWobbleMode) {
+      // Wobble mode: oscillating rotation
+      currentRotation = calculateWobbleRotation(t, finalRotation, wobbleConfig);
+    } else if (animateRotation) {
+      // Interpolate from start to final rotation
+      currentRotation = lerp(startRotation!, finalRotation, t);
+    } else {
+      // No rotation animation
+      currentRotation = finalRotation;
+    }
+
     // Apply transform
     element.style.transform =
       `translate(${centerOffsetX}px, ${centerOffsetY}px) ` +
       `translate(${translateX}px, ${translateY}px) ` +
-      `rotate(${rotation}deg) scale(${scale})`;
+      `rotate(${currentRotation}deg) scale(${scale})`;
 
     if (t < 1) {
       requestAnimationFrame(tick);
     } else {
-      // Ensure we end exactly at the final position
+      // Ensure we end exactly at the final position and rotation
       element.style.transform =
         `translate(${centerOffsetX}px, ${centerOffsetY}px) ` +
-        `rotate(${rotation}deg) scale(${scale})`;
+        `rotate(${finalRotation}deg) scale(${scale})`;
       if (onComplete) onComplete();
     }
   }

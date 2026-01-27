@@ -13,9 +13,11 @@ import type {
   ContainerBounds,
   LayoutAlgorithm,
   EntryPathConfig,
-  EntryPathType
+  EntryPathType,
+  EntryRotationConfig,
+  EntryRotationMode
 } from '../config/types';
-import { DEFAULT_PATH_CONFIG } from '../config/defaults';
+import { DEFAULT_PATH_CONFIG, DEFAULT_ENTRY_ROTATION } from '../config/defaults';
 import { requiresJSAnimation } from './PathAnimator';
 
 /** Layout-aware default start positions */
@@ -46,6 +48,7 @@ export class EntryAnimationEngine {
   private layoutAlgorithm: LayoutAlgorithm;
   private resolvedStartPosition: EntryStartPosition;
   private pathConfig: EntryPathConfig;
+  private rotationConfig: EntryRotationConfig;
 
   constructor(config: EntryAnimationConfig, layoutAlgorithm: LayoutAlgorithm) {
     this.config = config;
@@ -56,6 +59,9 @@ export class EntryAnimationEngine {
 
     // Resolve path config
     this.pathConfig = config.path || DEFAULT_PATH_CONFIG;
+
+    // Resolve rotation config
+    this.rotationConfig = config.rotation || DEFAULT_ENTRY_ROTATION;
   }
 
   /**
@@ -296,11 +302,15 @@ export class EntryAnimationEngine {
     finalRotation: number,
     finalScale: number,
     imageWidth?: number,
-    imageHeight?: number
+    imageHeight?: number,
+    startRotation?: number
   ): string {
     // Calculate translation from final to start position
     const translateX = startPosition.x - finalPosition.x;
     const translateY = startPosition.y - finalPosition.y;
+
+    // Use start rotation if provided, otherwise use final rotation
+    const rotation = startRotation !== undefined ? startRotation : finalRotation;
 
     // Use pixel offset if dimensions provided
     const centerOffsetX = imageWidth !== undefined ? -imageWidth / 2 : 0;
@@ -311,11 +321,11 @@ export class EntryAnimationEngine {
 
     if (startPosition.useScale) {
       // For center position: start at center with scale 0
-      return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${finalRotation}deg) scale(0)`;
+      return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(0)`;
     }
 
     // Standard entry: translate from edge, maintain rotation and scale
-    return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${finalRotation}deg) scale(${finalScale})`;
+    return `${centerTranslate} translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(${finalScale})`;
   }
 
   /**
@@ -377,5 +387,128 @@ export class EntryAnimationEngine {
       duration: this.config.timing.duration,
       stagger: this.config.timing.stagger
     };
+  }
+
+  /**
+   * Get the rotation configuration
+   */
+  getRotationConfig(): EntryRotationConfig {
+    return this.rotationConfig;
+  }
+
+  /**
+   * Get the rotation mode
+   */
+  getRotationMode(): EntryRotationMode {
+    return this.rotationConfig.mode;
+  }
+
+  /**
+   * Calculate the starting rotation for an entry animation
+   * @param finalRotation - The final rotation from the layout
+   * @returns The starting rotation in degrees
+   */
+  calculateStartRotation(finalRotation: number): number {
+    const mode = this.rotationConfig.mode;
+
+    switch (mode) {
+      case 'none':
+        // No rotation animation - start at final rotation
+        return finalRotation;
+
+      case 'settle': {
+        // Start at a configured rotation and settle to final
+        const startConfig = this.rotationConfig.startRotation;
+        if (startConfig === undefined) {
+          // Default: ±30° random offset from final
+          return finalRotation + (Math.random() - 0.5) * 60;
+        }
+        if (typeof startConfig === 'number') {
+          return startConfig;
+        }
+        // Range: random value between min and max
+        const range = startConfig.max - startConfig.min;
+        return startConfig.min + Math.random() * range;
+      }
+
+      case 'spin': {
+        // Spin from a rotated position to final
+        const spinCount = this.rotationConfig.spinCount ?? 1;
+        const direction = this.resolveSpinDirection(finalRotation);
+        return finalRotation + (spinCount * 360 * direction);
+      }
+
+      case 'random':
+        // Random starting rotation (±30° from final)
+        return finalRotation + (Math.random() - 0.5) * 60;
+
+      case 'wobble':
+        // Wobble is handled in JS animation, start at final rotation
+        return finalRotation;
+
+      default:
+        return finalRotation;
+    }
+  }
+
+  /**
+   * Resolve spin direction based on config
+   * @returns 1 for clockwise, -1 for counterclockwise
+   */
+  private resolveSpinDirection(finalRotation: number): number {
+    const direction = this.rotationConfig.direction ?? 'auto';
+
+    switch (direction) {
+      case 'clockwise':
+        return -1;  // Negative rotation = clockwise spin to final
+      case 'counterclockwise':
+        return 1;   // Positive rotation = counterclockwise spin to final
+      case 'random':
+        return Math.random() < 0.5 ? 1 : -1;
+      case 'auto':
+      default:
+        // Auto: choose direction that reduces total rotation distance
+        // If final rotation is positive, spin counterclockwise (add positive offset)
+        return finalRotation >= 0 ? 1 : -1;
+    }
+  }
+
+  /**
+   * Check if the current rotation mode requires JavaScript animation
+   * (as opposed to CSS transitions)
+   */
+  requiresJSRotation(): boolean {
+    return this.rotationConfig.mode === 'wobble';
+  }
+
+  /**
+   * Calculate wobble rotation for a given animation progress
+   * @param progress - Animation progress from 0 to 1
+   * @param finalRotation - The final rotation in degrees
+   * @returns The current rotation in degrees
+   */
+  calculateWobbleRotation(progress: number, finalRotation: number): number {
+    if (this.rotationConfig.mode !== 'wobble') {
+      return finalRotation;
+    }
+
+    const wobbleConfig = this.rotationConfig.wobble || {
+      amplitude: 15,
+      frequency: 3,
+      decay: true
+    };
+
+    const { amplitude, frequency, decay } = wobbleConfig;
+
+    // Oscillation using sine wave
+    const oscillation = Math.sin(progress * frequency * Math.PI * 2);
+
+    // Apply decay if enabled (stronger decay toward end)
+    const decayFactor = decay ? Math.pow(1 - progress, 2) : 1;
+
+    // Calculate wobble offset
+    const wobbleOffset = amplitude * oscillation * decayFactor;
+
+    return finalRotation + wobbleOffset;
   }
 }

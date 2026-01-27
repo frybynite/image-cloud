@@ -384,11 +384,16 @@ export class ImageCloud {
         // Use configured default opacity, or 1 if not specified
         img.style.opacity = this.defaultStyles.opacity ?? '1';
 
-        // Check if we need JS animation for this path type
-        if (this.entryAnimationEngine.requiresJSAnimation() && img.dataset.startX) {
-          // Use animatePath for bounce, elastic, wave paths
+        // Check if we need JS animation for path type or rotation
+        const needsJSAnimation = img.dataset.startX &&
+          (this.entryAnimationEngine.requiresJSAnimation() ||
+           this.entryAnimationEngine.requiresJSRotation() ||
+           img.dataset.startRotation !== img.dataset.rotation);
+
+        if (needsJSAnimation) {
+          // Use animatePath for bounce, elastic, wave paths or rotation animation
           const startPosition = {
-            x: parseFloat(img.dataset.startX),
+            x: parseFloat(img.dataset.startX!),
             y: parseFloat(img.dataset.startY!)
           };
           const endPosition = {
@@ -399,6 +404,9 @@ export class ImageCloud {
           const imageHeight = parseFloat(img.dataset.imageHeight!);
           const rotation = parseFloat(img.dataset.rotation!);
           const scale = parseFloat(img.dataset.scale!);
+          const startRotation = img.dataset.startRotation
+            ? parseFloat(img.dataset.startRotation)
+            : rotation;
           const timing = this.entryAnimationEngine.getTiming();
 
           animatePath({
@@ -410,10 +418,12 @@ export class ImageCloud {
             imageWidth,
             imageHeight,
             rotation,
-            scale
+            scale,
+            rotationConfig: this.entryAnimationEngine.getRotationConfig(),
+            startRotation
           });
         } else {
-          // Use CSS transition for linear/arc paths
+          // Use CSS transition for linear/arc paths without rotation animation
           const finalTransform = img.dataset.finalTransform || '';
           img.style.transform = finalTransform;
         }
@@ -602,6 +612,9 @@ export class ImageCloud {
           imageUrls.length
         );
 
+        // Calculate start rotation based on entry rotation config
+        const startRotation = this.entryAnimationEngine.calculateStartRotation(layout.rotation);
+
         const finalTransform = this.entryAnimationEngine.buildFinalTransform(
           layout.rotation,
           layout.scale,
@@ -614,7 +627,8 @@ export class ImageCloud {
           layout.rotation,
           layout.scale,
           renderedWidth,
-          imageHeight
+          imageHeight,
+          startRotation
         );
 
         if (this.fullConfig.debug && index < 3) {
@@ -633,7 +647,12 @@ export class ImageCloud {
         img.dataset.finalTransform = finalTransform;
 
         // Store animation data for JS-animated paths (bounce, elastic, wave)
-        if (this.entryAnimationEngine.requiresJSAnimation()) {
+        // or when rotation animation is needed
+        const needsJSAnimation = this.entryAnimationEngine.requiresJSAnimation() ||
+          this.entryAnimationEngine.requiresJSRotation() ||
+          startRotation !== layout.rotation;
+
+        if (needsJSAnimation) {
           img.dataset.startX = String(startPosition.x);
           img.dataset.startY = String(startPosition.y);
           img.dataset.endX = String(finalPosition.x);
@@ -642,6 +661,7 @@ export class ImageCloud {
           img.dataset.imageHeight = String(imageHeight);
           img.dataset.rotation = String(layout.rotation);
           img.dataset.scale = String(layout.scale);
+          img.dataset.startRotation = String(startRotation);
         }
 
         this.displayQueue.push(img);

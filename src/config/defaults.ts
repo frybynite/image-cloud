@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
+import type { ImageCloudConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -50,6 +50,13 @@ export const WAVE_PATH_PRESETS: Record<WavePathPreset, WavePathConfig> = Object.
  */
 export const DEFAULT_PATH_CONFIG: EntryPathConfig = Object.freeze({
   type: 'linear' as const
+});
+
+/**
+ * Default entry rotation configuration (no rotation animation)
+ */
+export const DEFAULT_ENTRY_ROTATION: EntryRotationConfig = Object.freeze({
+  mode: 'none' as const
 });
 
 /**
@@ -211,7 +218,8 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
         stagger: 150  // ms between images
       }),
       easing: 'cubic-bezier(0.25, 1, 0.5, 1)',  // smooth deceleration
-      path: DEFAULT_PATH_CONFIG
+      path: DEFAULT_PATH_CONFIG,
+      rotation: DEFAULT_ENTRY_ROTATION
     })
   }),
 
@@ -594,7 +602,10 @@ export function mergeConfig(
           : DEFAULT_CONFIG.animation.entry!.timing,
         path: userConfig.animation.entry.path
           ? { ...DEFAULT_PATH_CONFIG, ...userConfig.animation.entry.path }
-          : DEFAULT_CONFIG.animation.entry!.path
+          : DEFAULT_CONFIG.animation.entry!.path,
+        rotation: userConfig.animation.entry.rotation
+          ? { ...DEFAULT_ENTRY_ROTATION, ...userConfig.animation.entry.rotation }
+          : DEFAULT_CONFIG.animation.entry!.rotation
       };
     }
   }

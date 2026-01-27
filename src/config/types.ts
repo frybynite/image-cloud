@@ -291,6 +291,21 @@ export interface EntryPathConfig {
   wave?: Partial<WavePathConfig>;
 }
 
+// Entry Rotation Types
+export type EntryRotationMode = 'none' | 'settle' | 'spin' | 'wobble' | 'random';
+
+export interface EntryRotationConfig {
+  mode: EntryRotationMode;
+  startRotation?: number | { min: number; max: number };  // For 'settle' mode
+  spinCount?: number;                                      // For 'spin' mode (default: 1)
+  direction?: 'clockwise' | 'counterclockwise' | 'auto' | 'random';  // For 'spin' mode
+  wobble?: {
+    amplitude: number;    // degrees of oscillation (default: 15)
+    frequency: number;    // oscillations during animation (default: 3)
+    decay: boolean;       // whether oscillation diminishes (default: true)
+  };
+}
+
 export type EntryStartPosition =
   | 'nearest-edge'
   | 'top'
@@ -322,6 +337,7 @@ export interface EntryAnimationConfig {
   timing: EntryTimingConfig;
   easing: string;  // CSS easing, default: 'cubic-bezier(0.25, 1, 0.5, 1)'
   path?: EntryPathConfig;  // Animation path type (linear, bounce, elastic, wave)
+  rotation?: EntryRotationConfig;  // Entry rotation animation
 }
 
 export interface AnimationEasingConfig {

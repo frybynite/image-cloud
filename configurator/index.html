@@ -1619,6 +1619,66 @@
                                     </select>
                                 </div>
                             </div>
+                            <!-- Entry Rotation -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-entry-rotation">
+                                <label class="control-label" data-label="Rotation Mode" data-path="entry.rotation.mode">Rotation Mode</label>
+                                <div class="control-input">
+                                    <select id="entry-rotation-mode" onchange="updateRotationOptions()">
+                                        <option value="none">None (default)</option>
+                                        <option value="spin">Spin</option>
+                                        <option value="settle">Settle</option>
+                                        <option value="random">Random</option>
+                                        <option value="wobble">Wobble</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row" id="spin-count-row" style="display: none;">
+                                <input type="checkbox" class="control-checkbox" id="enable-spin-count" checked>
+                                <label class="control-label" data-label="Spin Count" data-path="entry.rotation.spinCount">Spin Count</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-spin-count" value="1" min="1" max="5" step="1">
+                                    <span class="value-display">rotations</span>
+                                </div>
+                            </div>
+                            <div class="control-row" id="spin-direction-row" style="display: none;">
+                                <input type="checkbox" class="control-checkbox" id="enable-spin-direction" checked>
+                                <label class="control-label" data-label="Direction" data-path="entry.rotation.direction">Direction</label>
+                                <div class="control-input">
+                                    <select id="entry-spin-direction">
+                                        <option value="clockwise">Clockwise</option>
+                                        <option value="counterclockwise">Counter-clockwise</option>
+                                        <option value="auto">Auto</option>
+                                        <option value="random">Random</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row" id="settle-min-row" style="display: none;">
+                                <input type="checkbox" class="control-checkbox" id="enable-settle-range" checked>
+                                <label class="control-label" data-label="Start Range" data-path="entry.rotation.startRotation">Start Range</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-settle-min" value="-45" min="-180" max="0" step="5">
+                                    <span class="value-display">to</span>
+                                    <input type="number" id="entry-settle-max" value="45" min="0" max="180" step="5">
+                                    <span class="value-display">deg</span>
+                                </div>
+                            </div>
+                            <div class="control-row" id="wobble-amplitude-row" style="display: none;">
+                                <input type="checkbox" class="control-checkbox" id="enable-wobble-config" checked>
+                                <label class="control-label" data-label="Wobble Amplitude" data-path="entry.rotation.wobble.amplitude">Wobble Amplitude</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-wobble-amplitude" value="15" min="5" max="45" step="5">
+                                    <span class="value-display">deg</span>
+                                </div>
+                            </div>
+                            <div class="control-row" id="wobble-frequency-row" style="display: none;">
+                                <input type="checkbox" class="control-checkbox" id="enable-wobble-frequency" checked>
+                                <label class="control-label" data-label="Wobble Frequency" data-path="entry.rotation.wobble.frequency">Wobble Frequency</label>
+                                <div class="control-input">
+                                    <input type="number" id="entry-wobble-frequency" value="3" min="1" max="8" step="1">
+                                    <span class="value-display">oscillations</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2578,6 +2638,31 @@
             scheduleAutoApply();
         };
 
+        // Update rotation options visibility based on selected rotation mode
+        window.updateRotationOptions = function() {
+            const rotationMode = document.getElementById('entry-rotation-mode').value;
+
+            // Hide all rotation-specific rows first
+            document.getElementById('spin-count-row').style.display = 'none';
+            document.getElementById('spin-direction-row').style.display = 'none';
+            document.getElementById('settle-min-row').style.display = 'none';
+            document.getElementById('wobble-amplitude-row').style.display = 'none';
+            document.getElementById('wobble-frequency-row').style.display = 'none';
+
+            // Show relevant rows based on mode
+            if (rotationMode === 'spin') {
+                document.getElementById('spin-count-row').style.display = 'flex';
+                document.getElementById('spin-direction-row').style.display = 'flex';
+            } else if (rotationMode === 'settle') {
+                document.getElementById('settle-min-row').style.display = 'flex';
+            } else if (rotationMode === 'wobble') {
+                document.getElementById('wobble-amplitude-row').style.display = 'flex';
+                document.getElementById('wobble-frequency-row').style.display = 'flex';
+            }
+
+            scheduleAutoApply();
+        };
+
         // Schedule auto-apply with debouncing
         function scheduleAutoApply() {
             clearTimeout(debounceTimer);
@@ -2831,6 +2916,50 @@
                         else if (pathType === 'wave') path.wavePreset = preset;
                     }
                     entry.path = path;
+                }
+            }
+
+            // Rotation configuration
+            const rotationEnabled = document.getElementById('enable-entry-rotation').checked;
+            if (rotationEnabled) {
+                const rotationMode = document.getElementById('entry-rotation-mode').value;
+                if (rotationMode !== 'none') {
+                    const rotation = { mode: rotationMode };
+
+                    if (rotationMode === 'spin') {
+                        const spinCountEnabled = document.getElementById('enable-spin-count').checked;
+                        if (spinCountEnabled) {
+                            rotation.spinCount = parseInt(document.getElementById('entry-spin-count').value);
+                        }
+                        const spinDirectionEnabled = document.getElementById('enable-spin-direction').checked;
+                        if (spinDirectionEnabled) {
+                            rotation.direction = document.getElementById('entry-spin-direction').value;
+                        }
+                    } else if (rotationMode === 'settle') {
+                        const settleRangeEnabled = document.getElementById('enable-settle-range').checked;
+                        if (settleRangeEnabled) {
+                            rotation.startRotation = {
+                                min: parseInt(document.getElementById('entry-settle-min').value),
+                                max: parseInt(document.getElementById('entry-settle-max').value)
+                            };
+                        }
+                    } else if (rotationMode === 'wobble') {
+                        const wobble = {};
+                        const wobbleConfigEnabled = document.getElementById('enable-wobble-config').checked;
+                        if (wobbleConfigEnabled) {
+                            wobble.amplitude = parseInt(document.getElementById('entry-wobble-amplitude').value);
+                        }
+                        const wobbleFreqEnabled = document.getElementById('enable-wobble-frequency').checked;
+                        if (wobbleFreqEnabled) {
+                            wobble.frequency = parseInt(document.getElementById('entry-wobble-frequency').value);
+                        }
+                        if (Object.keys(wobble).length > 0) {
+                            wobble.decay = true; // Always include decay
+                            rotation.wobble = wobble;
+                        }
+                    }
+
+                    entry.rotation = rotation;
                 }
             }
 

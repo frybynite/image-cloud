@@ -223,6 +223,13 @@
         "_title": "Animation path settings",
         "type": "Animation trajectory: linear, bounce, elastic, wave (default: linear)",
         "preset": "Preset configuration for the selected path type"
+      },
+      "rotation": {
+        "_title": "Entry rotation animation settings",
+        "mode": "How images rotate as they enter: none, spin, settle, random, wobble (default: none)",
+        "spinCount": "Number of full rotations during spin animation (default: 1)",
+        "direction": "Spin direction: clockwise, counterclockwise, auto, random (default: clockwise)",
+        "startRotation": "Starting rotation range for settle mode in degrees (default: -45 to 45)"
       }
     }
   },
@@ -248,6 +255,18 @@
       "_title": "Animation path settings",
       "type": "Animation trajectory: linear, bounce, elastic, wave (default: linear)",
       "preset": "Preset configuration for the selected path type"
+    },
+    "rotation": {
+      "_title": "Entry rotation animation settings",
+      "mode": "How images rotate as they enter: none, spin, settle, random, wobble (default: none)",
+      "spinCount": "Number of full rotations during spin animation (default: 1)",
+      "direction": "Spin direction: clockwise, counterclockwise, auto, random (default: clockwise)",
+      "startRotation": "Starting rotation range for settle mode in degrees (default: -45 to 45)",
+      "wobble": {
+        "_title": "Wobble animation settings",
+        "amplitude": "Maximum wobble angle in degrees (default: 15)",
+        "frequency": "Number of wobble oscillations during animation (default: 3)"
+      }
     }
   },
   "interaction": {
