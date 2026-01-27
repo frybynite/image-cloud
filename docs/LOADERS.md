@@ -4,17 +4,118 @@ Image Cloud supports multiple image sources through configurable loaders.
 
 ## Table of Contents
 
+- [Static Loader](#static-loader)
+  - [Configuration Options](#static-loader-configuration-options)
+  - [Source Types](#static-source-types)
+  - [URL Validation](#url-validation)
 - [Google Drive Loader](#google-drive-loader)
   - [Setting Up a Google API Key](#setting-up-a-google-api-key)
   - [Configuration Options](#google-drive-configuration-options)
   - [Source Types](#google-drive-source-types)
   - [Domain Restrictions](#domain-restrictions)
-- [Static Loader](#static-loader)
-  - [Configuration Options](#static-loader-configuration-options)
-  - [Source Types](#static-source-types)
-  - [URL Validation](#url-validation)
 - [Composite Loader](#composite-loader)
 - [Common Options](#common-options)
+
+---
+
+## Static Loader
+
+Load images from direct URLs or local file paths.
+
+### Static Loader Configuration Options
+
+```typescript
+loader: {
+  type: 'static',
+  static: {
+    sources: [...],                      // Required: Array of sources
+    validateUrls: true,                  // Optional: Verify URLs exist
+    validationTimeout: 5000,             // Optional: Timeout in ms
+    validationMethod: 'head',            // Optional: 'head', 'simple', or 'none'
+    failOnAllMissing: true,              // Optional: Fail if all URLs invalid
+    allowedExtensions: ['jpg', 'png'],   // Optional: Filter by extension
+    debugLogging: false                  // Optional: Enable debug output
+  }
+}
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `sources` | `StaticSource[]` | - | **Required.** Array of URL or path sources |
+| `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading |
+| `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms) |
+| `validationMethod` | `string` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (img load), `'none'` |
+| `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation |
+| `allowedExtensions` | `string[]` | All images | Filter images by file extension |
+| `debugLogging` | `boolean` | `false` | Log debug information to console |
+
+### Static Source Types
+
+#### URLs Source
+
+Load from direct image URLs:
+
+```javascript
+{
+  type: 'urls',
+  urls: [
+    'https://example.com/image1.jpg',
+    'https://example.com/image2.png',
+    '/local/path/image3.jpg'
+  ]
+}
+```
+
+#### Path Source
+
+Load from a base path with file names:
+
+```javascript
+{
+  type: 'path',
+  basePath: '/images/gallery/',
+  files: ['photo1.jpg', 'photo2.jpg', 'photo3.png']
+}
+```
+
+### URL Validation
+
+The static loader can validate URLs before attempting to display them:
+
+- **`'head'`** (default): Sends HTTP HEAD request - fast but may not work with all servers
+- **`'simple'`**: Creates an Image element to test loading - works universally but slower
+- **`'none'`**: Skip validation - fastest but broken images won't be filtered
+
+### Complete Static Loader Example
+
+```javascript
+const gallery = new ImageCloud({
+  container: 'imageCloud',
+  loader: {
+    type: 'static',
+    static: {
+      sources: [
+        {
+          type: 'urls',
+          urls: [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'
+          ]
+        },
+        {
+          type: 'path',
+          basePath: '/assets/photos/',
+          files: ['vacation1.jpg', 'vacation2.jpg', 'vacation3.jpg']
+        }
+      ],
+      validateUrls: true,
+      validationMethod: 'simple'
+    }
+  }
+});
+
+gallery.init();
+```
 
 ---
 
@@ -139,107 +240,6 @@ When hosting on a website (not localhost), your API key must be configured to al
 3. Under "HTTP referrers", add your domain (e.g., `yourdomain.github.io/*`)
 
 Without this, you'll see CORS errors and the loader will fail.
-
----
-
-## Static Loader
-
-Load images from direct URLs or local file paths.
-
-### Static Loader Configuration Options
-
-```typescript
-loader: {
-  type: 'static',
-  static: {
-    sources: [...],                      // Required: Array of sources
-    validateUrls: true,                  // Optional: Verify URLs exist
-    validationTimeout: 5000,             // Optional: Timeout in ms
-    validationMethod: 'head',            // Optional: 'head', 'simple', or 'none'
-    failOnAllMissing: true,              // Optional: Fail if all URLs invalid
-    allowedExtensions: ['jpg', 'png'],   // Optional: Filter by extension
-    debugLogging: false                  // Optional: Enable debug output
-  }
-}
-```
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `sources` | `StaticSource[]` | - | **Required.** Array of URL or path sources |
-| `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading |
-| `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms) |
-| `validationMethod` | `string` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (img load), `'none'` |
-| `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation |
-| `allowedExtensions` | `string[]` | All images | Filter images by file extension |
-| `debugLogging` | `boolean` | `false` | Log debug information to console |
-
-### Static Source Types
-
-#### URLs Source
-
-Load from direct image URLs:
-
-```javascript
-{
-  type: 'urls',
-  urls: [
-    'https://example.com/image1.jpg',
-    'https://example.com/image2.png',
-    '/local/path/image3.jpg'
-  ]
-}
-```
-
-#### Path Source
-
-Load from a base path with file names:
-
-```javascript
-{
-  type: 'path',
-  basePath: '/images/gallery/',
-  files: ['photo1.jpg', 'photo2.jpg', 'photo3.png']
-}
-```
-
-### URL Validation
-
-The static loader can validate URLs before attempting to display them:
-
-- **`'head'`** (default): Sends HTTP HEAD request - fast but may not work with all servers
-- **`'simple'`**: Creates an Image element to test loading - works universally but slower
-- **`'none'`**: Skip validation - fastest but broken images won't be filtered
-
-### Complete Static Loader Example
-
-```javascript
-const gallery = new ImageCloud({
-  container: 'imageCloud',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [
-        {
-          type: 'urls',
-          urls: [
-            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'
-          ]
-        },
-        {
-          type: 'path',
-          basePath: '/assets/photos/',
-          files: ['vacation1.jpg', 'vacation2.jpg', 'vacation3.jpg']
-        }
-      ],
-      validateUrls: true,
-      validationMethod: 'simple'
-    }
-  }
-});
-
-gallery.init();
-```
 
 ---
 
