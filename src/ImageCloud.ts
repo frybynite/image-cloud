@@ -558,6 +558,7 @@ export class ImageCloud {
         if (!this.zoomEngine.isInvolved(img)) {
           applyStylesToElement(img, this.defaultStyles);
           removeClassNameFromElement(img, this.hoverClassName);
+          applyClassNameToElement(img, this.defaultClassName);
         }
       });
 
