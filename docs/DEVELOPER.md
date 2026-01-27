@@ -38,16 +38,19 @@ npm run test:ui          # Run tests with Playwright UI
 
 ```
 src/
-├── ImageCloud.ts        # Main entry point
+├── ImageCloud.ts        # Main gallery class
 ├── index.ts             # Public exports
+├── auto-init.ts         # Auto-initialization from data attributes
 ├── config/
 │   ├── types.ts         # TypeScript interfaces
-│   └── defaults.ts      # Default configuration
+│   ├── defaults.ts      # Default configuration
+│   └── adapter.ts       # Legacy config adapter
 ├── engines/
 │   ├── LayoutEngine.ts  # Position calculations
 │   ├── AnimationEngine.ts
 │   ├── ZoomEngine.ts
-│   └── EntryAnimationEngine.ts
+│   ├── EntryAnimationEngine.ts
+│   └── PathAnimator.ts  # Entry path animations (bounce, elastic, wave)
 ├── generators/          # Layout algorithms
 │   ├── RadialPlacementGenerator.ts
 │   ├── GridPlacementGenerator.ts
@@ -55,10 +58,13 @@ src/
 │   ├── ClusterPlacementGenerator.ts
 │   ├── WavePlacementGenerator.ts
 │   └── RandomPlacementGenerator.ts
-└── loaders/
-    ├── GoogleDriveLoader.ts
-    ├── StaticImageLoader.ts
-    └── CompositeLoader.ts
+├── loaders/
+│   ├── GoogleDriveLoader.ts
+│   ├── StaticImageLoader.ts
+│   ├── CompositeLoader.ts
+│   └── ImageFilter.ts   # File extension filtering
+└── utils/
+    └── styleUtils.ts    # CSS style generation helpers
 ```
 
 ## Code Style
