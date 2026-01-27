@@ -18,7 +18,7 @@ npm run build:prod       # Build with validation
 npm run build:watch      # Watch mode
 npm run clean            # Remove dist/
 
-# Releasing
+# Releasing - this will only be done by the project owner
 npm run release:patch    # 0.1.0 → 0.1.1
 npm run release:minor    # 0.1.0 → 0.2.0
 npm run release:major    # 0.1.0 → 1.0.0
@@ -75,3 +75,17 @@ src/
 3. Make your changes
 4. Run tests: `npm test`
 5. Submit a Pull Request
+
+---
+
+## To Do
+
+### Restrict Release Scripts to Project Owner
+
+Currently, release scripts can be run by anyone with repo access. Consider implementing one of these approaches:
+
+- **Rely on npm permissions** - Only the owner has the npm token to publish
+- **Add user check in script** - Validate git user against allowed list
+- **GitHub branch protection** - Restrict who can push tags matching `v*`
+- **GitHub Actions workflow** - Create a release workflow with environment protection rules
+- **Keep scripts local** - Remove release scripts from repo, maintain locally only
