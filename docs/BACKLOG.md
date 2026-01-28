@@ -4,13 +4,11 @@ Future enhancements and feature ideas for Image Cloud.
 
 ## Active Issues
 
-- [x] Blurry images on zoom: CSS transform scale() scales rendered pixels, not source images. When images render at ~150-200px and zoom to 80% of container, they're scaled 3-4x causing blurriness. Fix: change ZoomEngine to resize actual image dimensions instead of using transform scale.
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
 - [ ] Discuss custom fly-in animations - allow configurable entrance animation styles for images.
 - [ ] Fix: Dragging window between screens triggers re-animation even when staying within same breakpoint.
 - [ ] Fix: Duplicate images still appearing when resizing window from desktop to mobile size (race condition not fully resolved).
-- [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
 - [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Review failing test: "unfocusing restores default state" - Escape key doesn't restore border to default state after unfocus.
@@ -97,3 +95,5 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Fix: Rotation configuration in configurator - min/max rotation controls appear but rotation behavior needs investigation.
 - [x] Fix: Configurator double refresh on text field changes - gallery refreshes on each keystroke (oninput) and again on blur (onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skipping refresh when config unchanged.
 - [x] Keyboard navigation - Left/Right arrow keys navigate between focused images with wrap-around. Escape unfocuses.
+- [x] Blurry images on zoom: CSS transform scale() scales rendered pixels, not source images. When images render at ~150-200px and zoom to 80% of container, they're scaled 3-4x causing blurriness. Fix: change ZoomEngine to resize actual image dimensions instead of using transform scale.
+- [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
