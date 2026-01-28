@@ -1,6 +1,6 @@
 # Image Cloud Library
 
-A TypeScript library for creating interactive image galleries with animated scattered layouts and zoom effects. Supports multiple image sources (Google Drive, static URLs) and layout algorithms.
+A TypeScript library for creating interactive image clouds with animated scattered layouts and zoom effects. Supports multiple image sources (Google Drive, static URLs) and layout algorithms.
 
 > [!WARNING]
 > All minor versions of this library before 1.0 (e.g., 0.1, 0.2, ...) will include breaking changes during development. Please re-test every time before upgrading until we have published v1.0.
@@ -32,8 +32,8 @@ npm install @frybynite/image-cloud
 import { ImageCloud } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
 
-const gallery = new ImageCloud({
-  container: 'myGallery',
+const cloud = new ImageCloud({
+  container: 'myCloud',
   loader: {
     type: 'static',
     static: {
@@ -54,7 +54,7 @@ const gallery = new ImageCloud({
   }
 });
 
-await gallery.init();
+await cloud.init();
 ```
 
 ### HTML (Auto-initialization)
@@ -67,8 +67,8 @@ await gallery.init();
 </head>
 <body>
   <!-- Note: Data attributes for auto-init need to be updated to match new structure if using complex config -->
-  <div id="gallery"
-       data-image-gallery="true"
+  <div id="cloud"
+       data-image-cloud="true"
        data-config='{"loader":{"type":"static","static":{"sources":[{"type":"urls","urls":["img1.jpg"]}]}}}'>
   </div>
 
@@ -88,13 +88,13 @@ await gallery.init();
   <link rel="stylesheet" href="https://unpkg.com/@frybynite/image-cloud/dist/style.css">
 </head>
 <body>
-  <div id="gallery"></div>
+  <div id="cloud"></div>
 
   <script src="https://unpkg.com/@frybynite/image-cloud/dist/image-cloud.umd.js"></script>
   <script>
     const { ImageCloud } = window.ImageCloud;
-    const gallery = new ImageCloud({
-      container: 'gallery',
+    const cloud = new ImageCloud({
+      container: 'cloud',
       loader: {
         type: 'static',
         static: {
@@ -102,7 +102,7 @@ await gallery.init();
         }
       }
     });
-    gallery.init();
+    cloud.init();
   </script>
 </body>
 </html>
@@ -113,8 +113,8 @@ await gallery.init();
 ### Static Images from URLs
 
 ```typescript
-const gallery = new ImageCloud({
-  container: 'gallery',
+const cloud = new ImageCloud({
+  container: 'cloud',
   loader: {
     type: 'static',
     static: {
@@ -132,14 +132,14 @@ const gallery = new ImageCloud({
   }
 });
 
-await gallery.init();
+await cloud.init();
 ```
 
 ### Static Images from Local Path
 
 ```typescript
-const gallery = new ImageCloud({
-  container: 'gallery',
+const cloud = new ImageCloud({
+  container: 'cloud',
   loader: {
     type: 'static',
     static: {
@@ -154,14 +154,14 @@ const gallery = new ImageCloud({
   }
 });
 
-await gallery.init();
+await cloud.init();
 ```
 
 ### Google Drive Folder
 
 ```typescript
-const gallery = new ImageCloud({
-  container: 'gallery',
+const cloud = new ImageCloud({
+  container: 'cloud',
   loader: {
     type: 'googleDrive',
     googleDrive: {
@@ -176,14 +176,14 @@ const gallery = new ImageCloud({
   }
 });
 
-await gallery.init();
+await cloud.init();
 ```
 
 ### Custom Configuration
 
 ```typescript
-const gallery = new ImageCloud({
-  container: 'gallery',
+const cloud = new ImageCloud({
+  container: 'cloud',
   loader: {
     type: 'static',
     static: {
@@ -216,7 +216,7 @@ const gallery = new ImageCloud({
   }
 });
 
-await gallery.init();
+await cloud.init();
 ```
 
 ## Configuration Options
@@ -243,7 +243,7 @@ interface ImageCloudOptions {
 
 #### Methods
 
-- `init(): Promise<void>` - Initialize the gallery and load images
+- `init(): Promise<void>` - Initialize the cloud and load images
 - `clearImageCloud(): void` - Clear all images and reset state
 - `destroy(): void` - Clean up resources and event listeners
 
@@ -276,13 +276,13 @@ import { useEffect, useRef } from 'react';
 import { ImageCloud } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
 
-function GalleryComponent() {
+function CloudComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const galleryRef = useRef<ImageCloud | null>(null);
+  const cloudRef = useRef<ImageCloud | null>(null);
 
   useEffect(() => {
     if (containerRef.current) {
-      galleryRef.current = new ImageCloud({
+      cloudRef.current = new ImageCloud({
         container: containerRef.current.id,
         loader: {
           type: 'static',
@@ -292,15 +292,15 @@ function GalleryComponent() {
         }
       });
 
-      galleryRef.current.init();
+      cloudRef.current.init();
     }
 
     return () => {
-      galleryRef.current?.destroy();
+      cloudRef.current?.destroy();
     };
   }, []);
 
-  return <div id="gallery" ref={containerRef} />;
+  return <div id="cloud" ref={containerRef} />;
 }
 ```
 
@@ -328,7 +328,7 @@ Check out the `examples/` directory for various usage patterns:
 - See `examples/README.md` for detailed instructions
 
 Also see:
-- `index.html` - Production Google Drive gallery
+- `index.html` - Production Google Drive cloud
 - `index-static.html` - Static image sources example
 
 ## Contributing
