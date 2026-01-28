@@ -5,10 +5,22 @@
  * Usage: Include this script and add data-image-cloud attribute to containers
  */
 
-// Import CSS for bundlers that support it
-import './styles/gallery.css';
+// Import CSS as inline string for self-contained bundle
+import css from './styles/gallery.css?inline';
 
 import { ImageCloud } from './ImageCloud';
+
+/** Inject library styles into <head> (idempotent) */
+function injectStyles(): void {
+  if (typeof document === 'undefined') return;
+  const id = 'fbn-ic-styles';
+  if (document.getElementById(id)) return;
+  const style = document.createElement('style');
+  style.id = id;
+  style.textContent = css;
+  document.head.appendChild(style);
+}
+injectStyles();
 import type { ImageCloudOptions } from './config/types';
 
 /**

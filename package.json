@@ -12,14 +12,15 @@
       "require": "./dist/image-cloud.umd.js",
       "types": "./dist/index.d.ts"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./auto-init": "./dist/image-cloud-auto-init.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run clean && tsc && vite build",
+    "build": "npm run clean && tsc && vite build && vite build --config vite.image-cloud-auto-init.config.ts",
     "test": "playwright test --config=test/playwright.config.ts",
     "test:ui": "playwright test --config=test/playwright.config.ts --ui",
     "test:headed": "playwright test --config=test/playwright.config.ts --headed",
