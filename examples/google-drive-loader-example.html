@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive image cloud gallery with smooth zoom animations">
-    <title>Certifications Gallery</title>
+    <meta name="description" content="Interactive image cloud with smooth zoom animations">
+    <title>Image Cloud - Google Drive Example</title>
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         html, body {
@@ -28,7 +28,7 @@
 <body>
     <div class="container">
         <!-- Using JavaScript initialization (see script below) -->
-        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image gallery">
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud">
             <!-- Images will be dynamically inserted here -->
         </div>
 
@@ -46,7 +46,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             // NEW FORMAT: Pattern-based configuration
-            const gallery = new ImageCloud({
+            const cloud = new ImageCloud({
                 container: 'imageCloud',
                 loader: {
                     type: 'googleDrive',
@@ -63,8 +63,8 @@
                 }
             });
 
-            gallery.init().catch(error => {
-                console.error('Gallery initialization failed:', error);
+            cloud.init().catch(error => {
+                console.error('Image cloud initialization failed:', error);
             });
         });
     </script>

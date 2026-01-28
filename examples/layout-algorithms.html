@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery - Layout Algorithms Demo</title>
+    <title>Image Cloud - Layout Algorithms Demo</title>
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         * {
@@ -25,24 +25,24 @@
             color: #888;
             margin-bottom: 30px;
         }
-        .gallery-grid {
+        .cloud-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 30px;
             max-width: 1800px;
             margin: 0 auto;
         }
-        .gallery-section {
+        .cloud-section {
             background: #16213e;
             border-radius: 12px;
             padding: 20px;
         }
-        .gallery-section h2 {
+        .cloud-section h2 {
             margin: 0 0 10px 0;
             font-size: 1.3rem;
             color: #7f5af0;
         }
-        .gallery-section p {
+        .cloud-section p {
             margin: 0 0 15px 0;
             color: #888;
             font-size: 0.9rem;
@@ -86,12 +86,12 @@
     <h1>Layout Algorithms Demo</h1>
     <p class="subtitle">Explore different image placement algorithms</p>
 
-    <div class="gallery-grid">
+    <div class="cloud-grid">
         <!-- Grid Layout -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Grid Layout</h2>
             <p>Clean rows and columns with optional stagger and jitter for organic feel</p>
-            <div id="gallery-grid" class="image-cloud"></div>
+            <div id="cloud-grid" class="image-cloud"></div>
             <div class="controls">
                 <select id="grid-stagger">
                     <option value="none">No Stagger</option>
@@ -109,10 +109,10 @@
         </div>
 
         <!-- Spiral Layout -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Spiral Layout</h2>
             <p>Images arranged along a spiral path - golden, archimedean, or logarithmic</p>
-            <div id="gallery-spiral" class="image-cloud"></div>
+            <div id="cloud-spiral" class="image-cloud"></div>
             <div class="controls">
                 <select id="spiral-type">
                     <option value="golden">Golden Spiral</option>
@@ -128,10 +128,10 @@
         </div>
 
         <!-- Cluster Layout -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Cluster Layout</h2>
             <p>Organic groupings like photos scattered on a table</p>
-            <div id="gallery-cluster" class="image-cloud"></div>
+            <div id="cloud-cluster" class="image-cloud"></div>
             <div class="controls">
                 <select id="cluster-count">
                     <option value="auto">Auto Clusters</option>
@@ -148,36 +148,41 @@
         </div>
 
         <!-- Wave Layout -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Wave Layout</h2>
             <p>Images positioned along flowing sine wave curves</p>
-            <div id="gallery-wave" class="image-cloud"></div>
+            <div id="cloud-wave" class="image-cloud"></div>
             <div class="controls">
+                <select id="wave-rows">
+                    <option value="2">2 Rows</option>
+                    <option value="3" selected>3 Rows</option>
+                    <option value="4">4 Rows</option>
+                </select>
                 <select id="wave-sync">
                     <option value="offset">Offset Waves</option>
                     <option value="synchronized">Synchronized</option>
                     <option value="alternating">Alternating</option>
                 </select>
-                <select id="wave-orientation">
-                    <option value="follow">Follow Wave</option>
-                    <option value="upright">Stay Upright</option>
+                <select id="wave-rotation">
+                    <option value="tangent">Follow Wave</option>
+                    <option value="none" selected>Stay Upright</option>
                 </select>
                 <button id="wave-refresh">Try it</button>
             </div>
         </div>
 
         <!-- Radial Layout (existing) -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Radial Layout</h2>
             <p>Concentric rings emanating from center (existing algorithm)</p>
-            <div id="gallery-radial" class="image-cloud"></div>
+            <div id="cloud-radial" class="image-cloud"></div>
         </div>
 
         <!-- Random Layout (existing) -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Random Layout</h2>
             <p>Randomly scattered images (existing algorithm)</p>
-            <div id="gallery-random" class="image-cloud"></div>
+            <div id="cloud-random" class="image-cloud"></div>
         </div>
     </div>
 
@@ -208,9 +213,9 @@
             }
         };
 
-        // Grid Gallery
-        const gridGallery = new ImageCloud({
-            container: 'gallery-grid',
+        // Grid Cloud
+        const gridCloud = new ImageCloud({
+            container: 'cloud-grid',
             loader: loaderConfig,
             layout: {
                 algorithm: 'grid',
@@ -226,9 +231,9 @@
             }
         });
 
-        // Spiral Gallery
-        const spiralGallery = new ImageCloud({
-            container: 'gallery-spiral',
+        // Spiral Cloud
+        const spiralCloud = new ImageCloud({
+            container: 'cloud-spiral',
             loader: loaderConfig,
             layout: {
                 algorithm: 'spiral',
@@ -242,9 +247,9 @@
             }
         });
 
-        // Cluster Gallery
-        const clusterGallery = new ImageCloud({
-            container: 'gallery-cluster',
+        // Cluster Cloud
+        const clusterCloud = new ImageCloud({
+            container: 'cloud-cluster',
             loader: loaderConfig,
             layout: {
                 algorithm: 'cluster',
@@ -259,27 +264,28 @@
             }
         });
 
-        // Wave Gallery
-        const waveGallery = new ImageCloud({
-            container: 'gallery-wave',
+        // Wave Cloud
+        const waveCloud = new ImageCloud({
+            container: 'cloud-wave',
             loader: loaderConfig,
             layout: {
                 algorithm: 'wave',
                 sizing: { base: 100 },
-                rotation: { enabled: false },  // Wave handles rotation
                 wave: {
                     rows: 3,
                     amplitude: 80,
                     frequency: 2,
-                    synchronization: 'offset',
-                    orientation: 'follow'
+                    synchronization: 'offset'
                 }
+            },
+            image: {
+                rotation: { mode: 'none' }  // 'tangent' to follow wave, 'none' to stay upright
             }
         });
 
-        // Radial Gallery (existing)
-        const radialGallery = new ImageCloud({
-            container: 'gallery-radial',
+        // Radial Cloud (existing)
+        const radialCloud = new ImageCloud({
+            container: 'cloud-radial',
             loader: loaderConfig,
             layout: {
                 algorithm: 'radial',
@@ -287,9 +293,9 @@
             }
         });
 
-        // Random Gallery (existing)
-        const randomGallery = new ImageCloud({
-            container: 'gallery-random',
+        // Random Cloud (existing)
+        const randomCloud = new ImageCloud({
+            container: 'cloud-random',
             loader: loaderConfig,
             layout: {
                 algorithm: 'random',
@@ -297,43 +303,43 @@
             }
         });
 
-        // Store gallery instances for refresh
-        let galleries = {
-            grid: gridGallery,
-            spiral: spiralGallery,
-            cluster: clusterGallery,
-            wave: waveGallery,
-            radial: radialGallery,
-            random: randomGallery
+        // Store cloud instances for refresh
+        let clouds = {
+            grid: gridCloud,
+            spiral: spiralCloud,
+            cluster: clusterCloud,
+            wave: waveCloud,
+            radial: radialCloud,
+            random: randomCloud
         };
 
-        // Initialize all galleries
+        // Initialize all clouds
         Promise.all([
-            gridGallery.init(),
-            spiralGallery.init(),
-            clusterGallery.init(),
-            waveGallery.init(),
-            radialGallery.init(),
-            randomGallery.init()
+            gridCloud.init(),
+            spiralCloud.init(),
+            clusterCloud.init(),
+            waveCloud.init(),
+            radialCloud.init(),
+            randomCloud.init()
         ]).catch(error => {
-            console.error('Gallery initialization failed:', error);
+            console.error('Cloud initialization failed:', error);
         });
 
-        // Helper to recreate a gallery with new config
-        async function refreshGallery(containerId, config) {
+        // Helper to recreate a cloud with new config
+        async function refreshCloud(containerId, config) {
             // Clear the container
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            // Create new gallery
-            const gallery = new ImageCloud({
+            // Create new cloud
+            const cloud = new ImageCloud({
                 container: containerId,
                 loader: loaderConfig,
                 layout: config
             });
 
-            await gallery.init();
-            return gallery;
+            await cloud.init();
+            return cloud;
         }
 
         // Grid refresh handler
@@ -341,7 +347,7 @@
             const stagger = document.getElementById('grid-stagger').value;
             const jitter = parseFloat(document.getElementById('grid-jitter').value);
 
-            galleries.grid = await refreshGallery('gallery-grid', {
+            clouds.grid = await refreshCloud('cloud-grid', {
                 algorithm: 'grid',
                 sizing: { base: 100 },
                 grid: {
@@ -360,7 +366,7 @@
             const spiralType = document.getElementById('spiral-type').value;
             const direction = document.getElementById('spiral-direction').value;
 
-            galleries.spiral = await refreshGallery('gallery-spiral', {
+            clouds.spiral = await refreshCloud('cloud-spiral', {
                 algorithm: 'spiral',
                 sizing: { base: 80 },
                 spiral: {
@@ -378,7 +384,7 @@
             const clusterCount = countValue === 'auto' ? 'auto' : parseInt(countValue);
             const distribution = document.getElementById('cluster-distribution').value;
 
-            galleries.cluster = await refreshGallery('gallery-cluster', {
+            clouds.cluster = await refreshCloud('cloud-cluster', {
                 algorithm: 'cluster',
                 sizing: { base: 90 },
                 cluster: {
@@ -393,21 +399,35 @@
 
         // Wave refresh handler
         document.getElementById('wave-refresh').addEventListener('click', async () => {
+            const rows = parseInt(document.getElementById('wave-rows').value);
             const synchronization = document.getElementById('wave-sync').value;
-            const orientation = document.getElementById('wave-orientation').value;
+            const rotationMode = document.getElementById('wave-rotation').value;
 
-            galleries.wave = await refreshGallery('gallery-wave', {
-                algorithm: 'wave',
-                sizing: { base: 100 },
-                rotation: { enabled: false },  // Wave handles rotation
-                wave: {
-                    rows: 3,
-                    amplitude: 80,
-                    frequency: 2,
-                    synchronization: synchronization,
-                    orientation: orientation
+            // Clear the container
+            const container = document.getElementById('cloud-wave');
+            container.innerHTML = '';
+
+            // Create new cloud with image rotation config
+            const cloud = new ImageCloud({
+                container: 'cloud-wave',
+                loader: loaderConfig,
+                layout: {
+                    algorithm: 'wave',
+                    sizing: { base: 100 },
+                    wave: {
+                        rows: rows,
+                        amplitude: 80,
+                        frequency: 2,
+                        synchronization: synchronization
+                    }
+                },
+                image: {
+                    rotation: { mode: rotationMode }
                 }
             });
+
+            await cloud.init();
+            clouds.wave = cloud;
         });
     </script>
 </body>

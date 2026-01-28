@@ -16,6 +16,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Review failing test: "unfocusing restores default state" - Escape key doesn't restore border to default state after unfocus.
 - [ ] Review failing test: "handles empty styling config" - Default shadow not being applied when styling config is empty.
 - [ ] Fix auto-init export: README shows `import { autoInitialize } from '@frybynite/image-cloud/auto-init'` but this subpath is not exported in package.json and `autoInitialize` is not exported from main entry point.
+- [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 ---
 
 ## Planned

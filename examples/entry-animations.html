@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery - Entry Animations Demo</title>
+    <title>Image Cloud - Entry Animations Demo</title>
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         * {
@@ -25,24 +25,24 @@
             color: #888;
             margin-bottom: 30px;
         }
-        .gallery-grid {
+        .cloud-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 30px;
             max-width: 1800px;
             margin: 0 auto;
         }
-        .gallery-section {
+        .cloud-section {
             background: #16213e;
             border-radius: 12px;
             padding: 20px;
         }
-        .gallery-section h2 {
+        .cloud-section h2 {
             margin: 0 0 10px 0;
             font-size: 1.3rem;
             color: #7f5af0;
         }
-        .gallery-section p {
+        .cloud-section p {
             margin: 0 0 15px 0;
             color: #888;
             font-size: 0.9rem;
@@ -96,7 +96,7 @@
             white-space: pre-wrap;
             display: none;
         }
-        .gallery-section:hover .config-hint {
+        .cloud-section:hover .config-hint {
             display: block;
         }
     </style>
@@ -105,12 +105,12 @@
     <h1>Entry Animations Demo</h1>
     <p class="subtitle">Explore different entry animation start positions and timing</p>
 
-    <div class="gallery-grid">
+    <div class="cloud-grid">
         <!-- Nearest Edge (Default) -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Nearest Edge (Default)</h2>
             <p>Images enter from the closest edge to their final position</p>
-            <div id="gallery-nearest" class="image-cloud"></div>
+            <div id="cloud-nearest" class="image-cloud"></div>
             <div class="controls">
                 <button id="nearest-replay">Replay Animation</button>
             </div>
@@ -118,10 +118,10 @@
         </div>
 
         <!-- Center Burst -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Center Burst</h2>
             <p>Images scale up from the center - great for radial/spiral layouts</p>
-            <div id="gallery-center" class="image-cloud"></div>
+            <div id="cloud-center" class="image-cloud"></div>
             <div class="controls">
                 <button id="center-replay">Replay Animation</button>
             </div>
@@ -129,10 +129,10 @@
         </div>
 
         <!-- Top Cascade -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Top Cascade</h2>
             <p>All images enter from the top edge - natural reading order</p>
-            <div id="gallery-top" class="image-cloud"></div>
+            <div id="cloud-top" class="image-cloud"></div>
             <div class="controls">
                 <button id="top-replay">Replay Animation</button>
             </div>
@@ -140,10 +140,10 @@
         </div>
 
         <!-- Circular Entrance -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Circular Entrance</h2>
             <p>Images enter from evenly distributed positions on a circle</p>
-            <div id="gallery-circular" class="image-cloud"></div>
+            <div id="cloud-circular" class="image-cloud"></div>
             <div class="controls">
                 <select id="circular-distribution">
                     <option value="even">Even Distribution</option>
@@ -155,10 +155,10 @@
         </div>
 
         <!-- Random Edge -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Random Edge</h2>
             <p>Each image enters from a randomly chosen edge</p>
-            <div id="gallery-random-edge" class="image-cloud"></div>
+            <div id="cloud-random-edge" class="image-cloud"></div>
             <div class="controls">
                 <button id="random-edge-replay">Replay Animation</button>
             </div>
@@ -166,10 +166,10 @@
         </div>
 
         <!-- Custom Timing -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Custom Timing</h2>
             <p>Adjust duration and stagger timing</p>
-            <div id="gallery-timing" class="image-cloud"></div>
+            <div id="cloud-timing" class="image-cloud"></div>
             <div class="controls">
                 <label>Duration:</label>
                 <select id="timing-duration">
@@ -189,10 +189,10 @@
         </div>
 
         <!-- Layout-Aware Defaults -->
-        <div class="gallery-section">
+        <div class="cloud-section">
             <h2>Layout-Aware Defaults</h2>
             <p>Different layouts have smart default entry animations</p>
-            <div id="gallery-layout-aware" class="image-cloud"></div>
+            <div id="cloud-layout-aware" class="image-cloud"></div>
             <div class="controls">
                 <select id="layout-algorithm">
                     <option value="radial">Radial (default: center)</option>
@@ -234,12 +234,12 @@
             }
         };
 
-        // Helper to create and initialize a gallery
-        async function createGallery(containerId, layoutConfig = {}, animationConfig = {}) {
+        // Helper to create and initialize a cloud
+        async function createCloud(containerId, layoutConfig = {}, animationConfig = {}) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            const gallery = new ImageCloud({
+            const cloud = new ImageCloud({
                 container: containerId,
                 loader: loaderConfig,
                 layout: {
@@ -250,21 +250,21 @@
                 animation: animationConfig
             });
 
-            await gallery.init();
-            return gallery;
+            await cloud.init();
+            return cloud;
         }
 
         // Initialize all demo galleries
-        async function initAllGalleries() {
+        async function initAllClouds() {
             // Nearest Edge (default)
-            await createGallery('gallery-nearest', {}, {
+            await createCloud('cloud-nearest', {}, {
                 entry: {
                     start: { position: 'nearest-edge' }
                 }
             });
 
             // Center Burst
-            await createGallery('gallery-center', {}, {
+            await createCloud('cloud-center', {}, {
                 entry: {
                     start: { position: 'center' },
                     timing: { duration: 500, stagger: 80 }
@@ -272,7 +272,7 @@
             });
 
             // Top Cascade
-            await createGallery('gallery-top', { algorithm: 'grid' }, {
+            await createCloud('cloud-top', { algorithm: 'grid' }, {
                 entry: {
                     start: { position: 'top' },
                     timing: { duration: 800, stagger: 100 }
@@ -280,7 +280,7 @@
             });
 
             // Circular
-            await createGallery('gallery-circular', {}, {
+            await createCloud('cloud-circular', {}, {
                 entry: {
                     start: {
                         position: 'circular',
@@ -291,7 +291,7 @@
             });
 
             // Random Edge
-            await createGallery('gallery-random-edge', {}, {
+            await createCloud('cloud-random-edge', {}, {
                 entry: {
                     start: { position: 'random-edge' },
                     timing: { duration: 600, stagger: 100 }
@@ -299,7 +299,7 @@
             });
 
             // Custom Timing
-            await createGallery('gallery-timing', {}, {
+            await createCloud('cloud-timing', {}, {
                 entry: {
                     start: { position: 'nearest-edge' },
                     timing: { duration: 600, stagger: 150 }
@@ -307,18 +307,18 @@
             });
 
             // Layout-Aware (uses defaults based on layout algorithm)
-            await createGallery('gallery-layout-aware', { algorithm: 'radial' }, {});
+            await createCloud('cloud-layout-aware', { algorithm: 'radial' }, {});
         }
 
         // Replay handlers
         document.getElementById('nearest-replay').addEventListener('click', () => {
-            createGallery('gallery-nearest', {}, {
+            createCloud('cloud-nearest', {}, {
                 entry: { start: { position: 'nearest-edge' } }
             });
         });
 
         document.getElementById('center-replay').addEventListener('click', () => {
-            createGallery('gallery-center', {}, {
+            createCloud('cloud-center', {}, {
                 entry: {
                     start: { position: 'center' },
                     timing: { duration: 500, stagger: 80 }
@@ -327,7 +327,7 @@
         });
 
         document.getElementById('top-replay').addEventListener('click', () => {
-            createGallery('gallery-top', { algorithm: 'grid' }, {
+            createCloud('cloud-top', { algorithm: 'grid' }, {
                 entry: {
                     start: { position: 'top' },
                     timing: { duration: 800, stagger: 100 }
@@ -337,7 +337,7 @@
 
         document.getElementById('circular-replay').addEventListener('click', () => {
             const distribution = document.getElementById('circular-distribution').value;
-            createGallery('gallery-circular', {}, {
+            createCloud('cloud-circular', {}, {
                 entry: {
                     start: {
                         position: 'circular',
@@ -349,7 +349,7 @@
         });
 
         document.getElementById('random-edge-replay').addEventListener('click', () => {
-            createGallery('gallery-random-edge', {}, {
+            createCloud('cloud-random-edge', {}, {
                 entry: {
                     start: { position: 'random-edge' },
                     timing: { duration: 600, stagger: 100 }
@@ -360,7 +360,7 @@
         document.getElementById('timing-replay').addEventListener('click', () => {
             const duration = parseInt(document.getElementById('timing-duration').value);
             const stagger = parseInt(document.getElementById('timing-stagger').value);
-            createGallery('gallery-timing', {}, {
+            createCloud('cloud-timing', {}, {
                 entry: {
                     start: { position: 'nearest-edge' },
                     timing: { duration, stagger }
@@ -371,12 +371,12 @@
         document.getElementById('layout-replay').addEventListener('click', () => {
             const algorithm = document.getElementById('layout-algorithm').value;
             // Don't specify entry config - let it use layout-aware defaults
-            createGallery('gallery-layout-aware', { algorithm }, {});
+            createCloud('cloud-layout-aware', { algorithm }, {});
         });
 
         // Initialize on load
-        initAllGalleries().catch(error => {
-            console.error('Gallery initialization failed:', error);
+        initAllClouds().catch(error => {
+            console.error('Cloud initialization failed:', error);
         });
     </script>
 </body>

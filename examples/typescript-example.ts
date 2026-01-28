@@ -10,8 +10,8 @@ import '@frybynite/image-cloud/style.css';
 
 // Example 1: Basic usage with static images (NEW FORMAT)
 function basicExample() {
-    const gallery = new ImageCloud({
-        container: 'gallery',
+    const cloud = new ImageCloud({
+        container: 'cloud',
         loader: {
             type: 'static',
             static: {
@@ -28,13 +28,13 @@ function basicExample() {
         }
     });
 
-    gallery.init();
+    cloud.init();
 }
 
 // Example 2: With full type safety and pattern-based config (NEW FORMAT)
 function typedExample() {
     const options: ImageCloudOptions = {
-        container: 'gallery',
+        container: 'cloud',
         loader: {
             type: 'static',
             static: {
@@ -81,14 +81,14 @@ function typedExample() {
         }
     };
 
-    const gallery = new ImageCloud(options);
-    gallery.init();
+    const cloud = new ImageCloud(options);
+    cloud.init();
 }
 
 // Example 3: Google Drive integration with multiple sources (NEW FORMAT)
 async function googleDriveExample() {
-    const gallery = new ImageCloud({
-        container: 'gallery',
+    const cloud = new ImageCloud({
+        container: 'cloud',
         loader: {
             type: 'googleDrive',
             googleDrive: {
@@ -120,23 +120,23 @@ async function googleDriveExample() {
     });
 
     try {
-        await gallery.init();
-        console.log('Gallery initialized successfully');
+        await cloud.init();
+        console.log('Cloud initialized successfully');
     } catch (error) {
-        console.error('Failed to initialize gallery:', error);
+        console.error('Failed to initialize cloud:', error);
     }
 }
 
 // Example 4: React component (NEW FORMAT)
 import { useEffect, useRef } from 'react';
 
-function GalleryComponent() {
+function CloudComponent() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const galleryRef = useRef<ImageCloud | null>(null);
+    const cloudRef = useRef<ImageCloud | null>(null);
 
     useEffect(() => {
         if (containerRef.current) {
-            galleryRef.current = new ImageCloud({
+            cloudRef.current = new ImageCloud({
                 container: containerRef.current.id,
                 loader: {
                     type: 'static',
@@ -151,41 +151,41 @@ function GalleryComponent() {
                 }
             });
 
-            galleryRef.current.init();
+            cloudRef.current.init();
         }
 
         return () => {
-            galleryRef.current?.destroy();
+            cloudRef.current?.destroy();
         };
     }, []);
 
-    return <div id="gallery" ref={containerRef} className="image-cloud" />;
+    return <div id="cloud" ref={containerRef} className="image-cloud" />;
 }
 
 // Example 5: Vue 3 Composition API (NEW FORMAT)
 import { onMounted, onUnmounted, ref } from 'vue';
 
 function useImageCloud(containerId: string, options: Omit<ImageCloudOptions, 'container'>) {
-    const gallery = ref<ImageCloud | null>(null);
+    const imageCloud = ref<ImageCloud | null>(null);
 
     onMounted(async () => {
-        gallery.value = new ImageCloud({
+        imageCloud.value = new ImageCloud({
             container: containerId,
             ...options
         });
 
         try {
-            await gallery.value.init();
+            await imageCloud.value.init();
         } catch (error) {
-            console.error('Gallery initialization failed:', error);
+            console.error('Cloud initialization failed:', error);
         }
     });
 
     onUnmounted(() => {
-        gallery.value?.destroy();
+        imageCloud.value?.destroy();
     });
 
-    return { gallery };
+    return { imageCloud };
 }
 
 // Export examples
@@ -193,6 +193,6 @@ export {
     basicExample,
     typedExample,
     googleDriveExample,
-    GalleryComponent,
+    CloudComponent,
     useImageCloud
 };

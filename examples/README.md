@@ -1,6 +1,6 @@
-# Image Gallery Examples
+# Image Cloud Examples
 
-This directory contains various examples demonstrating different ways to use the Image Gallery library.
+This directory contains various examples demonstrating different ways to use the Image Cloud library.
 
 ## Examples
 
@@ -17,7 +17,7 @@ npx serve ..
 
 **Features:**
 - Uses ES6 modules (`<script type="module">`)
-- Direct import from `dist/image-gallery.js`
+- Direct import from `dist/image-cloud.js`
 - Random layout configuration
 - Static image sources from URLs
 
@@ -51,34 +51,34 @@ Comprehensive TypeScript usage examples for various frameworks.
 
 **Usage:**
 ```typescript
-import { ImageCloud } from '@frybynite/image-gallery';
-import '@frybynite/image-gallery/style.css';
+import { ImageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/style.css';
 
-const gallery = new ImageCloud({
-    containerId: 'gallery',
+const cloud = new ImageCloud({
+    containerId: 'cloud',
     loaderType: 'static',
     staticLoader: {
         sources: [{ type: 'urls', urls: ['img1.jpg'] }]
     }
 });
 
-await gallery.init();
+await cloud.init();
 ```
 
 ## Parent Directory Examples
 
-### Main Gallery (`../index.html`)
+### Main Cloud (`../google-drive-loader-example.html`)
 
-Production Google Drive gallery with auto-initialization.
+Production Google Drive cloud with auto-initialization.
 
 **Features:**
 - Google Drive API integration
 - Auto-initialization from data attributes
 - Production-ready setup
 
-### Static Gallery (`../index-static.html`)
+### Static Cloud (`../static-loader-example.html`)
 
-Gallery demonstrating static image loading with mixed sources.
+Cloud demonstrating static image loading with mixed sources.
 
 **Features:**
 - Mixed URL and local path sources
@@ -97,8 +97,8 @@ serve .
 # Open browser to:
 # http://localhost:3000/examples/esm-example.html
 # http://localhost:3000/examples/cdn-umd-example.html
-# http://localhost:3000/index.html
-# http://localhost:3000/index-static.html
+# http://localhost:3000/google-drive-loader-example.html
+# http://localhost:3000/static-loader-example.html
 ```
 
 ### Option 2: Using Python
