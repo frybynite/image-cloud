@@ -22,6 +22,15 @@
             position: relative;
         }
     </style>
+    <!-- Import map is only needed for local development/testing.
+         Not needed when using a bundler or installing via npm. -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "../dist/image-cloud.js"
+        }
+    }
+    </script>
 </head>
 <body>
     <h1>Image Cloud - ESM Module Example</h1>
@@ -31,7 +40,7 @@
 
     <!-- ESM import: use type="module" and import from the .js build -->
     <script type="module">
-        import { ImageCloud } from '../dist/image-cloud.js';
+        import { ImageCloud } from '@frybynite/image-cloud';
 
         const cloud = new ImageCloud({
             container: 'cloud',  // matches the div id above

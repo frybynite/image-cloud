@@ -101,6 +101,15 @@
             display: block;
         }
     </style>
+    <!-- Import map is only needed for local development/testing.
+         Not needed when using a bundler or installing via npm. -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "../dist/image-cloud.js"
+        }
+    }
+    </script>
 </head>
 <body>
     <h1>Entry Animations Demo</h1>
@@ -209,7 +218,7 @@
     </div>
 
     <script type="module">
-        import { ImageCloud } from '../dist/image-cloud.js';
+        import { ImageCloud } from '@frybynite/image-cloud';
 
         // Sample images from test fixtures
         const sampleImages = [

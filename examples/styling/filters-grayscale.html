@@ -40,6 +40,15 @@
         .config-content .copy-btn:hover { background: #8b5cf6; }
         .config-content .copy-btn.copied { background: #22c55e; }
     </style>
+    <!-- Import map is only needed for local development/testing.
+         Not needed when using a bundler or installing via npm. -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "../../dist/image-cloud.js"
+        }
+    }
+    </script>
 </head>
 <body>
     <div class="controls">
@@ -113,7 +122,7 @@
     </div>
 
     <script type="module">
-        import { ImageCloud } from '../../dist/image-cloud.js';
+        import { ImageCloud } from '@frybynite/image-cloud';
         let cloud = null;
         let showingPaths = false;
 

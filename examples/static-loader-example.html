@@ -25,6 +25,15 @@
             height: 100%;
         }
     </style>
+    <!-- Import map is only needed for local development/testing.
+         Not needed when using a bundler or installing via npm. -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "../dist/image-cloud.js"
+        }
+    }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -42,7 +51,7 @@
     </div>
 
     <script type="module">
-        import { ImageCloud } from '../dist/image-cloud.js';
+        import { ImageCloud } from '@frybynite/image-cloud';
 
         document.addEventListener('DOMContentLoaded', () => {
             const cloud = new ImageCloud({
