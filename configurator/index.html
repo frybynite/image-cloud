@@ -1305,11 +1305,11 @@
                         <div class="control-group">
                             <h5 class="control-group-title" data-label="Rotation" data-path="image.rotation">Rotation</h5>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-image-rotation-mode" checked>
+                                <input type="checkbox" class="control-checkbox" id="enable-image-rotation-mode">
                                 <label class="control-label" data-label="Mode" data-path="image.rotation.mode">Mode</label>
                                 <div class="control-input">
                                     <select id="image-rotation-mode" onchange="toggleRotationRange()">
-                                        <option value="none">None</option>
+                                        <option value="none">None (default)</option>
                                         <option value="random">Random</option>
                                         <option value="tangent">Tangent (Wave/Spiral)</option>
                                     </select>
@@ -2811,8 +2811,10 @@
                 layout.algorithm = algorithm;
             }
 
-            // Debug Centers
-            layout.debugCenters = document.getElementById('debug-centers')?.checked || false;
+            // Debug Centers (only include when enabled, since default is off)
+            if (document.getElementById('debug-centers')?.checked) {
+                layout.debugCenters = true;
+            }
 
             // Image Config (new structure)
             const image = {};
@@ -2857,17 +2859,19 @@
             // Layout Sizing (adaptive only now)
             const sizing = {};
 
-            // Adaptive
+            // Adaptive (enabled defaults to true, so only include when false)
             const adaptiveEnabled = document.getElementById('enable-adaptive')?.checked;
             if (adaptiveEnabled !== undefined) {
-                const adaptive = { enabled: adaptiveEnabled };
-                if (adaptiveEnabled) {
+                const adaptive = {};
+                if (!adaptiveEnabled) {
+                    adaptive.enabled = false;
+                } else {
                     const minSize = getEnabledValue('enable-adaptive-minSize', 'adaptive-minSize', parseInt);
                     const maxSize = getEnabledValue('enable-adaptive-maxSize', 'adaptive-maxSize', parseInt);
                     if (minSize !== undefined) adaptive.minSize = minSize;
                     if (maxSize !== undefined) adaptive.maxSize = maxSize;
                 }
-                sizing.adaptive = adaptive;
+                if (Object.keys(adaptive).length > 0) sizing.adaptive = adaptive;
             }
 
             if (Object.keys(sizing).length > 0) layout.sizing = sizing;
@@ -2959,15 +2963,17 @@
             const duration = getEnabledValue('enable-animation-duration', 'animation-duration', parseInt);
             if (duration !== undefined) animation.duration = duration;
 
-            // Queue
+            // Queue (enabled defaults to true, so only include when false)
             const queueEnabled = document.getElementById('enable-queue')?.checked;
             if (queueEnabled !== undefined) {
-                const queue = { enabled: queueEnabled };
-                if (queueEnabled) {
+                const queue = {};
+                if (!queueEnabled) {
+                    queue.enabled = false;
+                } else {
                     const interval = getEnabledValue('enable-queue-interval', 'queue-interval', parseInt);
                     if (interval !== undefined) queue.interval = interval;
                 }
-                animation.queue = queue;
+                if (Object.keys(queue).length > 0) animation.queue = queue;
             }
 
             // Entry
@@ -3194,7 +3200,7 @@
 
             // Reset image rotation to default
             document.getElementById('image-rotation-mode').value = 'none';
-            document.getElementById('enable-image-rotation-mode').checked = true;
+            document.getElementById('enable-image-rotation-mode').checked = false;
             toggleRotationRange();
 
             // Reset algorithm

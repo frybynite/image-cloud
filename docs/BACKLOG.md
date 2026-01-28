@@ -15,6 +15,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Review failing test: "handles empty styling config" - Default shadow not being applied when styling config is empty.
 - [ ] Fix auto-init export: README shows `import { autoInitialize } from '@frybynite/image-cloud/auto-init'` but this subpath is not exported in package.json and `autoInitialize` is not exported from main entry point.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
+- [ ] Review style.css for overlap between styling and functionality — identify CSS that can be removed while maintaining functionality.
 ---
 
 ## Planned
@@ -33,6 +34,15 @@ Create a React wrapper component for the Image Cloud library.
 - Publish as separate package (`@image-cloud/react`) or include in main package
 - Support for React 18+ features (concurrent rendering, Suspense)
 - SSR compatibility
+
+### Packaging & Distribution Strategy
+Discuss and decide on packaging strategies for different consumption patterns.
+
+**Topics:**
+- CDN deployment: publish to unpkg/jsdelivr so users can reference a single URL (e.g., `https://unpkg.com/@frybynite/image-cloud/dist/image-cloud-auto-init.js`)
+- Simplify README examples to avoid `node_modules/` paths
+- Evaluate whether auto-init and main library need different distribution strategies
+- Consider a lightweight CDN-only bundle with no npm dependency required
 
 ### Simplify Initialization Process
 Reduce boilerplate and complexity for clients getting started with the library.
