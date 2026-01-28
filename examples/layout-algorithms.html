@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Cloud - Layout Algorithms Demo</title>
+    <!-- Required: Image Cloud CSS -->
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         * {
@@ -213,7 +214,10 @@
             }
         };
 
-        // Grid Cloud
+        // Each cloud targets a different container div by id.
+        // The 'layout' config controls the placement algorithm and its parameters.
+
+        // Grid: arranges images in rows/columns with optional stagger and jitter
         const gridCloud = new ImageCloud({
             container: 'cloud-grid',
             loader: loaderConfig,
@@ -221,17 +225,17 @@
                 algorithm: 'grid',
                 sizing: { base: 100 },
                 grid: {
-                    columns: 'auto',
-                    rows: 'auto',
-                    stagger: 'none',
-                    jitter: 0,
-                    overlap: 0.2,
-                    gap: 10
+                    columns: 'auto',     // auto-calculate column count
+                    rows: 'auto',        // auto-calculate row count
+                    stagger: 'none',     // 'none', 'row', or 'column'
+                    jitter: 0,           // random offset (0-1)
+                    overlap: 0.2,        // allowed overlap between images (0-1)
+                    gap: 10              // gap between cells in pixels
                 }
             }
         });
 
-        // Spiral Cloud
+        // Spiral: images along a spiral path from center outward
         const spiralCloud = new ImageCloud({
             container: 'cloud-spiral',
             loader: loaderConfig,
@@ -239,15 +243,15 @@
                 algorithm: 'spiral',
                 sizing: { base: 80 },
                 spiral: {
-                    spiralType: 'golden',
-                    direction: 'counterclockwise',
-                    tightness: 1.0,
-                    scaleDecay: 0.3
+                    spiralType: 'golden',         // 'golden', 'archimedean', or 'logarithmic'
+                    direction: 'counterclockwise', // 'clockwise' or 'counterclockwise'
+                    tightness: 1.0,                // how tightly wound the spiral is
+                    scaleDecay: 0.3                // images shrink as they move outward (0-1)
                 }
             }
         });
 
-        // Cluster Cloud
+        // Cluster: organic groupings, like photos scattered on a table
         const clusterCloud = new ImageCloud({
             container: 'cloud-cluster',
             loader: loaderConfig,
@@ -255,16 +259,16 @@
                 algorithm: 'cluster',
                 sizing: { base: 90 },
                 cluster: {
-                    clusterCount: 'auto',
-                    clusterSpread: 120,
-                    clusterSpacing: 180,
-                    overlap: 0.4,
-                    distribution: 'gaussian'
+                    clusterCount: 'auto',      // number of groups ('auto' or a number)
+                    clusterSpread: 120,         // how spread out images are within a cluster
+                    clusterSpacing: 180,        // distance between cluster centers
+                    overlap: 0.4,               // allowed image overlap (0-1)
+                    distribution: 'gaussian'    // 'gaussian' or 'uniform'
                 }
             }
         });
 
-        // Wave Cloud
+        // Wave: images along flowing sine wave curves
         const waveCloud = new ImageCloud({
             container: 'cloud-wave',
             loader: loaderConfig,
@@ -272,10 +276,10 @@
                 algorithm: 'wave',
                 sizing: { base: 100 },
                 wave: {
-                    rows: 3,
-                    amplitude: 80,
-                    frequency: 2,
-                    synchronization: 'offset'
+                    rows: 3,                      // number of wave rows
+                    amplitude: 80,                 // wave height in pixels
+                    frequency: 2,                  // number of wave cycles
+                    synchronization: 'offset'      // 'offset', 'synchronized', or 'alternating'
                 }
             },
             image: {
@@ -430,5 +434,6 @@
             clouds.wave = cloud;
         });
     </script>
+    <script src="view-source-popup.js"></script>
 </body>
 </html>

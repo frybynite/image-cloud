@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Interactive image cloud with smooth zoom animations">
     <title>Image Cloud - Google Drive Example</title>
+    <!-- Required: Image Cloud CSS for gallery layout, animations, and zoom -->
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         html, body {
@@ -27,28 +28,33 @@
 </head>
 <body>
     <div class="container">
-        <!-- Using JavaScript initialization (see script below) -->
-        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud">
-            <!-- Images will be dynamically inserted here -->
-        </div>
+        <!-- Required: Container div — Image Cloud renders images inside this element.
+             The id must match the 'container' option passed to ImageCloud(). -->
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud"></div>
 
+        <!-- Optional: Loading indicator — uses built-in fbn-ic-loading/fbn-ic-hidden classes.
+             Automatically shown while images load and hidden once ready. -->
         <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
             <div class="fbn-ic-spinner"></div>
             <p>Loading images...</p>
         </div>
 
+        <!-- Optional: Error display — shown if image loading fails. -->
         <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
     </div>
 
-    <!-- Load ImageCloud with new format (v0.2.0+) -->
+    <script src="view-source-popup.js"></script>
+
     <script type="module">
+        // Import ImageCloud from the ESM build
         import { ImageCloud } from '../dist/image-cloud.js';
 
         document.addEventListener('DOMContentLoaded', () => {
-            // NEW FORMAT: Pattern-based configuration
             const cloud = new ImageCloud({
+                // 'container' — the id of the div where images will be rendered (or an HTMLElement)
                 container: 'imageCloud',
                 loader: {
+                    // 'googleDrive' loader fetches images from shared Google Drive folders
                     type: 'googleDrive',
                     googleDrive: {
                         apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc',
@@ -56,13 +62,14 @@
                             {
                                 type: 'folder',
                                 folders: ['https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing'],
-                                recursive: true
+                                recursive: true  // include subfolders
                             }
                         ]
                     }
                 }
             });
 
+            // init() loads images and renders the cloud. Returns a Promise.
             cloud.init().catch(error => {
                 console.error('Image cloud initialization failed:', error);
             });

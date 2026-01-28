@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Cloud - Image Style Demo</title>
+    <!-- Required: Image Cloud CSS -->
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         * {
@@ -181,7 +182,11 @@
             }
         };
 
-        // Helper to create a styled cloud
+        // The 'styling' option controls image appearance across three states:
+        //   default — normal appearance
+        //   hover   — when the mouse is over an image
+        //   focused — when an image is clicked/zoomed
+        // Each state can set: border, shadow, filter, opacity, cursor, className
         function createCloud(containerId, stylingConfig) {
             return new ImageCloud({
                 container: containerId,
@@ -194,7 +199,7 @@
             });
         }
 
-        // Rounded Shadows
+        // shadow accepts presets ('none', 'sm', 'md', 'lg', 'glow') or custom CSS box-shadow strings
         const roundedCloud = createCloud('cloud-rounded', {
             default: {
                 border: { radius: 12 },
@@ -208,7 +213,7 @@
             }
         });
 
-        // Sepia Vintage
+        // filter accepts CSS filter properties: grayscale, sepia, brightness, contrast, blur, etc.
         const sepiaCloud = createCloud('cloud-sepia', {
             default: {
                 border: { width: 4, color: '#d4a574', radius: 2, style: 'solid' },
@@ -242,7 +247,7 @@
             }
         });
 
-        // Neon Glow
+        // Custom CSS box-shadow strings for effects beyond the built-in presets
         const neonCloud = createCloud('cloud-neon', {
             default: {
                 border: { radius: 8 },
@@ -256,7 +261,7 @@
             }
         });
 
-        // Polaroid
+        // borderBottom allows asymmetric borders (thicker bottom for polaroid frame effect)
         const polaroidCloud = createCloud('cloud-polaroid', {
             default: {
                 border: { width: 8, color: '#f5f5f0', radius: 0, style: 'solid' },
@@ -300,5 +305,6 @@
             console.error('Cloud initialization failed:', error);
         });
     </script>
+    <script src="view-source-popup.js"></script>
 </body>
 </html>

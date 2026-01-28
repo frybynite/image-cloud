@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Cloud - Entry Animations Demo</title>
+    <!-- Required: Image Cloud CSS -->
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         * {
@@ -234,7 +235,8 @@
             }
         };
 
-        // Helper to create and initialize a cloud
+        // Helper to create and initialize a cloud.
+        // Entry animations are configured via the 'animation.entry' option.
         async function createCloud(containerId, layoutConfig = {}, animationConfig = {}) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
@@ -256,22 +258,26 @@
 
         // Initialize all demo galleries
         async function initAllClouds() {
-            // Nearest Edge (default)
+            // start.position controls where images fly in from:
+            //   'nearest-edge' — closest screen edge (default)
+            //   'center'       — scale up from container center
+            //   'top'/'bottom'/'left'/'right' — all from one edge
+            //   'circular'     — positions on a circle around container
+            //   'random-edge'  — random edge per image
+
             await createCloud('cloud-nearest', {}, {
                 entry: {
                     start: { position: 'nearest-edge' }
                 }
             });
 
-            // Center Burst
             await createCloud('cloud-center', {}, {
                 entry: {
                     start: { position: 'center' },
-                    timing: { duration: 500, stagger: 80 }
+                    timing: { duration: 500, stagger: 80 }  // duration per image, stagger between images
                 }
             });
 
-            // Top Cascade
             await createCloud('cloud-top', { algorithm: 'grid' }, {
                 entry: {
                     start: { position: 'top' },
@@ -279,7 +285,7 @@
                 }
             });
 
-            // Circular
+            // Circular position has extra options: radius and distribution
             await createCloud('cloud-circular', {}, {
                 entry: {
                     start: {
@@ -306,7 +312,8 @@
                 }
             });
 
-            // Layout-Aware (uses defaults based on layout algorithm)
+            // When no entry config is provided, each layout algorithm picks a
+            // sensible default (e.g., radial/spiral use 'center', grid uses 'top')
             await createCloud('cloud-layout-aware', { algorithm: 'radial' }, {});
         }
 
@@ -379,5 +386,6 @@
             console.error('Cloud initialization failed:', error);
         });
     </script>
+    <script src="view-source-popup.js"></script>
 </body>
 </html>

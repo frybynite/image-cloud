@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Cloud - ESM Example</title>
+    <!-- Required: Image Cloud CSS -->
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         body {
@@ -25,14 +26,15 @@
 <body>
     <h1>Image Cloud - ESM Module Example</h1>
 
+    <!-- Required: Container div — give it a width and height so Image Cloud knows how much space to fill -->
     <div id="cloud" class="image-cloud"></div>
 
-    <!-- Use ES modules (modern browsers) with NEW FORMAT (v0.2.0+) -->
+    <!-- ESM import: use type="module" and import from the .js build -->
     <script type="module">
         import { ImageCloud } from '../dist/image-cloud.js';
 
         const cloud = new ImageCloud({
-            container: 'cloud',
+            container: 'cloud',  // matches the div id above
             loader: {
                 type: 'static',
                 static: {
@@ -61,16 +63,18 @@
                 }
             },
             layout: {
-                algorithm: 'random',
+                algorithm: 'random',  // layout algorithm: radial, grid, spiral, cluster, random, wave
                 sizing: {
-                    base: 180
+                    base: 180  // base image height in pixels
                 }
             }
         });
 
+        // init() loads images and renders the cloud. Returns a Promise.
         cloud.init().catch(error => {
             console.error('Cloud initialization failed:', error);
         });
     </script>
+    <script src="view-source-popup.js"></script>
 </body>
 </html>

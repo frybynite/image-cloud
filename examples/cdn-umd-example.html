@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Cloud - UMD/CDN Example</title>
+    <!-- Required: Image Cloud CSS -->
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         body {
@@ -25,15 +26,16 @@
 <body>
     <h1>Image Cloud - UMD/CDN Example</h1>
 
+    <!-- Required: Container div -->
     <div id="cloud" class="image-cloud"></div>
 
-    <!-- Load library via UMD bundle (works without module system) -->
+    <!-- UMD bundle: loads via <script> tag, no module system needed.
+         This exposes a global 'ImageCloud' object on window. -->
     <script src="../dist/image-cloud.umd.js"></script>
     <script>
-        // Access via global ImageCloud object
+        // With UMD, access ImageCloud from the global window object
         const { ImageCloud } = window.ImageCloud;
 
-        // NEW FORMAT (v0.2.0+): Pattern-based configuration
         const cloud = new ImageCloud({
             container: 'cloud',
             loader: {
@@ -64,9 +66,9 @@
                 }
             },
             layout: {
-                algorithm: 'radial',
+                algorithm: 'radial',  // layout algorithm: radial, grid, spiral, cluster, random, wave
                 sizing: {
-                    base: 200
+                    base: 200  // base image height in pixels
                 }
             }
         });
@@ -75,5 +77,6 @@
             console.error('Cloud initialization failed:', error);
         });
     </script>
+    <script src="view-source-popup.js"></script>
 </body>
 </html>

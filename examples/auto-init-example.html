@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cloud - Auto-Init Example</title>
+    <!-- No <link> needed — auto-init imports the CSS automatically -->
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05060F;
+        }
+    </style>
+</head>
+<body>
+    <!-- Auto-init requires no JavaScript from you. Add these two attributes to any div:
+         - data-image-cloud : marks this element as an Image Cloud container
+         - data-config      : JSON configuration (same options as ImageCloud constructor)
+         The auto-init script finds all [data-image-cloud] elements and initializes them. -->
+    <div
+        id="cloud"
+        style="width: 100%; height: 100%"
+        data-image-cloud
+        data-config='{
+            "loader": {
+                "type": "static",
+                "static": {
+                    "sources": [
+                        {
+                            "type": "urls",
+                            "urls": [
+                                "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop",
+                                "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop",
+                                "https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800",
+                                "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800",
+                                "https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800",
+                                "https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800",
+                                "https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=800",
+                                "https://images.pexels.com/photos/1671324/pexels-photo-1671324.jpeg?auto=compress&cs=tinysrgb&w=800",
+                                "https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=800",
+                                "https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg?auto=compress&cs=tinysrgb&w=800"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "layout": {
+                "algorithm": "radial",
+                "sizing": {
+                    "base": 200
+                }
+            }
+        }'
+    ></div>
+
+    <!-- Just load auto-init.js — it scans the page for [data-image-cloud] elements
+         and initializes each one using the JSON from its data-config attribute. -->
+    <script type="module" src="../dist/image-cloud-auto-init.js"></script>
+    <script src="view-source-popup.js"></script>
+</body>
+</html>

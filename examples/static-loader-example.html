@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Static image loader test cloud">
     <title>Image Cloud - Static Loader </title>
+    <!-- Required: Image Cloud CSS for gallery layout, animations, and zoom -->
     <link rel="stylesheet" href="../dist/style.css">
     <style>
         html, body {
@@ -27,31 +28,32 @@
 </head>
 <body>
     <div class="container">
-        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud">
-            <!-- Images will be dynamically inserted here -->
-        </div>
+        <!-- Required: Container div — its id must match the 'container' option -->
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud"></div>
 
+        <!-- Optional: Loading indicator (auto-managed via fbn-ic-loading class) -->
         <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
             <div class="fbn-ic-spinner"></div>
             <p>Loading images...</p>
         </div>
 
+        <!-- Optional: Error display -->
         <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
     </div>
 
-    <!-- Load ImageCloud with new format (v0.2.0+) -->
     <script type="module">
         import { ImageCloud } from '../dist/image-cloud.js';
 
         document.addEventListener('DOMContentLoaded', () => {
-            // NEW FORMAT: Pattern-based configuration
             const cloud = new ImageCloud({
                 container: 'imageCloud',
                 loader: {
+                    // 'static' loader uses direct image URLs (no API key needed)
                     type: 'static',
                     static: {
                         sources: [
                             {
+                                // 'urls' source type — provide an array of image URLs
                                 type: 'urls',
                                 urls: [
                                     'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -78,5 +80,6 @@
             });
         });
     </script>
+    <script src="view-source-popup.js"></script>
 </body>
 </html>
