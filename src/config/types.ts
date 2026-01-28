@@ -459,7 +459,7 @@ export interface ImageCloudConfig {
 export type GalleryConfig = ImageCloudConfig;
 
 export interface ImageCloudOptions {
-  container?: string;
+  container?: string | HTMLElement;
   loader?: Partial<LoaderConfig>;
   image?: Partial<ImageConfig>;
   layout?: Partial<LayoutConfig>;

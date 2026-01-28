@@ -18,7 +18,8 @@ import { ImageFilter } from './loaders/ImageFilter';
 import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
 
 export class ImageCloud {
-  private containerId: string;
+  private containerId: string | null;
+  private containerRef: HTMLElement | null;
 
   // Internal state
   private fullConfig: ImageCloudConfig;
@@ -54,7 +55,15 @@ export class ImageCloud {
 
   constructor(options: ImageCloudOptions = {}) {
     this.fullConfig = mergeConfig(options);
-    this.containerId = options.container || 'imageCloud';
+
+    // Container can be a string ID or an HTMLElement reference
+    if (options.container instanceof HTMLElement) {
+      this.containerRef = options.container;
+      this.containerId = null;
+    } else {
+      this.containerRef = null;
+      this.containerId = options.container || 'imageCloud';
+    }
 
     // Internal state
     this.imagesLoaded = false;
@@ -156,9 +165,13 @@ export class ImageCloud {
   async init(): Promise<void> {
     try {
       // 1. Setup DOM
-      this.containerEl = document.getElementById(this.containerId);
-      if (!this.containerEl) {
-        throw new Error(`Container #${this.containerId} not found`);
+      if (this.containerRef) {
+        this.containerEl = this.containerRef;
+      } else {
+        this.containerEl = document.getElementById(this.containerId!);
+        if (!this.containerEl) {
+          throw new Error(`Container #${this.containerId} not found`);
+        }
       }
 
       // Add gallery class for CSS scoping

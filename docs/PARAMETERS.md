@@ -37,7 +37,7 @@ Initialize the gallery using the `ImageCloudOptions` structure.
 
 ```typescript
 const gallery = new ImageCloud({
-  container: 'my-gallery-id', // optional, defaults to 'imageCloud'
+  container: 'my-gallery-id', // string ID or HTMLElement, defaults to 'imageCloud'
   loader: { ... },
   image: { ... },
   layout: { ... },
@@ -47,6 +47,19 @@ const gallery = new ImageCloud({
   debug: false
 });
 ```
+
+The `container` property accepts either a **string element ID** or a direct **HTMLElement** reference:
+
+```typescript
+// Using a string ID (works in both JS and JSON config)
+const gallery = new ImageCloud({ container: 'my-gallery' });
+
+// Using an HTMLElement reference (TypeScript/JavaScript only)
+const el = document.querySelector('.my-gallery') as HTMLElement;
+const gallery = new ImageCloud({ container: el });
+```
+
+If omitted, defaults to the element with ID `'imageCloud'`.
 
 ### 1. Loader Configuration (`loader`)
 
@@ -1426,7 +1439,7 @@ All available parameters with example values:
 
 ```jsonc
 {
-  "container": "imageCloud",                    // ID of the container element
+  "container": "imageCloud",                    // ID of the container element (string ID or HTMLElement in JS/TS)
   "debug": false,                               // Default. Enable debug logging
 
   "loader": {
