@@ -24,6 +24,28 @@ A TypeScript library for creating interactive image clouds with animated scatter
 npm install @frybynite/image-cloud
 ```
 
+### CDN
+
+No install needed — load directly from a CDN:
+
+**jsDelivr**
+```
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/image-cloud.js      (ESM)
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/image-cloud.umd.js  (UMD)
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/image-cloud-auto-init.js
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/style.css
+```
+
+**unpkg**
+```
+https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/image-cloud.js      (ESM)
+https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/image-cloud.umd.js  (UMD)
+https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/image-cloud-auto-init.js
+https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/style.css
+```
+
+Replace `@0.1.0` with the desired version, or use `@latest` for the most recent release.
+
 ## Quick Start
 
 ### TypeScript/JavaScript (Programmatic API)
@@ -62,48 +84,33 @@ await cloud.init();
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="stylesheet" href="node_modules/@frybynite/image-cloud/dist/style.css">
-</head>
 <body>
-  <!-- Note: Data attributes for auto-init need to be updated to match new structure if using complex config -->
-  <div id="cloud"
-       data-image-cloud="true"
-       data-config='{"loader":{"type":"static","static":{"sources":[{"type":"urls","urls":["img1.jpg"]}]}}}'>
-  </div>
-
-  <script type="module">
-    import { autoInitialize } from '@frybynite/image-cloud/auto-init';
-  </script>
-</body>
-</html>
-```
-
-### CDN Usage
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <link rel="stylesheet" href="https://unpkg.com/@frybynite/image-cloud/dist/style.css">
-</head>
-<body>
-  <div id="cloud"></div>
-
-  <script src="https://unpkg.com/@frybynite/image-cloud/dist/image-cloud.umd.js"></script>
-  <script>
-    const { ImageCloud } = window.ImageCloud;
-    const cloud = new ImageCloud({
-      container: 'cloud',
-      loader: {
-        type: 'static',
-        static: {
-          sources: [{ type: 'urls', urls: ['image1.jpg', 'image2.jpg'] }]
+  <div
+    id="cloud"
+    style="width: 100%; height: 100vh"
+    data-image-cloud
+    data-config='{
+      "loader": {
+        "type": "static",
+        "static": {
+          "sources": [{
+            "type": "urls",
+            "urls": [
+              "https://example.com/image1.jpg",
+              "https://example.com/image2.jpg",
+              "https://example.com/image3.jpg"
+            ]
+          }]
         }
+      },
+      "layout": {
+        "algorithm": "radial"
       }
-    });
-    cloud.init();
-  </script>
+    }'
+  ></div>
+
+  <!-- No CSS link needed — auto-init injects styles automatically -->
+  <script type="module" src="node_modules/@frybynite/image-cloud/dist/image-cloud-auto-init.js"></script>
 </body>
 </html>
 ```
