@@ -1,0 +1,16 @@
+{
+  "name": "image-cloud-test-published",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Test harness for verifying published @frybynite/image-cloud package",
+  "scripts": {
+    "dev": "vite",
+    "serve-cdn": "npx serve . -p 3001"
+  },
+  "dependencies": {
+    "@frybynite/image-cloud": "^0.1.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

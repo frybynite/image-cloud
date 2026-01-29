@@ -115,134 +115,23 @@ await cloud.init();
 </html>
 ```
 
-## Usage Examples
+## Getting Started
 
-### Static Images from URLs
+For detailed configuration, see the documentation in the `docs/` folder:
 
-```typescript
-const cloud = new ImageCloud({
-  container: 'cloud',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [
-        {
-          type: 'urls',
-          urls: [
-            'https://picsum.photos/400/300',
-            'https://picsum.photos/500/350',
-            'https://picsum.photos/450/320'
-          ]
-        }
-      ]
-    }
-  }
-});
+1. **[Loaders](docs/LOADERS.md)** — Configure image sources (static URLs, local paths, Google Drive folders)
+2. **[Layout Generators](docs/GENERATORS.md)** — Choose and customize layout algorithms (radial, grid, spiral, cluster, random)
+3. **[Image Sizing](docs/IMAGE_SIZING.md)** — Control base sizes, variance, and responsive/adaptive behavior
+4. **[Full Parameter Reference](docs/PARAMETERS.md)** — Complete configuration options for animation, interaction, styling, and more
 
-await cloud.init();
-```
+### Using the Configurator
 
-### Static Images from Local Path
+The easiest way to create a custom configuration is with the interactive Configurator tool:
 
-```typescript
-const cloud = new ImageCloud({
-  container: 'cloud',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [
-        {
-          type: 'path',
-          basePath: '/images',
-          files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
-        }
-      ]
-    }
-  }
-});
+- **Online**: [Image Cloud Configurator](https://frybynite.github.io/image-cloud/configurator/index.html)
+- **Local**: Run a local server from the `configurator/` directory
 
-await cloud.init();
-```
-
-### Google Drive Folder
-
-```typescript
-const cloud = new ImageCloud({
-  container: 'cloud',
-  loader: {
-    type: 'googleDrive',
-    googleDrive: {
-      apiKey: 'YOUR_GOOGLE_API_KEY',
-      sources: [
-        {
-          type: 'folder',
-          folders: ['YOUR_FOLDER_ID']
-        }
-      ]
-    }
-  }
-});
-
-await cloud.init();
-```
-
-### Custom Configuration
-
-```typescript
-const cloud = new ImageCloud({
-  container: 'cloud',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
-    }
-  },
-  layout: {
-    algorithm: 'radial',  // 'radial' | 'grid' | 'spiral' | 'cluster' | 'random'
-    sizing: {
-      base: 250
-    },
-    rotation: {
-      range: { max: 20, min: -20 }
-    },
-    spacing: {
-      padding: 60
-    }
-  },
-  animation: {
-    duration: 800,
-    queue: {
-      interval: 200
-    }
-  },
-  interaction: {
-    focus: {
-      scale: 3.0,
-      zIndex: 1000
-    }
-  }
-});
-
-await cloud.init();
-```
-
-## Configuration Options
-
-See `docs/PARAMETERS.md` for full documentation of the configuration object.
-
-### ImageCloudOptions
-
-```typescript
-interface ImageCloudOptions {
-  container?: string;              // HTML element ID (default: 'imageCloud')
-  loader?: Partial<LoaderConfig>;
-  layout?: Partial<LayoutConfig>;
-  animation?: Partial<AnimationConfig>;
-  interaction?: Partial<InteractionConfig>;
-  rendering?: Partial<RenderingConfig>;
-  debug?: boolean;
-}
-```
+The Configurator lets you visually adjust all settings and exports a ready-to-use JSON configuration.
 
 ## API Reference
 
@@ -260,56 +149,6 @@ interface ImageCloudOptions {
 - **Click outside**: Unfocus current image
 - **ESC key**: Unfocus current image
 - **Window resize**: Responsive layout adjustment
-
-## Advanced Usage
-
-### Custom Placement Generator
-
-```typescript
-import { PlacementGenerator, ImageLayout, ContainerBounds } from '@frybynite/image-cloud';
-
-class CustomGenerator implements PlacementGenerator {
-  generate(count: number, bounds: ContainerBounds): ImageLayout[] {
-    // Your custom layout algorithm
-    return layouts;
-  }
-}
-```
-
-### React Integration
-
-```tsx
-import { useEffect, useRef } from 'react';
-import { ImageCloud } from '@frybynite/image-cloud';
-import '@frybynite/image-cloud/style.css';
-
-function CloudComponent() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cloudRef = useRef<ImageCloud | null>(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      cloudRef.current = new ImageCloud({
-        container: containerRef.current.id,
-        loader: {
-          type: 'static',
-          static: {
-            sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
-          }
-        }
-      });
-
-      cloudRef.current.init();
-    }
-
-    return () => {
-      cloudRef.current?.destroy();
-    };
-  }, []);
-
-  return <div id="cloud" ref={containerRef} />;
-}
-```
 
 ## Browser Support
 
