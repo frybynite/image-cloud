@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Cloud - Image Style Demo</title>
     <!-- Required: Image Cloud CSS -->
-    <link rel="stylesheet" href="../dist/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
     <style>
         * {
             box-sizing: border-box;
@@ -70,12 +70,10 @@
             display: block;
         }
     </style>
-    <!-- Import map is only needed for local development/testing.
-         Not needed when using a bundler or installing via npm. -->
     <script type="importmap">
     {
         "imports": {
-            "@frybynite/image-cloud": "../dist/image-cloud.js"
+            "@frybynite/image-cloud": "https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js"
         }
     }
     </script>
@@ -167,20 +165,20 @@
     <script type="module">
         import { ImageCloud } from '@frybynite/image-cloud';
 
-        // Sample images from test fixtures
+        // Sample images from Pexels
         const sampleImages = [
-            '/test/fixtures/images/image1.jpg',
-            '/test/fixtures/images/image2.jpg',
-            '/test/fixtures/images/image3.jpg',
-            '/test/fixtures/images/computing1.jpg',
-            '/test/fixtures/images/computing2.jpg',
-            '/test/fixtures/images/computing3.jpg',
-            '/test/fixtures/images/food1.jpg',
-            '/test/fixtures/images/food2.jpg',
-            '/test/fixtures/images/food3.jpg',
-            '/test/fixtures/images/scenery1.jpg',
-            '/test/fixtures/images/scenery2.jpg',
-            '/test/fixtures/images/scenery3.jpg'
+            'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1450360/pexels-photo-1450360.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1559825/pexels-photo-1559825.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1183099/pexels-photo-1183099.jpeg?auto=compress&w=600'
         ];
 
         const loaderConfig = {
