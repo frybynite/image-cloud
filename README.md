@@ -63,9 +63,9 @@ const cloud = new ImageCloud({
         {
           type: 'urls',
           urls: [
-            'https://example.com/image1.jpg',
-            'https://example.com/image2.jpg',
-            'https://example.com/image3.jpg'
+            'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
+            'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600'
           ]
         }
       ]
@@ -96,9 +96,9 @@ await cloud.init();
           "sources": [{
             "type": "urls",
             "urls": [
-              "https://example.com/image1.jpg",
-              "https://example.com/image2.jpg",
-              "https://example.com/image3.jpg"
+              "https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600",
+              "https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600",
+              "https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600"
             ]
           }]
         }
@@ -110,7 +110,7 @@ await cloud.init();
   ></div>
 
   <!-- No CSS link needed — auto-init injects styles automatically -->
-  <script type="module" src="node_modules/@frybynite/image-cloud/dist/image-cloud-auto-init.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud-auto-init.js"></script>
 </body>
 </html>
 ```
@@ -123,6 +123,7 @@ For detailed configuration, see the documentation in the `docs/` folder:
 2. **[Layout Generators](docs/GENERATORS.md)** — Choose and customize layout algorithms (radial, grid, spiral, cluster, random)
 3. **[Image Sizing](docs/IMAGE_SIZING.md)** — Control base sizes, variance, and responsive/adaptive behavior
 4. **[Full Parameter Reference](docs/PARAMETERS.md)** — Complete configuration options for animation, interaction, styling, and more
+5. **[API Reference](docs/api/README.md)** — TypeScript API documentation for the ImageCloud class, types, loaders, and generators
 
 ### Using the Configurator
 
@@ -133,22 +134,24 @@ The easiest way to create a custom configuration is with the interactive Configu
 
 The Configurator lets you visually adjust all settings and exports a ready-to-use JSON configuration.
 
-## API Reference
+## Events & Interactions
 
-### ImageCloud Class
-
-#### Methods
-
-- `init(): Promise<void>` - Initialize the cloud and load images
-- `clearImageCloud(): void` - Clear all images and reset state
-- `destroy(): void` - Clean up resources and event listeners
-
-### Events & Interactions
+### Mouse
 
 - **Click image**: Focus/zoom the image
 - **Click outside**: Unfocus current image
-- **ESC key**: Unfocus current image
-- **Window resize**: Responsive layout adjustment
+- **Hover**: Apply hover styling
+
+### Keyboard
+
+- **Arrow Right**: Navigate to next image (when focused)
+- **Arrow Left**: Navigate to previous image (when focused)
+- **Enter / Space**: Focus hovered image
+- **Escape**: Unfocus current image
+
+### Window
+
+- **Resize**: Responsive layout adjustment (debounced)
 
 ## Browser Support
 

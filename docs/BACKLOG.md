@@ -16,6 +16,8 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix auto-init export: README shows `import { autoInitialize } from '@frybynite/image-cloud/auto-init'` but this subpath is not exported in package.json and `autoInitialize` is not exported from main entry point.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review style.css for overlap between styling and functionality — identify CSS that can be removed while maintaining functionality.
+- [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
+- [ ] Review skipped test: "initializes multiple galleries on same page" (`test/e2e/auto-init.spec.ts:66`)
 ---
 
 ## Planned
