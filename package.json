@@ -1,6 +1,6 @@
 {
   "name": "@frybynite/image-cloud",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "TypeScript image cloud library with custom loaders, various layouts, full images styling, what animation and zoom effects",
   "type": "module",
   "main": "./dist/image-cloud.umd.js",

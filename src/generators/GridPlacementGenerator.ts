@@ -3,8 +3,6 @@
  * Generates grid-based layouts with optional stagger and jitter
  */
 
-console.log('[GridPlacementGenerator] Module loaded');
-
 import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, GridAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface GridLayoutOptions extends Partial<LayoutConfig> {
@@ -128,9 +126,6 @@ export class GridPlacementGenerator implements PlacementGenerator {
     const hasFixedGrid = gridConfig.columns !== 'auto' && gridConfig.rows !== 'auto';
     const isOverflowMode = hasFixedGrid && imageCount > cellCount;
 
-    // Debug logging - temporary
-    console.log('[GridGen] generate called, imageCount:', imageCount, 'gridConfig:', JSON.stringify({ columns: gridConfig.columns, rows: gridConfig.rows }));
-    console.log('[GridGen] cellCount:', cellCount, 'hasFixedGrid:', hasFixedGrid, 'isOverflowMode:', isOverflowMode);
     if (typeof window !== 'undefined') {
       (window as any).__gridOverflowDebug = {
         gridConfigColumns: gridConfig.columns,
