@@ -163,7 +163,6 @@ config: {
 
 ## Notes
 
-- Make sure the library is built (`npm run build`) before running examples
-- All examples load from `../dist/` directory
+- Examples load from jsDelivr CDN — no build required
 - Static image URLs may have CORS restrictions
 - Google Drive examples require a valid API key
