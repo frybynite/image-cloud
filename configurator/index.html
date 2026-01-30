@@ -1560,7 +1560,7 @@
                             <h5 class="control-group-title" data-label="Entry Animation" data-path="animation.entry">Entry Animation</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-position">
-                                <label class="control-label" data-label="Start Position" data-path="entry.start.position">Start Position</label>
+                                <label class="control-label" data-label="Start Position" data-path="start.position">Start Position</label>
                                 <div class="control-input">
                                     <select id="entry-position">
                                         <option value="nearest-edge">Nearest Edge</option>
@@ -1576,7 +1576,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-offset">
-                                <label class="control-label" data-label="Offset" data-path="entry.start.offset">Offset</label>
+                                <label class="control-label" data-label="Offset" data-path="start.offset">Offset</label>
                                 <div class="control-input">
                                     <input type="number" id="entry-offset" value="100" min="0" max="300">
                                     <span class="value-display">px</span>
@@ -1584,7 +1584,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-duration">
-                                <label class="control-label" data-label="Duration" data-path="entry.timing.duration">Duration</label>
+                                <label class="control-label" data-label="Duration" data-path="timing.duration">Duration</label>
                                 <div class="control-input">
                                     <input type="number" id="entry-duration" value="600" min="100" max="2000" step="50">
                                     <span class="value-display">ms</span>
@@ -1592,7 +1592,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-stagger">
-                                <label class="control-label" data-label="Stagger" data-path="entry.timing.stagger">Stagger</label>
+                                <label class="control-label" data-label="Stagger" data-path="timing.stagger">Stagger</label>
                                 <div class="control-input">
                                     <input type="number" id="entry-stagger" value="150" min="0" max="500" step="25">
                                     <span class="value-display">ms</span>
@@ -1600,7 +1600,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-path">
-                                <label class="control-label" data-label="Path Type" data-path="entry.path.type">Path Type</label>
+                                <label class="control-label" data-label="Path Type" data-path="path.type">Path Type</label>
                                 <div class="control-input">
                                     <select id="entry-path-type" onchange="updatePathPresets()">
                                         <option value="linear">Linear (default)</option>
@@ -1612,7 +1612,7 @@
                             </div>
                             <div class="control-row" id="path-preset-row" style="display: none;">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-path-preset" checked>
-                                <label class="control-label" data-label="Preset" data-path="entry.path.preset">Preset</label>
+                                <label class="control-label" data-label="Preset" data-path="path.preset">Preset</label>
                                 <div class="control-input">
                                     <select id="entry-path-preset">
                                         <!-- Options populated by updatePathPresets() -->
@@ -1622,7 +1622,7 @@
                             <!-- Entry Rotation -->
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-rotation">
-                                <label class="control-label" data-label="Rotation Mode" data-path="entry.rotation.mode">Rotation Mode</label>
+                                <label class="control-label" data-label="Rotation Mode" data-path="rotation.mode">Rotation Mode</label>
                                 <div class="control-input">
                                     <select id="entry-rotation-mode" onchange="updateRotationOptions()">
                                         <option value="none">None (default)</option>
@@ -1636,7 +1636,7 @@
                             <div class="subsection-content" id="rotation-options-content">
                                 <div class="control-row" id="spin-count-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-spin-count" checked>
-                                    <label class="control-label" data-label="Spin Count" data-path="entry.rotation.spinCount">Spin Count</label>
+                                    <label class="control-label" data-label="Spin Count" data-path="rotation.spinCount">Spin Count</label>
                                     <div class="control-input">
                                         <input type="number" id="entry-spin-count" value="1" min="1" max="5" step="1">
                                         <span class="value-display">rotations</span>
@@ -1644,7 +1644,7 @@
                                 </div>
                                 <div class="control-row" id="spin-direction-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-spin-direction" checked>
-                                    <label class="control-label" data-label="Direction" data-path="entry.rotation.direction">Direction</label>
+                                    <label class="control-label" data-label="Direction" data-path="rotation.direction">Direction</label>
                                     <div class="control-input">
                                         <select id="entry-spin-direction">
                                             <option value="clockwise">Clockwise</option>
@@ -1656,7 +1656,7 @@
                                 </div>
                                 <div class="control-row" id="settle-min-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-settle-range" checked>
-                                    <label class="control-label" data-label="Start Range" data-path="entry.rotation.startRotation">Start Range</label>
+                                    <label class="control-label" data-label="Start Range" data-path="rotation.startRotation">Start Range</label>
                                     <div class="control-input">
                                         <input type="number" id="entry-settle-min" value="-45" min="-180" max="0" step="5">
                                         <span class="value-display">to</span>
@@ -1666,7 +1666,7 @@
                                 </div>
                                 <div class="control-row" id="wobble-amplitude-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-wobble-config" checked>
-                                    <label class="control-label" data-label="Wobble Amplitude" data-path="entry.rotation.wobble.amplitude">Wobble Amplitude</label>
+                                    <label class="control-label" data-label="Wobble Amplitude" data-path="rotation.wobble.amplitude">Wobble Amplitude</label>
                                     <div class="control-input">
                                         <input type="number" id="entry-wobble-amplitude" value="15" min="5" max="45" step="5">
                                         <span class="value-display">deg</span>
@@ -1674,7 +1674,7 @@
                                 </div>
                                 <div class="control-row" id="wobble-frequency-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-wobble-frequency" checked>
-                                    <label class="control-label" data-label="Wobble Frequency" data-path="entry.rotation.wobble.frequency">Wobble Frequency</label>
+                                    <label class="control-label" data-label="Wobble Frequency" data-path="rotation.wobble.frequency">Wobble Frequency</label>
                                     <div class="control-input">
                                         <input type="number" id="entry-wobble-frequency" value="3" min="1" max="8" step="1">
                                         <span class="value-display">oscillations</span>
@@ -1684,7 +1684,7 @@
                             <!-- Entry Scale -->
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-scale">
-                                <label class="control-label" data-label="Scale Mode" data-path="entry.scale.mode">Scale Mode</label>
+                                <label class="control-label" data-label="Scale Mode" data-path="scale.mode">Scale Mode</label>
                                 <div class="control-input">
                                     <select id="entry-scale-mode" onchange="updateScaleOptions()">
                                         <option value="none">None (default)</option>
@@ -1698,7 +1698,7 @@
                             <div class="subsection-content" id="scale-options-content">
                                 <div class="control-row" id="scale-start-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-scale-start" checked>
-                                    <label class="control-label" data-label="Start Scale" data-path="entry.scale.startScale">Start Scale</label>
+                                    <label class="control-label" data-label="Start Scale" data-path="scale.startScale">Start Scale</label>
                                     <div class="control-input">
                                         <span class="value-display">0.3</span>
                                         <input type="range" id="entry-scale-start" min="0.1" max="4.0" step="0.1" value="0.3" oninput="updateRangeDisplay(this)">
@@ -1706,7 +1706,7 @@
                                 </div>
                                 <div class="control-row" id="scale-pop-overshoot-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-pop-overshoot" checked>
-                                    <label class="control-label" data-label="Pop Overshoot" data-path="entry.scale.pop.overshoot">Pop Overshoot</label>
+                                    <label class="control-label" data-label="Pop Overshoot" data-path="scale.pop.overshoot">Pop Overshoot</label>
                                     <div class="control-input">
                                         <span class="value-display">1.2</span>
                                         <input type="range" id="entry-pop-overshoot" min="1.05" max="1.5" step="0.05" value="1.2" oninput="updateRangeDisplay(this)">
@@ -1714,7 +1714,7 @@
                                 </div>
                                 <div class="control-row" id="scale-pop-bounces-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-pop-bounces" checked>
-                                    <label class="control-label" data-label="Pop Bounces" data-path="entry.scale.pop.bounces">Pop Bounces</label>
+                                    <label class="control-label" data-label="Pop Bounces" data-path="scale.pop.bounces">Pop Bounces</label>
                                     <div class="control-input">
                                         <input type="number" id="entry-pop-bounces" value="1" min="1" max="3" step="1">
                                         <span class="value-display">bounces</span>
@@ -1722,7 +1722,7 @@
                                 </div>
                                 <div class="control-row" id="scale-random-min-row" style="display: none;">
                                     <input type="checkbox" class="control-checkbox" id="enable-scale-range" checked>
-                                    <label class="control-label" data-label="Random Range" data-path="entry.scale.range">Random Range</label>
+                                    <label class="control-label" data-label="Random Range" data-path="scale.range">Random Range</label>
                                     <div class="control-input">
                                         <span class="value-display">0.5</span>
                                         <input type="range" id="entry-scale-random-min" min="0.1" max="1.0" step="0.1" value="0.5" oninput="updateRangeDisplay(this)">
