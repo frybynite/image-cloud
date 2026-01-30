@@ -1269,7 +1269,7 @@
                             <h5 class="control-group-title" data-label="Sizing" data-path="image.sizing">Sizing</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-baseHeight">
-                                <label class="control-label" data-label="Base Height" data-path="image.sizing.baseHeight">Base Height</label>
+                                <label class="control-label" data-label="Base Height" data-path="baseHeight">Base Height</label>
                                 <div class="control-input">
                                     <input type="number" id="image-baseHeight" value="200" min="50" max="500">
                                     <span class="value-display">px</span>
@@ -1277,7 +1277,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-min">
-                                <label class="control-label" data-label="Variance Min" data-path="image.sizing.variance.min">Variance Min</label>
+                                <label class="control-label" data-label="Variance Min" data-path="variance.min">Variance Min</label>
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
                                     <input type="range" id="image-variance-min" min="0.5" max="1.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
@@ -1285,7 +1285,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-max">
-                                <label class="control-label" data-label="Variance Max" data-path="image.sizing.variance.max">Variance Max</label>
+                                <label class="control-label" data-label="Variance Max" data-path="variance.max">Variance Max</label>
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
                                     <input type="range" id="image-variance-max" min="1.0" max="2.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
@@ -1293,7 +1293,7 @@
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-scaleDecay">
-                                <label class="control-label" data-label="Scale Decay" data-path="image.sizing.scaleDecay">Scale Decay</label>
+                                <label class="control-label" data-label="Scale Decay" data-path="scaleDecay">Scale Decay</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="image-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
@@ -1306,7 +1306,7 @@
                             <h5 class="control-group-title" data-label="Rotation" data-path="image.rotation">Rotation</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-rotation-mode">
-                                <label class="control-label" data-label="Mode" data-path="image.rotation.mode">Mode</label>
+                                <label class="control-label" data-label="Mode" data-path="mode">Mode</label>
                                 <div class="control-input">
                                     <select id="image-rotation-mode" onchange="toggleRotationRange()">
                                         <option value="none">None (default)</option>
@@ -1318,7 +1318,7 @@
                             <div id="rotation-range-controls" style="display: none;">
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-min">
-                                    <label class="control-label" data-label="Min Degrees" data-path="image.rotation.range.min">Min Degrees</label>
+                                    <label class="control-label" data-label="Min Degrees" data-path="range.min">Min Degrees</label>
                                     <div class="control-input">
                                         <span class="value-display">-15°</span>
                                         <input type="range" id="image-rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
@@ -1326,7 +1326,7 @@
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-max">
-                                    <label class="control-label" data-label="Max Degrees" data-path="image.rotation.range.max">Max Degrees</label>
+                                    <label class="control-label" data-label="Max Degrees" data-path="range.max">Max Degrees</label>
                                     <div class="control-input">
                                         <span class="value-display">15°</span>
                                         <input type="range" id="image-rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
