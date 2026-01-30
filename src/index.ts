@@ -5,7 +5,7 @@
  */
 
 // Import CSS for bundlers that support it
-import './styles/gallery.css';
+import './styles/image-cloud.css';
 
 // Main class export
 export { ImageCloud } from './ImageCloud';
@@ -80,3 +80,6 @@ export { StaticImageLoader } from './loaders/StaticImageLoader';
 export { CompositeLoader } from './loaders/CompositeLoader';
 export type { CompositeLoaderConfig } from './loaders/CompositeLoader';
 export { ImageFilter } from './loaders/ImageFilter';
+
+// Export functional styles for manual injection if needed
+export { injectFunctionalStyles, FUNCTIONAL_CSS } from './styles/functionalStyles';

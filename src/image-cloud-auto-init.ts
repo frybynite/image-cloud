@@ -6,7 +6,7 @@
  */
 
 // Import CSS as inline string for self-contained bundle
-import css from './styles/gallery.css?inline';
+import css from './styles/image-cloud.css?inline';
 
 import { ImageCloud } from './ImageCloud';
 

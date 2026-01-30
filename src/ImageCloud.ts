@@ -16,6 +16,7 @@ import { StaticImageLoader } from './loaders/StaticImageLoader';
 import { CompositeLoader } from './loaders/CompositeLoader';
 import { ImageFilter } from './loaders/ImageFilter';
 import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
+import { injectFunctionalStyles } from './styles/functionalStyles';
 
 export class ImageCloud {
   private containerId: string | null;
@@ -164,6 +165,9 @@ export class ImageCloud {
    */
   async init(): Promise<void> {
     try {
+      // Inject functional styles (idempotent)
+      injectFunctionalStyles();
+
       // 1. Setup DOM
       if (this.containerRef) {
         this.containerEl = this.containerRef;
