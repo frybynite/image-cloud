@@ -1065,14 +1065,6 @@
                                     </div>
                                 </div>
                                 <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-spiral-scaleDecay">
-                                    <label class="control-label" data-label="Scale Decay" data-path="spiral.scaleDecay">Scale Decay</label>
-                                    <div class="control-input">
-                                        <span class="value-display">0</span>
-                                        <input type="range" id="spiral-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
-                                    </div>
-                                </div>
-                                <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-spiral-startAngle">
                                     <label class="control-label" data-label="Start Angle" data-path="spiral.startAngle">Start Angle</label>
                                     <div class="control-input">
@@ -1185,33 +1177,6 @@
                             </div>
                         </div>
 
-                        <!-- Adaptive Sizing -->
-                        <div class="control-group">
-                            <h5 class="control-group-title" data-label="Adaptive Sizing" data-path="layout.sizing.adaptive">Adaptive Sizing</h5>
-                            <div class="subsection-toggle">
-                                <input type="checkbox" id="enable-adaptive" checked onchange="toggleSubsection('adaptive-content', this.checked)">
-                                <label for="enable-adaptive" data-label="Enabled" data-path="adaptive.enabled">Enabled</label>
-                            </div>
-                            <div class="subsection-content" id="adaptive-content">
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-minSize">
-                                    <label class="control-label" data-label="Min Size" data-path="adaptive.minSize">Min Size</label>
-                                    <div class="control-input">
-                                        <input type="number" id="adaptive-minSize" value="50" min="20" max="200">
-                                        <span class="value-display">px</span>
-                                    </div>
-                                </div>
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-adaptive-maxSize">
-                                    <label class="control-label" data-label="Max Size" data-path="adaptive.maxSize">Max Size</label>
-                                    <div class="control-input">
-                                        <input type="number" id="adaptive-maxSize" value="400" min="100" max="800">
-                                        <span class="value-display">px</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Layout Controls -->
                         <div class="control-group">
                             <h5 class="control-group-title" data-label="Layout Controls" data-path="layout">Layout Controls</h5>
@@ -1229,6 +1194,17 @@
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
                                     <input type="range" id="layout-density" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                </div>
+                            </div>
+                            <!-- Scale Decay - only for radial/spiral -->
+                            <div class="algorithm-specific" data-algorithms="radial,spiral">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-layout-scaleDecay">
+                                    <label class="control-label" data-label="Scale Decay" data-path="layout.scaleDecay">Scale Decay</label>
+                                    <div class="control-input">
+                                        <span class="value-display">0</span>
+                                        <input type="range" id="layout-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1268,35 +1244,94 @@
                         <div class="control-group">
                             <h5 class="control-group-title" data-label="Sizing" data-path="image.sizing">Sizing</h5>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-image-baseHeight">
-                                <label class="control-label" data-label="Base Height" data-path="baseHeight">Base Height</label>
+                                <input type="checkbox" class="control-checkbox" id="enable-image-sizing-mode" checked>
+                                <label class="control-label" data-label="Mode" data-path="image.sizing.mode">Mode</label>
                                 <div class="control-input">
-                                    <input type="number" id="image-baseHeight" value="200" min="50" max="500">
-                                    <span class="value-display">px</span>
+                                    <select id="image-sizing-mode" onchange="toggleSizingMode()">
+                                        <option value="adaptive" selected>Adaptive (default)</option>
+                                        <option value="fixed">Fixed</option>
+                                        <option value="responsive">Responsive</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Fixed mode controls -->
+                            <div id="fixed-sizing-controls" style="display: none;">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-image-height" checked>
+                                    <label class="control-label" data-label="Height" data-path="image.sizing.height">Height</label>
+                                    <div class="control-input">
+                                        <input type="number" id="image-height" value="150" min="50" max="500">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Responsive mode controls -->
+                            <div id="responsive-sizing-controls" style="display: none;">
+                                <div class="control-row">
+                                    <span class="control-checkbox" style="width: 16px;"></span>
+                                    <label class="control-label" data-label="Height" data-path="image.sizing.height">Height</label>
+                                </div>
+                                <div class="control-row">
+                                    <span style="width: 16px;"></span>
+                                    <input type="checkbox" class="control-checkbox" id="enable-height-mobile" checked>
+                                    <label class="control-label" data-label="Mobile" data-path="image.sizing.height.mobile">Mobile</label>
+                                    <div class="control-input">
+                                        <input type="number" id="height-mobile" value="100" min="50" max="500">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <span style="width: 16px;"></span>
+                                    <input type="checkbox" class="control-checkbox" id="enable-height-tablet" checked>
+                                    <label class="control-label" data-label="Tablet" data-path="image.sizing.height.tablet">Tablet</label>
+                                    <div class="control-input">
+                                        <input type="number" id="height-tablet" value="150" min="50" max="500">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <span style="width: 16px;"></span>
+                                    <input type="checkbox" class="control-checkbox" id="enable-height-screen" checked>
+                                    <label class="control-label" data-label="Screen" data-path="image.sizing.height.screen">Screen</label>
+                                    <div class="control-input">
+                                        <input type="number" id="height-screen" value="200" min="50" max="500">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Adaptive mode controls -->
+                            <div id="adaptive-sizing-controls">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-image-minSize">
+                                    <label class="control-label" data-label="Min Size" data-path="image.sizing.minSize">Min Size</label>
+                                    <div class="control-input">
+                                        <input type="number" id="image-minSize" value="50" min="20" max="200">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-image-maxSize">
+                                    <label class="control-label" data-label="Max Size" data-path="image.sizing.maxSize">Max Size</label>
+                                    <div class="control-input">
+                                        <input type="number" id="image-maxSize" value="400" min="100" max="800">
+                                        <span class="value-display">px</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-min">
-                                <label class="control-label" data-label="Variance Min" data-path="variance.min">Variance Min</label>
+                                <label class="control-label" data-label="Variance Min" data-path="image.sizing.variance.min">Variance Min</label>
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
-                                    <input type="range" id="image-variance-min" min="0.5" max="1.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="image-variance-min" min="0.25" max="1.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-variance-max">
-                                <label class="control-label" data-label="Variance Max" data-path="variance.max">Variance Max</label>
+                                <label class="control-label" data-label="Variance Max" data-path="image.sizing.variance.max">Variance Max</label>
                                 <div class="control-input">
                                     <span class="value-display">1.0</span>
-                                    <input type="range" id="image-variance-max" min="1.0" max="2.0" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
-                                </div>
-                            </div>
-                            <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-image-scaleDecay">
-                                <label class="control-label" data-label="Scale Decay" data-path="scaleDecay">Scale Decay</label>
-                                <div class="control-input">
-                                    <span class="value-display">0</span>
-                                    <input type="range" id="image-scaleDecay" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
+                                    <input type="range" id="image-variance-max" min="1.0" max="1.75" step="0.05" value="1.0" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
                         </div>
@@ -1306,7 +1341,7 @@
                             <h5 class="control-group-title" data-label="Rotation" data-path="image.rotation">Rotation</h5>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-image-rotation-mode">
-                                <label class="control-label" data-label="Mode" data-path="mode">Mode</label>
+                                <label class="control-label" data-label="Mode" data-path="image.rotation.mode">Mode</label>
                                 <div class="control-input">
                                     <select id="image-rotation-mode" onchange="toggleRotationRange()">
                                         <option value="none">None (default)</option>
@@ -1318,7 +1353,7 @@
                             <div id="rotation-range-controls" style="display: none;">
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-min">
-                                    <label class="control-label" data-label="Min Degrees" data-path="range.min">Min Degrees</label>
+                                    <label class="control-label" data-label="Min Degrees" data-path="image.rotation.range.min">Min Degrees</label>
                                     <div class="control-input">
                                         <span class="value-display">-15°</span>
                                         <input type="range" id="image-rotation-min" min="-45" max="0" step="1" value="-15" oninput="updateRangeDisplay(this)">
@@ -1326,7 +1361,7 @@
                                 </div>
                                 <div class="control-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-image-rotation-max">
-                                    <label class="control-label" data-label="Max Degrees" data-path="range.max">Max Degrees</label>
+                                    <label class="control-label" data-label="Max Degrees" data-path="image.rotation.range.max">Max Degrees</label>
                                     <div class="control-input">
                                         <span class="value-display">15°</span>
                                         <input type="range" id="image-rotation-max" min="0" max="45" step="1" value="15" oninput="updateRangeDisplay(this)">
@@ -2626,6 +2661,24 @@
             scheduleAutoApply();
         };
 
+        // Toggle sizing mode controls (fixed vs adaptive vs responsive)
+        window.toggleSizingMode = function() {
+            const mode = document.getElementById('image-sizing-mode').value;
+            const fixedControls = document.getElementById('fixed-sizing-controls');
+            const adaptiveControls = document.getElementById('adaptive-sizing-controls');
+            const responsiveControls = document.getElementById('responsive-sizing-controls');
+            if (fixedControls) {
+                fixedControls.style.display = mode === 'fixed' ? 'block' : 'none';
+            }
+            if (adaptiveControls) {
+                adaptiveControls.style.display = mode === 'adaptive' ? 'block' : 'none';
+            }
+            if (responsiveControls) {
+                responsiveControls.style.display = mode === 'responsive' ? 'block' : 'none';
+            }
+            scheduleAutoApply();
+        };
+
         // Update range display value
         window.updateRangeDisplay = function(input) {
             const display = input.parentElement.querySelector('.value-display');
@@ -2643,7 +2696,33 @@
         window.onAlgorithmChange = function() {
             const algorithm = document.getElementById('layout-algorithm').value;
             document.querySelectorAll('.algorithm-specific').forEach(el => {
-                el.classList.toggle('visible', el.dataset.algorithm === algorithm);
+                // Support both data-algorithm (single) and data-algorithms (comma-separated)
+                const singleAlgo = el.dataset.algorithm;
+                const multiAlgos = el.dataset.algorithms;
+
+                let shouldShow = false;
+                if (singleAlgo) {
+                    shouldShow = singleAlgo === algorithm;
+                } else if (multiAlgos) {
+                    shouldShow = multiAlgos.split(',').includes(algorithm);
+                }
+
+                const wasVisible = el.classList.contains('visible');
+                el.classList.toggle('visible', shouldShow);
+
+                // Reset values to defaults when hiding
+                if (wasVisible && !shouldShow) {
+                    // Reset scaleDecay
+                    const scaleDecayInput = el.querySelector('#layout-scaleDecay');
+                    const scaleDecayCheckbox = el.querySelector('#enable-layout-scaleDecay');
+                    if (scaleDecayInput) {
+                        scaleDecayInput.value = '0';
+                        updateRangeDisplay(scaleDecayInput);
+                    }
+                    if (scaleDecayCheckbox) {
+                        scaleDecayCheckbox.checked = false;
+                    }
+                }
             });
             scheduleAutoApply();
         };
@@ -2821,8 +2900,38 @@
 
             // Image Sizing
             const imageSizing = {};
-            const baseHeight = getEnabledValue('enable-image-baseHeight', 'image-baseHeight', parseInt);
-            if (baseHeight !== undefined) imageSizing.baseHeight = baseHeight;
+
+            // Sizing mode
+            const sizingMode = document.getElementById('image-sizing-mode')?.value;
+            if (document.getElementById('enable-image-sizing-mode')?.checked && sizingMode) {
+                imageSizing.mode = sizingMode;
+
+                if (sizingMode === 'fixed') {
+                    // Fixed mode: use single height value
+                    const height = getEnabledValue('enable-image-height', 'image-height', parseInt);
+                    if (height !== undefined) imageSizing.height = height;
+                } else if (sizingMode === 'responsive') {
+                    // Responsive mode: use breakpoint-specific heights
+                    const heightObj = {};
+                    const mobile = getEnabledValue('enable-height-mobile', 'height-mobile', parseInt);
+                    const tablet = getEnabledValue('enable-height-tablet', 'height-tablet', parseInt);
+                    const screen = getEnabledValue('enable-height-screen', 'height-screen', parseInt);
+
+                    if (mobile !== undefined) heightObj.mobile = mobile;
+                    if (tablet !== undefined) heightObj.tablet = tablet;
+                    if (screen !== undefined) heightObj.screen = screen;
+
+                    if (Object.keys(heightObj).length > 0) {
+                        imageSizing.height = heightObj;
+                    }
+                } else {
+                    // Adaptive mode: use minSize/maxSize
+                    const minSize = getEnabledValue('enable-image-minSize', 'image-minSize', parseInt);
+                    const maxSize = getEnabledValue('enable-image-maxSize', 'image-maxSize', parseInt);
+                    if (minSize !== undefined) imageSizing.minSize = minSize;
+                    if (maxSize !== undefined) imageSizing.maxSize = maxSize;
+                }
+            }
 
             const variance = {};
             const vMin = getEnabledValue('enable-image-variance-min', 'image-variance-min', parseFloat);
@@ -2830,9 +2939,6 @@
             if (vMin !== undefined) variance.min = vMin;
             if (vMax !== undefined) variance.max = vMax;
             if (Object.keys(variance).length > 0) imageSizing.variance = variance;
-
-            const scaleDecay = getEnabledValue('enable-image-scaleDecay', 'image-scaleDecay', parseFloat);
-            if (scaleDecay !== undefined) imageSizing.scaleDecay = scaleDecay;
 
             if (Object.keys(imageSizing).length > 0) image.sizing = imageSizing;
 
@@ -2856,31 +2962,13 @@
 
             if (Object.keys(image).length > 0) config.image = image;
 
-            // Layout Sizing (adaptive only now)
-            const sizing = {};
-
-            // Adaptive (enabled defaults to true, so only include when false)
-            const adaptiveEnabled = document.getElementById('enable-adaptive')?.checked;
-            if (adaptiveEnabled !== undefined) {
-                const adaptive = {};
-                if (!adaptiveEnabled) {
-                    adaptive.enabled = false;
-                } else {
-                    const minSize = getEnabledValue('enable-adaptive-minSize', 'adaptive-minSize', parseInt);
-                    const maxSize = getEnabledValue('enable-adaptive-maxSize', 'adaptive-maxSize', parseInt);
-                    if (minSize !== undefined) adaptive.minSize = minSize;
-                    if (maxSize !== undefined) adaptive.maxSize = maxSize;
-                }
-                if (Object.keys(adaptive).length > 0) sizing.adaptive = adaptive;
-            }
-
-            if (Object.keys(sizing).length > 0) layout.sizing = sizing;
-
-            // Layout-level targetCoverage and densityFactor
+            // Layout-level settings
             const coverage = getEnabledValue('enable-layout-coverage', 'layout-coverage', parseFloat);
             const density = getEnabledValue('enable-layout-density', 'layout-density', parseFloat);
+            const scaleDecay = getEnabledValue('enable-layout-scaleDecay', 'layout-scaleDecay', parseFloat);
             if (coverage !== undefined) layout.targetCoverage = coverage;
             if (density !== undefined) layout.densityFactor = density;
+            if (scaleDecay !== undefined) layout.scaleDecay = scaleDecay;
 
             // Spacing
             const spacing = {};
@@ -2917,12 +3005,10 @@
                 const spiralType = getEnabledValue('enable-spiral-type', 'spiral-type');
                 const direction = getEnabledValue('enable-spiral-direction', 'spiral-direction');
                 const tightness = getEnabledValue('enable-spiral-tightness', 'spiral-tightness', parseFloat);
-                const scaleDecay = getEnabledValue('enable-spiral-scaleDecay', 'spiral-scaleDecay', parseFloat);
                 const startAngle = getEnabledValue('enable-spiral-startAngle', 'spiral-startAngle', parseInt);
                 if (spiralType !== undefined) spiral.spiralType = spiralType;
                 if (direction !== undefined) spiral.direction = direction;
                 if (tightness !== undefined) spiral.tightness = tightness;
-                if (scaleDecay !== undefined) spiral.scaleDecay = scaleDecay;
                 if (startAngle !== undefined) spiral.startAngle = startAngle;
                 if (Object.keys(spiral).length > 0) layout.spiral = spiral;
             } else if (algorithm === 'cluster') {
@@ -3193,10 +3279,13 @@
             initStylingState();
 
             // Reset subsection toggles
-            document.getElementById('enable-adaptive').checked = true;
-            toggleSubsection('adaptive-content', true);
             document.getElementById('enable-queue').checked = true;
             toggleSubsection('queue-content', true);
+
+            // Reset image sizing to adaptive mode
+            document.getElementById('image-sizing-mode').value = 'adaptive';
+            document.getElementById('enable-image-sizing-mode').checked = true;
+            toggleSizingMode();
 
             // Reset image rotation to default
             document.getElementById('image-rotation-mode').value = 'none';
@@ -3276,9 +3365,7 @@
                     if (element.type === 'checkbox') {
                         element.checked = value;
                         // Handle subsection toggles
-                        if (key === 'enable-adaptive') {
-                            toggleSubsection('adaptive-content', value);
-                        } else if (key === 'enable-queue') {
+                        if (key === 'enable-queue') {
                             toggleSubsection('queue-content', value);
                         } else {
                             // Regular control checkbox
@@ -3297,6 +3384,10 @@
                         // Handle rotation mode change
                         if (key === 'image-rotation-mode') {
                             toggleRotationRange();
+                        }
+                        // Handle sizing mode change
+                        if (key === 'image-sizing-mode') {
+                            toggleSizingMode();
                         }
                     }
                 }

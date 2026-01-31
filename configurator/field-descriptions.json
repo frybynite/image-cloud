@@ -6,13 +6,16 @@
       "_title": "Algorithm settings for image placement",
       "type": "The algorithm used to arrange images in the gallery (default: radial)"
     },
-    "sizing": {
-      "_title": "Control how image sizes are calculated",
-      "adaptive": {
-        "_title": "Automatically adjust sizes based on container and image count",
-        "enabled": "Enable automatic size adjustment (default: true)",
-        "minSize": "Smallest allowed image size in pixels (default: 50)",
-        "maxSize": "Largest allowed image size in pixels (default: 400)"
+    "scaleDecay": "Center images larger, outer images smaller for spiral/radial layouts (default: 0)",
+    "responsive": {
+      "_title": "Responsive breakpoint configuration",
+      "mobile": {
+        "_title": "Mobile breakpoint settings",
+        "maxWidth": "Maximum viewport width for mobile breakpoint (default: 767)"
+      },
+      "tablet": {
+        "_title": "Tablet breakpoint settings",
+        "maxWidth": "Maximum viewport width for tablet breakpoint (default: 1199)"
       }
     },
     "targetCoverage": "How much of the container area images should fill, 0.3-0.9 (default: 0.6)",
@@ -39,7 +42,6 @@
       "spiralType": "Mathematical curve used: golden, archimedean, logarithmic (default: golden)",
       "direction": "Clockwise or counter-clockwise spiral direction (default: counterclockwise)",
       "tightness": "How close spiral arms are to each other (default: 1.0)",
-      "scaleDecay": "Images get smaller toward the outer spiral (default: 0)",
       "startAngle": "Rotation offset for the spiral pattern in degrees (default: 0)"
     },
     "cluster": {
@@ -61,6 +63,7 @@
     }
   },
   "algorithm": "The algorithm used to arrange images in the gallery (default: radial)",
+  "scaleDecay": "Center images larger, outer images smaller for spiral/radial layouts (default: 0)",
   "grid": {
     "_title": "Grid-specific layout options",
     "columns": "Number of columns in the grid layout (default: auto)",
@@ -78,7 +81,6 @@
     "spiralType": "Mathematical curve used: golden, archimedean, logarithmic (default: golden)",
     "direction": "Clockwise or counter-clockwise spiral direction (default: counterclockwise)",
     "tightness": "How close spiral arms are to each other (default: 1.0)",
-    "scaleDecay": "Images get smaller toward the outer spiral (default: 0)",
     "startAngle": "Rotation offset for the spiral pattern in degrees (default: 0)"
   },
   "cluster": {
@@ -98,12 +100,6 @@
     "phaseShift": "Offset between rows in the wave pattern (default: 0)",
     "synchronization": "How wave phases align across rows (default: offset)"
   },
-  "adaptive": {
-    "_title": "Automatically adjust sizes based on container and image count",
-    "enabled": "Enable automatic size adjustment (default: true)",
-    "minSize": "Smallest allowed image size in pixels (default: 50)",
-    "maxSize": "Largest allowed image size in pixels (default: 400)"
-  },
   "spacing": {
     "_title": "Control spacing around and between images",
     "padding": "Space between images and container edges (default: 50)",
@@ -112,14 +108,21 @@
   "image": {
     "_title": "Configure image appearance and sizing",
     "sizing": {
-      "_title": "Control base image dimensions",
-      "baseHeight": "Default height for images before variance",
+      "_title": "Control image dimensions",
+      "mode": "Sizing mode: 'adaptive' auto-calculates, 'fixed' uses single height, 'responsive' uses breakpoint heights (default: adaptive)",
+      "height": {
+        "_title": "Image height configuration",
+        "mobile": "Height for mobile viewports (≤767px) in pixels (default: 100)",
+        "tablet": "Height for tablet viewports (768-1199px) in pixels (default: 150)",
+        "screen": "Height for desktop/screen viewports (≥1200px) in pixels (default: 200)"
+      },
+      "minSize": "Adaptive mode: minimum allowed image height in pixels (default: 50)",
+      "maxSize": "Adaptive mode: maximum allowed image height in pixels (default: 400)",
       "variance": {
         "_title": "Random size variation range",
-        "min": "Minimum size multiplier for random sizing (default: 1.0)",
-        "max": "Maximum size multiplier for random sizing (default: 1.0)"
-      },
-      "scaleDecay": "Center images larger, outer images smaller (default: 0)"
+        "min": "Minimum size multiplier, 0.25-1 (default: 1.0)",
+        "max": "Maximum size multiplier, 1-1.75 (default: 1.0)"
+      }
     },
     "rotation": {
       "_title": "Control image rotation",

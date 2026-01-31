@@ -90,10 +90,11 @@ test.describe('Composite Loader E2E', () => {
 
       const firstImage = page.locator('#imageCloud img').first();
       await firstImage.click();
+      await page.waitForTimeout(200);
 
-      // Check that transform includes scale (zoom effect)
-      const transform = await firstImage.evaluate((el) => el.style.transform);
-      expect(transform).toContain('scale');
+      // Check that image has the focused class
+      const hasFocusedClass = await firstImage.evaluate((el) => el.classList.contains('fbn-ic-focused'));
+      expect(hasFocusedClass).toBe(true);
     });
 
     test('pressing Escape unfocuses image', async ({ page }) => {

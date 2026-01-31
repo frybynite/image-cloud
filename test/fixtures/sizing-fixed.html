@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Test</title>
+  <title>Fixed Sizing Test</title>
   <link rel="stylesheet" href="/dist/style.css">
   <style>
     html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
@@ -25,7 +25,9 @@
             urls: [
               '/test/fixtures/images/image1.jpg',
               '/test/fixtures/images/image2.jpg',
-              '/test/fixtures/images/image3.jpg'
+              '/test/fixtures/images/image3.jpg',
+              '/test/fixtures/images/image4.jpg',
+              '/test/fixtures/images/image5.jpg'
             ]
           }],
           validateUrls: false
@@ -33,30 +35,17 @@
       },
       image: {
         sizing: {
-          mode: 'responsive',
-          height: {
-            mobile: 120,
-            tablet: 180,
-            screen: 250
-          }
+          mode: 'fixed',
+          height: 150
         }
       },
       layout: {
-        responsive: {
-          mobile: { maxWidth: 767 },
-          tablet: { maxWidth: 1199 }
-        }
-      },
-      rendering: {
-        responsive: {
-          breakpoints: { mobile: 768 }
-        }
+        algorithm: 'radial'
       },
       animation: { duration: 100, queue: { interval: 20 } },
       debug: true
     });
 
-    // Initialize the gallery
     window.gallery.init().catch(error => {
       console.error('Gallery initialization failed:', error);
     });

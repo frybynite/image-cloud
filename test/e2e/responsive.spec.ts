@@ -69,7 +69,9 @@ test.describe('Responsive Behavior', () => {
       expect(mobileHeight).toBeLessThan(desktopHeight);
     });
 
-    test('minor resize within breakpoint does not re-layout', async ({ page }) => {
+    test('minor resize within breakpoint does not re-layout', async ({ page }, testInfo) => {
+      // Skip on mobile project - this test uses desktop viewport sizes
+      test.skip(testInfo.project.name === 'mobile', 'Desktop-only test');
       await page.setViewportSize({ width: 1400, height: 900 });
       await page.goto('/test/fixtures/responsive.html');
       await waitForGalleryInit(page);

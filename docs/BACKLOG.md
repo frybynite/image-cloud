@@ -18,6 +18,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Review style.css for overlap between styling and functionality — identify CSS that can be removed while maintaining functionality.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Review skipped test: "initializes multiple galleries on same page" (`test/e2e/auto-init.spec.ts:66`)
+- [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
 ---
 
 ## Planned
@@ -79,6 +80,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Thumbnail navigation
 - Touch gesture improvements
 - For options like image border where the border can be applied overall, or separately to top, bottom, left, right - list all the options available and discuss how we can give them overall control.
+- Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 
 ---
 

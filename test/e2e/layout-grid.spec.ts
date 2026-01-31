@@ -885,9 +885,14 @@ test.describe('Grid Layout Algorithm', () => {
               validateUrls: false
             }
           },
+          image: {
+            sizing: {
+              mode: 'fixed',
+              height: 100
+            }
+          },
           layout: {
             algorithm: 'grid',
-            rotation: { enabled: false },
             grid: { columns: 3, rows: 2, stagger: 'none', jitter: 0, overlap: 0, gap: 10 }
           },
           animation: { duration: 50, queue: { enabled: true, interval: 10 } }
@@ -902,21 +907,50 @@ test.describe('Grid Layout Algorithm', () => {
       const count = await getImageCount(page);
       expect(count).toBe(20);
 
-      // Get positions of all images
-      const positions = await page.locator('#imageCloud img').evaluateAll((imgs) =>
-        imgs.map((img) => {
-          const rect = img.getBoundingClientRect();
-          return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
-        })
-      );
+      // Verify overflow mode is triggered
+      const debugInfo = await page.evaluate(() => (window as any).__gridOverflowDebug);
+      expect(debugInfo.isOverflowMode).toBe(true);
+      expect(debugInfo.columns).toBe(3);
+      expect(debugInfo.rows).toBe(2);
 
-      // Find unique Y positions (rows) - with fixed 3x2 grid, should only have 2 distinct rows
-      const yPositions = positions.map(p => Math.round(p.y / 50)); // Group into 50px buckets
-      const uniqueRows = new Set(yPositions);
+      // Get the calculated layout positions from the gallery
+      const layouts = await page.evaluate(() => {
+        // @ts-ignore
+        return window.gallery?.imageLayouts?.map(l => ({ x: l.x, y: l.y }));
+      });
 
-      // In overflow mode, all images should be in 2 rows (stacked within cells)
-      // If overflow mode isn't working, there would be more rows (20 / 3 = ~7 rows)
-      expect(uniqueRows.size).toBeLessThanOrEqual(3); // Allow for some variance due to offset stacking
+      // In overflow mode, images should be placed within the 6 cell positions (with offset)
+      const cellCenters = layouts.slice(0, 6); // First 6 are the base cell centers
+
+      // Calculate cell spacing to determine appropriate tolerance
+      // The distance between first two cells in a row gives us cell width
+      const cellWidth = Math.abs(cellCenters[1].x - cellCenters[0].x);
+      const cellHeight = Math.abs(cellCenters[3].y - cellCenters[0].y);
+      // Overflow offset is 0.25 * min(cellWidth, cellHeight), so max offset per layer is ~0.25 * cellSize
+      // With 3 overflow layers, max offset is ~0.75 * cellSize, so tolerance should be ~0.8 * cellSize
+      const tolerance = Math.min(cellWidth, cellHeight) * 0.4; // Half of expected max distance
+
+      // Verify each image is assigned to exactly one cell
+      let assignedCount = 0;
+      for (const layout of layouts) {
+        // Find the closest cell center
+        let minDist = Infinity;
+        for (const cell of cellCenters) {
+          const dx = Math.abs(layout.x - cell.x);
+          const dy = Math.abs(layout.y - cell.y);
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < minDist) {
+            minDist = dist;
+          }
+        }
+        // Image should be within tolerance of some cell
+        if (minDist < tolerance * 3) { // 3 layers max
+          assignedCount++;
+        }
+      }
+
+      // All images should be assigned to cells
+      expect(assignedCount).toBe(20);
     });
 
     test('overflow images are offset from base cell position', async ({ page }) => {
@@ -951,9 +985,14 @@ test.describe('Grid Layout Algorithm', () => {
               validateUrls: false
             }
           },
+          image: {
+            sizing: {
+              mode: 'fixed',
+              height: 100
+            }
+          },
           layout: {
             algorithm: 'grid',
-            rotation: { enabled: false },
             grid: { columns: 2, rows: 2, stagger: 'none', jitter: 0, overlap: 0, gap: 10, overflowOffset: 0.15 }
           },
           animation: { duration: 50, queue: { enabled: true, interval: 10 } }

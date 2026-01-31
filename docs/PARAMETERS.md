@@ -168,16 +168,24 @@ Controls image-specific sizing and rotation behavior. This is the recommended wa
 ```typescript
 image: {
   sizing: {
-    baseHeight?: number | {        // Optional - if not set, layouts auto-calculate
-      default: number,             // Base height for large screens
-      tablet?: number,             // Height for tablet
-      mobile?: number              // Height for mobile
+    mode: 'fixed' | 'adaptive',    // Required: explicit mode selection
+
+    // Fixed mode only:
+    height?: number | {            // Required when mode='fixed'
+      mobile?: number,             // Height for mobile viewports
+      tablet?: number,             // Height for tablet viewports
+      screen?: number              // Height for desktop/large screens
     },
+
+    // Adaptive mode only:
+    minSize?: number,              // default: 50
+    maxSize?: number,              // default: 400
+
+    // Both modes:
     variance?: {
-      min: number,                 // > 0.1 and < 1 (e.g., 0.8)
-      max: number                  // > 1 and < 2 (e.g., 1.2)
-    },
-    scaleDecay?: number            // For Radial/Spiral - progressive size reduction (0-1)
+      min: number,                 // 0.25-1 (e.g., 0.8)
+      max: number                  // 1-1.75 (e.g., 1.2)
+    }
   },
   rotation: {
     mode: 'none' | 'random' | 'tangent',  // default: 'none'
@@ -193,20 +201,44 @@ image: {
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `baseHeight` | `number \| ResponsiveBaseHeight` | *auto* | Base image height. If not set, layouts auto-calculate based on `targetCoverage`. |
-| `variance.min` | `number` | `1.0` | Minimum size multiplier. Must be > 0.1 and < 1.0. |
-| `variance.max` | `number` | `1.0` | Maximum size multiplier. Must be > 1.0 and < 2.0. |
-| `scaleDecay` | `number` | `0` | Progressive size reduction for Radial/Spiral layouts (0-1). |
+| `mode` | `'fixed' \| 'adaptive'` | `'adaptive'` | **Required.** Sizing mode selection. |
+| `height` | `number \| FixedModeHeight` | - | Fixed mode only: explicit image height. |
+| `minSize` | `number` | `50` | Adaptive mode only: minimum image height. |
+| `maxSize` | `number` | `400` | Adaptive mode only: maximum image height. |
+| `variance.min` | `number` | `1.0` | Minimum size multiplier (0.25-1). |
+| `variance.max` | `number` | `1.0` | Maximum size multiplier (1-1.75). |
 
-**Responsive baseHeight:**
+**Fixed Mode - Single Height:**
 ```typescript
 image: {
   sizing: {
-    baseHeight: {
-      default: 200,   // Desktop
-      tablet: 150,    // Tablet (uses rendering.responsive.breakpoints.tablet)
-      mobile: 100     // Mobile (uses rendering.responsive.breakpoints.mobile)
+    mode: 'fixed',
+    height: 150      // All viewports use 150px
+  }
+}
+```
+
+**Fixed Mode - Responsive Heights:**
+```typescript
+image: {
+  sizing: {
+    mode: 'fixed',
+    height: {
+      mobile: 100,   // < 767px viewport width
+      tablet: 150,   // < 1199px viewport width
+      screen: 200    // >= 1200px viewport width
     }
+  }
+}
+```
+
+**Adaptive Mode (default):**
+```typescript
+image: {
+  sizing: {
+    mode: 'adaptive',  // Auto-calculates based on container and image count
+    minSize: 50,       // Minimum image height
+    maxSize: 400       // Maximum image height
   }
 }
 ```
@@ -238,10 +270,12 @@ image: {
 **Example - Spiral with tangent rotation:**
 ```typescript
 image: {
-  rotation: { mode: 'tangent' },
-  sizing: { scaleDecay: 0.5 }
+  rotation: { mode: 'tangent' }
 },
-layout: { algorithm: 'spiral' }
+layout: {
+  algorithm: 'spiral',
+  scaleDecay: 0.5
+}
 ```
 
 ---
@@ -253,9 +287,13 @@ Controls the positioning and sizing of images.
 ```typescript
 layout: {
   algorithm: 'radial' | 'random' | 'grid' | 'spiral' | 'cluster' | 'wave',
-  targetCoverage?: number,         // 0-1, for auto-sizing when baseHeight not set (default: 0.6)
+  targetCoverage?: number,         // 0-1, for auto-sizing (default: 0.6)
   densityFactor?: number,          // Controls spacing density (default: 1.0)
-  sizing: LayoutSizingConfig,
+  scaleDecay?: number,             // 0-1, outer images smaller (default: 0)
+  responsive?: {                   // Responsive breakpoints
+    mobile: { maxWidth: number },  // default: 767
+    tablet: { maxWidth: number }   // default: 1199
+  },
   spacing: LayoutSpacingConfig,
   // Algorithm-specific options
   grid?: GridAlgorithmConfig,
@@ -270,11 +308,13 @@ layout: {
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'`, `'wave'` |
-| `targetCoverage` | `number` | `0.6` | Target percentage of container to fill (0.0-1.0) when `image.sizing.baseHeight` is not set |
+| `targetCoverage` | `number` | `0.6` | Target percentage of container to fill (0.0-1.0) when using adaptive sizing |
 | `densityFactor` | `number` | `1.0` | Multiplier for calculated sizes and spacing |
+| `scaleDecay` | `number` | `0` | Size reduction for outer images in spiral/radial layouts (0 = none, 1 = 50% smaller at edge) |
+| `responsive.mobile.maxWidth` | `number` | `767` | Maximum viewport width for mobile breakpoint |
+| `responsive.tablet.maxWidth` | `number` | `1199` | Maximum viewport width for tablet breakpoint (screen is > tablet) |
 | `debugRadials` | `boolean` | `false` | Visualize the radial layout structure (debug). |
 | `debugCenters` | `boolean` | `false` | Show markers at calculated image center positions (debug). |
-| `sizing` | `LayoutSizingConfig` | *See below* | Configuration for image dimensions. |
 | `spacing` | `LayoutSpacingConfig` | *See below* | Configuration for margins and gaps. |
 
 ---
@@ -339,11 +379,11 @@ Images placed along a spiral path emanating from the center.
 ```typescript
 layout: {
   algorithm: 'spiral',
+  scaleDecay: 0.5,               // 0-1, outer images smaller (layout-level)
   spiral: {
     spiralType: 'golden',        // 'golden' | 'archimedean' | 'logarithmic'
     direction: 'counterclockwise', // 'clockwise' | 'counterclockwise'
     tightness: 1.0,              // spacing between spiral arms
-    scaleDecay: 0,               // 0-1, outer images smaller
     startAngle: 0                // initial rotation offset in radians
   }
 }
@@ -354,8 +394,9 @@ layout: {
 | `spiralType` | `string` | `'golden'` | Spiral pattern type |
 | `direction` | `string` | `'counterclockwise'` | Spiral rotation direction |
 | `tightness` | `number` | `1.0` | How tightly wound (higher = tighter) |
-| `scaleDecay` | `number` | `0` | Size reduction for outer images (0 = none, 1 = 50% smaller at edge) |
 | `startAngle` | `number` | `0` | Starting angle offset in radians |
+
+> **Note:** `scaleDecay` is now configured at `layout.scaleDecay` level, not within `spiral`.
 
 **Spiral Types:**
 - `'golden'` - Fibonacci/sunflower pattern, optimal distribution
@@ -552,38 +593,6 @@ No algorithm-specific options. Uses base `sizing` and `rotation` config.
 - Good for creative/artistic displays
 
 ---
-
-## Layout Sizing (`layout.sizing`)
-
-Controls image sizing behavior at the layout level.
-
-```typescript
-layout: {
-  sizing: {
-    base: 200,           // Base height in pixels (fallback)
-    responsive: [
-      { minWidth: 1200, height: 225 },
-      { minWidth: 768, height: 180 },
-      { minWidth: 0, height: 100 }
-    ],
-    adaptive: {
-      enabled: true,
-      minSize: 50,
-      maxSize: 400
-    }
-  }
-}
-```
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `base` | `number` | `200` | Base height of images in pixels. |
-| `responsive` | `ResponsiveHeight[]` | *See above* | Array of `{ minWidth, height }` objects for responsive sizing. |
-| `adaptive.enabled` | `boolean` | `true` | Enable auto-sizing |
-| `adaptive.minSize` | `number` | `50` | Minimum image height |
-| `adaptive.maxSize` | `number` | `400` | Maximum image height |
-
-> **Note:** For image-specific sizing like `variance`, `baseHeight`, and `scaleDecay`, see [Image Configuration](#2-image-configuration-image).
 
 #### Spacing (`layout.spacing`)
 
@@ -1508,12 +1517,17 @@ All available parameters with example values:
 
   "image": {
     "sizing": {
-      "baseHeight": 200,                        // Optional. number or responsive object
+      "mode": "adaptive",                       // Required. "fixed" | "adaptive"
+      // Fixed mode only:
+      "height": 150,                            // number or { mobile, tablet, screen }
+      // Adaptive mode only:
+      "minSize": 50,                            // Default. Minimum image height
+      "maxSize": 400,                           // Default. Maximum image height
+      // Both modes:
       "variance": {
-        "min": 1.0,                             // Default. Min scale (0.1-1.0)
-        "max": 1.0                              // Default. Max scale (1.0-2.0)
-      },
-      "scaleDecay": 0                           // Default. For Radial/Spiral (0-1)
+        "min": 1.0,                             // Default. Min scale (0.25-1.0)
+        "max": 1.0                              // Default. Max scale (1.0-1.75)
+      }
     },
     "rotation": {
       "mode": "none",                           // Default. "none" | "random" | "tangent"
@@ -1528,22 +1542,13 @@ All available parameters with example values:
     "algorithm": "radial",                      // Default. "radial" | "random" | "grid" | "spiral" | "cluster" | "wave"
     "targetCoverage": 0.6,                      // Default. Target % of container to fill (0-1)
     "densityFactor": 1.0,                       // Default. Multiplier for calculated sizes
+    "scaleDecay": 0,                            // Default. 0-1 outer image size reduction (spiral/radial)
+    "responsive": {                             // Responsive breakpoints
+      "mobile": { "maxWidth": 767 },            // Default. Mobile breakpoint
+      "tablet": { "maxWidth": 1199 }            // Default. Tablet breakpoint (screen > tablet)
+    },
     "debugRadials": false,                      // Default
     "debugCenters": false,                      // Default. Show markers at image center positions
-
-    "sizing": {
-      "base": 200,                              // Default. Base image size in px
-      "responsive": [                           // Default
-        { "minWidth": 1200, "height": 225 },
-        { "minWidth": 768, "height": 180 },
-        { "minWidth": 0, "height": 100 }
-      ],
-      "adaptive": {
-        "enabled": true,                        // Default
-        "minSize": 50,                          // Default
-        "maxSize": 400                          // Default
-      }
-    },
 
     "spacing": {
       "padding": 50,                            // Default. Container padding in px
@@ -1568,7 +1573,6 @@ All available parameters with example values:
       "spiralType": "golden",                   // Default. "golden" | "archimedean" | "logarithmic"
       "direction": "counterclockwise",          // Default. "clockwise" | "counterclockwise"
       "tightness": 1.0,                         // Default. Spiral arm spacing
-      "scaleDecay": 0,                          // Default. 0-1 outer image size reduction
       "startAngle": 0                           // Default. Initial angle in radians
     },
 
@@ -1753,9 +1757,14 @@ const gallery = new ImageCloud({
       sources: [{ type: 'urls', urls: [...] }]
     }
   },
+  image: {
+    sizing: {
+      mode: 'fixed',
+      height: 120
+    }
+  },
   layout: {
     algorithm: 'grid',
-    sizing: { base: 120 },
     grid: {
       columns: 4,
       stagger: 'row',
@@ -1773,14 +1782,19 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    sizing: {
+      mode: 'fixed',
+      height: 100
+    }
+  },
   layout: {
     algorithm: 'spiral',
-    sizing: { base: 100 },
+    scaleDecay: 0.4,  // Outer images 20% smaller
     spiral: {
       spiralType: 'golden',
       direction: 'counterclockwise',
-      tightness: 1.0,
-      scaleDecay: 0.4  // Outer images 20% smaller
+      tightness: 1.0
     }
   }
 });
@@ -1793,6 +1807,10 @@ const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   image: {
+    sizing: {
+      mode: 'fixed',
+      height: 90
+    },
     rotation: {
       mode: 'random',
       range: { min: -20, max: 20 }  // More rotation for organic feel
@@ -1800,7 +1818,6 @@ const gallery = new ImageCloud({
   },
   layout: {
     algorithm: 'cluster',
-    sizing: { base: 90 },
     cluster: {
       clusterCount: 3,
       clusterSpread: 100,
@@ -1841,9 +1858,14 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    sizing: {
+      mode: 'fixed',
+      height: 80
+    }
+  },
   layout: {
     algorithm: 'spiral',
-    sizing: { base: 80 },
     spiral: {
       spiralType: 'archimedean',
       direction: 'clockwise',
@@ -1947,9 +1969,11 @@ const gallery = new ImageCloud({
       sources: [{ type: 'urls', urls: [...] }]
     }
   },
+  image: {
+    sizing: { mode: 'fixed', height: 100 }
+  },
   layout: {
-    algorithm: 'radial',
-    sizing: { base: 100 }
+    algorithm: 'radial'
   },
   animation: {
     entry: {
@@ -1966,9 +1990,11 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    sizing: { mode: 'fixed', height: 120 }
+  },
   layout: {
     algorithm: 'grid',
-    sizing: { base: 120 },
     grid: { columns: 4, gap: 15 }
   },
   animation: {
@@ -1987,9 +2013,11 @@ const gallery = new ImageCloud({
 const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
+  image: {
+    sizing: { mode: 'fixed', height: 90 }
+  },
   layout: {
-    algorithm: 'radial',
-    sizing: { base: 90 }
+    algorithm: 'radial'
   },
   animation: {
     entry: {
@@ -2048,11 +2076,11 @@ const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   image: {
+    sizing: { mode: 'fixed', height: 120 },
     rotation: { mode: 'tangent' }  // Images tilt along wave curve
   },
   layout: {
     algorithm: 'wave',
-    sizing: { base: 120 },
     wave: {
       rows: 4,
       amplitude: 100,
@@ -2076,11 +2104,11 @@ const gallery = new ImageCloud({
   container: 'my-gallery',
   loader: { ... },
   image: {
+    sizing: { mode: 'fixed', height: 90 },
     rotation: { mode: 'tangent' }  // Images follow wave curve
   },
   layout: {
     algorithm: 'wave',
-    sizing: { base: 90 },
     wave: {
       rows: 5,
       amplitude: 120,
@@ -2090,3 +2118,85 @@ const gallery = new ImageCloud({
   }
 });
 ```
+
+---
+
+## Migration Guide
+
+If you are upgrading from an older version, the sizing configuration structure has changed.
+
+### Key Changes
+
+| Old Location | New Location | Notes |
+|--------------|--------------|-------|
+| `image.sizing.baseHeight` | `image.sizing.height` | Use with `mode: 'fixed'` |
+| `image.sizing.scaleDecay` | `layout.scaleDecay` | Moved to layout level |
+| `layout.sizing.responsive[]` | `layout.responsive{}` | Changed from array to object |
+| `layout.sizing.adaptive` | `image.sizing.minSize/maxSize` | Part of image.sizing |
+| `layout.sizing.base` | `image.sizing.height` | Use with `mode: 'fixed'` |
+
+### Before (Old Config)
+
+```typescript
+{
+  image: {
+    sizing: {
+      baseHeight: 150,
+      scaleDecay: 0.5,
+      variance: { min: 0.8, max: 1.2 }
+    }
+  },
+  layout: {
+    algorithm: 'spiral',
+    sizing: {
+      base: 200,
+      responsive: [
+        { minWidth: 1200, height: 225 },
+        { minWidth: 768, height: 180 },
+        { minWidth: 0, height: 100 }
+      ],
+      adaptive: {
+        enabled: true,
+        minSize: 50,
+        maxSize: 400
+      }
+    }
+  }
+}
+```
+
+### After (New Config)
+
+```typescript
+{
+  image: {
+    sizing: {
+      mode: 'fixed',           // or 'adaptive'
+      height: {                // for fixed mode
+        mobile: 100,           // < 767px
+        tablet: 180,           // < 1199px
+        screen: 225            // >= 1200px
+      },
+      // For adaptive mode, use these instead:
+      // minSize: 50,
+      // maxSize: 400,
+      variance: { min: 0.8, max: 1.2 }
+    }
+  },
+  layout: {
+    algorithm: 'spiral',
+    scaleDecay: 0.5,           // moved from image.sizing
+    responsive: {              // changed from array to object
+      mobile: { maxWidth: 767 },
+      tablet: { maxWidth: 1199 }
+    }
+  }
+}
+```
+
+### Sizing Mode Selection
+
+The new `mode` property explicitly controls sizing behavior:
+
+- **`mode: 'fixed'`**: Uses the `height` property for explicit image sizes
+- **`mode: 'adaptive'`**: Auto-calculates sizes based on container and image count, constrained by `minSize` and `maxSize`

@@ -1,287 +1,307 @@
-# Image Configuration
+# Image Sizing
 
-This document explains the image sizing and rotation configuration in Image Cloud.
+This document explains the image sizing configuration in Image Cloud.
+
+## Quick Summary: Sizing Modes
+
+| Mode | Description | Use When |
+|------|-------------|----------|
+| **Adaptive** (default) | Auto-calculates image height based on container size and image count | You want the library to optimize sizing automatically |
+| **Fixed** | Single explicit height for all viewport sizes | You want consistent image sizes regardless of screen size |
+| **Responsive** | Different heights for mobile, tablet, and desktop | You want explicit control over sizes at each breakpoint |
 
 ## Configuration Structure
-
-Image configuration is organized under the `image` section:
 
 ```typescript
 {
   image: {
     sizing: {
-      baseHeight?: number | {        // Optional - if not set, layouts auto-calculate
-        default: number,             // Base height for large screens
-        tablet?: number,             // Height for tablet
-        mobile?: number              // Height for mobile
+      mode: 'adaptive' | 'fixed' | 'responsive',
+
+      // For fixed mode:
+      height: 200,  // Single number in pixels
+
+      // For responsive mode:
+      height: {
+        mobile: 100,   // Viewport width <= 767px
+        tablet: 150,   // Viewport width 768-1199px
+        screen: 200    // Viewport width >= 1200px
       },
-      variance?: {
-        min: number,                 // > 0.1 and < 1 (e.g., 0.8)
-        max: number                  // > 1 and < 2 (e.g., 1.2)
-      },
-      scaleDecay?: number            // For Radial/Spiral - progressive size reduction (0-1)
-    },
-    rotation: {
-      mode: 'none' | 'random' | 'tangent',  // default: 'none'
-      range?: {
-        min: number,                 // Negative degrees (-180 to 0)
-        max: number                  // Positive degrees (0 to 180)
+
+      // For adaptive mode:
+      minSize: 50,     // Minimum height floor (default: 50)
+      maxSize: 400,    // Maximum height ceiling (default: 400)
+
+      // For all modes:
+      variance: {
+        min: 0.8,      // 80% of base height (range: 0.25-1.0)
+        max: 1.2       // 120% of base height (range: 1.0-1.75)
       }
     }
   },
   layout: {
-    algorithm: 'radial' | 'grid' | 'spiral' | 'cluster' | 'wave' | 'random',
-    targetCoverage?: number,         // 0-1, for auto-sizing when baseHeight not set (default: 0.6)
-    densityFactor?: number,          // Controls spacing density (default: 1.0)
-    spacing: { padding, minGap },
-    // ... algorithm-specific configs
+    scaleDecay: 0.5    // Progressive size reduction for radial/spiral (0-1)
   }
 }
 ```
 
-## Image Sizing
+## Sizing Modes in Detail
 
-### Base Height
+### Adaptive Mode (Default)
 
-The `baseHeight` determines the starting height for images:
-
-1. **If `baseHeight` is set** - Use this value directly (with responsive variants if provided)
-2. **If `baseHeight` is not set** - Layout auto-calculates based on `targetCoverage`
+Adaptive mode automatically calculates optimal image sizes based on:
+- Container dimensions
+- Number of images
+- Target coverage percentage
+- Density factor
 
 ```typescript
-// Simple fixed height
-image: {
-  sizing: {
-    baseHeight: 200  // All viewports use 200px
+{
+  image: {
+    sizing: {
+      mode: 'adaptive',
+      minSize: 50,    // Won't go smaller than 50px
+      maxSize: 400    // Won't go larger than 400px
+    }
+  },
+  layout: {
+    targetCoverage: 0.6,   // Aim to fill 60% of container area
+    densityFactor: 1.0     // Multiplier for calculated sizes
   }
 }
+```
 
-// Responsive height
-image: {
-  sizing: {
-    baseHeight: {
-      default: 200,   // Desktop
-      tablet: 150,    // Tablet (uses rendering.responsive.breakpoints.tablet)
-      mobile: 100     // Mobile (uses rendering.responsive.breakpoints.mobile)
+**How it works:**
+1. Calculates target area based on `targetCoverage` (default: 60% of container)
+2. Divides by image count to get area per image
+3. Derives height assuming 1.4 aspect ratio (landscape images)
+4. Applies `densityFactor` multiplier
+5. Clamps result to `[minSize, maxSize]` range
+
+### Fixed Mode
+
+Fixed mode uses a single explicit height for all images, regardless of viewport size.
+
+```typescript
+{
+  image: {
+    sizing: {
+      mode: 'fixed',
+      height: 200    // All images are 200px tall
     }
   }
 }
 ```
 
-### Variance
+**When to use:** When you want consistent image sizes across all devices.
 
-Variance allows random size variation for a more organic look:
+### Responsive Mode
+
+Responsive mode lets you specify different heights for each viewport breakpoint.
 
 ```typescript
-image: {
-  sizing: {
-    variance: {
-      min: 0.8,  // 80% of base height
-      max: 1.2   // 120% of base height
+{
+  image: {
+    sizing: {
+      mode: 'responsive',
+      height: {
+        mobile: 100,   // Small screens (width <= 767px)
+        tablet: 150,   // Medium screens (width 768-1199px)
+        screen: 200    // Large screens (width >= 1200px)
+      }
     }
   }
 }
 ```
 
-**Validation Rules:**
-- `min` must be > 0.1 and < 1.0 (values outside this range are ignored)
-- `max` must be > 1.0 and < 2.0 (values outside this range are ignored)
-- All layouts apply variance after determining the base height
+**Breakpoint thresholds** (configurable via `layout.responsive`):
+- **Mobile**: viewport width <= 767px
+- **Tablet**: viewport width 768-1199px
+- **Screen**: viewport width >= 1200px
 
-### Scale Decay
+**Fallback chain:** If a breakpoint value is not specified:
+- Mobile falls back to: tablet → screen
+- Tablet falls back to: screen → mobile
+- Screen falls back to: tablet → mobile
 
-Scale decay progressively reduces image size from center to edge (Radial and Spiral layouts only):
+## Variance
 
-```typescript
-image: {
-  sizing: {
-    scaleDecay: 0.5  // 0-1, higher = more reduction at edges
-  }
-}
-```
-
-- Center images stay at full size
-- Edge images can be reduced by up to 50%
-- Minimum floor: 5% of original calculated size
-
-## Image Rotation
-
-### Rotation Mode
+Variance adds random size variation to each image for a more organic look. It applies to all sizing modes.
 
 ```typescript
-image: {
-  rotation: {
-    mode: 'none' | 'random' | 'tangent'
-  }
-}
-```
-
-| Mode | Description | Applicable Layouts |
-|------|-------------|-------------------|
-| `none` | No rotation (default) | All |
-| `random` | Random rotation within range | All |
-| `tangent` | Align to curve tangent | Wave, Spiral |
-
-### Rotation Range
-
-For `random` mode, specify the rotation range in degrees:
-
-```typescript
-image: {
-  rotation: {
-    mode: 'random',
-    range: {
-      min: -15,  // Counter-clockwise limit
-      max: 15    // Clockwise limit
+{
+  image: {
+    sizing: {
+      variance: {
+        min: 0.8,   // Images can be 80% of base height
+        max: 1.2    // Images can be 120% of base height
+      }
     }
   }
 }
 ```
 
-**Validation Rules:**
-- `min` must be >= -180 and <= 0
-- `max` must be >= 0 and <= 180
-- Invalid values are ignored, defaults used instead
+**Validation rules:**
+- `min`: must be between 0.25 and 1.0
+- `max`: must be between 1.0 and 1.75
+- Default is `{ min: 1.0, max: 1.0 }` (no variance)
 
-## How Each Layout Uses Image Config
+**Formula:** `finalHeight = baseHeight × random(variance.min, variance.max)`
 
-### Radial
+## Scale Decay
 
-- Uses `baseHeight` if set, otherwise auto-calculates
-- Applies `variance` to each image
-- Applies `scaleDecay` (outer rings get smaller)
-- Supports `random` rotation mode
+Scale decay progressively reduces image size from center to edge. This is a **layout-level** setting that only applies to Radial and Spiral algorithms.
 
-### Grid
+```typescript
+{
+  layout: {
+    algorithm: 'radial',  // or 'spiral'
+    scaleDecay: 0.5       // 0-1, higher = more reduction at edges
+  }
+}
+```
 
-- Uses `baseHeight` if set, otherwise calculates cell-based size
-- Applies `variance` for non-uniform grid look
-- Rotation only applied when grid has `jitter` > 0
-- Supports `random` rotation mode
-
-### Spiral
-
-- Uses `baseHeight` if set, otherwise auto-calculates
-- Applies `variance` to each image
-- Applies `scaleDecay` (outer spiral positions get smaller)
-- Supports `random` and `tangent` rotation modes
-
-### Cluster
-
-- Uses `baseHeight` if set, otherwise auto-calculates
-- Applies `variance` to each image within clusters
-- Supports `random` rotation mode
-
-### Wave
-
-- Uses `baseHeight` if set, otherwise auto-calculates
-- Applies `variance` to each image
-- Supports `random` and `tangent` rotation modes
-
-### Random
-
-- Uses `baseHeight` if set, otherwise auto-calculates
-- Applies `variance` to each image
-- Supports `random` rotation mode
-
-## Layout-Level Configuration
-
-These parameters affect how layouts calculate sizes when `baseHeight` is not set:
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `layout.targetCoverage` | 0.6 | Target percentage of container to fill (0.0-1.0) |
-| `layout.densityFactor` | 1.0 | Multiplier for calculated sizes |
-| `layout.sizing.adaptive.enabled` | true | Enable adaptive sizing |
-| `layout.sizing.adaptive.minSize` | 50 | Minimum image height floor |
-| `layout.sizing.adaptive.maxSize` | 400 | Maximum image height ceiling |
+**How it works:**
+- Center images remain at full size
+- Outer images are progressively reduced
+- Maximum reduction is 50% at the outermost positions
+- Formula: `ringScale = 1 - (normalizedPosition × scaleDecay × 0.5)`
 
 ## Sizing Flow
 
 ```
-image.sizing.baseHeight (if set)
-    OR
-auto-calculate using layout.targetCoverage
-         ↓
-apply layout.densityFactor
-         ↓
-clamp to [adaptive.minSize, adaptive.maxSize]
-         ↓
-apply scaleDecay (Radial/Spiral only)
-         ↓
-apply variance
-         ↓
-minimum floor: 5% of calculated size
-         ↓
-final image height
-```
-
-## Migration from Previous API
-
-The previous `layout.rotation` and `layout.sizing.variance` configs are still supported for backward compatibility but deprecated:
-
-```typescript
-// Old format (deprecated)
-{
-  layout: {
-    rotation: { enabled: true, range: { min: -15, max: 15 } },
-    sizing: { variance: { min: 0.8, max: 1.2 } }
-  }
-}
-
-// New format (recommended)
-{
-  image: {
-    rotation: { mode: 'random', range: { min: -15, max: 15 } },
-    sizing: { variance: { min: 0.8, max: 1.2 } }
-  }
-}
+┌─────────────────────────────────────┐
+│         Determine Base Height       │
+├─────────────────────────────────────┤
+│ Adaptive: auto-calculate from       │
+│           container & image count   │
+│ Fixed:    use height value          │
+│ Responsive: use breakpoint height   │
+└──────────────────┬──────────────────┘
+                   ↓
+┌─────────────────────────────────────┐
+│  Apply Scale Decay (Radial/Spiral)  │
+│  ringScale = 1 - (pos × decay × 0.5)│
+└──────────────────┬──────────────────┘
+                   ↓
+┌─────────────────────────────────────┐
+│         Apply Variance              │
+│  height × random(min, max)          │
+└──────────────────┬──────────────────┘
+                   ↓
+┌─────────────────────────────────────┐
+│         Final Image Height          │
+└─────────────────────────────────────┘
 ```
 
 ## Examples
 
-### Classic Scattered Photos
+### Auto-Sizing with Variance (Scattered Photos)
 
 ```typescript
 {
   image: {
-    rotation: { mode: 'random', range: { min: -15, max: 15 } },
-    sizing: { variance: { min: 0.9, max: 1.1 } }
+    sizing: {
+      mode: 'adaptive',
+      variance: { min: 0.9, max: 1.1 }
+    }
   },
   layout: { algorithm: 'radial' }
 }
 ```
 
-### Clean Grid
-
-```typescript
-{
-  image: {
-    rotation: { mode: 'none' }
-  },
-  layout: { algorithm: 'grid' }
-}
-```
-
-### Spiral with Decay
-
-```typescript
-{
-  image: {
-    rotation: { mode: 'tangent' },
-    sizing: { scaleDecay: 0.5 }
-  },
-  layout: { algorithm: 'spiral' }
-}
-```
-
-### Fixed Responsive Heights
+### Fixed Height Grid
 
 ```typescript
 {
   image: {
     sizing: {
-      baseHeight: { default: 200, tablet: 150, mobile: 100 }
+      mode: 'fixed',
+      height: 180
+    }
+  },
+  layout: { algorithm: 'grid' }
+}
+```
+
+### Responsive Heights
+
+```typescript
+{
+  image: {
+    sizing: {
+      mode: 'responsive',
+      height: {
+        mobile: 100,
+        tablet: 150,
+        screen: 200
+      }
+    }
+  }
+}
+```
+
+### Spiral with Center Emphasis
+
+```typescript
+{
+  image: {
+    sizing: {
+      mode: 'adaptive',
+      variance: { min: 0.85, max: 1.0 }
+    }
+  },
+  layout: {
+    algorithm: 'spiral',
+    scaleDecay: 0.6    // Outer images 30% smaller
+  }
+}
+```
+
+### Dense Small Images
+
+```typescript
+{
+  image: {
+    sizing: {
+      mode: 'adaptive',
+      minSize: 30,
+      maxSize: 100
+    }
+  },
+  layout: {
+    targetCoverage: 0.8,
+    densityFactor: 0.8
+  }
+}
+```
+
+## Customizing Breakpoints
+
+The default breakpoints can be customized:
+
+```typescript
+{
+  layout: {
+    responsive: {
+      mobile: { maxWidth: 600 },   // Custom mobile breakpoint
+      tablet: { maxWidth: 1024 }   // Custom tablet breakpoint
+    }
+  }
+}
+```
+
+## Image Rotation
+
+For complete documentation on image rotation (modes: none, random, tangent), see the rotation section of the main documentation.
+
+Quick reference:
+```typescript
+{
+  image: {
+    rotation: {
+      mode: 'none' | 'random' | 'tangent',
+      range: { min: -15, max: 15 }  // For 'random' mode
     }
   }
 }

@@ -33,7 +33,8 @@ export class RadialPlacementGenerator implements PlacementGenerator {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
     const { debugRadials } = this.config;
-    const baseImageSize = this.config.sizing.base;
+    // Use fixedHeight if provided, otherwise use default 200
+    const baseImageSize = options.fixedHeight ?? 200;
 
     // Get rotation config from image config
     const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
@@ -45,8 +46,8 @@ export class RadialPlacementGenerator implements PlacementGenerator {
     const varianceMax = this.imageConfig.sizing?.variance?.max ?? 1.0;
     const hasVariance = varianceMin !== 1.0 || varianceMax !== 1.0;
 
-    // Get scale decay for radial layouts
-    const scaleDecay = this.imageConfig.sizing?.scaleDecay ?? 0;
+    // Get scale decay from layout config
+    const scaleDecay = this.config.scaleDecay ?? 0;
 
     // Debug color palette
     const debugPalette = ['green', 'blue', 'red', 'yellow', 'orange', 'purple'];

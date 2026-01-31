@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, DeepPartial, ResponsiveHeight, AdaptiveSizingConfig, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig } from './types';
+import type { ImageCloudConfig, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints } from './types';
 
 /**
  * Shadow presets for image styling
@@ -120,15 +120,24 @@ export const DEFAULT_WAVE_CONFIG: WaveAlgorithmConfig = Object.freeze({
 });
 
 /**
+ * Default responsive breakpoints for layout
+ */
+export const DEFAULT_RESPONSIVE_BREAKPOINTS: ResponsiveBreakpoints = Object.freeze({
+  mobile: Object.freeze({ maxWidth: 767 }),
+  tablet: Object.freeze({ maxWidth: 1199 })
+});
+
+/**
  * Default image sizing configuration
  */
 export const DEFAULT_IMAGE_SIZING: ImageSizingConfig = Object.freeze({
-  // baseHeight not set - layouts will auto-calculate based on targetCoverage
+  mode: 'adaptive' as const,  // Default to adaptive sizing
+  minSize: 50,                // Adaptive mode minimum
+  maxSize: 400,               // Adaptive mode maximum
   variance: Object.freeze({
     min: 1.0,  // No variance by default
     max: 1.0
-  }),
-  scaleDecay: 0  // No decay by default
+  })
 });
 
 /**
@@ -182,19 +191,8 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   // Pattern-based layout configuration
   layout: Object.freeze({
     algorithm: 'radial' as const,
-    sizing: Object.freeze({
-      base: 200,  // pixels - fallback when image.sizing.baseHeight not set
-      responsive: [
-        { minWidth: 1200, height: 225 },  // Large screens
-        { minWidth: 768, height: 180 },   // Tablet / Small desktop
-        { minWidth: 0, height: 100 }      // Mobile / Default
-      ],
-      adaptive: Object.freeze({
-        enabled: true,             // Enable adaptive sizing by default
-        minSize: 50,               // Minimum 50px image height
-        maxSize: 400               // Maximum 400px image height
-      })
-    }),
+    scaleDecay: 0,                 // No decay by default (0-1 for radial/spiral)
+    responsive: DEFAULT_RESPONSIVE_BREAKPOINTS,
     targetCoverage: 0.6,           // Target 60% of container area
     densityFactor: 1.0,            // Default density
     spacing: Object.freeze({
@@ -406,13 +404,13 @@ function deepMergeImageConfig(
       ...userImage.sizing
     };
 
-    // Deep merge variance with validation
+    // Deep merge variance with validation (min: 0.25-1, max: 1-1.75)
     if (userImage.sizing.variance) {
       const userVariance = userImage.sizing.variance as ImageVarianceConfig;
-      const validMin = userVariance.min !== undefined && userVariance.min > 0.1 && userVariance.min < 1
+      const validMin = userVariance.min !== undefined && userVariance.min >= 0.25 && userVariance.min <= 1
         ? userVariance.min
         : defaults.sizing?.variance?.min ?? 1.0;
-      const validMax = userVariance.max !== undefined && userVariance.max > 1 && userVariance.max < 2
+      const validMax = userVariance.max !== undefined && userVariance.max >= 1 && userVariance.max <= 1.75
         ? userVariance.max
         : defaults.sizing?.variance?.max ?? 1.0;
       merged.sizing!.variance = { min: validMin, max: validMax };
@@ -472,6 +470,7 @@ function convertLegacyVarianceConfig(userConfig: DeepPartial<ImageCloudConfig>):
 
   return {
     sizing: {
+      mode: 'adaptive',  // Legacy variance config implies adaptive mode
       variance: legacyVariance
     }
   };
@@ -550,15 +549,16 @@ export function mergeConfig(
       ...userConfig.layout
     } as any;
 
-    // Deep merge sizing config
-    if (userConfig.layout.sizing) {
-      merged.layout.sizing = {
-        ...DEFAULT_CONFIG.layout.sizing,
-        ...userConfig.layout.sizing,
-        responsive: (userConfig.layout.sizing.responsive as ResponsiveHeight[]) || DEFAULT_CONFIG.layout.sizing.responsive,
-        adaptive: userConfig.layout.sizing.adaptive
-          ? { ...DEFAULT_CONFIG.layout.sizing.adaptive!, ...(userConfig.layout.sizing.adaptive as AdaptiveSizingConfig) }
-          : DEFAULT_CONFIG.layout.sizing.adaptive
+    // Deep merge responsive breakpoints config
+    if (userConfig.layout.responsive) {
+      merged.layout.responsive = {
+        ...DEFAULT_CONFIG.layout.responsive!,
+        mobile: userConfig.layout.responsive.mobile
+          ? { ...DEFAULT_CONFIG.layout.responsive!.mobile, ...userConfig.layout.responsive.mobile }
+          : DEFAULT_CONFIG.layout.responsive!.mobile,
+        tablet: userConfig.layout.responsive.tablet
+          ? { ...DEFAULT_CONFIG.layout.responsive!.tablet, ...userConfig.layout.responsive.tablet }
+          : DEFAULT_CONFIG.layout.responsive!.tablet
       };
     }
 

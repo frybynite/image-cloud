@@ -33,7 +33,8 @@ export class WavePlacementGenerator implements PlacementGenerator {
   ): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
-    const baseImageSize = this.config.sizing.base;
+    // Use fixedHeight if provided, otherwise use default 200
+    const baseImageSize = options.fixedHeight ?? 200;
     const padding = this.config.spacing.padding ?? 50;
 
     // Get rotation config from image config

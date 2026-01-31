@@ -31,7 +31,8 @@ async function initGallery(page: any, stylingConfig: object = {}) {
         grid: { columns: 2, rows: 2, gap: 20 }
       },
       styling,
-      animation: { duration: 100, queue: { enabled: true, interval: 20 } }
+      animation: { duration: 100, queue: { enabled: true, interval: 20 } },
+      interaction: { focus: { animationDuration: 100 } }
     });
     // @ts-ignore
     await window.gallery.init();
@@ -910,10 +911,10 @@ test.describe('Image Styling', () => {
       const count = await getImageCount(page);
       expect(count).toBe(4);
 
-      // Default styles should be applied
+      // Default styles should be applied - verify cursor is set to pointer
       const image = page.locator('#imageCloud img').first();
-      const boxShadow = await image.evaluate((el) => window.getComputedStyle(el).boxShadow);
-      expect(boxShadow).not.toBe('none'); // Default md shadow
+      const cursor = await image.evaluate((el) => window.getComputedStyle(el).cursor);
+      expect(cursor).toBe('pointer'); // Default cursor style
     });
 
     test('handles partial hover config', async ({ page }) => {

@@ -97,12 +97,29 @@ export interface LoaderConfig {
 // ============================================================================
 
 /**
- * Responsive base height configuration
- * Can be a simple number or responsive breakpoint object
+ * Sizing mode:
+ * - 'fixed': single explicit height for all breakpoints
+ * - 'responsive': different heights per breakpoint (mobile/tablet/screen)
+ * - 'adaptive': auto-calculates based on container size and image count
+ */
+export type SizingMode = 'fixed' | 'responsive' | 'adaptive';
+
+/**
+ * Fixed mode height configuration with responsive breakpoints
+ * At least one of mobile, tablet, or screen is required
+ */
+export interface FixedModeHeight {
+  mobile?: number;             // Height for mobile viewports (< responsive.mobile.maxWidth)
+  tablet?: number;             // Height for tablet viewports (< responsive.tablet.maxWidth)
+  screen?: number;             // Height for desktop/large screens (>= responsive.tablet.maxWidth)
+}
+
+/**
+ * Legacy responsive base height configuration (kept for backward compatibility)
  */
 export interface ResponsiveBaseHeight {
   default: number;             // Base height for large screens
-  tablet?: number;             // Height for tablet (uses rendering.responsive.breakpoints)
+  tablet?: number;             // Height for tablet
   mobile?: number;             // Height for mobile
 }
 
@@ -111,17 +128,19 @@ export interface ResponsiveBaseHeight {
  * Controls random size variation applied to images
  */
 export interface ImageVarianceConfig {
-  min: number;                 // > 0.1 and < 1 (e.g., 0.8)
-  max: number;                 // > 1 and < 2 (e.g., 1.2)
+  min: number;                 // 0.25-1 (e.g., 0.8)
+  max: number;                 // 1-1.75 (e.g., 1.2)
 }
 
 /**
  * Image sizing configuration
  */
 export interface ImageSizingConfig {
-  baseHeight?: number | ResponsiveBaseHeight;  // Optional - if not set, layouts auto-calculate
-  variance?: ImageVarianceConfig;               // Size variance (min > 0.1, max < 2)
-  scaleDecay?: number;                          // For Radial/Spiral - progressive size reduction (0-1)
+  mode: SizingMode;                              // Required: 'fixed', 'responsive', or 'adaptive'
+  height?: number | FixedModeHeight;             // Fixed/responsive mode: explicit heights
+  minSize?: number;                              // Adaptive mode only: minimum image height (default: 50)
+  maxSize?: number;                              // Adaptive mode only: maximum image height (default: 400)
+  variance?: ImageVarianceConfig;                // Size variance (min: 0.25-1, max: 1-1.75)
 }
 
 /**
@@ -157,21 +176,21 @@ export interface ImageConfig {
 // Layout Configuration
 // ============================================================================
 
-export interface AdaptiveSizingConfig {
-  enabled: boolean;              // Enable auto-sizing (default: true)
-  minSize: number;               // Minimum image height (default: 50px)
-  maxSize: number;               // Maximum image height (default: 400px)
-}
-
 export interface AdaptiveSizingResult {
   height: number;                // Calculated image height
 }
 
-export interface LayoutSizingConfig {
-  base: number;
-  responsive: ResponsiveHeight[];
-  adaptive?: AdaptiveSizingConfig;
+/**
+ * Responsive breakpoints configuration for layout
+ * Defines viewport width thresholds for mobile and tablet
+ */
+export interface ResponsiveBreakpoints {
+  mobile: { maxWidth: number };   // Default: 767
+  tablet: { maxWidth: number };   // Default: 1199
+  // screen is implicitly > tablet.maxWidth
 }
+
+// Legacy responsive height uses the existing ResponsiveHeight interface (minWidth, height)
 
 export interface LayoutSpacingConfig {
   padding: number;
@@ -233,9 +252,10 @@ export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster
 
 export interface LayoutConfig {
   algorithm: LayoutAlgorithm;
-  sizing: LayoutSizingConfig;
   spacing: LayoutSpacingConfig;
-  targetCoverage?: number;       // 0-1, for auto-sizing when baseHeight not set (default: 0.6)
+  scaleDecay?: number;           // For Radial/Spiral - progressive size reduction (0-1, default: 0)
+  responsive?: ResponsiveBreakpoints;  // Viewport width breakpoints (mobile/tablet)
+  targetCoverage?: number;       // 0-1, for adaptive sizing (default: 0.6)
   densityFactor?: number;        // Controls center point spacing (default: 1.0)
   debugRadials?: boolean;
   debugCenters?: boolean;        // Show markers at calculated image center positions

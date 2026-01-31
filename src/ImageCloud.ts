@@ -82,8 +82,7 @@ export class ImageCloud {
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
     this.layoutEngine = new LayoutEngine({
       layout: this.fullConfig.layout,
-      image: this.fullConfig.image,
-      breakpoints: this.fullConfig.rendering.responsive.breakpoints
+      image: this.fullConfig.image
     });
     this.zoomEngine = new ZoomEngine(this.fullConfig.interaction.focus, this.animationEngine, this.fullConfig.styling);
 
@@ -290,13 +289,28 @@ export class ImageCloud {
 
   private getImageHeight(): number {
     const width = window.innerWidth;
-    const heights = this.fullConfig.layout.sizing.responsive || [];
-    for (const bh of heights) {
-      if (width >= bh.minWidth) {
-        return bh.height;
-      }
+    const responsive = this.fullConfig.layout.responsive;
+
+    // Get sizing config for adaptive mode defaults
+    const sizing = this.fullConfig.image.sizing;
+    const maxSize = sizing?.maxSize ?? 400;
+
+    // Use responsive breakpoints to determine max height
+    // These serve as upper bounds for the adaptive sizing
+    if (!responsive) {
+      // Fallback defaults if responsive not configured
+      if (width <= 767) return Math.min(100, maxSize);
+      if (width <= 1199) return Math.min(180, maxSize);
+      return Math.min(225, maxSize);
     }
-    return 120; // Fallback
+
+    if (width <= responsive.mobile.maxWidth) {
+      return Math.min(100, maxSize);  // Mobile
+    }
+    if (width <= responsive.tablet.maxWidth) {
+      return Math.min(180, maxSize);  // Tablet
+    }
+    return Math.min(225, maxSize);  // Screen (desktop)
   }
 
   /**

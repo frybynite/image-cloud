@@ -159,28 +159,36 @@ export class LegacyOptionsAdapter {
       debugRadials: oldLayout.debugRadials
     };
 
-    // Convert layout sizing configuration (base and responsive only)
-    newLayout.sizing = {
-      base: oldLayout.baseImageSize || 200,
-      responsive: oldLayout.responsiveHeights || []
-    };
-
     // Convert spacing configuration
     newLayout.spacing = {
       padding: oldLayout.padding ?? 50,
       minGap: oldLayout.minSpacing ?? 20
     };
 
-    // Convert image configuration (variance and rotation now in image config)
+    // Convert image configuration (sizing, variance and rotation now in image config)
     const newImage: Partial<ImageConfig> = {};
 
-    // Convert sizing with variance
-    newImage.sizing = {
-      variance: {
-        min: oldLayout.sizeVarianceMin ?? 1.0,
-        max: oldLayout.sizeVarianceMax ?? 1.0
-      }
-    };
+    // If baseImageSize is provided, use fixed mode with that height
+    const baseHeight = oldLayout.baseImageSize;
+    if (baseHeight) {
+      newImage.sizing = {
+        mode: 'fixed',
+        height: baseHeight,
+        variance: {
+          min: oldLayout.sizeVarianceMin ?? 1.0,
+          max: oldLayout.sizeVarianceMax ?? 1.0
+        }
+      };
+    } else {
+      // Default to adaptive mode
+      newImage.sizing = {
+        mode: 'adaptive',
+        variance: {
+          min: oldLayout.sizeVarianceMin ?? 1.0,
+          max: oldLayout.sizeVarianceMax ?? 1.0
+        }
+      };
+    }
 
     // Convert rotation configuration
     const rotationEnabled = oldLayout.rotationRange !== undefined && oldLayout.rotationRange > 0;

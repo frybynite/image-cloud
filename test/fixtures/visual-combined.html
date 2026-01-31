@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Regression - Combined Styling</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #f5f5f5; }
+    #imageCloud { width: 100%; height: 100%; position: relative; background-color: #ffffff; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageCloud } from '/dist/image-cloud.js';
+    window.ImageCloud = ImageCloud;
+    window.gallery = new ImageCloud({
+      container: 'imageCloud',
+      loader: { type: 'static', static: { sources: [{ type: 'urls', urls: [
+        '/test/fixtures/images/image1.jpg',
+        '/test/fixtures/images/image2.jpg',
+        '/test/fixtures/images/image3.jpg',
+        '/test/fixtures/images/food1.jpg',
+        '/test/fixtures/images/food2.jpg',
+        '/test/fixtures/images/food3.jpg'
+      ]}], validateUrls: false }},
+      animation: { duration: 100, queue: { enabled: true, interval: 20 } },
+      layout: { algorithm: 'grid', rotation: { enabled: false }, grid: { columns: 3, rows: 2, gap: 20, jitter: 0 } },
+      styling: { border: { width: 3, color: '#ffffff', radius: 12 }, shadow: { preset: 'lg' } }
+    });
+    window.gallery.init().catch(e => console.error('Gallery init failed:', e));
+  </script>
+</body>
+</html>

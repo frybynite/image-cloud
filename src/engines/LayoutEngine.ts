@@ -9,7 +9,7 @@
  * - updateConfig(newConfig)
  */
 
-import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator, AdaptiveSizingResult, ImageConfig, ResponsiveBaseHeight } from '../config/types';
+import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator, AdaptiveSizingResult, ImageConfig, FixedModeHeight, ResponsiveBreakpoints } from '../config/types';
 import { RandomPlacementGenerator } from '../generators/RandomPlacementGenerator';
 import { RadialPlacementGenerator } from '../generators/RadialPlacementGenerator';
 import { GridPlacementGenerator } from '../generators/GridPlacementGenerator';
@@ -20,23 +20,17 @@ import { WavePlacementGenerator } from '../generators/WavePlacementGenerator';
 export interface LayoutEngineConfig {
   layout: LayoutConfig;
   image: ImageConfig;
-  breakpoints?: {
-    mobile: number;
-    tablet?: number;
-  };
 }
 
 export class LayoutEngine {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
-  private breakpoints: { mobile: number; tablet?: number };
   private layouts: Map<number, ImageLayout>;
   private generator: PlacementGenerator;
 
   constructor(config: LayoutEngineConfig) {
     this.config = config.layout;
     this.imageConfig = config.image;
-    this.breakpoints = config.breakpoints ?? { mobile: 768 };
 
     this.layouts = new Map();  // Store original states by image ID
 
@@ -119,80 +113,104 @@ export class LayoutEngine {
     if (newConfig.image) {
       Object.assign(this.imageConfig, newConfig.image);
     }
+  }
 
-    // Update breakpoints
-    if (newConfig.breakpoints) {
-      this.breakpoints = newConfig.breakpoints;
+  /**
+   * Get responsive breakpoints from layout config
+   */
+  private getBreakpoints(): ResponsiveBreakpoints {
+    return this.config.responsive ?? {
+      mobile: { maxWidth: 767 },
+      tablet: { maxWidth: 1199 }
+    };
+  }
+
+  /**
+   * Resolve breakpoint name based on viewport width
+   */
+  resolveBreakpoint(viewportWidth: number): 'mobile' | 'tablet' | 'screen' {
+    const breakpoints = this.getBreakpoints();
+
+    if (viewportWidth <= breakpoints.mobile.maxWidth) {
+      return 'mobile';
     }
+    if (viewportWidth <= breakpoints.tablet.maxWidth) {
+      return 'tablet';
+    }
+    return 'screen';
   }
 
   /**
    * Resolve the effective base height based on image config and current viewport
    * @param viewportWidth - Current viewport width
-   * @returns Resolved base height or undefined if should auto-calculate
+   * @returns Resolved base height or undefined if should auto-calculate (adaptive mode)
    */
   resolveBaseHeight(viewportWidth: number): number | undefined {
-    const baseHeight = this.imageConfig.sizing?.baseHeight;
+    const sizing = this.imageConfig.sizing;
 
-    if (baseHeight === undefined) {
-      return undefined; // Signal to auto-calculate
+    // If mode is adaptive (or not set), return undefined to signal auto-calculation
+    if (!sizing || sizing.mode === 'adaptive') {
+      return undefined;
     }
 
-    if (typeof baseHeight === 'number') {
-      return baseHeight;
+    // Fixed or responsive mode - use the height property
+    const height = sizing.height;
+
+    if (height === undefined) {
+      return undefined; // No height specified, fall back to adaptive
     }
 
-    // Responsive base height
-    const responsive = baseHeight as ResponsiveBaseHeight;
-
-    if (viewportWidth <= this.breakpoints.mobile) {
-      return responsive.mobile ?? responsive.tablet ?? responsive.default;
+    if (typeof height === 'number') {
+      return height;
     }
 
-    if (this.breakpoints.tablet && viewportWidth <= this.breakpoints.tablet) {
-      return responsive.tablet ?? responsive.default;
-    }
+    // Responsive height for fixed mode
+    const responsiveHeight = height as FixedModeHeight;
+    const breakpoint = this.resolveBreakpoint(viewportWidth);
 
-    return responsive.default;
+    // Fallback chain: specific breakpoint -> higher breakpoints -> any defined
+    if (breakpoint === 'mobile') {
+      return responsiveHeight.mobile ?? responsiveHeight.tablet ?? responsiveHeight.screen;
+    }
+    if (breakpoint === 'tablet') {
+      return responsiveHeight.tablet ?? responsiveHeight.screen ?? responsiveHeight.mobile;
+    }
+    // screen
+    return responsiveHeight.screen ?? responsiveHeight.tablet ?? responsiveHeight.mobile;
   }
 
   /**
    * Calculate adaptive image size based on container dimensions and image count
    * @param containerBounds - Container dimensions {width, height}
    * @param imageCount - Number of images to display
-   * @param responsiveHeight - Current responsive breakpoint height (upper bound)
+   * @param maxHeight - Maximum height constraint (upper bound)
    * @param viewportWidth - Current viewport width for baseHeight resolution
    * @returns Calculated sizing result with height
    */
   calculateAdaptiveSize(
     containerBounds: ContainerBounds,
     imageCount: number,
-    responsiveHeight: number,
+    maxHeight: number,
     viewportWidth: number
   ): AdaptiveSizingResult {
-    const adaptive = this.config.sizing.adaptive;
+    const sizing = this.imageConfig.sizing;
 
-    // Check if user specified a baseHeight in image config
+    // Check if user specified a fixed height in image config
     const userBaseHeight = this.resolveBaseHeight(viewportWidth);
 
-    // If user specified baseHeight, use it (clamped to responsive max and adaptive bounds)
+    // If user specified baseHeight (fixed/responsive mode), use it directly
+    // Don't clamp to maxHeight since user explicitly chose this value
     if (userBaseHeight !== undefined) {
-      let height = Math.min(userBaseHeight, responsiveHeight);
-      if (adaptive) {
-        height = this.clamp(height, adaptive.minSize, adaptive.maxSize);
-      }
-      return { height };
+      return { height: userBaseHeight };
     }
 
-    // If adaptive sizing is disabled, return responsive height
-    if (!adaptive || !adaptive.enabled) {
-      return { height: responsiveHeight };
-    }
-
-    const { width, height } = containerBounds;
-    const { minSize, maxSize } = adaptive;
+    // Adaptive mode - auto-calculate based on container and image count
+    const minSize = sizing?.minSize ?? 50;
+    const maxSize = sizing?.maxSize ?? 400;
     const targetCoverage = this.config.targetCoverage ?? 0.6;
     const densityFactor = this.config.densityFactor ?? 1.0;
+
+    const { width, height } = containerBounds;
 
     // Calculate area-based optimal size
     const containerArea = width * height;
@@ -206,8 +224,8 @@ export class LayoutEngine {
     // Apply density factor
     calculatedHeight *= densityFactor;
 
-    // Clamp to responsive maximum (responsive height is the ceiling)
-    calculatedHeight = Math.min(calculatedHeight, responsiveHeight);
+    // Clamp to maximum height constraint
+    calculatedHeight = Math.min(calculatedHeight, maxHeight);
 
     // Apply min/max constraints
     let finalHeight = this.clamp(calculatedHeight, minSize, maxSize);

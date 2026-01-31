@@ -62,7 +62,7 @@ export class GridPlacementGenerator implements PlacementGenerator {
     const gridConfig = { ...DEFAULT_GRID_CONFIG, ...this.config.grid };
     const padding = this.config.spacing.padding;
     // Use fixedHeight if provided, otherwise use base size from config
-    const baseImageSize = options.fixedHeight ?? this.config.sizing.base;
+    const baseImageSize = options.fixedHeight ?? 200;
 
     // Get rotation config from image config
     const rotationMode = this.imageConfig.rotation?.mode ?? 'none';
