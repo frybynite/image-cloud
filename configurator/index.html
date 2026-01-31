@@ -1485,6 +1485,31 @@
                                 </div>
                             </div>
 
+                            <!-- Cursor -->
+                            <div class="control-row" data-property="cursor">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-cursor">
+                                <label class="control-label" data-label="Cursor" data-path="cursor">Cursor</label>
+                                <div class="control-input">
+                                    <select id="style-cursor">
+                                        <option value="pointer" selected>pointer</option>
+                                        <option value="auto">auto</option>
+                                        <option value="default">default</option>
+                                        <option value="grab">grab</option>
+                                        <option value="grabbing">grabbing</option>
+                                        <option value="move">move</option>
+                                        <option value="crosshair">crosshair</option>
+                                        <option value="text">text</option>
+                                        <option value="wait">wait</option>
+                                        <option value="progress">progress</option>
+                                        <option value="not-allowed">not-allowed</option>
+                                        <option value="help">help</option>
+                                        <option value="zoom-in">zoom-in</option>
+                                        <option value="zoom-out">zoom-out</option>
+                                        <option value="none">none</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <!-- Filters -->
                             <div class="control-row" data-property="filter.grayscale">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-grayscale">
@@ -1886,6 +1911,7 @@
             'borderLeft.style': null,
             'shadow': 'none',
             'opacity': 1,
+            'cursor': 'pointer',
             'filter.grayscale': 0,
             'filter.blur': 0,
             'filter.brightness': 1,
@@ -3237,6 +3263,8 @@
                         stateConfig.shadow = data.value;
                     } else if (prop === 'opacity') {
                         stateConfig.opacity = data.value;
+                    } else if (prop === 'cursor') {
+                        stateConfig.cursor = data.value;
                     }
                 }
 
@@ -3305,6 +3333,7 @@
                 'default-border-radius': { state: 'default', prop: 'border.radius' },
                 'default-shadow': { state: 'default', prop: 'shadow' },
                 'default-opacity': { state: 'default', prop: 'opacity' },
+                'default-cursor': { state: 'default', prop: 'cursor' },
                 'default-grayscale': { state: 'default', prop: 'filter.grayscale' },
                 'default-blur': { state: 'default', prop: 'filter.blur' },
                 'default-brightness': { state: 'default', prop: 'filter.brightness' },
@@ -3318,6 +3347,7 @@
                 'hover-border-radius': { state: 'hover', prop: 'border.radius' },
                 'hover-shadow': { state: 'hover', prop: 'shadow' },
                 'hover-opacity': { state: 'hover', prop: 'opacity' },
+                'hover-cursor': { state: 'hover', prop: 'cursor' },
                 'hover-grayscale': { state: 'hover', prop: 'filter.grayscale' },
                 'hover-blur': { state: 'hover', prop: 'filter.blur' },
                 'hover-brightness': { state: 'hover', prop: 'filter.brightness' },
@@ -3331,6 +3361,7 @@
                 'focused-border-radius': { state: 'focused', prop: 'border.radius' },
                 'focused-shadow': { state: 'focused', prop: 'shadow' },
                 'focused-opacity': { state: 'focused', prop: 'opacity' },
+                'focused-cursor': { state: 'focused', prop: 'cursor' },
                 'focused-grayscale': { state: 'focused', prop: 'filter.grayscale' },
                 'focused-blur': { state: 'focused', prop: 'filter.blur' },
                 'focused-brightness': { state: 'focused', prop: 'filter.brightness' },

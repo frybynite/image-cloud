@@ -173,6 +173,7 @@
     "borderRadiusBottomLeft": "Bottom-left corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
     "shadow": "Drop shadow preset: none, sm, md, lg, glow (default: none)",
     "opacity": "Image transparency level, 0-1 (default: 1)",
+    "cursor": "CSS cursor when hovering over images: pointer, grab, zoom-in, etc. (default: pointer)",
     "filter": {
       "_title": "CSS filter effects (available for all states)",
       "grayscale": "Black and white filter intensity, 0-1 (default: 0)",
