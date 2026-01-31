@@ -19,6 +19,9 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Review skipped test: "initializes multiple galleries on same page" (`test/e2e/auto-init.spec.ts:66`)
 - [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
+- [ ] Need to provide a drop shadow option (see examples/filters-dropshadow.html)
+- [ ] Invert option for image default/hover/focused
+- [ ] Add border offset for default/hover/focused
 ---
 
 ## Planned
