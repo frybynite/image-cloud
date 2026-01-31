@@ -168,20 +168,21 @@ Controls image-specific sizing and rotation behavior. This is the recommended wa
 ```typescript
 image: {
   sizing: {
-    mode: 'fixed' | 'adaptive',    // Required: explicit mode selection
+    mode: 'fixed' | 'responsive' | 'adaptive',  // Required: sizing mode
 
-    // Fixed mode only:
-    height?: number | {            // Required when mode='fixed'
-      mobile?: number,             // Height for mobile viewports
-      tablet?: number,             // Height for tablet viewports
-      screen?: number              // Height for desktop/large screens
+    // Fixed mode: single height for all viewports
+    // Responsive mode: per-breakpoint heights
+    height?: number | {            // Required for fixed/responsive modes
+      mobile?: number,             // Height for mobile (< 767px)
+      tablet?: number,             // Height for tablet (768-1199px)
+      screen?: number              // Height for desktop (>= 1200px)
     },
 
     // Adaptive mode only:
     minSize?: number,              // default: 50
     maxSize?: number,              // default: 400
 
-    // Both modes:
+    // All modes:
     variance?: {
       min: number,                 // 0.25-1 (e.g., 0.8)
       max: number                  // 1-1.75 (e.g., 1.2)
@@ -201,12 +202,20 @@ image: {
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `mode` | `'fixed' \| 'adaptive'` | `'adaptive'` | **Required.** Sizing mode selection. |
-| `height` | `number \| FixedModeHeight` | - | Fixed mode only: explicit image height. |
+| `mode` | `'fixed' \| 'responsive' \| 'adaptive'` | `'adaptive'` | **Required.** Sizing mode selection. |
+| `height` | `number \| FixedModeHeight` | - | Fixed/responsive mode: explicit image height(s). |
 | `minSize` | `number` | `50` | Adaptive mode only: minimum image height. |
 | `maxSize` | `number` | `400` | Adaptive mode only: maximum image height. |
 | `variance.min` | `number` | `1.0` | Minimum size multiplier (0.25-1). |
 | `variance.max` | `number` | `1.0` | Maximum size multiplier (1-1.75). |
+
+**Sizing Modes:**
+
+| Mode | Description | Height Property |
+|------|-------------|-----------------|
+| `adaptive` | Auto-calculates based on container and image count (default) | Uses `minSize`/`maxSize` |
+| `fixed` | Single explicit height for all viewports | `height: number` |
+| `responsive` | Different heights per viewport breakpoint | `height: { mobile, tablet, screen }` |
 
 **Fixed Mode - Single Height:**
 ```typescript
@@ -218,14 +227,14 @@ image: {
 }
 ```
 
-**Fixed Mode - Responsive Heights:**
+**Responsive Mode - Per-Breakpoint Heights:**
 ```typescript
 image: {
   sizing: {
-    mode: 'fixed',
+    mode: 'responsive',
     height: {
       mobile: 100,   // < 767px viewport width
-      tablet: 150,   // < 1199px viewport width
+      tablet: 150,   // 768-1199px viewport width
       screen: 200    // >= 1200px viewport width
     }
   }
@@ -1517,13 +1526,15 @@ All available parameters with example values:
 
   "image": {
     "sizing": {
-      "mode": "adaptive",                       // Required. "fixed" | "adaptive"
-      // Fixed mode only:
-      "height": 150,                            // number or { mobile, tablet, screen }
+      "mode": "adaptive",                       // "fixed" | "responsive" | "adaptive"
+      // Fixed mode: single height
+      "height": 150,                            // number for fixed mode
+      // Responsive mode: per-breakpoint heights
+      // "height": { "mobile": 100, "tablet": 150, "screen": 200 },
       // Adaptive mode only:
       "minSize": 50,                            // Default. Minimum image height
       "maxSize": 400,                           // Default. Maximum image height
-      // Both modes:
+      // All modes:
       "variance": {
         "min": 1.0,                             // Default. Min scale (0.25-1.0)
         "max": 1.0                              // Default. Max scale (1.0-1.75)
@@ -2171,13 +2182,17 @@ If you are upgrading from an older version, the sizing configuration structure h
 {
   image: {
     sizing: {
-      mode: 'fixed',           // or 'adaptive'
-      height: {                // for fixed mode
+      mode: 'responsive',      // 'fixed', 'responsive', or 'adaptive'
+      height: {                // for responsive mode (per-breakpoint)
         mobile: 100,           // < 767px
-        tablet: 180,           // < 1199px
+        tablet: 180,           // 768-1199px
         screen: 225            // >= 1200px
       },
-      // For adaptive mode, use these instead:
+      // For fixed mode (single height):
+      // mode: 'fixed',
+      // height: 150,
+      // For adaptive mode (auto-calculate):
+      // mode: 'adaptive',
       // minSize: 50,
       // maxSize: 400,
       variance: { min: 0.8, max: 1.2 }
@@ -2198,5 +2213,6 @@ If you are upgrading from an older version, the sizing configuration structure h
 
 The new `mode` property explicitly controls sizing behavior:
 
-- **`mode: 'fixed'`**: Uses the `height` property for explicit image sizes
-- **`mode: 'adaptive'`**: Auto-calculates sizes based on container and image count, constrained by `minSize` and `maxSize`
+- **`mode: 'adaptive'`**: Auto-calculates sizes based on container and image count, constrained by `minSize` and `maxSize` (default)
+- **`mode: 'fixed'`**: Uses a single `height` value for all viewports
+- **`mode: 'responsive'`**: Uses per-breakpoint heights via `height: { mobile, tablet, screen }`

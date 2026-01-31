@@ -105,7 +105,7 @@ Responsive mode lets you specify different heights for each viewport breakpoint.
     sizing: {
       mode: 'responsive',
       height: {
-        mobile: 100,   // Small screens (width <= 767px)
+        mobile: 100,   // Small screens (width < 768px)
         tablet: 150,   // Medium screens (width 768-1199px)
         screen: 200    // Large screens (width >= 1200px)
       }
@@ -115,8 +115,8 @@ Responsive mode lets you specify different heights for each viewport breakpoint.
 ```
 
 **Breakpoint thresholds** (configurable via `layout.responsive`):
-- **Mobile**: viewport width <= 767px
-- **Tablet**: viewport width 768-1199px
+- **Mobile**: viewport width < 768px (default: maxWidth 767)
+- **Tablet**: viewport width 768-1199px (default: maxWidth 1199)
 - **Screen**: viewport width >= 1200px
 
 **Fallback chain:** If a breakpoint value is not specified:
