@@ -111,17 +111,32 @@ interface ImageConfig {
 ### ImageSizingConfig
 
 ```typescript
+type SizingMode = 'fixed' | 'responsive' | 'adaptive';
+
 interface ImageSizingConfig {
-  baseHeight?: number | ResponsiveBaseHeight;
-  variance?: ImageVarianceConfig;
-  scaleDecay?: number;  // 0-1, for radial/spiral layouts
+  mode: SizingMode;                    // Required: sizing mode
+  height?: number | FixedModeHeight;   // Fixed/responsive mode: explicit heights
+  minSize?: number;                    // Adaptive mode only (default: 50)
+  maxSize?: number;                    // Adaptive mode only (default: 400)
+  variance?: ImageVarianceConfig;      // Size variance (all modes)
+}
+
+interface FixedModeHeight {
+  mobile?: number;   // Height for mobile (< 768px)
+  tablet?: number;   // Height for tablet (768-1199px)
+  screen?: number;   // Height for desktop (>= 1200px)
 }
 
 interface ImageVarianceConfig {
-  min: number;  // 0.1-1.0 (smaller images)
-  max: number;  // 1.0-2.0 (larger images)
+  min: number;  // 0.25-1.0 (smaller images)
+  max: number;  // 1.0-1.75 (larger images)
 }
 ```
+
+**Sizing Modes:**
+- `'adaptive'` - Auto-calculates based on container/image count (default)
+- `'fixed'` - Single explicit height (`height: number`)
+- `'responsive'` - Per-breakpoint heights (`height: { mobile, tablet, screen }`)
 
 ### ImageRotationConfig
 
@@ -146,10 +161,11 @@ interface ImageRotationRange {
 ```typescript
 interface LayoutConfig {
   algorithm: 'random' | 'radial' | 'grid' | 'spiral' | 'cluster' | 'wave';
-  sizing: LayoutSizingConfig;
   spacing: { padding: number; minGap: number };
   targetCoverage?: number;    // 0-1 (default: 0.6)
   densityFactor?: number;     // Multiplier (default: 1.0)
+  scaleDecay?: number;        // 0-1, outer image size reduction (radial/spiral)
+  responsive?: ResponsiveBreakpoints;
 
   // Algorithm-specific options
   grid?: GridAlgorithmConfig;
@@ -159,26 +175,17 @@ interface LayoutConfig {
 }
 ```
 
-### LayoutSizingConfig
+### ResponsiveBreakpoints
 
 ```typescript
-interface LayoutSizingConfig {
-  base: number;                     // Fallback base height
-  responsive: ResponsiveHeight[];   // Breakpoint-based heights
-  adaptive?: AdaptiveSizingConfig;
-}
-
-interface ResponsiveHeight {
-  minWidth: number;  // Breakpoint in pixels
-  height: number;    // Image height at this breakpoint
-}
-
-interface AdaptiveSizingConfig {
-  enabled: boolean;   // Default: true
-  minSize: number;    // Default: 50px
-  maxSize: number;    // Default: 400px
+interface ResponsiveBreakpoints {
+  mobile: { maxWidth: number };   // Default: 767
+  tablet: { maxWidth: number };   // Default: 1199
 }
 ```
+
+> **Note:** Image sizing is configured via `image.sizing`, not `layout.sizing`.
+> See [ImageSizingConfig](#imagesizingconfig) above.
 
 ### Algorithm Configs
 
