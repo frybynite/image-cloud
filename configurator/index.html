@@ -341,6 +341,42 @@
             pointer-events: none;
         }
 
+        /* Custom Shadow Controls */
+        .custom-shadow-controls {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            margin-left: 24px;
+            margin-bottom: 12px;
+        }
+
+        .custom-shadow-controls .control-row {
+            margin-bottom: 8px;
+        }
+
+        .custom-shadow-controls .control-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .custom-shadow-controls .control-label {
+            flex: 0 0 70px;
+        }
+
+        .custom-shadow-format-hint {
+            display: none;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 10px;
+            color: #8b5cf6;
+            margin-bottom: 8px;
+            padding: 4px 0;
+        }
+
+        .custom-shadow-format-hint.show-path {
+            display: block;
+        }
+
         /* Input Styles */
         input[type="number"] {
             width: 70px;
@@ -1405,7 +1441,7 @@
                                 <!-- Border Controls -->
                                 <div class="control-row" data-property="border.width">
                                     <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-width">
-                                    <label class="control-label" data-label="Border Width" data-path="border.width">Border Width</label>
+                                    <label class="control-label" data-label="Border Width" data-path="styling.border.width">Border Width</label>
                                     <div class="control-input">
                                         <input type="number" id="style-border-width" value="0" min="0" max="20">
                                         <span class="value-display">px</span>
@@ -1413,14 +1449,14 @@
                                 </div>
                                 <div class="control-row" data-property="border.color">
                                     <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-color">
-                                    <label class="control-label" data-label="Border Color" data-path="border.color">Border Color</label>
+                                    <label class="control-label" data-label="Border Color" data-path="styling.border.color">Border Color</label>
                                     <div class="control-input">
                                         <input type="color" id="style-border-color" value="#000000">
                                     </div>
                                 </div>
                                 <div class="control-row" data-property="border.style">
                                     <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-style">
-                                    <label class="control-label" data-label="Border Style" data-path="border.style">Border Style</label>
+                                    <label class="control-label" data-label="Border Style" data-path="styling.border.style">Border Style</label>
                                     <div class="control-input">
                                         <select id="style-border-style">
                                             <option value="solid" selected>Solid</option>
@@ -1452,7 +1488,7 @@
                                 <!-- Border Radius Control -->
                                 <div class="control-row" data-property="border.radius">
                                     <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-border-radius">
-                                    <label class="control-label" data-label="Border Radius" data-path="border.radius">Border Radius</label>
+                                    <label class="control-label" data-label="Border Radius" data-path="styling.border.radius">Border Radius</label>
                                     <div class="control-input">
                                         <input type="number" id="style-border-radius" value="0" min="0" max="50">
                                         <span class="value-display">px</span>
@@ -1463,7 +1499,7 @@
                             <!-- Shadow -->
                             <div class="control-row" data-property="shadow">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-shadow">
-                                <label class="control-label" data-label="Shadow" data-path="shadow">Shadow</label>
+                                <label class="control-label" data-label="Shadow" data-path="styling.shadow">Shadow</label>
                                 <div class="control-input">
                                     <select id="style-shadow">
                                         <option value="none" selected>None</option>
@@ -1471,14 +1507,54 @@
                                         <option value="md">Medium</option>
                                         <option value="lg">Large</option>
                                         <option value="glow">Glow</option>
+                                        <option value="custom">Custom...</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <!-- Custom Shadow Controls -->
+                            <div class="custom-shadow-controls" id="custom-shadow-controls" style="display: none;">
+                                <div class="custom-shadow-format-hint" id="custom-shadow-format-hint">x-offset y-offset blur rgba(color, opacity)</div>
+                                <div class="control-row">
+                                    <label class="control-label" data-path="styling.shadowCustom.offsetX">X Offset</label>
+                                    <div class="control-input">
+                                        <input type="number" id="shadow-offset-x" value="0">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <label class="control-label" data-path="styling.shadowCustom.offsetY">Y Offset</label>
+                                    <div class="control-input">
+                                        <input type="number" id="shadow-offset-y" value="4">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <label class="control-label" data-path="styling.shadowCustom.blur">Blur</label>
+                                    <div class="control-input">
+                                        <input type="number" id="shadow-blur" value="16" min="0">
+                                        <span class="value-display">px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <label class="control-label" data-path="styling.shadowCustom.color">Color</label>
+                                    <div class="control-input">
+                                        <input type="color" id="shadow-color" value="#000000">
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <label class="control-label" data-path="styling.shadowCustom.opacity">Opacity</label>
+                                    <div class="control-input">
+                                        <span class="value-display" id="shadow-opacity-value">0.4</span>
+                                        <input type="range" id="shadow-opacity" min="0" max="1" step="0.05" value="0.4">
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Opacity -->
                             <div class="control-row" data-property="opacity">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-opacity">
-                                <label class="control-label" data-label="Opacity" data-path="opacity">Opacity</label>
+                                <label class="control-label" data-label="Opacity" data-path="styling.opacity">Opacity</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeDisplay(this)">
@@ -1488,7 +1564,7 @@
                             <!-- Cursor -->
                             <div class="control-row" data-property="cursor">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-cursor">
-                                <label class="control-label" data-label="Cursor" data-path="cursor">Cursor</label>
+                                <label class="control-label" data-label="Cursor" data-path="styling.cursor">Cursor</label>
                                 <div class="control-input">
                                     <select id="style-cursor">
                                         <option value="pointer" selected>pointer</option>
@@ -1513,7 +1589,7 @@
                             <!-- Filters -->
                             <div class="control-row" data-property="filter.grayscale">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-grayscale">
-                                <label class="control-label" data-label="Grayscale" data-path="filter.grayscale">Grayscale</label>
+                                <label class="control-label" data-label="Grayscale" data-path="styling.filter.grayscale">Grayscale</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-grayscale" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
@@ -1521,7 +1597,7 @@
                             </div>
                             <div class="control-row" data-property="filter.blur">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-blur">
-                                <label class="control-label" data-label="Blur" data-path="filter.blur">Blur</label>
+                                <label class="control-label" data-label="Blur" data-path="styling.filter.blur">Blur</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-blur" min="0" max="10" step="0.5" value="0" oninput="updateRangeDisplay(this)">
@@ -1529,7 +1605,7 @@
                             </div>
                             <div class="control-row" data-property="filter.brightness">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-brightness">
-                                <label class="control-label" data-label="Brightness" data-path="filter.brightness">Brightness</label>
+                                <label class="control-label" data-label="Brightness" data-path="styling.filter.brightness">Brightness</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-brightness" min="0.5" max="1.5" step="0.05" value="1" oninput="updateRangeDisplay(this)">
@@ -1537,7 +1613,7 @@
                             </div>
                             <div class="control-row" data-property="filter.contrast">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-contrast">
-                                <label class="control-label" data-label="Contrast" data-path="filter.contrast">Contrast</label>
+                                <label class="control-label" data-label="Contrast" data-path="styling.filter.contrast">Contrast</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-contrast" min="0.5" max="2" step="0.05" value="1" oninput="updateRangeDisplay(this)">
@@ -1545,7 +1621,7 @@
                             </div>
                             <div class="control-row" data-property="filter.saturate">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-saturate">
-                                <label class="control-label" data-label="Saturate" data-path="filter.saturate">Saturate</label>
+                                <label class="control-label" data-label="Saturate" data-path="styling.filter.saturate">Saturate</label>
                                 <div class="control-input">
                                     <span class="value-display">1</span>
                                     <input type="range" id="style-saturate" min="0" max="2" step="0.1" value="1" oninput="updateRangeDisplay(this)">
@@ -1553,7 +1629,7 @@
                             </div>
                             <div class="control-row" data-property="filter.sepia">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-sepia">
-                                <label class="control-label" data-label="Sepia" data-path="filter.sepia">Sepia</label>
+                                <label class="control-label" data-label="Sepia" data-path="styling.filter.sepia">Sepia</label>
                                 <div class="control-input">
                                     <span class="value-display">0</span>
                                     <input type="range" id="style-sepia" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
@@ -1561,7 +1637,7 @@
                             </div>
                             <div class="control-row" data-property="filter.hueRotate">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-hueRotate">
-                                <label class="control-label" data-label="Hue Rotate" data-path="filter.hueRotate">Hue Rotate</label>
+                                <label class="control-label" data-label="Hue Rotate" data-path="styling.filter.hueRotate">Hue Rotate</label>
                                 <div class="control-input">
                                     <span class="value-display">0°</span>
                                     <input type="range" id="style-hueRotate" min="0" max="360" step="10" value="0" oninput="updateRangeDisplay(this)">
@@ -1936,6 +2012,54 @@
                 stylingState.hover[prop] = { enabled: false, value: styleDefaults[prop] };
                 stylingState.focused[prop] = { enabled: false, value: styleDefaults[prop] };
             }
+            // Initialize custom shadow state for each state
+            initCustomShadowState();
+        }
+
+        // Custom shadow state per styling state
+        const customShadowState = {
+            default: { offsetX: 0, offsetY: 4, blur: 16, color: '#000000', opacity: 0.4 },
+            hover: { offsetX: 0, offsetY: 4, blur: 16, color: '#000000', opacity: 0.4 },
+            focused: { offsetX: 0, offsetY: 4, blur: 16, color: '#000000', opacity: 0.4 }
+        };
+
+        // Initialize custom shadow state
+        function initCustomShadowState() {
+            const defaultCustom = { offsetX: 0, offsetY: 4, blur: 16, color: '#000000', opacity: 0.4 };
+            customShadowState.default = { ...defaultCustom };
+            customShadowState.hover = { ...defaultCustom };
+            customShadowState.focused = { ...defaultCustom };
+        }
+
+        // Shadow preset definitions (for copying values to custom)
+        const shadowPresets = {
+            'none': { offsetX: 0, offsetY: 0, blur: 0, color: '#000000', opacity: 0 },
+            'sm': { offsetX: 0, offsetY: 2, blur: 4, color: '#000000', opacity: 0.1 },
+            'md': { offsetX: 0, offsetY: 4, blur: 16, color: '#000000', opacity: 0.4 },
+            'lg': { offsetX: 0, offsetY: 8, blur: 32, color: '#000000', opacity: 0.5 },
+            'glow': { offsetX: 0, offsetY: 0, blur: 30, color: '#ffffff', opacity: 0.6 }
+        };
+
+        // Parse shadow preset to custom values
+        function parseShadowPreset(presetName) {
+            return shadowPresets[presetName] || shadowPresets['md'];
+        }
+
+        // Convert hex color to rgba
+        function hexToRgba(hex, opacity) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            if (!result) return `rgba(0, 0, 0, ${opacity})`;
+            const r = parseInt(result[1], 16);
+            const g = parseInt(result[2], 16);
+            const b = parseInt(result[3], 16);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+
+        // Build custom shadow CSS string
+        function buildCustomShadow(params) {
+            const { offsetX, offsetY, blur, color, opacity } = params;
+            const rgba = hexToRgba(color, opacity);
+            return `${offsetX}px ${offsetY}px ${blur}px ${rgba}`;
         }
 
         // Get effective value for a property (considers inheritance)
@@ -2227,6 +2351,31 @@
 
             // Populate border radius control based on current corner
             populateBorderRadiusControl(state, currentBorderRadiusCorner);
+
+            // Populate custom shadow controls
+            populateCustomShadowState(state);
+        }
+
+        // Populate custom shadow controls based on state
+        function populateCustomShadowState(state) {
+            const shadowSelect = document.getElementById('style-shadow');
+            const customControls = document.getElementById('custom-shadow-controls');
+            const effectiveValue = getEffectiveValue(state, 'shadow');
+
+            // Show/hide custom controls based on current value
+            const isCustom = effectiveValue === 'custom' || (effectiveValue && !shadowPresets[effectiveValue] && effectiveValue !== 'none');
+            customControls.style.display = isCustom ? 'block' : 'none';
+
+            // If it's a custom CSS string (not a preset), set select to custom
+            if (isCustom && shadowSelect.value !== 'custom') {
+                shadowSelect.value = 'custom';
+            }
+
+            // Update the tracked previous value for preset-to-custom copying
+            previousShadowValue = shadowSelect.value;
+
+            // Populate the custom shadow control values
+            populateCustomShadowControls(state);
         }
 
         // Handle styling checkbox change
@@ -2300,6 +2449,9 @@
                 };
             }
 
+            // Reset custom shadow state for this state
+            customShadowState[currentStylingState] = { offsetX: 0, offsetY: 4, blur: 16, color: '#000000', opacity: 0.4 };
+
             populateStylingForm(currentStylingState);
             scheduleAutoApply();
         };
@@ -2316,6 +2468,94 @@
                 const eventType = control.type === 'range' ? 'input' : 'change';
                 control.addEventListener(eventType, () => onStylingControlChange(control));
             });
+
+            // Custom shadow controls setup
+            setupCustomShadowControls();
+        }
+
+        // Track shadow select value before changes (updated by populateCustomShadowState)
+        let previousShadowValue = 'none';
+
+        // Setup custom shadow controls
+        function setupCustomShadowControls() {
+            const shadowSelect = document.getElementById('style-shadow');
+            const customControls = document.getElementById('custom-shadow-controls');
+
+            // Track value before change using mousedown (fires before change)
+            shadowSelect.addEventListener('mousedown', function() {
+                previousShadowValue = this.value;
+            });
+
+            // Toggle custom controls visibility when shadow select changes
+            shadowSelect.addEventListener('change', function() {
+                const isCustom = this.value === 'custom';
+                customControls.style.display = isCustom ? 'block' : 'none';
+
+                if (isCustom) {
+                    // If switching to custom from a preset, copy preset values
+                    if (previousShadowValue && previousShadowValue !== 'custom' && shadowPresets[previousShadowValue]) {
+                        const presetValues = parseShadowPreset(previousShadowValue);
+                        customShadowState[currentStylingState] = { ...presetValues };
+                        populateCustomShadowControls(currentStylingState);
+                    }
+                }
+                previousShadowValue = this.value;
+            });
+
+            // Custom shadow control listeners
+            const customInputs = ['shadow-offset-x', 'shadow-offset-y', 'shadow-blur', 'shadow-color', 'shadow-opacity'];
+            customInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    const eventType = input.type === 'range' ? 'input' : 'change';
+                    input.addEventListener(eventType, () => onCustomShadowChange());
+                }
+            });
+
+            // Update opacity display value
+            const opacitySlider = document.getElementById('shadow-opacity');
+            if (opacitySlider) {
+                opacitySlider.addEventListener('input', function() {
+                    document.getElementById('shadow-opacity-value').textContent = this.value;
+                });
+            }
+        }
+
+        // Handle custom shadow control changes
+        function onCustomShadowChange() {
+            const checkbox = document.getElementById('enable-style-shadow');
+            if (!checkbox?.checked) return;
+
+            const shadowSelect = document.getElementById('style-shadow');
+            if (shadowSelect.value !== 'custom') return;
+
+            // Update custom shadow state for current styling state
+            customShadowState[currentStylingState] = {
+                offsetX: parseInt(document.getElementById('shadow-offset-x').value) || 0,
+                offsetY: parseInt(document.getElementById('shadow-offset-y').value) || 0,
+                blur: parseInt(document.getElementById('shadow-blur').value) || 0,
+                color: document.getElementById('shadow-color').value || '#000000',
+                opacity: parseFloat(document.getElementById('shadow-opacity').value) || 0
+            };
+
+            // Update styling state with custom shadow CSS
+            stylingState[currentStylingState].shadow = {
+                enabled: true,
+                value: 'custom'
+            };
+
+            scheduleAutoApply();
+        }
+
+        // Populate custom shadow controls from state
+        function populateCustomShadowControls(state) {
+            const custom = customShadowState[state];
+            document.getElementById('shadow-offset-x').value = custom.offsetX;
+            document.getElementById('shadow-offset-y').value = custom.offsetY;
+            document.getElementById('shadow-blur').value = custom.blur;
+            document.getElementById('shadow-color').value = custom.color;
+            document.getElementById('shadow-opacity').value = custom.opacity;
+            document.getElementById('shadow-opacity-value').textContent = custom.opacity;
         }
 
         // Field descriptions for tooltips
@@ -2665,6 +2905,12 @@
             const stylingPrefix = document.getElementById('styling-path-prefix');
             if (stylingPrefix) {
                 stylingPrefix.classList.toggle('show-path', showingPaths);
+            }
+
+            // Toggle custom shadow format hint visibility
+            const shadowFormatHint = document.getElementById('custom-shadow-format-hint');
+            if (shadowFormatHint) {
+                shadowFormatHint.classList.toggle('show-path', showingPaths);
             }
         };
 
@@ -3260,7 +3506,12 @@
                         const filterProp = prop.replace('filter.', '');
                         filter[filterProp] = data.value;
                     } else if (prop === 'shadow') {
-                        stateConfig.shadow = data.value;
+                        // If custom shadow, build CSS string from custom state
+                        if (data.value === 'custom') {
+                            stateConfig.shadow = buildCustomShadow(customShadowState[stateName]);
+                        } else {
+                            stateConfig.shadow = data.value;
+                        }
                     } else if (prop === 'opacity') {
                         stateConfig.opacity = data.value;
                     } else if (prop === 'cursor') {

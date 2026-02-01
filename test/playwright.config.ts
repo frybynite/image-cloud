@@ -24,6 +24,7 @@ export default defineConfig({
       testIgnore: [
         '**/google-drive-loader.spec.ts', // API behavior identical across devices
         '**/visual-regression.spec.ts',   // Visual tests control their own viewport sizes
+        '**/configurator-*.spec.ts',      // Configurator is a desktop-only tool
       ],
     },
   ],

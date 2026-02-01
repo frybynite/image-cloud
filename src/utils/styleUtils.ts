@@ -173,11 +173,9 @@ export function buildStyleProperties(state: ImageStyleState | undefined): StyleP
     styles.boxShadow = resolveShadow(state.shadow);
   }
 
-  // Filter
+  // Filter - always set to ensure hover filters are properly cleared on mouseleave
   const filterStr = buildFilterString(state.filter);
-  if (filterStr) {
-    styles.filter = filterStr;
-  }
+  styles.filter = filterStr || 'none';
 
   // Opacity
   if (state.opacity !== undefined) {

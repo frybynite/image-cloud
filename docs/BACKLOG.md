@@ -106,3 +106,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Keyboard navigation - Left/Right arrow keys navigate between focused images with wrap-around. Escape unfocuses.
 - [x] Blurry images on zoom: CSS transform scale() scales rendered pixels, not source images. When images render at ~150-200px and zoom to 80% of container, they're scaled 3-4x causing blurriness. Fix: change ZoomEngine to resize actual image dimensions instead of using transform scale.
 - [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
+- [x] Configurator: Enhanced shadow configuration - added "Custom..." option to shadow dropdown with individual controls for x-offset, y-offset, blur, color, and opacity. Preset values are copied when switching from preset to custom.
