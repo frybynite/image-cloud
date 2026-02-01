@@ -188,6 +188,7 @@
       "opacity": "Shadow transparency, 0-1. Lower values create subtle shadows, higher values create more prominent shadows (default: 0.4)"
     },
     "opacity": "Image transparency level, 0-1 (default: 1)",
+    "invert": "Invert colors filter intensity, 0-1 (default: 0)",
     "cursor": "CSS cursor when hovering over images: pointer, grab, zoom-in, etc. (default: pointer)",
     "filter": {
       "_title": "CSS filter effects (available for all states)",

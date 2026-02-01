@@ -1609,6 +1609,16 @@
                                 </div>
                             </div>
 
+                            <!-- Invert -->
+                            <div class="control-row" data-property="filter.invert">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-invert">
+                                <label class="control-label" data-label="Invert" data-path="styling.filter.invert">Invert</label>
+                                <div class="control-input">
+                                    <span class="value-display">0</span>
+                                    <input type="range" id="style-invert" min="0" max="1" step="0.1" value="0" oninput="updateRangeDisplay(this)">
+                                </div>
+                            </div>
+
                             <!-- Cursor -->
                             <div class="control-row" data-property="cursor">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-cursor">
@@ -2047,7 +2057,8 @@
             'filter.contrast': 1,
             'filter.saturate': 1,
             'filter.sepia': 0,
-            'filter.hueRotate': 0
+            'filter.hueRotate': 0,
+            'filter.invert': 0
         };
 
         // Per-state styling configuration
@@ -3660,6 +3671,7 @@
                 'default-saturate': { state: 'default', prop: 'filter.saturate' },
                 'default-sepia': { state: 'default', prop: 'filter.sepia' },
                 'default-hueRotate': { state: 'default', prop: 'filter.hueRotate' },
+                'default-invert': { state: 'default', prop: 'filter.invert' },
                 'hover-border-width': { state: 'hover', prop: 'border.width' },
                 'hover-border-color': { state: 'hover', prop: 'border.color' },
                 'hover-border-style': { state: 'hover', prop: 'border.style' },
@@ -3678,6 +3690,7 @@
                 'hover-saturate': { state: 'hover', prop: 'filter.saturate' },
                 'hover-sepia': { state: 'hover', prop: 'filter.sepia' },
                 'hover-hueRotate': { state: 'hover', prop: 'filter.hueRotate' },
+                'hover-invert': { state: 'hover', prop: 'filter.invert' },
                 'focused-border-width': { state: 'focused', prop: 'border.width' },
                 'focused-border-color': { state: 'focused', prop: 'border.color' },
                 'focused-border-style': { state: 'focused', prop: 'border.style' },
@@ -3695,7 +3708,8 @@
                 'focused-contrast': { state: 'focused', prop: 'filter.contrast' },
                 'focused-saturate': { state: 'focused', prop: 'filter.saturate' },
                 'focused-sepia': { state: 'focused', prop: 'filter.sepia' },
-                'focused-hueRotate': { state: 'focused', prop: 'filter.hueRotate' }
+                'focused-hueRotate': { state: 'focused', prop: 'filter.hueRotate' },
+                'focused-invert': { state: 'focused', prop: 'filter.invert' }
             };
 
             // Apply preset config
