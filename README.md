@@ -30,21 +30,21 @@ No install needed — load directly from a CDN:
 
 **jsDelivr**
 ```
-https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/image-cloud.js      (ESM)
-https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/image-cloud.umd.js  (UMD)
-https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/image-cloud-auto-init.js
-https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@0.1.0/dist/style.css
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js      (ESM)
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.umd.js  (UMD)
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud-auto-init.js
+https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css
 ```
 
 **unpkg**
 ```
-https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/image-cloud.js      (ESM)
-https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/image-cloud.umd.js  (UMD)
-https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/image-cloud-auto-init.js
-https://unpkg.com/@frybynite/image-cloud@0.1.0/dist/style.css
+https://unpkg.com/@frybynite/image-cloud@latest/dist/image-cloud.js      (ESM)
+https://unpkg.com/@frybynite/image-cloud@latest/dist/image-cloud.umd.js  (UMD)
+https://unpkg.com/@frybynite/image-cloud@latest/dist/image-cloud-auto-init.js
+https://unpkg.com/@frybynite/image-cloud@latest/dist/style.css
 ```
 
-Replace `@0.1.0` with the desired version, or use `@latest` for the most recent release.
+Replace `@latest` with a specific version (e.g., `@0.2.1`) to pin to that release.
 
 ## Quick Start
 

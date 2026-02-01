@@ -41,15 +41,6 @@ Create a React wrapper component for the Image Cloud library.
 - Support for React 18+ features (concurrent rendering, Suspense)
 - SSR compatibility
 
-### Packaging & Distribution Strategy
-Discuss and decide on packaging strategies for different consumption patterns.
-
-**Topics:**
-- CDN deployment: publish to unpkg/jsdelivr so users can reference a single URL (e.g., `https://unpkg.com/@frybynite/image-cloud/dist/image-cloud-auto-init.js`)
-- Simplify README examples to avoid `node_modules/` paths
-- Evaluate whether auto-init and main library need different distribution strategies
-- Consider a lightweight CDN-only bundle with no npm dependency required
-
 ### Simplify Initialization Process
 Reduce boilerplate and complexity for clients getting started with the library.
 
@@ -89,6 +80,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 ## Completed
 
+- [x] Packaging & Distribution Strategy - CDN deployment (unpkg/jsdelivr), simplified README examples, separate auto-init bundle.
 - [x] Fix image centering - images now correctly center on their layout positions (using pixel-based translate transforms).
 - [x] Replace random image placement with a more organized layout.
 - [x] Reorganize images on window resize to ensure they stay within the visible screen area.
