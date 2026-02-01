@@ -445,51 +445,61 @@ entry: {
 
 ## Implementation Phases
 
-### Phase 1: Foundation
-- [ ] Create `EntryAnimationEngine` class
-- [ ] Refactor current animation out of `ImageGallery.ts`
-- [ ] Add configuration types to `types.ts`
-- [ ] Add defaults to `defaults.ts`
+### Phase 1: Foundation ✅ COMPLETE
+- [x] Create `EntryAnimationEngine` class (`src/engines/EntryAnimationEngine.ts` - 673 lines)
+- [x] Refactor current animation out of `ImageGallery.ts` (now in dedicated engine files)
+- [x] Add configuration types to `types.ts` (EntryAnimationConfig, EntryStartConfig, EntryPathConfig, etc.)
+- [x] Add defaults to `defaults.ts`
 
-### Phase 2: Start Positions
-- [ ] Implement all start position options
-- [ ] Add offset configuration
-- [ ] Test with different layouts
+### Phase 2: Start Positions ✅ COMPLETE
+- [x] Implement all start position options (8 types: nearest-edge, top, bottom, left, right, center, random-edge, circular)
+- [x] Add offset configuration
+- [x] Test with different layouts (layout-aware defaults implemented per algorithm)
 
-### Phase 3: Path Types
-- [ ] Implement linear (refactor current)
-- [ ] Implement arc paths
-- [ ] Implement preset paths (bounce, elastic)
-- [ ] Consider bezier/keyframe for future
+### Phase 3: Path Types ✅ MOSTLY COMPLETE
+- [x] Implement linear (refactor current)
+- [ ] Implement arc paths (partially - mentioned in types but implementation unclear)
+- [x] Implement preset paths (bounce, elastic)
+- [x] **BONUS:** Implement wave path (not in original plan)
+- [ ] Consider bezier/keyframe for future (deferred)
 
-### Phase 4: Timing & Easing
+### Phase 4: Timing & Easing 🟡 PARTIALLY COMPLETE
 - [ ] Add duration variance
-- [ ] Add stagger patterns
-- [ ] Implement easing presets
-- [ ] Consider spring physics (future)
+- [ ] Add stagger patterns (basic stagger implemented, patterns like 'sequential', 'random', 'distance-from-center' not done)
+- [x] Implement easing presets (CSS easing support)
+- [x] Consider spring physics (implemented via elastic path with stiffness/damping/mass)
 
-### Phase 5: Entry Rotation
-- [ ] Implement `settle` mode (start rotated, animate to final)
-- [ ] Implement `spin` mode (full rotations during flight)
-- [ ] Implement `wobble` mode (oscillating rotation)
-- [ ] Implement `random` mode (random start rotation)
-- [ ] Integrate rotation with existing path animations
+### Phase 5: Entry Rotation ✅ COMPLETE
+- [x] Implement `settle` mode (start rotated, animate to final)
+- [x] Implement `spin` mode (full rotations during flight)
+- [x] Implement `wobble` mode (oscillating rotation)
+- [x] Implement `random` mode (random start rotation)
+- [x] Integrate rotation with existing path animations
 
-### Phase 6: Polish
-- [ ] Performance optimization
+### Phase 5b: Entry Scale ✅ COMPLETE (BONUS - not in original plan)
+- [x] Implement `grow` mode (start smaller, grow to final)
+- [x] Implement `shrink` mode (start larger, shrink to final)
+- [x] Implement `pop` mode (bounce/overshoot effect on scale)
+- [x] Implement `random` mode (random start scale)
+
+### Phase 6: Polish 🟡 PARTIALLY COMPLETE
+- [ ] Performance optimization (needs review)
 - [ ] Add debug visualization for paths
-- [ ] Documentation and examples
+- [x] Documentation and examples (this plan document)
 - [ ] Unit tests
+- [ ] Configurator UI integration
 
 ---
 
 ## Open Questions
 
 1. **Should path and easing be separate?** Some "paths" like bounce are really easing effects. Should we merge them?
+   - *Current approach: Kept separate. Path controls trajectory, easing controls timing curve.*
 
 2. **Per-image customization?** How deep should per-image control go? Could get complex.
 
-3. **Layout-aware defaults?** Should radial layout default to center-out, grid to top-down, etc.?
+3. ~~**Layout-aware defaults?** Should radial layout default to center-out, grid to top-down, etc.?~~
+   - ✅ **RESOLVED:** Implemented layout-aware defaults (radial→center, spiral→center, grid→top, cluster→nearest-edge, wave→left)
 
 4. **Exit animations?** Should we also support exit animations for when images are removed/refreshed?
 
@@ -498,6 +508,7 @@ entry: {
 6. **Rotation + Path combinations?** Some path/rotation combos may look odd (e.g., spin + spiral). Should we warn or restrict certain combinations?
 
 7. **Rotation performance?** Wobble mode requires JS animation. Should we offer a CSS-only fallback for simpler rotation effects?
+   - *Current approach: Uses requestAnimationFrame for complex animations (bounce, elastic, wave, wobble). Simple modes use CSS transitions.*
 
 ---
 
