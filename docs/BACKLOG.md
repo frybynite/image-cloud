@@ -14,7 +14,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
-- [ ] Invert option for image default/hover/focused
 - [ ] Add border-image to functionality and configurator
 - [ ] Configurator: Split image border and style into separate sections - currently too large in one section
 ---
@@ -109,3 +108,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Review style.css for overlap between styling and functionality - CSS now provides functional layout rules plus optional styling defaults; JS applies config-driven inline styles that override defaults.
 - [x] Add border offset for default/hover/focused states.
 - [x] Fix skipped test "initializes multiple galleries on same page" - library CSS was overriding fixture's 50% width causing galleries to stack vertically; IntersectionObserver wouldn't fire for off-screen gallery.
+- [x] Invert option for image default/hover/focused states.
