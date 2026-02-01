@@ -61,9 +61,7 @@ test.describe('Auto-Initialization', () => {
 
   test.describe('Multiple Galleries', () => {
 
-    // TODO: This test has pre-existing issues with multi-gallery initialization
-    // that are unrelated to the entry animations feature. Skip for now.
-    test.skip('initializes multiple galleries on same page', async ({ page }) => {
+    test('initializes multiple galleries on same page', async ({ page }) => {
       await page.goto('/test/fixtures/multi-gallery.html');
 
       // Wait for both galleries
