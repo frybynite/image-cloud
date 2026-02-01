@@ -167,12 +167,14 @@ The Configurator lets you visually adjust all settings and exports a ready-to-us
 Check out the `examples/` directory for various usage patterns:
 - `esm-example.html` - Modern ES module usage
 - `cdn-umd-example.html` - Traditional script tag / CDN usage
-- `typescript-example.ts` - TypeScript examples with React and Vue
+- `auto-init-example.html` - HTML data attribute initialization
+- `static-loader-example.html` - Static image URLs
+- `google-drive-loader-example.html` - Google Drive folder source
+- `layout-algorithms.html` - Compare all layout algorithms
+- `entry-animations.html` - Entry animation styles
+- `image-style-demo.html` - Borders, shadows, and filters
+- `typescript-example.ts` - TypeScript with React and Vue
 - See `examples/README.md` for detailed instructions
-
-Also see:
-- `index.html` - Production Google Drive cloud
-- `index-static.html` - Static image sources example
 
 ## Contributing
 
