@@ -162,14 +162,6 @@ The Configurator lets you visually adjust all settings and exports a ready-to-us
 - Safari: Latest 2 versions
 - Mobile: iOS Safari 12+, Chrome Android
 
-## License
-
-MIT
-
-## Author
-
-[frybynite](https://github.com/frybynite)
-
 ## Examples
 
 Check out the `examples/` directory for various usage patterns:
@@ -187,3 +179,11 @@ Also see:
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 See [docs/DEVELOPER.md](docs/DEVELOPER.md) for build scripts, testing, and project structure.
+
+## License
+
+MIT
+
+## Author
+
+[frybynite](https://github.com/frybynite)
