@@ -184,6 +184,87 @@ test.describe('Image Styling', () => {
 
   });
 
+  test.describe('Outline Configuration', () => {
+
+    test('applies outline width', async ({ page }) => {
+      await initGallery(page, {
+        default: {
+          outline: { width: 3, color: '#ff0000', style: 'solid' }
+        }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+      const outline = await image.evaluate((el) => window.getComputedStyle(el).outline);
+
+      expect(outline).toContain('3px');
+    });
+
+    test('applies outline offset', async ({ page }) => {
+      await initGallery(page, {
+        default: {
+          outline: { width: 2, color: '#000000', style: 'solid', offset: 5 }
+        }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+      const outlineOffset = await image.evaluate((el) => window.getComputedStyle(el).outlineOffset);
+
+      expect(outlineOffset).toBe('5px');
+    });
+
+    test('applies outline style dashed', async ({ page }) => {
+      await initGallery(page, {
+        default: {
+          outline: { width: 2, color: '#000000', style: 'dashed' }
+        }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+      const outlineStyle = await image.evaluate((el) => window.getComputedStyle(el).outlineStyle);
+
+      expect(outlineStyle).toBe('dashed');
+    });
+
+    test('hover state changes outline', async ({ page }) => {
+      await initGallery(page, {
+        default: { outline: { width: 0 } },
+        hover: { outline: { width: 3, color: '#ff0000', style: 'solid' } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Get initial outline
+      const initialOutline = await image.evaluate((el) => window.getComputedStyle(el).outlineWidth);
+      expect(initialOutline).toBe('0px');
+
+      // Hover over image
+      await image.hover();
+      await page.waitForTimeout(100);
+
+      // Get hover outline
+      const hoverOutline = await image.evaluate((el) => window.getComputedStyle(el).outlineWidth);
+      expect(hoverOutline).toBe('3px');
+    });
+
+    test('focused state applies outline', async ({ page }) => {
+      await initGallery(page, {
+        default: { outline: { width: 0 } },
+        focused: { outline: { width: 4, color: '#00ff00', style: 'solid' } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      // Click to focus
+      await image.click();
+      await page.waitForTimeout(300);
+
+      // Get focused outline
+      const focusedOutline = await image.evaluate((el) => window.getComputedStyle(el).outlineWidth);
+      expect(focusedOutline).toBe('4px');
+    });
+
+  });
+
   test.describe('Shadow Presets', () => {
 
     test('applies no shadow preset', async ({ page }) => {

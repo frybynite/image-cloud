@@ -171,6 +171,13 @@
     "borderRadiusTopRight": "Top-right corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
     "borderRadiusBottomRight": "Bottom-right corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
     "borderRadiusBottomLeft": "Bottom-left corner radius in pixels - overrides border.radius for this corner (inherits from border.radius)",
+    "outline": {
+      "_title": "Outline styling (drawn outside border, does not affect layout). Unlike border, outline cannot be applied per-side.",
+      "width": "Outline width in pixels (default: 0)",
+      "color": "Outline color (default: #000000)",
+      "style": "Outline line style: solid, dashed, dotted, double, none (default: solid)",
+      "offset": "Space between outline and border edge in pixels. Can be negative (default: 0)"
+    },
     "shadow": "Drop shadow preset (none, sm, md, lg, glow) or custom shadow. Select 'Custom...' to define your own shadow with x/y offset, blur, color, and opacity (default: none)",
     "shadowCustom": {
       "_title": "Custom shadow settings - define your own shadow effect",

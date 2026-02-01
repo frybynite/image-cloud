@@ -880,6 +880,13 @@
             margin-bottom: 15px;
         }
 
+        /* Section Separator */
+        .section-separator {
+            height: 1px;
+            background: #333;
+            margin: 12px 0;
+        }
+
         /* Side Selector (smaller than state selector) */
         .side-selector {
             display: flex;
@@ -1472,6 +1479,47 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <!-- Outline Controls (only shown when "All" side is selected) -->
+                                <div id="outline-controls-wrapper">
+                                    <div class="section-separator"></div>
+                                    <div class="control-row" data-property="outline.width">
+                                        <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-outline-width">
+                                        <label class="control-label" data-label="Outline Width" data-path="styling.outline.width">Outline Width</label>
+                                        <div class="control-input">
+                                            <input type="number" id="style-outline-width" value="0" min="0" max="20">
+                                            <span class="value-display">px</span>
+                                        </div>
+                                    </div>
+                                    <div class="control-row" data-property="outline.color">
+                                        <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-outline-color">
+                                        <label class="control-label" data-label="Outline Color" data-path="styling.outline.color">Outline Color</label>
+                                        <div class="control-input">
+                                            <input type="color" id="style-outline-color" value="#000000">
+                                        </div>
+                                    </div>
+                                    <div class="control-row" data-property="outline.style">
+                                        <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-outline-style">
+                                        <label class="control-label" data-label="Outline Style" data-path="styling.outline.style">Outline Style</label>
+                                        <div class="control-input">
+                                            <select id="style-outline-style">
+                                                <option value="solid" selected>Solid</option>
+                                                <option value="dashed">Dashed</option>
+                                                <option value="dotted">Dotted</option>
+                                                <option value="double">Double</option>
+                                                <option value="none">None</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="control-row" data-property="outline.offset">
+                                        <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-outline-offset">
+                                        <label class="control-label" data-label="Outline Offset" data-path="styling.outline.offset">Outline Offset</label>
+                                        <div class="control-input">
+                                            <input type="number" id="style-outline-offset" value="0" min="-10" max="20">
+                                            <span class="value-display">px</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Border Radius Section Box -->
@@ -1985,6 +2033,11 @@
             'borderLeft.width': null,
             'borderLeft.color': null,
             'borderLeft.style': null,
+            // Outline properties
+            'outline.width': 0,
+            'outline.color': '#000000',
+            'outline.style': 'solid',
+            'outline.offset': 0,
             'shadow': 'none',
             'opacity': 1,
             'cursor': 'pointer',
@@ -2131,6 +2184,12 @@
 
             // Populate border controls with values for this side
             populateBorderControls(currentStylingState, side);
+
+            // Show/hide outline controls (only visible when "All" is selected)
+            const outlineWrapper = document.getElementById('outline-controls-wrapper');
+            if (outlineWrapper) {
+                outlineWrapper.style.display = side === 'all' ? '' : 'none';
+            }
         };
 
         // Update data-path attributes for border controls based on current side
@@ -3474,6 +3533,7 @@
                 const borderRight = {};
                 const borderBottom = {};
                 const borderLeft = {};
+                const outline = {};
                 const filter = {};
 
                 for (const [prop, data] of Object.entries(stylingState[stateName])) {
@@ -3502,6 +3562,9 @@
                         stateConfig.borderRadiusBottomRight = data.value;
                     } else if (prop === 'borderRadiusBottomLeft') {
                         stateConfig.borderRadiusBottomLeft = data.value;
+                    } else if (prop.startsWith('outline.')) {
+                        const outlineProp = prop.replace('outline.', '');
+                        outline[outlineProp] = data.value;
                     } else if (prop.startsWith('filter.')) {
                         const filterProp = prop.replace('filter.', '');
                         filter[filterProp] = data.value;
@@ -3524,6 +3587,7 @@
                 if (Object.keys(borderRight).length > 0) stateConfig.borderRight = borderRight;
                 if (Object.keys(borderBottom).length > 0) stateConfig.borderBottom = borderBottom;
                 if (Object.keys(borderLeft).length > 0) stateConfig.borderLeft = borderLeft;
+                if (Object.keys(outline).length > 0) stateConfig.outline = outline;
                 if (Object.keys(filter).length > 0) stateConfig.filter = filter;
 
                 return stateConfig;
@@ -3582,6 +3646,10 @@
                 'default-border-color': { state: 'default', prop: 'border.color' },
                 'default-border-style': { state: 'default', prop: 'border.style' },
                 'default-border-radius': { state: 'default', prop: 'border.radius' },
+                'default-outline-width': { state: 'default', prop: 'outline.width' },
+                'default-outline-color': { state: 'default', prop: 'outline.color' },
+                'default-outline-style': { state: 'default', prop: 'outline.style' },
+                'default-outline-offset': { state: 'default', prop: 'outline.offset' },
                 'default-shadow': { state: 'default', prop: 'shadow' },
                 'default-opacity': { state: 'default', prop: 'opacity' },
                 'default-cursor': { state: 'default', prop: 'cursor' },
@@ -3596,6 +3664,10 @@
                 'hover-border-color': { state: 'hover', prop: 'border.color' },
                 'hover-border-style': { state: 'hover', prop: 'border.style' },
                 'hover-border-radius': { state: 'hover', prop: 'border.radius' },
+                'hover-outline-width': { state: 'hover', prop: 'outline.width' },
+                'hover-outline-color': { state: 'hover', prop: 'outline.color' },
+                'hover-outline-style': { state: 'hover', prop: 'outline.style' },
+                'hover-outline-offset': { state: 'hover', prop: 'outline.offset' },
                 'hover-shadow': { state: 'hover', prop: 'shadow' },
                 'hover-opacity': { state: 'hover', prop: 'opacity' },
                 'hover-cursor': { state: 'hover', prop: 'cursor' },
@@ -3610,6 +3682,10 @@
                 'focused-border-color': { state: 'focused', prop: 'border.color' },
                 'focused-border-style': { state: 'focused', prop: 'border.style' },
                 'focused-border-radius': { state: 'focused', prop: 'border.radius' },
+                'focused-outline-width': { state: 'focused', prop: 'outline.width' },
+                'focused-outline-color': { state: 'focused', prop: 'outline.color' },
+                'focused-outline-style': { state: 'focused', prop: 'outline.style' },
+                'focused-outline-offset': { state: 'focused', prop: 'outline.offset' },
                 'focused-shadow': { state: 'focused', prop: 'shadow' },
                 'focused-opacity': { state: 'focused', prop: 'opacity' },
                 'focused-cursor': { state: 'focused', prop: 'cursor' },
