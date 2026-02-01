@@ -1,3 +1,5 @@
+![Image Cloud Banner](https://raw.githubusercontent.com/frybynite/image-cloud/main/images/image-cloud-banner.png)
+
 # Image Cloud Library
 
 A TypeScript library for creating interactive image clouds with animated scattered layouts and zoom effects. Supports multiple image sources (Google Drive, static URLs) and layout algorithms.
