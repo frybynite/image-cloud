@@ -10,7 +10,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Review failing test: "unfocusing restores default state" - Escape key doesn't restore border to default state after unfocus.
 - [ ] Review failing test: "handles empty styling config" - Default shadow not being applied when styling config is empty.
-- [ ] Fix auto-init export: README shows `import { autoInitialize } from '@frybynite/image-cloud/auto-init'` but this subpath is not exported in package.json and `autoInitialize` is not exported from main entry point.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
@@ -109,3 +108,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Add border offset for default/hover/focused states.
 - [x] Fix skipped test "initializes multiple galleries on same page" - library CSS was overriding fixture's 50% width causing galleries to stack vertically; IntersectionObserver wouldn't fire for off-screen gallery.
 - [x] Invert option for image default/hover/focused states.
+- [x] Fix auto-init export - subpath `./auto-init` now exported in package.json and `autoInitialize` exported from module.
