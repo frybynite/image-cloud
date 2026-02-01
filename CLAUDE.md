@@ -94,6 +94,7 @@ Located in `examples/` folder:
 
 - Any time a new layout, style, etc. is created we must update the examples/ and the configurator/
 - **⛔ CRITICAL: NEVER commit or push without my explicit approval. ASK FIRST.**       
+- ** CRITICAL: whever a new package version number if changed, made CONFIRM WITH ME FIRST BEFORE CONTINUING TO CHECK IN **
 - When a parameter name, location, value, default, etc. is changed:
   - update the Parameters.md file
   - update configurator labels, values, help text.

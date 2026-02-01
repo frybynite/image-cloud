@@ -8,18 +8,14 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
 - [ ] Discuss custom fly-in animations - allow configurable entrance animation styles for images.
 - [ ] Fix: Dragging window between screens triggers re-animation even when staying within same breakpoint.
-- [ ] Fix: Duplicate images still appearing when resizing window from desktop to mobile size (race condition not fully resolved).
-- [ ] Re-evaluate layout: sizing, adaptive sizing, spacing.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Review failing test: "unfocusing restores default state" - Escape key doesn't restore border to default state after unfocus.
 - [ ] Review failing test: "handles empty styling config" - Default shadow not being applied when styling config is empty.
 - [ ] Fix auto-init export: README shows `import { autoInitialize } from '@frybynite/image-cloud/auto-init'` but this subpath is not exported in package.json and `autoInitialize` is not exported from main entry point.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
-- [ ] Review style.css for overlap between styling and functionality — identify CSS that can be removed while maintaining functionality.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Review skipped test: "initializes multiple galleries on same page" (`test/e2e/auto-init.spec.ts:66`)
 - [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
-- [ ] Need to provide a drop shadow option (see examples/filters-dropshadow.html)
 - [ ] Invert option for image default/hover/focused
 - [ ] Add border offset for default/hover/focused
 ---
@@ -107,3 +103,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Blurry images on zoom: CSS transform scale() scales rendered pixels, not source images. When images render at ~150-200px and zoom to 80% of container, they're scaled 3-4x causing blurriness. Fix: change ZoomEngine to resize actual image dimensions instead of using transform scale.
 - [x] Support multiple loaders - allow a list of loaders in addition to one loader (e.g., combine Google Drive and static sources). (Implemented via CompositeLoader class)
 - [x] Configurator: Enhanced shadow configuration - added "Custom..." option to shadow dropdown with individual controls for x-offset, y-offset, blur, color, and opacity. Preset values are copied when switching from preset to custom.
+- [x] Drop shadow filter option - available via `filter.dropShadow` configuration with x, y, blur, and color parameters.
+- [x] Fix: Duplicate images on desktop-to-mobile resize - race condition resolved.
+- [x] Re-evaluate layout: sizing, adaptive sizing, spacing - reviewed and updated sizing configuration.
+- [x] Review style.css for overlap between styling and functionality - CSS now provides functional layout rules plus optional styling defaults; JS applies config-driven inline styles that override defaults.
