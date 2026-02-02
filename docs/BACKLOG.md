@@ -74,6 +74,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 ## Completed
 
+- [x] Swipe gesture navigation - Left/right swipe gestures on touch devices navigate between focused images (SwipeEngine with drag feedback, threshold detection, horizontal angle filtering).
 - [x] Packaging & Distribution Strategy - CDN deployment (unpkg/jsdelivr), simplified README examples, separate auto-init bundle.
 - [x] Fix image centering - images now correctly center on their layout positions (using pixel-based translate transforms).
 - [x] Replace random image placement with a more organized layout.

@@ -866,6 +866,65 @@ export class ZoomEngine {
   }
 
   /**
+   * Apply a temporary horizontal drag offset to the focused image
+   * Used during swipe gestures for visual feedback
+   */
+  setDragOffset(offset: number): void {
+    if (!this.currentFocus || !this.focusData || this.state !== ZoomState.FOCUSED) return;
+
+    const element = this.currentFocus;
+    const focusTransform = this.focusData.focusTransform;
+
+    // Build transform with additional horizontal offset
+    const transforms: string[] = ['translate(-50%, -50%)'];
+    const x = (focusTransform.x ?? 0) + offset;
+    const y = focusTransform.y ?? 0;
+    transforms.push(`translate(${x}px, ${y}px)`);
+    if (focusTransform.rotation !== undefined) {
+      transforms.push(`rotate(${focusTransform.rotation}deg)`);
+    }
+
+    element.style.transition = 'none';
+    element.style.transform = transforms.join(' ');
+  }
+
+  /**
+   * Clear the drag offset, optionally animating back to center
+   * @param animate - If true, animate back to center; if false, snap instantly
+   * @param duration - Animation duration in ms (default 150)
+   */
+  clearDragOffset(animate: boolean, duration: number = 150): void {
+    if (!this.currentFocus || !this.focusData || this.state !== ZoomState.FOCUSED) return;
+
+    const element = this.currentFocus;
+    const focusTransform = this.focusData.focusTransform;
+
+    // Build the centered transform (no offset)
+    const transforms: string[] = ['translate(-50%, -50%)'];
+    const x = focusTransform.x ?? 0;
+    const y = focusTransform.y ?? 0;
+    transforms.push(`translate(${x}px, ${y}px)`);
+    if (focusTransform.rotation !== undefined) {
+      transforms.push(`rotate(${focusTransform.rotation}deg)`);
+    }
+    const centeredTransform = transforms.join(' ');
+
+    if (animate) {
+      element.style.transition = `transform ${duration}ms ease-out`;
+      element.style.transform = centeredTransform;
+      // Clear transition after animation completes
+      setTimeout(() => {
+        if (this.currentFocus === element) {
+          element.style.transition = 'none';
+        }
+      }, duration);
+    } else {
+      element.style.transition = 'none';
+      element.style.transform = centeredTransform;
+    }
+  }
+
+  /**
    * Reset zoom state (cancels all animations)
    */
   reset(): void {

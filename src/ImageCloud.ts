@@ -10,6 +10,7 @@ import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
+import { SwipeEngine, SNAP_BACK_DURATION_MS } from './engines/SwipeEngine';
 import { animatePath } from './engines/PathAnimator';
 import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 import { StaticImageLoader } from './loaders/StaticImageLoader';
@@ -46,6 +47,7 @@ export class ImageCloud {
   private entryAnimationEngine: EntryAnimationEngine;
   private layoutEngine: LayoutEngine;
   private zoomEngine: ZoomEngine;
+  private swipeEngine: SwipeEngine | null;
   private imageLoader: ImageLoader;
   private imageFilter: ImageFilter;
 
@@ -98,6 +100,9 @@ export class ImageCloud {
       entryConfig as EntryAnimationConfig,
       this.fullConfig.layout.algorithm
     );
+
+    // SwipeEngine will be initialized after container is available
+    this.swipeEngine = null;
 
     // Initialize image filter with configured extensions
     this.imageFilter = this.createImageFilter();
@@ -180,6 +185,22 @@ export class ImageCloud {
       // Add gallery class for CSS scoping
       this.containerEl.classList.add('fbn-ic-gallery');
 
+      // Initialize swipe engine for touch navigation
+      this.swipeEngine = new SwipeEngine(this.containerEl, {
+        onNext: () => this.navigateToNextImage(),
+        onPrev: () => this.navigateToPreviousImage(),
+        onDragOffset: (offset) => this.zoomEngine.setDragOffset(offset),
+        onDragEnd: (navigated) => {
+          if (!navigated) {
+            // Snap back to center with animation
+            this.zoomEngine.clearDragOffset(true, SNAP_BACK_DURATION_MS);
+          } else {
+            // Clear offset immediately (navigation handles transition)
+            this.zoomEngine.clearDragOffset(false);
+          }
+        }
+      });
+
       // Create or bind UI elements
       this.setupUI();
 
@@ -210,6 +231,7 @@ export class ImageCloud {
       if (e.key === 'Escape') {
         this.zoomEngine.unfocusImage();
         this.currentFocusIndex = null;
+        this.swipeEngine?.disable();
       } else if (e.key === 'ArrowRight') {
         this.navigateToNextImage();
       } else if (e.key === 'ArrowLeft') {
@@ -222,9 +244,14 @@ export class ImageCloud {
     });
 
     document.addEventListener('click', (e: MouseEvent) => {
+      // Ignore clicks that follow touch events (prevents unfocus during swipe)
+      if (this.swipeEngine?.hadRecentTouch()) {
+        return;
+      }
       if (!(e.target as HTMLElement).closest('.fbn-ic-image')) {
         this.zoomEngine.unfocusImage();
         this.currentFocusIndex = null;
+        this.swipeEngine?.disable();
       }
     });
 
@@ -731,10 +758,12 @@ export class ImageCloud {
     if (isFocused) {
       await this.zoomEngine.unfocusImage();
       this.currentFocusIndex = null;
+      this.swipeEngine?.disable();
     } else {
       // Track the focused image index for keyboard navigation
       const imageId = imageElement.dataset.imageId;
       this.currentFocusIndex = imageId !== undefined ? parseInt(imageId, 10) : null;
+      this.swipeEngine?.enable();
       await this.zoomEngine.focusImage(imageElement, bounds, originalLayout);
     }
   }
@@ -794,5 +823,6 @@ export class ImageCloud {
     if (this.resizeTimeout !== null) {
       clearTimeout(this.resizeTimeout);
     }
+    this.swipeEngine?.destroy();
   }
 }
