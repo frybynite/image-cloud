@@ -67,6 +67,9 @@ export class SwipeEngine {
     if (this.enabled) return;
     this.enabled = true;
 
+    // Set touch-action to allow vertical scroll but let JS handle horizontal
+    this.container.style.touchAction = 'pan-y';
+
     this.container.addEventListener('touchstart', this.boundTouchStart, { passive: false });
     this.container.addEventListener('touchmove', this.boundTouchMove, { passive: false });
     this.container.addEventListener('touchend', this.boundTouchEnd, { passive: true });
@@ -79,6 +82,9 @@ export class SwipeEngine {
   disable(): void {
     if (!this.enabled) return;
     this.enabled = false;
+
+    // Restore default touch-action
+    this.container.style.touchAction = '';
 
     this.container.removeEventListener('touchstart', this.boundTouchStart);
     this.container.removeEventListener('touchmove', this.boundTouchMove);

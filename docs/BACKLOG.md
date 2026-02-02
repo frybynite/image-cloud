@@ -15,6 +15,8 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
 - [ ] Add border-image to functionality and configurator
 - [ ] Configurator: Split image border and style into separate sections - currently too large in one section
+- [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.
+- [ ] Swipe gestures: Swipes inside an iframe don't work consistently.
 ---
 
 ## Planned

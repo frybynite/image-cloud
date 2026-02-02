@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Cloud - Iframe Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+    p {
+      margin-bottom: 20px;
+      color: #666;
+    }
+    .iframe-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      background: white;
+    }
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Cloud in Iframe</h1>
+  <p>Tests gallery behavior when embedded in an iframe. Try clicking images, keyboard navigation (arrow keys, Escape), and swipe gestures (in touch mode).</p>
+
+  <div class="iframe-container">
+    <iframe id="galleryFrame" src="interactions.html" title="Image Cloud Gallery"></iframe>
+  </div>
+
+  <div class="controls">
+    <button onclick="resizeSmall()">Small (400x300)</button>
+    <button onclick="resizeMedium()">Medium (600x400)</button>
+    <button onclick="resizeLarge()">Large (800x500)</button>
+    <button onclick="reloadFrame()">Reload</button>
+  </div>
+
+  <script>
+    const frame = document.getElementById('galleryFrame');
+
+    function resizeSmall() {
+      frame.style.width = '400px';
+      frame.style.height = '300px';
+    }
+
+    function resizeMedium() {
+      frame.style.width = '600px';
+      frame.style.height = '400px';
+    }
+
+    function resizeLarge() {
+      frame.style.width = '800px';
+      frame.style.height = '500px';
+    }
+
+    function reloadFrame() {
+      frame.src = frame.src;
+    }
+  </script>
+</body>
+</html>
