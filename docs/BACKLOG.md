@@ -17,6 +17,9 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Configurator: Split image border and style into separate sections - currently too large in one section
 - [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.
 - [ ] Swipe gestures: Swipes inside an iframe don't work consistently.
+- [ ] Security: Set up Dependabot for dependency vulnerability scanning
+- [ ] Security: Set up CodeQL for code security analysis
+- [ ] Security: Enable secret scanning for the repository
 ---
 
 ## Planned
