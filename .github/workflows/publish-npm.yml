@@ -4,9 +4,27 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:  # Manual trigger for testing security checks
 
 jobs:
+  security:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
   publish:
+    needs: security
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,6 +41,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Security audit
+        run: npm audit --audit-level=high
 
       - name: Build
         run: npm run build
