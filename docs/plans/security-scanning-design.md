@@ -31,7 +31,7 @@ Additionally, set up Dependabot for ongoing weekly vulnerability monitoring.
 ### Security Job
 
 Runs CodeQL analysis on JavaScript/TypeScript code:
-- Uses `github/codeql-action/init@v3` and `github/codeql-action/analyze@v3`
+- Uses `github/codeql-action/init@v4` and `github/codeql-action/analyze@v4`
 - Language: `javascript-typescript`
 - Results appear in GitHub Security tab
 - Fails workflow if security issues found
