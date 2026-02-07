@@ -20,6 +20,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
 - [x] Security: Set up CodeQL for code security analysis
 - [ ] Security: Enable secret scanning for the repository (manual step in GitHub settings)
+- [ ] Document risks of using the Google Drive approach (API key exposure, rate limits, dependency on Google API availability, folder permission requirements)
 ---
 
 ## Planned
@@ -64,6 +65,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
   - `zIndex` - bring hovered/focused images to front
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
+- Auth/credential hooks for static loader fetch options (e.g., custom headers, bearer tokens for authenticated image endpoints — applies to JSON source and URL validation)
 - Vue component wrapper
 - Web Component wrapper
 - Additional layout algorithms (honeycomb, physics-based)
@@ -74,6 +76,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - For options like image border where the border can be applied overall, or separately to top, bottom, left, right - list all the options available and discuss how we can give them overall control.
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
+- Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).
 
 ---
 

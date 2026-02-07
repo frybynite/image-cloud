@@ -90,7 +90,8 @@ Controls how images are fetched and validated.
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `sources` | `StaticSource[]` | `[]` | **Required.** Array of static sources. |
+| `sources` | `StaticSource[]` | `[]` | Array of static sources. Required unless `urls` shorthand is used. |
+| `urls` | `string[]` | - | **Shorthand.** Direct array of image URLs, auto-wrapped as `sources: [{ type: 'urls', urls: [...] }]`. |
 | `validateUrls` | `boolean` | `true` | Check if image URLs exist before loading. |
 | `validationTimeout` | `number` | `5000` | Timeout (ms) for URL validation. |
 | `validationMethod` | `'head' \| 'simple' \| 'none'` | `'head'` | Method used to validate URLs. |
@@ -98,8 +99,47 @@ Controls how images are fetched and validated.
 | `allowedExtensions` | `string[]` | `['jpg', 'jpeg', ...]` | Allowed image file extensions. |
 
 **Static Source Objects:**
-*   **URLs:** `{ type: 'urls', urls: string[] }`
-*   **Path:** `{ type: 'path', basePath: string, files: string[] }`
+*   **URLs:** `{ type: 'urls', urls: string[] }` — Direct image URLs
+*   **Path:** `{ type: 'path', basePath: string, files: string[] }` — Base path + filenames
+*   **JSON:** `{ type: 'json', url: string }` — JSON endpoint returning `{ "images": ["url1", "url2", ...] }`
+
+**URLs Shorthand** — the simplest way to load images:
+```typescript
+const gallery = new ImageCloud({
+  container: 'my-gallery',
+  loader: {
+    type: 'static',
+    static: {
+      urls: [
+        'https://example.com/photo1.jpg',
+        'https://example.com/photo2.jpg',
+        'https://example.com/photo3.jpg'
+      ]
+    }
+  }
+});
+```
+
+**JSON Source** — load from a JSON endpoint:
+```typescript
+const gallery = new ImageCloud({
+  container: 'my-gallery',
+  loader: {
+    type: 'static',
+    static: {
+      sources: [
+        { type: 'json', url: 'https://api.example.com/gallery/images.json' }
+      ]
+    }
+  }
+});
+// Endpoint must return: { "images": ["https://...", "https://..."] }
+```
+
+**JSON Source Behavior:**
+- Fetch uses a 10-second timeout via `AbortController`
+- Endpoint must return JSON with shape `{ "images": ["url1", "url2", ...] }`
+- Fetched URLs are processed through the standard validation pipeline
 
 #### Composite Loader (`loader.composite`)
 
@@ -1461,7 +1501,7 @@ All available parameters with example values:
   "debug": false,                               // Default. Enable debug logging
 
   "loader": {
-    "type": "googleDrive",                      // Default. "googleDrive" | "static"
+    "type": "googleDrive",                      // Default. "googleDrive" | "static" | "composite"
 
     "googleDrive": {
       "apiKey": "YOUR_GOOGLE_API_KEY",          // Required
@@ -1499,8 +1539,13 @@ All available parameters with example values:
           "type": "path",                       // Base path + filenames
           "basePath": "/images/gallery/",
           "files": ["photo1.jpg", "photo2.png"]
+        },
+        {
+          "type": "json",                       // JSON endpoint source
+          "url": "https://api.example.com/images.json"
         }
       ],
+      // "urls": ["https://..."],               // Shorthand (auto-wrapped as sources[0])
       "validateUrls": true,                     // Default
       "validationTimeout": 5000,                // Default. Timeout in ms
       "validationMethod": "head",               // Default. "head" | "simple" | "none"
@@ -1922,6 +1967,40 @@ const gallery = new ImageCloud({
             "https://example.com/image2.jpg"
           ]
         }
+      ]
+    }
+  }
+}
+```
+
+### Static Loader (URLs Shorthand)
+
+```jsonc
+{
+  "container": "imageCloud",
+  "loader": {
+    "type": "static",
+    "static": {
+      "urls": [
+        "https://example.com/photo1.jpg",
+        "https://example.com/photo2.jpg",
+        "https://example.com/photo3.jpg"
+      ]
+    }
+  }
+}
+```
+
+### Static Loader (JSON Endpoint)
+
+```jsonc
+{
+  "container": "imageCloud",
+  "loader": {
+    "type": "static",
+    "static": {
+      "sources": [
+        { "type": "json", "url": "https://api.example.com/gallery/images.json" }
       ]
     }
   }

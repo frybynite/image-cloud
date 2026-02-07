@@ -175,7 +175,8 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
       debugLogging: false
     }),
     static: Object.freeze({
-      sources: [],  // Must be provided by user
+      sources: [],  // Must be provided by user (or use urls shorthand)
+      urls: undefined as unknown as string[],  // Shorthand for sources: [{ type: 'urls', urls: [...] }]
       validateUrls: true,
       validationTimeout: 5000,
       validationMethod: 'head' as const,
@@ -536,10 +537,12 @@ export function mergeConfig(
         ...DEFAULT_CONFIG.loader.static!,
         ...userConfig.loader.static,
         sources: userConfig.loader.static.sources || DEFAULT_CONFIG.loader.static!.sources,
+        urls: userConfig.loader.static.urls || undefined,
         allowedExtensions: userConfig.loader.static.allowedExtensions ||
           DEFAULT_CONFIG.loader.static!.allowedExtensions
       };
     }
+
   }
 
   // Deep merge layout config

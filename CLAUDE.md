@@ -49,7 +49,8 @@ src/
 │   └── RandomPlacementGenerator.ts
 └── loaders/
     ├── GoogleDriveLoader.ts  # Loads images from Google Drive folders
-    └── StaticImageLoader.ts  # Loads images from static URLs
+    ├── StaticImageLoader.ts  # Loads images from static URLs, paths, or JSON endpoints
+    └── CompositeLoader.ts    # Combines multiple loaders
 ```
 
 ## Key Concepts

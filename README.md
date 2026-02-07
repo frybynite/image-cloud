@@ -2,7 +2,7 @@
 
 # Image Cloud Library
 
-A TypeScript library for creating interactive image clouds with animated scattered layouts and zoom effects. Supports multiple image sources (Google Drive, static URLs) and layout algorithms.
+A TypeScript library for creating interactive image clouds with animated scattered layouts and zoom effects. Supports multiple image sources (static URLs, JSON endpoints, Google Drive) and layout algorithms.
 
 > [!WARNING]
 > ⚠️ All minor versions of this library before 1.0 (e.g., 0.1, 0.2, ...) will include breaking changes during development. Please re-test every time before upgrading until we have published v1.0.
@@ -15,7 +15,7 @@ A TypeScript library for creating interactive image clouds with animated scatter
 - 🔍 Zoom/focus interactions with keyboard navigation
 - 🎨 State-based image styling (borders, shadows, filters for default/hover/focused)
 - 📱 Responsive design with adaptive sizing
-- 🖼️ Multiple image sources (Google Drive, static URLs, composite loaders)
+- 🖼️ Multiple image sources (static URLs, JSON endpoints, Google Drive, composite loaders)
 - 🛠️ Interactive configurator for visual configuration
 - 📦 Zero runtime dependencies
 - 🔷 Full TypeScript support
@@ -121,7 +121,7 @@ await cloud.init();
 
 For detailed configuration, see the documentation in the `docs/` folder:
 
-1. **[Loaders](docs/LOADERS.md)** — Configure image sources (static URLs, local paths, Google Drive folders)
+1. **[Loaders](docs/LOADERS.md)** — Configure image sources (static URLs, JSON endpoints, local paths, Google Drive folders)
 2. **[Layout Generators](docs/GENERATORS.md)** — Choose and customize layout algorithms (radial, grid, spiral, cluster, random)
 3. **[Image Sizing](docs/IMAGE_SIZING.md)** — Control base sizes, variance, and responsive/adaptive behavior
 4. **[Full Parameter Reference](docs/PARAMETERS.md)** — Complete configuration options for animation, interaction, styling, and more
@@ -169,6 +169,8 @@ Check out the `examples/` directory for various usage patterns:
 - `cdn-umd-example.html` - Traditional script tag / CDN usage
 - `auto-init-example.html` - HTML data attribute initialization
 - `static-loader-example.html` - Static image URLs
+- `static-urls-shorthand-example.html` - Simplest static loader: direct URL array shorthand
+- `static-json-source-example.html` - Load images from a JSON endpoint
 - `google-drive-loader-example.html` - Google Drive folder source
 - `layout-algorithms.html` - Compare all layout algorithms
 - `entry-animations.html` - Entry animation styles

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Static loader JSON source example">
+    <title>Image Cloud - Static Loader JSON Source</title>
+    <!-- Required: Image Cloud CSS for gallery layout, animations, and zoom -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05060F;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+        #imageCloud {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Required: Container div — its id must match the 'container' option -->
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud"></div>
+
+        <!-- Optional: Loading indicator (auto-managed via fbn-ic-loading class) -->
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
+            <div class="fbn-ic-spinner"></div>
+            <p>Loading images...</p>
+        </div>
+
+        <!-- Optional: Error display -->
+        <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+    </div>
+
+    <script type="module">
+        import { ImageCloud } from '@frybynite/image-cloud';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load images from a JSON endpoint
+            // The endpoint must return: { "images": ["url1", "url2", ...] }
+            const cloud = new ImageCloud({
+                container: 'imageCloud',
+                loader: {
+                    type: 'static',
+                    static: {
+                        sources: [
+                            {
+                                type: 'json',
+                                url: 'static-images.json'
+                            }
+                        ]
+                    }
+                }
+            });
+
+            cloud.init().catch(error => {
+                console.error('Image cloud initialization failed:', error);
+            });
+        });
+    </script>
+    <script src="view-source-popup.js"></script>
+</body>
+</html>

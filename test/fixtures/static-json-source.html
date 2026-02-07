@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Static Loader - JSON Source Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageCloud } from '/dist/image-cloud.js';
+
+    window.gallery = new ImageCloud({
+      container: 'imageCloud',
+      loader: {
+        type: 'static',
+        static: {
+          sources: [
+            {
+              type: 'json',
+              url: '/test/fixtures/static-images.json'
+            }
+          ],
+          validateUrls: false
+        }
+      },
+      animation: {
+        duration: 300,
+        queue: { enabled: true, interval: 50 }
+      }
+    });
+
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+    });
+  </script>
+</body>
+</html>

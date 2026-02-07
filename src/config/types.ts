@@ -61,17 +61,19 @@ export interface GoogleDriveLoaderConfig {
   debugLogging?: boolean;
 }
 
-export type StaticSourceType = 'urls' | 'path';
+export type StaticSourceType = 'urls' | 'path' | 'json';
 
 export interface StaticSource {
   type: StaticSourceType;
   urls?: string[];
   basePath?: string;
   files?: string[];
+  url?: string;            // For 'json' source type: JSON endpoint URL
 }
 
 export interface StaticLoaderConfig {
-  sources: StaticSource[];
+  sources?: StaticSource[];
+  urls?: string[];          // Shorthand: auto-wrapped as sources: [{ type: 'urls', urls: [...] }]
   validateUrls?: boolean;
   validationTimeout?: number;
   validationMethod?: 'head' | 'simple' | 'none';

@@ -1,0 +1,10 @@
+{
+  "images": [
+    "/test/fixtures/images/scenery1.jpg",
+    "/test/fixtures/images/scenery2.jpg",
+    "/test/fixtures/images/scenery3.jpg",
+    "/test/fixtures/images/computing1.jpg",
+    "/test/fixtures/images/computing2.jpg",
+    "/test/fixtures/images/computing3.jpg"
+  ]
+}

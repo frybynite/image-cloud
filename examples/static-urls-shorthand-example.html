@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Static loader URLs shorthand example">
+    <title>Image Cloud - Static Loader URLs Shorthand</title>
+    <!-- Required: Image Cloud CSS for gallery layout, animations, and zoom -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05060F;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+        #imageCloud {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Required: Container div — its id must match the 'container' option -->
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud"></div>
+
+        <!-- Optional: Loading indicator (auto-managed via fbn-ic-loading class) -->
+        <div id="loading" class="fbn-ic-loading fbn-ic-hidden">
+            <div class="fbn-ic-spinner"></div>
+            <p>Loading images...</p>
+        </div>
+
+        <!-- Optional: Error display -->
+        <div id="error" class="fbn-ic-error fbn-ic-hidden"></div>
+    </div>
+
+    <script type="module">
+        import { ImageCloud } from '@frybynite/image-cloud';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // The simplest way to load images — use the urls shorthand
+            // instead of the verbose sources: [{ type: 'urls', urls: [...] }] structure
+            const cloud = new ImageCloud({
+                container: 'imageCloud',
+                loader: {
+                    type: 'static',
+                    static: {
+                        urls: [
+                            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+                            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+                            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop',
+                            'https://images.pexels.com/photos/1450360/pexels-photo-1450360.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&auto=format&fit=crop',
+                            'https://images.pexels.com/photos/1619317/pexels-photo-1619317.jpeg?auto=compress&cs=tinysrgb&w=800',
+                            'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop',
+                            'https://images.pexels.com/photos/1268871/pexels-photo-1268871.jpeg?auto=compress&cs=tinysrgb&w=800'
+                        ]
+                    }
+                }
+            });
+
+            cloud.init().catch(error => {
+                console.error('Image cloud initialization failed:', error);
+            });
+        });
+    </script>
+    <script src="view-source-popup.js"></script>
+</body>
+</html>

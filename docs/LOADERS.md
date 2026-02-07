@@ -4,7 +4,8 @@ Image Cloud supports multiple image sources through configurable loaders.
 
 ## Table of Contents
 
-- [Static Loader](#static-loader)
+- [Static Loader](#static-loader) *(recommended)*
+  - [URLs Shorthand](#urls-shorthand) *(simplest)*
   - [Configuration Options](#static-loader-configuration-options)
   - [Source Types](#static-source-types)
   - [URL Validation](#url-validation)
@@ -20,7 +21,31 @@ Image Cloud supports multiple image sources through configurable loaders.
 
 ## Static Loader
 
-Load images from direct URLs or local file paths.
+Load images from direct URLs, local file paths, or JSON endpoints. The static loader is the recommended loader for most use cases.
+
+### URLs Shorthand
+
+The simplest way to load images — pass a direct array of URLs without the `sources` wrapper:
+
+```javascript
+const gallery = new ImageCloud({
+  container: 'imageCloud',
+  loader: {
+    type: 'static',
+    static: {
+      urls: [
+        'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
+        'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800',
+        'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=800'
+      ]
+    }
+  }
+});
+
+gallery.init();
+```
+
+The `urls` shorthand is automatically wrapped as `sources: [{ type: 'urls', urls: [...] }]`. You can combine `urls` with additional `sources` entries — the shorthand URLs are prepended.
 
 ### Static Loader Configuration Options
 
@@ -28,7 +53,8 @@ Load images from direct URLs or local file paths.
 loader: {
   type: 'static',
   static: {
-    sources: [...],                      // Required: Array of sources
+    sources: [...],                      // Array of sources (or use urls shorthand)
+    urls: [...],                         // Shorthand: direct URL array
     validateUrls: true,                  // Optional: Verify URLs exist
     validationTimeout: 5000,             // Optional: Timeout in ms
     validationMethod: 'head',            // Optional: 'head', 'simple', or 'none'
@@ -41,7 +67,8 @@ loader: {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `sources` | `StaticSource[]` | - | **Required.** Array of URL or path sources |
+| `sources` | `StaticSource[]` | `[]` | Array of URL, path, or JSON sources. Required unless `urls` is used. |
+| `urls` | `string[]` | - | **Shorthand.** Direct URL array, auto-wrapped as a `sources` entry. |
 | `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading |
 | `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms) |
 | `validationMethod` | `string` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (img load), `'none'` |
@@ -78,6 +105,19 @@ Load from a base path with file names:
 }
 ```
 
+#### JSON Source
+
+Load image URLs from a JSON endpoint:
+
+```javascript
+{
+  type: 'json',
+  url: '/api/gallery/images.json'
+}
+```
+
+The endpoint must return JSON with the shape `{ "images": ["url1", "url2", ...] }`. The fetch uses a 10-second timeout via `AbortController`.
+
 ### URL Validation
 
 The static loader can validate URLs before attempting to display them:
@@ -106,6 +146,10 @@ const gallery = new ImageCloud({
           type: 'path',
           basePath: '/assets/photos/',
           files: ['vacation1.jpg', 'vacation2.jpg', 'vacation3.jpg']
+        },
+        {
+          type: 'json',
+          url: '/api/gallery/images.json'
         }
       ],
       validateUrls: true,
@@ -122,6 +166,9 @@ gallery.init();
 ## Google Drive Loader
 
 Load images from public Google Drive folders using the Google Drive API.
+
+[! WARNING] ⚠️
+Using a Google Drive API key can result in a security risk that gives anyone who can reference your key access to shared folders. The risk is low if you're not sharing folders, but it is not zero. Also you will likely get a notification from Google when a key is found to be exposed. Make sure your key is restricted to Google Drive, don't share anything publicly unless your understand the risk. Create a Google Drive space that only shares this content as an option. Use this feature with the caution it deserves. 
 
 ### Setting Up a Google API Key
 

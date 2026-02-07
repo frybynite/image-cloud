@@ -27,12 +27,18 @@ export class StaticImageLoader implements ImageLoader {
     this.validateUrls = config.validateUrls !== false;
     this.validationTimeout = config.validationTimeout ?? 5000;
     this.validationMethod = config.validationMethod ?? 'head';
-    this.sources = config.sources ?? [];
     this.debugLogging = config.debugLogging ?? false;
+
+    // Handle urls shorthand: auto-wrap as a sources entry
+    if (config.urls && Array.isArray(config.urls) && config.urls.length > 0) {
+      this.sources = [{ type: 'urls', urls: config.urls }, ...(config.sources ?? [])];
+    } else {
+      this.sources = config.sources ?? [];
+    }
 
     // Validate that we have sources configured
     if (!this.sources || this.sources.length === 0) {
-      throw new Error('StaticImageLoader requires at least one source to be configured');
+      throw new Error('StaticImageLoader requires at least one source (or urls shorthand) to be configured');
     }
 
     this.log('StaticImageLoader initialized with config:', config);
@@ -107,6 +113,8 @@ export class StaticImageLoader implements ImageLoader {
       return await this.processUrls(source.urls || [], filter);
     } else if (source.type === 'path') {
       return await this.processPath(source.basePath, source.files || [], filter);
+    } else if (source.type === 'json') {
+      return await this.processJson(source.url, filter);
     } else {
       console.warn(`Unknown source type: ${source.type}`);
       return [];
@@ -194,6 +202,51 @@ export class StaticImageLoader implements ImageLoader {
     }
 
     return validUrls;
+  }
+
+  /**
+   * Process a JSON endpoint source
+   * Fetches a JSON endpoint that returns { images: string[] }
+   * @param url - JSON endpoint URL
+   * @param filter - Filter to apply to discovered images
+   * @returns Promise resolving to array of validated URLs
+   */
+  private async processJson(url: string | undefined, filter: IImageFilter): Promise<string[]> {
+    if (!url) {
+      console.warn('url is required for json-type sources');
+      return [];
+    }
+
+    this.log(`Fetching JSON endpoint: ${url}`);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} fetching ${url}`);
+      }
+
+      const data = await response.json();
+
+      if (!data || !Array.isArray(data.images)) {
+        throw new Error(`JSON source must return JSON with shape { "images": ["url1", "url2", ...] }`);
+      }
+
+      this.log(`JSON endpoint returned ${data.images.length} image(s)`);
+
+      // Process the URLs through the standard URL processing pipeline
+      return await this.processUrls(data.images, filter);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error(`Timeout fetching JSON endpoint: ${url}`);
+      }
+      throw error;
+    }
   }
 
   /**
