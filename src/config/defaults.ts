@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints } from './types';
+import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry } from './types';
 
 /**
  * Shadow presets for image styling
@@ -163,27 +163,25 @@ export const DEFAULT_IMAGE_CONFIG: ImageConfig = Object.freeze({
  * Default configuration object
  * Frozen to prevent accidental modifications
  */
+/**
+ * Default shared loader configuration
+ */
+export const DEFAULT_SHARED_LOADER_CONFIG: SharedLoaderConfig = Object.freeze({
+  validateUrls: true,
+  validationTimeout: 5000,
+  validationMethod: 'head' as const,
+  failOnAllMissing: true,
+  allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
+  debugLogging: false
+});
+
 export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
-  // Unified loader configuration
-  loader: Object.freeze({
-    type: 'googleDrive' as const,
-    googleDrive: Object.freeze({
-      apiKey: '',  // Must be provided by user
-      sources: [],  // Must be provided by user
-      apiEndpoint: 'https://www.googleapis.com/drive/v3/files',
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
-      debugLogging: false
-    }),
-    static: Object.freeze({
-      sources: [],  // Must be provided by user (or use urls shorthand)
-      urls: undefined as unknown as string[],  // Shorthand for sources: [{ type: 'urls', urls: [...] }]
-      validateUrls: true,
-      validationTimeout: 5000,
-      validationMethod: 'head' as const,
-      failOnAllMissing: true,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
-      debugLogging: false
-    })
+  // Loader configuration (always an array, composite behavior is implicit)
+  loaders: [] as LoaderEntry[],
+
+  // Shared loader settings
+  config: Object.freeze({
+    loaders: DEFAULT_SHARED_LOADER_CONFIG
   }),
 
   // Image sizing and rotation configuration
@@ -478,11 +476,11 @@ function convertLegacyVarianceConfig(userConfig: DeepPartial<ImageCloudConfig>):
 }
 
 export function mergeConfig(
-  userConfig: DeepPartial<ImageCloudConfig> = {}
+  userConfig: ImageCloudOptions = {}
 ): ImageCloudConfig {
   // Convert legacy configs to new format
-  const legacyRotation = convertLegacyRotationConfig(userConfig);
-  const legacyVariance = convertLegacyVarianceConfig(userConfig);
+  const legacyRotation = convertLegacyRotationConfig(userConfig as any);
+  const legacyVariance = convertLegacyVarianceConfig(userConfig as any);
 
   // Combine user image config with converted legacy configs
   // User's explicit image config takes precedence over legacy conversions
@@ -502,8 +500,29 @@ export function mergeConfig(
     }
   }
 
+  // Build loaders array: images shorthand prepended, then explicit loaders
+  const loaders = [...(userConfig.loaders ?? [])];
+  if (userConfig.images && userConfig.images.length > 0) {
+    loaders.unshift({
+      static: {
+        sources: [{ urls: userConfig.images }]
+      }
+    });
+  }
+
+  // Merge shared loader config
+  const sharedLoaderConfig: SharedLoaderConfig = {
+    ...DEFAULT_SHARED_LOADER_CONFIG,
+    ...(userConfig.config?.loaders ?? {})
+  };
+
+  const mergedConfig: ConfigSection = {
+    loaders: sharedLoaderConfig
+  };
+
   const merged: ImageCloudConfig = {
-    loader: { ...DEFAULT_CONFIG.loader },
+    loaders,
+    config: mergedConfig,
     image: deepMergeImageConfig(DEFAULT_IMAGE_CONFIG, combinedImageConfig),
     layout: { ...DEFAULT_CONFIG.layout },
     animation: { ...DEFAULT_CONFIG.animation },
@@ -512,38 +531,6 @@ export function mergeConfig(
     styling: deepMergeStyling(DEFAULT_STYLING, userConfig.styling as Partial<ImageStylingConfig> | undefined),
     debug: DEFAULT_CONFIG.debug
   };
-
-  // Deep merge loader config
-  if (userConfig.loader) {
-    merged.loader = {
-      ...DEFAULT_CONFIG.loader,
-      ...userConfig.loader
-    } as any;
-
-    // Deep merge googleDrive config
-    if (userConfig.loader.googleDrive) {
-      merged.loader.googleDrive = {
-        ...DEFAULT_CONFIG.loader.googleDrive!,
-        ...userConfig.loader.googleDrive,
-        sources: userConfig.loader.googleDrive.sources || DEFAULT_CONFIG.loader.googleDrive!.sources,
-        allowedExtensions: userConfig.loader.googleDrive.allowedExtensions ||
-          DEFAULT_CONFIG.loader.googleDrive!.allowedExtensions
-      };
-    }
-
-    // Deep merge static config
-    if (userConfig.loader.static) {
-      merged.loader.static = {
-        ...DEFAULT_CONFIG.loader.static!,
-        ...userConfig.loader.static,
-        sources: userConfig.loader.static.sources || DEFAULT_CONFIG.loader.static!.sources,
-        urls: userConfig.loader.static.urls || undefined,
-        allowedExtensions: userConfig.loader.static.allowedExtensions ||
-          DEFAULT_CONFIG.loader.static!.allowedExtensions
-      };
-    }
-
-  }
 
   // Deep merge layout config
   if (userConfig.layout) {

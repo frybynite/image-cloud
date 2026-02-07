@@ -33,20 +33,18 @@
 
     window.gallery = new ImageCloud({
       container: 'imageCloud',
-      loader: {
-        type: 'googleDrive',
+      loaders: [{
         googleDrive: {
           apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc',
           sources: [
             {
-              type: 'folder',
               folders: ['https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing'],
               recursive: true
             }
           ],
           debugLogging: true
         }
-      },
+      }],
       layout: {
         algorithm: 'radial',
         rotation: { enabled: true }

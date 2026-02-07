@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 
 // Minimal config to satisfy constructor validation
 const minimalConfig = {
-  sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/test'] }]
+  sources: [{ folders: ['https://drive.google.com/drive/folders/test'] }]
 };
 
 test.describe('GoogleDriveLoader Unit Tests', () => {
@@ -120,7 +120,7 @@ test.describe('GoogleDriveLoader Unit Tests', () => {
       const error = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({
-          sources: [{ type: 'folder', folders: ['invalid-url'] }]
+          sources: [{ folders: ['invalid-url'] }]
         });
         const filter = { isAllowed: () => true };
         try {

@@ -17,12 +17,10 @@
     window.ImageCloud = ImageCloud;
     window.gallery = new ImageCloud({
       container: 'imageCloud',
-      loader: {
-        type: 'static',
+      loaders: [{
         static: {
           sources: [
             {
-              type: 'urls',
               urls: [
                 '/test/fixtures/images/image1.jpg',
                 '/test/fixtures/images/image2.jpg',
@@ -41,7 +39,7 @@
           ],
           validateUrls: false
         }
-      },
+      }],
       layout: {
         algorithm: 'radial',
         rotation: { enabled: true }

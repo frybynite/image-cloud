@@ -16,18 +16,14 @@
 
     window.gallery = new ImageCloud({
       container: 'imageCloud',
-      loader: {
-        type: 'static',
+      loaders: [{
         static: {
           sources: [
-            {
-              type: 'json',
-              url: '/test/fixtures/static-images.json'
-            }
+            { json: '/test/fixtures/static-images.json' }
           ],
           validateUrls: false
         }
-      },
+      }],
       animation: {
         duration: 300,
         queue: { enabled: true, interval: 50 }

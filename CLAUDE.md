@@ -66,7 +66,7 @@ See `docs/PARAMETERS.md` for full configuration reference. Key config structure:
 ```typescript
 {
   container: 'elementId',
-  loader: { type: 'googleDrive' | 'static', ... },
+  images: ['url1', 'url2'],  // or loaders: [{ static: {...} }, { googleDrive: {...} }]
   layout: { algorithm: 'radial' | 'grid' | 'spiral' | 'cluster' | 'random', ... },
   sizing: { base, variance, responsive, adaptive }
 }

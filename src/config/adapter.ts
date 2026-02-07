@@ -7,8 +7,7 @@
 import type {
   ImageCloudOptions,
   LegacyImageGalleryOptions,
-  GoogleDriveSource,
-  LoaderConfig,
+  LoaderEntry,
   LayoutConfig,
   AnimationConfig,
   InteractionConfig,
@@ -41,9 +40,8 @@ export class LegacyOptionsAdapter {
       opts.containerId ||
       opts.loaderType ||
       opts.folderUrl ||
-      (opts.googleDrive && !opts.loader) ||
-      (opts.staticLoader && !opts.loader) ||
-      (opts.config && !opts.layout && !opts.animation && !opts.interaction)
+      (opts.googleDrive && !opts.loaders) ||
+      (opts.config?.layout && !opts.layout && !opts.animation && !opts.interaction)
     );
   }
 
@@ -60,91 +58,92 @@ export class LegacyOptionsAdapter {
     }
 
     // Convert loader configuration
-    newOptions.loader = this.convertLoader(oldOptions);
+    newOptions.loaders = this.convertLoader(oldOptions);
 
     // Convert layout and image configuration
-    if (oldOptions.config?.layout) {
-      const { layout, image } = this.convertLayout(oldOptions.config.layout);
+    const legacyConfig = (oldOptions as any).config;
+
+    if (legacyConfig?.layout) {
+      const { layout, image } = this.convertLayout(legacyConfig.layout);
       newOptions.layout = layout;
       newOptions.image = image;
     }
 
     // Convert animation configuration
-    if (oldOptions.config?.animation) {
-      newOptions.animation = this.convertAnimation(oldOptions.config.animation);
+    if (legacyConfig?.animation) {
+      newOptions.animation = this.convertAnimation(legacyConfig.animation);
     }
 
     // Convert zoom to interaction.focus
-    if (oldOptions.config?.zoom) {
-      newOptions.interaction = this.convertZoomToInteraction(oldOptions.config.zoom);
+    if (legacyConfig?.zoom) {
+      newOptions.interaction = this.convertZoomToInteraction(legacyConfig.zoom);
     }
 
     // Convert rendering configuration
     newOptions.rendering = this.convertRendering(oldOptions);
 
     // Convert debug flag
-    if (oldOptions.config?.debugLogging !== undefined) {
-      newOptions.debug = oldOptions.config.debugLogging;
+    if (legacyConfig?.debugLogging !== undefined) {
+      newOptions.debug = legacyConfig.debugLogging;
     }
 
     return newOptions;
   }
 
   /**
-   * Convert loader configuration
+   * Convert loader configuration to new LoaderEntry[] format
    */
-  private static convertLoader(oldOptions: OldOptions): Partial<LoaderConfig> {
-    const loader: Partial<LoaderConfig> = {};
+  private static convertLoader(oldOptions: OldOptions): LoaderEntry[] {
+    const opts = oldOptions as any;
+    const legacyConfig = opts.config;
 
     // Determine loader type
-    const loaderType = oldOptions.loaderType || oldOptions.config?.loader?.type || 'googleDrive';
-    loader.type = loaderType;
+    const loaderType = oldOptions.loaderType || legacyConfig?.loader?.type || 'googleDrive';
 
     if (loaderType === 'googleDrive') {
-      this.warn('loader', 'Top-level loaderType, folderUrl, and googleDrive are deprecated. Use the unified "loader" configuration instead.');
+      this.warn('loader', 'Top-level loaderType, folderUrl, and googleDrive are deprecated. Use "loaders" array instead.');
 
-      // Convert Google Drive configuration
-      const apiKey = oldOptions.googleDrive?.apiKey || oldOptions.config?.googleDrive?.apiKey || '';
+      const apiKey = oldOptions.googleDrive?.apiKey || legacyConfig?.googleDrive?.apiKey || '';
 
-      // Convert folderUrl to sources array
-      const sources: GoogleDriveSource[] = [];
-
+      const sources: any[] = [];
       if (oldOptions.folderUrl) {
         sources.push({
-          type: 'folder',
           folders: [oldOptions.folderUrl],
-          recursive: true  // Default to recursive for backward compatibility
+          recursive: true
         });
       }
 
-      loader.googleDrive = {
-        apiKey,
-        sources,
-        apiEndpoint: oldOptions.config?.googleDrive?.apiEndpoint,
-        allowedExtensions: oldOptions.config?.googleDrive?.imageExtensions,
-        debugLogging: oldOptions.config?.debugLogging
-      };
+      return [{
+        googleDrive: {
+          apiKey,
+          sources,
+          apiEndpoint: legacyConfig?.googleDrive?.apiEndpoint,
+          allowedExtensions: legacyConfig?.googleDrive?.imageExtensions,
+          debugLogging: legacyConfig?.debugLogging
+        }
+      }];
     } else if (loaderType === 'static') {
-      this.warn('loader', 'Top-level staticLoader is deprecated. Use the unified "loader" configuration instead.');
+      this.warn('loader', 'Top-level staticLoader is deprecated. Use "loaders" array instead.');
 
-      // Convert static loader configuration
-      const staticConfig = oldOptions.staticLoader || oldOptions.config?.loader?.static;
+      const staticConfig = opts.staticLoader || legacyConfig?.loader?.static;
 
       if (staticConfig) {
         const config = staticConfig as any;
-        loader.static = {
-          sources: config.sources || [],
-          validateUrls: config.validateUrls,
-          validationTimeout: config.validationTimeout,
-          validationMethod: config.validationMethod,
-          failOnAllMissing: config.failOnAllMissing,
-          allowedExtensions: config.imageExtensions || config.allowedExtensions,
-          debugLogging: oldOptions.config?.debugLogging
-        };
+        return [{
+          static: {
+            sources: config.sources || [],
+            validateUrls: config.validateUrls,
+            validationTimeout: config.validationTimeout,
+            validationMethod: config.validationMethod,
+            failOnAllMissing: config.failOnAllMissing,
+            allowedExtensions: config.imageExtensions || config.allowedExtensions,
+            debugLogging: legacyConfig?.debugLogging
+          }
+        }];
       }
     }
 
-    return loader;
+    return [];
   }
 
   /**
@@ -250,16 +249,17 @@ export class LegacyOptionsAdapter {
    */
   private static convertRendering(oldOptions: OldOptions): Partial<RenderingConfig> {
     const rendering: Partial<RenderingConfig> = {};
+    const legacyConfig = (oldOptions as any).config;
 
     // Convert responsive configuration
-    if (oldOptions.config?.breakpoints || oldOptions.config?.isMobile) {
+    if (legacyConfig?.breakpoints || legacyConfig?.isMobile) {
       this.warn('rendering', 'Top-level breakpoints and isMobile are deprecated. Use "rendering.responsive" instead.');
 
       rendering.responsive = {
         breakpoints: {
-          mobile: oldOptions.config?.breakpoints?.mobile ?? 768
+          mobile: legacyConfig?.breakpoints?.mobile ?? 768
         },
-        mobileDetection: oldOptions.config?.isMobile || (() => {
+        mobileDetection: legacyConfig?.isMobile || (() => {
           if (typeof window === 'undefined') return false;
           return window.innerWidth <= 768;
         })
@@ -267,11 +267,11 @@ export class LegacyOptionsAdapter {
     }
 
     // Convert UI configuration
-    if (oldOptions.config?.ui) {
+    if (legacyConfig?.ui) {
       this.warn('rendering', 'Top-level ui configuration is deprecated. Use "rendering.ui" instead.');
 
       rendering.ui = {
-        showLoadingSpinner: oldOptions.config.ui.showLoadingSpinner ?? false
+        showLoadingSpinner: legacyConfig.ui.showLoadingSpinner ?? false
       };
     }
 

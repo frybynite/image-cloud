@@ -236,9 +236,8 @@
         ];
 
         const loaderConfig = {
-            type: 'static',
             static: {
-                sources: [{ type: 'urls', urls: sampleImages }],
+                sources: [{ urls: sampleImages }],
                 validationMethod: 'none'
             }
         };
@@ -251,7 +250,7 @@
 
             const cloud = new ImageCloud({
                 container: containerId,
-                loader: loaderConfig,
+                loaders: [loaderConfig],
                 layout: {
                     algorithm: 'radial',
                     sizing: { base: 90 },

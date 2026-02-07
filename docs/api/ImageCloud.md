@@ -26,12 +26,7 @@ const cloud = new ImageCloud(options?: ImageCloudOptions);
 ```typescript
 const cloud = new ImageCloud({
   container: 'gallery',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [{ type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }]
-    }
-  },
+  images: ['img1.jpg', 'img2.jpg'],
   layout: {
     algorithm: 'radial'
   }
@@ -175,19 +170,11 @@ import '@frybynite/image-cloud/style.css';
 
 const cloud = new ImageCloud({
   container: 'myGallery',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [{
-        type: 'urls',
-        urls: [
-          'https://picsum.photos/400/300',
-          'https://picsum.photos/500/350',
-          'https://picsum.photos/450/320'
-        ]
-      }]
-    }
-  },
+  images: [
+    'https://picsum.photos/400/300',
+    'https://picsum.photos/500/350',
+    'https://picsum.photos/450/320'
+  ],
   layout: {
     algorithm: 'spiral',
     sizing: {

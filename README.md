@@ -58,21 +58,11 @@ import '@frybynite/image-cloud/style.css';
 
 const cloud = new ImageCloud({
   container: 'myCloud',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [
-        {
-          type: 'urls',
-          urls: [
-            'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
-            'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
-            'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600'
-          ]
-        }
-      ]
-    }
-  },
+  images: [
+    'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
+    'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
+    'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600'
+  ],
   layout: {
     algorithm: 'radial'
   }
@@ -92,19 +82,11 @@ await cloud.init();
     style="width: 100%; height: 100vh"
     data-image-cloud
     data-config='{
-      "loader": {
-        "type": "static",
-        "static": {
-          "sources": [{
-            "type": "urls",
-            "urls": [
-              "https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600",
-              "https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600",
-              "https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600"
-            ]
-          }]
-        }
-      },
+      "images": [
+        "https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600",
+        "https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600",
+        "https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600"
+      ],
       "layout": {
         "algorithm": "radial"
       }

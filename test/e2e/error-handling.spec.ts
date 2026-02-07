@@ -34,13 +34,11 @@ test.describe('Error Handling', () => {
           // @ts-ignore
           const gallery = new window.ImageCloud({
             container: 'nonexistent-container-id',
-            loader: {
-              type: 'static',
-              static: {
-                sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }],
+            loaders: [{ static: {
+                sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
                 validateUrls: false
               }
-            }
+            }]
           });
           await gallery.init();
           return null;
@@ -75,13 +73,11 @@ test.describe('Error Handling', () => {
           // @ts-ignore
           const gallery = new window.ImageCloud({
             container: 'imageCloud',
-            loader: {
-              type: 'static',
-              static: {
-                sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }],
+            loaders: [{ static: {
+                sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
                 validateUrls: false
               }
-            }
+            }]
           });
           await gallery.init();
           return null;
@@ -105,13 +101,11 @@ test.describe('Error Handling', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{ type: 'urls', urls: invalidUrls }],
+          loaders: [{ static: {
+              sources: [{ urls: invalidUrls }],
               validateUrls: false
             }
-          },
+          }],
           animation: { duration: 100 }
         });
         // @ts-ignore
@@ -144,13 +138,11 @@ test.describe('Error Handling', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{ type: 'urls', urls }],
+          loaders: [{ static: {
+              sources: [{ urls }],
               validateUrls: false
             }
-          },
+          }],
           animation: { duration: 100, queue: { enabled: true, interval: 20 } }
         });
         // @ts-ignore
@@ -176,19 +168,15 @@ test.describe('Error Handling', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{
-                type: 'urls',
-                urls: [
+          loaders: [{ static: {
+              sources: [{ urls: [
                   '/test/fixtures/images/image1.jpg',
                   '/this-returns-404.jpg'
                 ]
               }],
               validateUrls: false
             }
-          },
+          }],
           animation: { duration: 100 }
         });
         // @ts-ignore
@@ -280,7 +268,7 @@ test.describe('Error Handling', () => {
       const error = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }]
+          sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }]
         });
         try {
           loader.imagesLength();
@@ -299,7 +287,7 @@ test.describe('Error Handling', () => {
       const error = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }]
+          sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }]
         });
         try {
           loader.imageURLs();
@@ -324,16 +312,12 @@ test.describe('Error Handling', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{
-                type: 'urls',
-                urls: ['/some-file.pdf', '/another-file.txt']
+          loaders: [{ static: {
+              sources: [{ urls: ['/some-file.pdf', '/another-file.txt']
               }],
               validateUrls: false
             }
-          }
+          }]
         });
         // @ts-ignore
         await window.gallery.init();
@@ -359,13 +343,11 @@ test.describe('Error Handling', () => {
         // @ts-ignore
         const gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }],
+          loaders: [{ static: {
+              sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
               validateUrls: false
             }
-          }
+          }]
         });
         await gallery.init();
 
@@ -388,13 +370,11 @@ test.describe('Error Handling', () => {
         // @ts-ignore
         const gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }],
+          loaders: [{ static: {
+              sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
               validateUrls: false
             }
-          },
+          }],
           animation: { duration: 50 }
         });
 
@@ -423,9 +403,7 @@ test.describe('Error Handling', () => {
         // Create a loader that will have some images
         // @ts-ignore
         const validLoader = new window.StaticImageLoader({
-          sources: [{
-            type: 'urls',
-            urls: ['/test/fixtures/images/image1.jpg', '/test/fixtures/images/image2.jpg']
+          sources: [{ urls: ['/test/fixtures/images/image1.jpg', '/test/fixtures/images/image2.jpg']
           }],
           validationMethod: 'none'
         });
@@ -433,7 +411,7 @@ test.describe('Error Handling', () => {
         // Create a loader with invalid Google Drive config (will fail during prepare)
         // @ts-ignore
         const invalidLoader = new window.GoogleDriveLoader({
-          sources: [{ type: 'folder', folders: ['invalid-url'] }]
+          sources: [{ folders: ['invalid-url'] }]
         });
 
         // @ts-ignore
@@ -474,12 +452,8 @@ test.describe('Error Handling', () => {
           // @ts-ignore
           window.gallery = new window.ImageCloud({
             container: 'imageCloud',
-            loader: {
-              type: 'static',
-              static: {
-                sources: [{
-                  type: 'urls',
-                  urls: [
+            loaders: [{ static: {
+                sources: [{ urls: [
                     '/test/fixtures/images/image1.jpg',
                     'not-a-valid-url',
                     '://broken-protocol',
@@ -488,7 +462,7 @@ test.describe('Error Handling', () => {
                 }],
                 validateUrls: false
               }
-            },
+            }],
             animation: { duration: 100 }
           });
           // @ts-ignore
@@ -520,13 +494,11 @@ test.describe('Error Handling', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{ type: 'urls', urls: [] }],
+          loaders: [{ static: {
+              sources: [{ urls: [] }],
               validateUrls: false
             }
-          }
+          }]
         });
         // @ts-ignore
         await window.gallery.init();
@@ -553,13 +525,11 @@ test.describe('Error Handling', () => {
           // @ts-ignore
           window.gallery = new window.ImageCloud({
             container: 'imageCloud',
-            loader: {
-              type: 'static',
-              static: {
-                sources: [{ type: 'urls', urls }],
+            loaders: [{ static: {
+                sources: [{ urls }],
                 validateUrls: false
               }
-            },
+            }],
             animation: { duration: 20, queue: { enabled: true, interval: 5 } }
           });
           // @ts-ignore
@@ -590,13 +560,11 @@ test.describe('Error Handling', () => {
             // @ts-ignore
             const gallery = new window.ImageCloud({
               container: 'imageCloud',
-              loader: {
-                type: 'static',
-                static: {
-                  sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }],
+              loaders: [{ static: {
+                  sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
                   validateUrls: false
                 }
-              },
+              }],
               animation: { duration: 50 }
             });
             await gallery.init();

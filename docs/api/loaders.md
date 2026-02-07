@@ -55,11 +55,12 @@ interface StaticLoaderConfig {
 
 ### Source Types
 
-**URLs Source** - Direct image URLs:
+Sources are identified by shape (which key is present), not by a `type` field.
+
+**URLs Source** - Direct image URLs (identified by the `urls` key):
 
 ```typescript
 {
-  type: 'urls',
   urls: [
     'https://example.com/image1.jpg',
     'https://example.com/image2.png'
@@ -67,13 +68,20 @@ interface StaticLoaderConfig {
 }
 ```
 
-**Path Source** - Base path + filenames:
+**Path Source** - Base path + filenames (identified by the `path` key):
 
 ```typescript
 {
-  type: 'path',
-  basePath: '/images/gallery',
+  path: '/images/gallery',
   files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
+}
+```
+
+**JSON Source** - Load from a JSON endpoint (identified by the `json` key):
+
+```typescript
+{
+  json: '/api/gallery/images.json'
 }
 ```
 
@@ -81,15 +89,14 @@ interface StaticLoaderConfig {
 
 ```typescript
 const cloud = new ImageCloud({
-  loader: {
-    type: 'static',
+  loaders: [{
     static: {
       sources: [
-        { type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }
+        { urls: ['img1.jpg', 'img2.jpg'] }
       ],
       validateUrls: true
     }
-  }
+  }]
 });
 ```
 
@@ -100,7 +107,7 @@ import { StaticImageLoader, ImageFilter } from '@frybynite/image-cloud';
 
 const loader = new StaticImageLoader({
   sources: [
-    { type: 'urls', urls: ['img1.jpg', 'img2.jpg'] }
+    { urls: ['img1.jpg', 'img2.jpg'] }
   ]
 });
 
@@ -134,11 +141,12 @@ interface GoogleDriveLoaderConfig {
 
 ### Source Types
 
-**Folder Source** - Load all images from folders:
+Sources are identified by shape (which key is present).
+
+**Folder Source** - Load all images from folders (identified by the `folders` key):
 
 ```typescript
 {
-  type: 'folder',
   folders: [
     'https://drive.google.com/drive/folders/FOLDER_ID',
     // or just the folder ID
@@ -148,11 +156,10 @@ interface GoogleDriveLoaderConfig {
 }
 ```
 
-**Files Source** - Load specific files:
+**Files Source** - Load specific files (identified by the `files` key):
 
 ```typescript
 {
-  type: 'files',
   files: [
     'https://drive.google.com/file/d/FILE_ID/view',
     // or just the file ID
@@ -165,18 +172,16 @@ interface GoogleDriveLoaderConfig {
 
 ```typescript
 const cloud = new ImageCloud({
-  loader: {
-    type: 'googleDrive',
+  loaders: [{
     googleDrive: {
       apiKey: 'YOUR_API_KEY',
       sources: [
         {
-          type: 'folder',
           folders: ['https://drive.google.com/drive/folders/FOLDER_ID']
         }
       ]
     }
-  }
+  }]
 });
 ```
 
@@ -187,7 +192,7 @@ import { GoogleDriveLoader, ImageFilter } from '@frybynite/image-cloud';
 
 const loader = new GoogleDriveLoader({
   apiKey: 'YOUR_API_KEY',
-  sources: [{ type: 'folder', folders: ['FOLDER_ID'] }]
+  sources: [{ folders: ['FOLDER_ID'] }]
 });
 
 await loader.prepare(new ImageFilter());
@@ -223,22 +228,23 @@ interface CompositeLoaderConfig {
 
 ### Usage via Config
 
+Use the `loaders` array with multiple entries — composite behavior is implicit:
+
 ```typescript
 const cloud = new ImageCloud({
-  loader: {
-    type: 'composite',
-    composite: {
-      loaders: [
-        new StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['local1.jpg', 'local2.jpg'] }]
-        }),
-        new GoogleDriveLoader({
-          apiKey: 'YOUR_API_KEY',
-          sources: [{ type: 'folder', folders: ['FOLDER_ID'] }]
-        })
-      ]
+  loaders: [
+    {
+      static: {
+        sources: [{ urls: ['local1.jpg', 'local2.jpg'] }]
+      }
+    },
+    {
+      googleDrive: {
+        apiKey: 'YOUR_API_KEY',
+        sources: [{ folders: ['FOLDER_ID'] }]
+      }
     }
-  }
+  ]
 });
 ```
 
@@ -254,8 +260,8 @@ import {
 
 const composite = new CompositeLoader({
   loaders: [
-    new StaticImageLoader({ sources: [{ type: 'urls', urls: ['a.jpg'] }] }),
-    new GoogleDriveLoader({ apiKey: 'KEY', sources: [{ type: 'folder', folders: ['ID'] }] })
+    new StaticImageLoader({ sources: [{ urls: ['a.jpg'] }] }),
+    new GoogleDriveLoader({ apiKey: 'KEY', sources: [{ folders: ['ID'] }] })
   ]
 });
 
@@ -332,15 +338,14 @@ class MyCustomLoader implements ImageLoader {
 }
 ```
 
-Use with CompositeLoader or pass directly to ImageCloud:
+Use with CompositeLoader:
 
 ```typescript
-const cloud = new ImageCloud({
-  loader: {
-    type: 'composite',
-    composite: {
-      loaders: [new MyCustomLoader()]
-    }
-  }
+import { CompositeLoader, ImageFilter } from '@frybynite/image-cloud';
+
+const composite = new CompositeLoader({
+  loaders: [new MyCustomLoader()]
 });
+
+await composite.prepare(new ImageFilter());
 ```

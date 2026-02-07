@@ -215,9 +215,8 @@
         ];
 
         const loaderConfig = {
-            type: 'static',
             static: {
-                sources: [{ type: 'urls', urls: sampleImages }],
+                sources: [{ urls: sampleImages }],
                 validationMethod: 'none'
             }
         };
@@ -228,7 +227,7 @@
         // Grid: arranges images in rows/columns with optional stagger and jitter
         const gridCloud = new ImageCloud({
             container: 'cloud-grid',
-            loader: loaderConfig,
+            loaders: [loaderConfig],
             layout: {
                 algorithm: 'grid',
                 sizing: { base: 100 },
@@ -246,7 +245,7 @@
         // Spiral: images along a spiral path from center outward
         const spiralCloud = new ImageCloud({
             container: 'cloud-spiral',
-            loader: loaderConfig,
+            loaders: [loaderConfig],
             layout: {
                 algorithm: 'spiral',
                 sizing: { base: 80 },
@@ -262,7 +261,7 @@
         // Cluster: organic groupings, like photos scattered on a table
         const clusterCloud = new ImageCloud({
             container: 'cloud-cluster',
-            loader: loaderConfig,
+            loaders: [loaderConfig],
             layout: {
                 algorithm: 'cluster',
                 sizing: { base: 90 },
@@ -279,7 +278,7 @@
         // Wave: images along flowing sine wave curves
         const waveCloud = new ImageCloud({
             container: 'cloud-wave',
-            loader: loaderConfig,
+            loaders: [loaderConfig],
             layout: {
                 algorithm: 'wave',
                 sizing: { base: 100 },
@@ -298,7 +297,7 @@
         // Radial Cloud (existing)
         const radialCloud = new ImageCloud({
             container: 'cloud-radial',
-            loader: loaderConfig,
+            loaders: [loaderConfig],
             layout: {
                 algorithm: 'radial',
                 sizing: { base: 100 }
@@ -308,7 +307,7 @@
         // Random Cloud (existing)
         const randomCloud = new ImageCloud({
             container: 'cloud-random',
-            loader: loaderConfig,
+            loaders: [loaderConfig],
             layout: {
                 algorithm: 'random',
                 sizing: { base: 120 }
@@ -346,7 +345,7 @@
             // Create new cloud
             const cloud = new ImageCloud({
                 container: containerId,
-                loader: loaderConfig,
+                loaders: [loaderConfig],
                 layout: config
             });
 
@@ -422,7 +421,7 @@
             // Create new cloud with image rotation config
             const cloud = new ImageCloud({
                 container: 'cloud-wave',
-                loader: loaderConfig,
+                loaders: [loaderConfig],
                 layout: {
                     algorithm: 'wave',
                     sizing: { base: 100 },

@@ -21,10 +21,7 @@ async function initGallery(page: any, stylingConfig: object = {}) {
     // @ts-ignore
     window.gallery = new window.ImageCloud({
       container: 'imageCloud',
-      loader: {
-        type: 'static',
-        static: { sources: [{ type: 'urls', urls }], validateUrls: false }
-      },
+      loaders: [{ static: { sources: [{ urls }], validateUrls: false } }],
       layout: {
         algorithm: 'grid',
         rotation: { enabled: false },

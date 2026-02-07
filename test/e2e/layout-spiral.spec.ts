@@ -26,10 +26,7 @@ async function initGallery(page: any, spiralConfig: object = {}) {
     // @ts-ignore
     window.gallery = new window.ImageCloud({
       container: 'imageCloud',
-      loader: {
-        type: 'static',
-        static: { sources: [{ type: 'urls', urls }], validateUrls: false }
-      },
+      loaders: [{ static: { sources: [{ urls }], validateUrls: false } }],
       layout: {
         algorithm: 'spiral',
         rotation: { enabled: true, range: { min: -10, max: 10 } },
@@ -247,10 +244,7 @@ test.describe('Spiral Layout Algorithm', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: { sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }], validateUrls: false }
-          },
+          loaders: [{ static: { sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }], validateUrls: false } }],
           layout: { algorithm: 'spiral', spiral: { spiralType: 'golden' } },
           animation: { duration: 100 }
         });
@@ -276,10 +270,7 @@ test.describe('Spiral Layout Algorithm', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: { sources: [{ type: 'urls', urls: imageUrls }], validateUrls: false }
-          },
+          loaders: [{ static: { sources: [{ urls: imageUrls }], validateUrls: false } }],
           layout: { algorithm: 'spiral', spiral: { spiralType: 'golden' } },
           animation: { duration: 50, queue: { enabled: true, interval: 10 } }
         });

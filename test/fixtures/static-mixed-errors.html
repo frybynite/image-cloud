@@ -17,11 +17,9 @@
     window.ImageCloud = ImageCloud;
     window.gallery = new ImageCloud({
       container: 'imageCloud',
-      loader: {
-        type: 'static',
+      loaders: [{
         static: {
           sources: [{
-            type: 'urls',
             urls: [
               '/test/fixtures/images/image1.jpg',
               '/nonexistent1.jpg',
@@ -30,7 +28,7 @@
           }],
           validateUrls: false
         }
-      },
+      }],
       debug: true
     });
 

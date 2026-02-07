@@ -60,20 +60,18 @@
             const cloud = new ImageCloud({
                 // 'container' — the id of the div where images will be rendered (or an HTMLElement)
                 container: 'imageCloud',
-                loader: {
+                loaders: [{
                     // 'googleDrive' loader fetches images from shared Google Drive folders
-                    type: 'googleDrive',
                     googleDrive: {
                         apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc',
                         sources: [
                             {
-                                type: 'folder',
                                 folders: ['https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing'],
                                 recursive: true  // include subfolders
                             }
                         ]
                     }
-                }
+                }]
             });
 
             // init() loads images and renders the cloud. Returns a Promise.

@@ -59,12 +59,9 @@ test.describe('Gallery Initialization', () => {
       // @ts-ignore
       const gallery = new window.ImageCloud({
         container: 'nonexistent',
-        loader: {
-          type: 'static',
-          static: {
-            sources: [{ type: 'urls', urls: ['/test/fixtures/images/image1.jpg'] }]
-          }
-        }
+        loaders: [{ static: {
+            sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }]
+          } }]
       });
       // @ts-ignore
       gallery.init();

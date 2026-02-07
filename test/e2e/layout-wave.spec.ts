@@ -31,10 +31,7 @@ async function initGallery(page: any, waveConfig: object = {}, imageCount = 9) {
     // @ts-ignore
     window.gallery = new window.ImageCloud({
       container: 'imageCloud',
-      loader: {
-        type: 'static',
-        static: { sources: [{ type: 'urls', urls }], validateUrls: false }
-      },
+      loaders: [{ static: { sources: [{ urls }], validateUrls: false } }],
       layout: {
         algorithm: 'wave',
         rotation: { enabled: true, range: { min: -10, max: 10 } },
@@ -276,11 +273,8 @@ test.describe('Wave Layout Algorithm', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
+          loaders: [{ static: {
               sources: [{
-                type: 'urls',
                 urls: [
                   '/test/fixtures/images/image1.jpg',
                   '/test/fixtures/images/image2.jpg',
@@ -288,8 +282,7 @@ test.describe('Wave Layout Algorithm', () => {
                 ]
               }],
               validateUrls: false
-            }
-          },
+            } }],
           layout: {
             algorithm: 'wave',
             rotation: { enabled: false },

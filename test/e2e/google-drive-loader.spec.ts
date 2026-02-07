@@ -136,7 +136,7 @@ test.describe('Google Drive Loader', () => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({
           apiKey: 'INVALID_API_KEY_12345',
-          sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph'] }]
+          sources: [{ folders: ['https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph'] }]
         });
         try {
           // Create a mock filter for testing
@@ -161,7 +161,7 @@ test.describe('Google Drive Loader', () => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({
           apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc',
-          sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/NONEXISTENT_FOLDER_ID_12345'] }]
+          sources: [{ folders: ['https://drive.google.com/drive/folders/NONEXISTENT_FOLDER_ID_12345'] }]
         });
         try {
           // Create a mock filter for testing
@@ -189,7 +189,7 @@ test.describe('Google Drive Loader', () => {
       const result = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.GoogleDriveLoader({
-          sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/test'] }]
+          sources: [{ folders: ['https://drive.google.com/drive/folders/test'] }]
         });
         return loader.manualImageUrls(['abc123', 'def456']);
       });

@@ -5,10 +5,12 @@ The Image Cloud library offers a flexible configuration system to customize ever
 ## Table of Contents
 
 - [Pattern-Based Configuration](#pattern-based-configuration)
-- [Loader Configuration](#1-loader-configuration-loader)
-  - [Google Drive Loader](#google-drive-config-loadergoogledrive)
-  - [Static Loader](#static-loader-config-loaderstatic)
-  - [Composite Loader](#composite-loader-programmatic-only)
+- [Loader Configuration](#1-loader-configuration)
+  - [`images` Shorthand](#images-shorthand)
+  - [Static Loader](#static-loader)
+  - [Google Drive Loader](#google-drive-loader)
+  - [Multiple Loaders](#multiple-loaders-composite)
+  - [Shared Loader Config](#shared-loader-config-configloaders)
 - [Image Configuration](#2-image-configuration-image)
 - [Layout Configuration](#3-layout-configuration-layout)
   - [Layout Algorithms](#layout-algorithms)
@@ -38,7 +40,9 @@ Initialize the gallery using the `ImageCloudOptions` structure.
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery-id', // string ID or HTMLElement, defaults to 'imageCloud'
-  loader: { ... },
+  images: [...],              // shorthand: array of image URLs
+  loaders: [...],             // array of loader entries
+  config: { loaders: {...} }, // shared loader settings
   image: { ... },
   layout: { ... },
   animation: { ... },
@@ -61,145 +65,147 @@ const gallery = new ImageCloud({ container: el });
 
 If omitted, defaults to the element with ID `'imageCloud'`.
 
-### 1. Loader Configuration (`loader`)
+### 1. Loader Configuration
 
-Controls how images are fetched and validated.
+Controls how images are fetched and validated. Loaders are configured via `images` (shorthand), `loaders` (array of loader entries), and `config.loaders` (shared settings).
+
+#### `images` Shorthand
+
+The simplest way to load images — a top-level array of URLs:
+
+```typescript
+const gallery = new ImageCloud({
+  container: 'my-gallery',
+  images: [
+    'https://example.com/photo1.jpg',
+    'https://example.com/photo2.jpg',
+    'https://example.com/photo3.jpg'
+  ]
+});
+```
+
+The `images` shorthand is prepended as the first static loader entry. You can combine `images` with explicit `loaders` — the shorthand images come first.
+
+#### Static Loader
+
+Load images from direct URLs, local file paths, or JSON endpoints. Configured as `{ static: {...} }` within the `loaders` array.
+
+```typescript
+loaders: [{
+  static: {
+    sources: [...],                      // Required: Array of sources
+    validateUrls: true,                  // Optional: Verify URLs exist
+    validationTimeout: 5000,             // Optional: Timeout in ms
+    validationMethod: 'head',            // Optional: 'head', 'simple', or 'none'
+    failOnAllMissing: true,              // Optional: Fail if all URLs invalid
+    allowedExtensions: ['jpg', 'png'],   // Optional: Filter by extension
+    debugLogging: false                  // Optional: Enable debug output
+  }
+}]
+```
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `type` | `'googleDrive' \| 'static' \| 'composite'` | `'googleDrive'` | The primary source type for images. |
-| `googleDrive` | `GoogleDriveLoaderConfig` | *See below* | Configuration for Google Drive loading. |
-| `static` | `StaticLoaderConfig` | *See below* | Configuration for static image loading. |
-| `composite` | `CompositeLoaderConfig` | *See below* | Configuration for combining multiple loaders. |
-
-#### Google Drive Config (`loader.googleDrive`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `apiKey` | `string` | `''` | **Required.** Your Google Drive API Key. |
-| `sources` | `GoogleDriveSource[]` | `[]` | **Required.** Array of folder or file sources. |
-| `apiEndpoint` | `string` | `'https://www.googleapis.com/drive/v3/files'` | Google Drive API endpoint. |
-| `allowedExtensions` | `string[]` | `['jpg', 'jpeg', ...]` | Allowed image file extensions. |
-| `debugLogging` | `boolean` | `false` | Enable debug logs for the loader. |
-
-**Google Drive Source Objects:**
-*   **Folder:** `{ type: 'folder', folders: string[], recursive?: boolean }`
-*   **Files:** `{ type: 'files', files: string[] }`
-
-#### Static Loader Config (`loader.static`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `sources` | `StaticSource[]` | `[]` | Array of static sources. Required unless `urls` shorthand is used. |
-| `urls` | `string[]` | - | **Shorthand.** Direct array of image URLs, auto-wrapped as `sources: [{ type: 'urls', urls: [...] }]`. |
+| `sources` | `StaticSource[]` | `[]` | Array of URL, path, or JSON sources. Required. |
 | `validateUrls` | `boolean` | `true` | Check if image URLs exist before loading. |
 | `validationTimeout` | `number` | `5000` | Timeout (ms) for URL validation. |
 | `validationMethod` | `'head' \| 'simple' \| 'none'` | `'head'` | Method used to validate URLs. |
 | `failOnAllMissing` | `boolean` | `true` | Throw error if no images are found. |
 | `allowedExtensions` | `string[]` | `['jpg', 'jpeg', ...]` | Allowed image file extensions. |
+| `debugLogging` | `boolean` | `false` | Enable debug logs for the loader. |
 
-**Static Source Objects:**
-*   **URLs:** `{ type: 'urls', urls: string[] }` — Direct image URLs
-*   **Path:** `{ type: 'path', basePath: string, files: string[] }` — Base path + filenames
-*   **JSON:** `{ type: 'json', url: string }` — JSON endpoint returning `{ "images": ["url1", "url2", ...] }`
-
-**URLs Shorthand** — the simplest way to load images:
-```typescript
-const gallery = new ImageCloud({
-  container: 'my-gallery',
-  loader: {
-    type: 'static',
-    static: {
-      urls: [
-        'https://example.com/photo1.jpg',
-        'https://example.com/photo2.jpg',
-        'https://example.com/photo3.jpg'
-      ]
-    }
-  }
-});
-```
-
-**JSON Source** — load from a JSON endpoint:
-```typescript
-const gallery = new ImageCloud({
-  container: 'my-gallery',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [
-        { type: 'json', url: 'https://api.example.com/gallery/images.json' }
-      ]
-    }
-  }
-});
-// Endpoint must return: { "images": ["https://...", "https://..."] }
-```
+**Static Source Objects** (identified by shape, not a `type` field):
+*   **URLs:** `{ urls: string[] }` — Direct image URLs
+*   **Path:** `{ path: string, files: string[] }` — Base path + filenames
+*   **JSON:** `{ json: string }` — JSON endpoint returning `{ "images": ["url1", "url2", ...] }`
 
 **JSON Source Behavior:**
 - Fetch uses a 10-second timeout via `AbortController`
 - Endpoint must return JSON with shape `{ "images": ["url1", "url2", ...] }`
 - Fetched URLs are processed through the standard validation pipeline
 
-#### Composite Loader (`loader.composite`)
+#### Google Drive Loader
 
-The `CompositeLoader` combines multiple loaders of any type and loads them in parallel. This is useful for combining images from different sources (e.g., Google Drive + static URLs).
+Load images from public Google Drive folders. Configured as `{ googleDrive: {...} }` within the `loaders` array.
 
 ```typescript
-const gallery = new ImageCloud({
-  container: 'my-gallery',
-  loader: {
-    type: 'composite',
-    composite: {
-      loaders: [
-        {
-          type: 'googleDrive',
-          googleDrive: {
-            apiKey: 'YOUR_API_KEY',
-            sources: [{ type: 'folder', folders: ['https://drive.google.com/...'] }]
-          }
-        },
-        {
-          type: 'static',
-          static: {
-            sources: [{ type: 'urls', urls: ['https://example.com/image1.jpg'] }]
-          }
-        }
-      ],
-      debugLogging: false
-    }
+loaders: [{
+  googleDrive: {
+    apiKey: 'YOUR_API_KEY',           // Required: Google API key
+    sources: [...],                    // Required: Array of sources
+    allowedExtensions: ['jpg', 'png'], // Optional: Filter by extension
+    debugLogging: false                // Optional: Enable debug output
   }
-});
+}]
 ```
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `loaders` | `LoaderConfig[]` | *Required* | Array of loader configurations (googleDrive, static, or nested composite). |
-| `debugLogging` | `boolean` | `false` | Enable debug logs for the composite loader. |
+| `apiKey` | `string` | - | **Required.** Your Google Drive API Key. |
+| `sources` | `GoogleDriveSource[]` | - | **Required.** Array of folder or file sources. |
+| `apiEndpoint` | `string` | `'https://www.googleapis.com/drive/v3/files'` | Google Drive API endpoint. |
+| `allowedExtensions` | `string[]` | `['jpg', 'jpeg', ...]` | Allowed image file extensions. |
+| `debugLogging` | `boolean` | `false` | Enable debug logs for the loader. |
 
-**Behavior:**
-- All loaders are prepared in parallel using `Promise.all()`
-- If one loader fails, others continue (failed loader contributes 0 images)
-- URLs are combined in the order loaders appear in the array
-- Supports nesting (composite loaders can contain other composite loaders)
+**Google Drive Source Objects** (identified by shape):
+*   **Folder:** `{ folders: string[], recursive?: boolean }` — Load all images from folder(s)
+*   **Files:** `{ files: string[] }` — Load specific files by URL or ID
 
-**Programmatic Usage:**
+#### Multiple Loaders (Composite)
 
-You can also create a CompositeLoader directly for more control:
+Use the `loaders` array with multiple entries to pull images from different sources. Composite behavior is implicit — no wrapper needed.
 
 ```typescript
-import { CompositeLoader, GoogleDriveLoader, StaticImageLoader, ImageFilter } from '@frybynite/image-cloud';
-
-const compositeLoader = new CompositeLoader({
+const gallery = new ImageCloud({
+  container: 'my-gallery',
   loaders: [
-    new GoogleDriveLoader({ apiKey: '...', sources: [...] }),
-    new StaticImageLoader({ sources: [...] })
+    {
+      googleDrive: {
+        apiKey: 'YOUR_API_KEY',
+        sources: [{ folders: ['https://drive.google.com/...'] }]
+      }
+    },
+    {
+      static: {
+        sources: [{ urls: ['https://example.com/image1.jpg'] }]
+      }
+    }
   ]
 });
-
-await compositeLoader.prepare(new ImageFilter());
-console.log(compositeLoader.imageURLs());  // Combined URLs
 ```
+
+**Behavior:**
+- All loaders are prepared in parallel
+- If one loader fails, others continue (failed loader contributes 0 images)
+- URLs are combined in the order loaders appear in the array
+
+#### Shared Loader Config (`config.loaders`)
+
+Use `config.loaders` to set defaults that apply to all loaders. Individual loader entries can override these settings.
+
+```typescript
+config: {
+  loaders: {
+    validateUrls: true,            // Default: true
+    validationTimeout: 5000,       // Default: 5000
+    validationMethod: 'head',      // Default: 'head'
+    failOnAllMissing: true,        // Default: true
+    allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
+    debugLogging: false            // Default: false
+  }
+}
+```
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading. |
+| `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms). |
+| `validationMethod` | `'head' \| 'simple' \| 'none'` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (URL format check), `'none'`. |
+| `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation. |
+| `allowedExtensions` | `string[]` | `['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']` | Filter images by extension. |
+| `debugLogging` | `boolean` | `false` | Output debug information to console. |
+
+**Config merge order:** `config.loaders` (shared defaults) → individual loader entry overrides → final config passed to loader constructor.
 
 ### 2. Image Configuration (`image`)
 
@@ -736,7 +742,7 @@ When you don't specify `start.position`, the library automatically chooses the b
 // Uses layout-aware defaults automatically
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   layout: { algorithm: 'radial' }  // Will use 'center' entry by default
 });
 ```
@@ -1500,71 +1506,68 @@ All available parameters with example values:
   "container": "imageCloud",                    // ID of the container element (string ID or HTMLElement in JS/TS)
   "debug": false,                               // Default. Enable debug logging
 
-  "loader": {
-    "type": "googleDrive",                      // Default. "googleDrive" | "static" | "composite"
+  "images": [                                   // Shorthand: array of image URLs
+    "https://example.com/image1.jpg",
+    "https://example.com/image2.jpg"
+  ],
 
-    "googleDrive": {
-      "apiKey": "YOUR_GOOGLE_API_KEY",          // Required
-      "sources": [                              // Required
-        {
-          "type": "folder",                     // Load from folder(s)
-          "folders": [
-            "https://drive.google.com/drive/folders/FOLDER_ID"
-          ],
-          "recursive": true                     // Include subfolders
-        },
-        {
-          "type": "files",                      // Load specific files
-          "files": [
-            "https://drive.google.com/file/d/FILE_ID_1",
-            "https://drive.google.com/file/d/FILE_ID_2"
-          ]
-        }
-      ],
-      "apiEndpoint": "https://www.googleapis.com/drive/v3/files",  // Default
-      "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
-      "debugLogging": false                     // Default
+  "loaders": [                                  // Array of loader entries
+    {
+      "static": {                               // Key-based loader identification
+        "sources": [                            // Required
+          {
+            "urls": [                           // Shape-based: URLs source
+              "https://example.com/image1.jpg",
+              "https://example.com/image2.jpg"
+            ]
+          },
+          {
+            "path": "/images/gallery/",         // Shape-based: Path source
+            "files": ["photo1.jpg", "photo2.png"]
+          },
+          {
+            "json": "https://api.example.com/images.json"  // Shape-based: JSON source
+          }
+        ],
+        "validateUrls": true,                   // Default (per-loader override)
+        "validationTimeout": 5000,              // Default
+        "validationMethod": "head",             // Default. "head" | "simple" | "none"
+        "failOnAllMissing": true,               // Default
+        "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
+        "debugLogging": false                   // Default
+      }
     },
+    {
+      "googleDrive": {                          // Key-based loader identification
+        "apiKey": "YOUR_GOOGLE_API_KEY",        // Required
+        "sources": [                            // Required
+          {
+            "folders": [                        // Shape-based: Folder source
+              "https://drive.google.com/drive/folders/FOLDER_ID"
+            ],
+            "recursive": true                   // Include subfolders
+          },
+          {
+            "files": [                          // Shape-based: Files source
+              "https://drive.google.com/file/d/FILE_ID_1",
+              "https://drive.google.com/file/d/FILE_ID_2"
+            ]
+          }
+        ],
+        "apiEndpoint": "https://www.googleapis.com/drive/v3/files",  // Default
+        "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
+        "debugLogging": false                   // Default
+      }
+    }
+  ],
 
-    "static": {
-      "sources": [                              // Required
-        {
-          "type": "urls",                       // Direct image URLs
-          "urls": [
-            "https://example.com/image1.jpg",
-            "https://example.com/image2.jpg"
-          ]
-        },
-        {
-          "type": "path",                       // Base path + filenames
-          "basePath": "/images/gallery/",
-          "files": ["photo1.jpg", "photo2.png"]
-        },
-        {
-          "type": "json",                       // JSON endpoint source
-          "url": "https://api.example.com/images.json"
-        }
-      ],
-      // "urls": ["https://..."],               // Shorthand (auto-wrapped as sources[0])
+  "config": {
+    "loaders": {                                // Shared loader settings
       "validateUrls": true,                     // Default
       "validationTimeout": 5000,                // Default. Timeout in ms
       "validationMethod": "head",               // Default. "head" | "simple" | "none"
       "failOnAllMissing": true,                 // Default
       "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
-      "debugLogging": false                     // Default
-    },
-
-    "composite": {
-      "loaders": [                              // Required. Array of loader configs
-        {
-          "type": "googleDrive",
-          "googleDrive": { /* ... */ }
-        },
-        {
-          "type": "static",
-          "static": { /* ... */ }
-        }
-      ],
       "debugLogging": false                     // Default
     }
   },
@@ -1807,12 +1810,7 @@ All available parameters with example values:
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [{ type: 'urls', urls: [...] }]
-    }
-  },
+  images: [...],
   image: {
     sizing: {
       mode: 'fixed',
@@ -1837,7 +1835,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     sizing: {
       mode: 'fixed',
@@ -1861,7 +1859,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     sizing: {
       mode: 'fixed',
@@ -1890,7 +1888,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     rotation: { mode: 'none' }  // No rotation for clean grid
   },
@@ -1913,7 +1911,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     sizing: {
       mode: 'fixed',
@@ -1936,18 +1934,16 @@ const gallery = new ImageCloud({
 ```jsonc
 {
   "container": "imageCloud",
-  "loader": {
-    "type": "googleDrive",
+  "loaders": [{
     "googleDrive": {
       "apiKey": "YOUR_API_KEY",
       "sources": [
         {
-          "type": "folder",
           "folders": ["https://drive.google.com/drive/folders/FOLDER_ID"]
         }
       ]
     }
-  }
+  }]
 }
 ```
 
@@ -1956,12 +1952,10 @@ const gallery = new ImageCloud({
 ```jsonc
 {
   "container": "imageCloud",
-  "loader": {
-    "type": "static",
+  "loaders": [{
     "static": {
       "sources": [
         {
-          "type": "urls",
           "urls": [
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg"
@@ -1969,25 +1963,20 @@ const gallery = new ImageCloud({
         }
       ]
     }
-  }
+  }]
 }
 ```
 
-### Static Loader (URLs Shorthand)
+### Static Loader (Images Shorthand)
 
 ```jsonc
 {
   "container": "imageCloud",
-  "loader": {
-    "type": "static",
-    "static": {
-      "urls": [
-        "https://example.com/photo1.jpg",
-        "https://example.com/photo2.jpg",
-        "https://example.com/photo3.jpg"
-      ]
-    }
-  }
+  "images": [
+    "https://example.com/photo1.jpg",
+    "https://example.com/photo2.jpg",
+    "https://example.com/photo3.jpg"
+  ]
 }
 ```
 
@@ -1996,55 +1985,45 @@ const gallery = new ImageCloud({
 ```jsonc
 {
   "container": "imageCloud",
-  "loader": {
-    "type": "static",
+  "loaders": [{
     "static": {
       "sources": [
-        { "type": "json", "url": "https://api.example.com/gallery/images.json" }
+        { "json": "https://api.example.com/gallery/images.json" }
       ]
     }
-  }
+  }]
 }
 ```
 
-### Composite Loader (Multiple Sources)
+### Multiple Loaders (Composite)
 
 ```jsonc
 {
   "container": "imageCloud",
-  "loader": {
-    "type": "composite",
-    "composite": {
-      "loaders": [
-        {
-          "type": "googleDrive",
-          "googleDrive": {
-            "apiKey": "YOUR_API_KEY",
-            "sources": [
-              {
-                "type": "folder",
-                "folders": ["https://drive.google.com/drive/folders/FOLDER_ID"]
-              }
+  "loaders": [
+    {
+      "googleDrive": {
+        "apiKey": "YOUR_API_KEY",
+        "sources": [
+          {
+            "folders": ["https://drive.google.com/drive/folders/FOLDER_ID"]
+          }
+        ]
+      }
+    },
+    {
+      "static": {
+        "sources": [
+          {
+            "urls": [
+              "https://example.com/extra1.jpg",
+              "https://example.com/extra2.jpg"
             ]
           }
-        },
-        {
-          "type": "static",
-          "static": {
-            "sources": [
-              {
-                "type": "urls",
-                "urls": [
-                  "https://example.com/extra1.jpg",
-                  "https://example.com/extra2.jpg"
-                ]
-              }
-            ]
-          }
-        }
-      ]
+        ]
+      }
     }
-  }
+  ]
 }
 ```
 
@@ -2053,12 +2032,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [{ type: 'urls', urls: [...] }]
-    }
-  },
+  images: [...],
   image: {
     sizing: { mode: 'fixed', height: 100 }
   },
@@ -2079,7 +2053,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     sizing: { mode: 'fixed', height: 120 }
   },
@@ -2102,7 +2076,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     sizing: { mode: 'fixed', height: 90 }
   },
@@ -2129,17 +2103,7 @@ const gallery = new ImageCloud({
 ```jsonc
 {
   "container": "imageCloud",
-  "loader": {
-    "type": "static",
-    "static": {
-      "sources": [
-        {
-          "type": "urls",
-          "urls": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
-        }
-      ]
-    }
-  },
+  "images": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"],
   "layout": {
     "algorithm": "spiral",
     "sizing": { "base": 100 }
@@ -2164,7 +2128,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     sizing: { mode: 'fixed', height: 120 },
     rotation: { mode: 'tangent' }  // Images tilt along wave curve
@@ -2192,7 +2156,7 @@ const gallery = new ImageCloud({
 ```typescript
 const gallery = new ImageCloud({
   container: 'my-gallery',
-  loader: { ... },
+  images: [...],
   image: {
     sizing: { mode: 'fixed', height: 90 },
     rotation: { mode: 'tangent' }  // Images follow wave curve

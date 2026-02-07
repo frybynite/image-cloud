@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // Unit tests for StaticImageLoader
-// Tests urls shorthand, json source type, and constructor validation
+// Tests url sources, json source type, and constructor validation
 
 test.describe('StaticImageLoader Unit Tests', () => {
 
@@ -34,7 +34,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
         try {
           // @ts-ignore
           new window.StaticImageLoader({
-            sources: [{ type: 'urls', urls: ['https://example.com/a.jpg'] }]
+            sources: [{ urls: ['https://example.com/a.jpg'] }]
           });
           return null;
         } catch (e) {
@@ -44,12 +44,15 @@ test.describe('StaticImageLoader Unit Tests', () => {
       expect(error).toBeNull();
     });
 
-    test('accepts urls shorthand', async ({ page }) => {
+    test('accepts multiple sources', async ({ page }) => {
       const error = await page.evaluate(() => {
         try {
           // @ts-ignore
           new window.StaticImageLoader({
-            urls: ['https://example.com/a.jpg', 'https://example.com/b.jpg']
+            sources: [
+              { urls: ['https://example.com/a.jpg'] },
+              { urls: ['https://example.com/b.jpg'] }
+            ]
           });
           return null;
         } catch (e) {
@@ -59,11 +62,11 @@ test.describe('StaticImageLoader Unit Tests', () => {
       expect(error).toBeNull();
     });
 
-    test('throws when urls is empty and no sources', async ({ page }) => {
+    test('throws when sources is empty', async ({ page }) => {
       const error = await page.evaluate(() => {
         try {
           // @ts-ignore
-          new window.StaticImageLoader({ urls: [] });
+          new window.StaticImageLoader({ sources: [] });
           return null;
         } catch (e) {
           return (e as Error).message;
@@ -74,17 +77,19 @@ test.describe('StaticImageLoader Unit Tests', () => {
 
   });
 
-  test.describe('URLs Shorthand', () => {
+  test.describe('URL Sources', () => {
 
-    test('loads images from urls shorthand', async ({ page }) => {
+    test('loads images from urls source', async ({ page }) => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          urls: [
-            'https://example.com/a.jpg',
-            'https://example.com/b.png',
-            'https://example.com/c.webp'
-          ],
+          sources: [{
+            urls: [
+              'https://example.com/a.jpg',
+              'https://example.com/b.png',
+              'https://example.com/c.webp'
+            ]
+          }],
           validateUrls: false
         });
         // @ts-ignore
@@ -107,16 +112,18 @@ test.describe('StaticImageLoader Unit Tests', () => {
       ]);
     });
 
-    test('urls shorthand filters non-image extensions', async ({ page }) => {
+    test('urls source filters non-image extensions', async ({ page }) => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          urls: [
-            'https://example.com/photo.jpg',
-            'https://example.com/document.pdf',
-            'https://example.com/pic.png',
-            'https://example.com/data.csv'
-          ],
+          sources: [{
+            urls: [
+              'https://example.com/photo.jpg',
+              'https://example.com/document.pdf',
+              'https://example.com/pic.png',
+              'https://example.com/data.csv'
+            ]
+          }],
           validateUrls: false
         });
         // @ts-ignore
@@ -136,12 +143,14 @@ test.describe('StaticImageLoader Unit Tests', () => {
       ]);
     });
 
-    test('urls shorthand prepends to sources', async ({ page }) => {
+    test('multiple sources are combined in order', async ({ page }) => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          urls: ['https://example.com/first.jpg'],
-          sources: [{ type: 'urls', urls: ['https://example.com/second.jpg'] }],
+          sources: [
+            { urls: ['https://example.com/first.jpg'] },
+            { urls: ['https://example.com/second.jpg'] }
+          ],
           validateUrls: false
         });
         // @ts-ignore
@@ -167,7 +176,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          sources: [{ type: 'json', url: '/test/fixtures/static-images.json' }],
+          sources: [{ json: '/test/fixtures/static-images.json' }],
           validateUrls: false
         });
         // @ts-ignore
@@ -200,7 +209,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
         try {
           // @ts-ignore
           const loader = new window.StaticImageLoader({
-            sources: [{ type: 'json', url: '/test/fixtures/bad-shape.json' }],
+            sources: [{ json: '/test/fixtures/bad-shape.json' }],
             validateUrls: false
           });
           // @ts-ignore
@@ -230,7 +239,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          sources: [{ type: 'json', url: '/test/fixtures/bad-shape.json' }],
+          sources: [{ json: '/test/fixtures/bad-shape.json' }],
           validateUrls: false
         });
         // @ts-ignore
@@ -254,7 +263,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          sources: [{ type: 'json', url: '/test/fixtures/not-found.json' }],
+          sources: [{ json: '/test/fixtures/not-found.json' }],
           validateUrls: false
         });
         // @ts-ignore
@@ -274,7 +283,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          sources: [{ type: 'json' }],  // Missing url
+          sources: [{ json: '' }],  // Missing url
           validateUrls: false
         });
         // @ts-ignore
@@ -298,7 +307,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const result = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          urls: ['https://example.com/a.jpg']
+          sources: [{ urls: ['https://example.com/a.jpg'] }]
         });
         return loader.isPrepared();
       });
@@ -309,7 +318,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const error = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          urls: ['https://example.com/a.jpg']
+          sources: [{ urls: ['https://example.com/a.jpg'] }]
         });
         try {
           loader.imagesLength();
@@ -325,7 +334,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const error = await page.evaluate(() => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          urls: ['https://example.com/a.jpg']
+          sources: [{ urls: ['https://example.com/a.jpg'] }]
         });
         try {
           loader.imageURLs();
@@ -341,7 +350,7 @@ test.describe('StaticImageLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          urls: ['https://example.com/a.jpg'],
+          sources: [{ urls: ['https://example.com/a.jpg'] }],
           validateUrls: false
         });
         // @ts-ignore

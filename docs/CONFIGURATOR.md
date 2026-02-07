@@ -109,12 +109,7 @@ import { ImageGallery } from 'image-cloud';
 
 const gallery = new ImageCloud({
   container: 'myGallery',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [{ type: 'urls', urls: myImageUrls }]
-    }
-  },
+  images: myImageUrls,
   // Paste generated config here:
   layout: {
     algorithm: 'radial',

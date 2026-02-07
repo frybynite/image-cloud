@@ -13,7 +13,7 @@
  * - manualImageUrls(imageIds)
  */
 
-import type { ImageLoader, IImageFilter, GoogleDriveResponse, GoogleDriveLoaderConfig, GoogleDriveSource } from '../config/types';
+import type { ImageLoader, IImageFilter, GoogleDriveResponse, GoogleDriveLoaderInnerConfig, GoogleDriveSource } from '../config/types';
 
 export class GoogleDriveLoader implements ImageLoader {
   private apiKey: string;
@@ -25,7 +25,7 @@ export class GoogleDriveLoader implements ImageLoader {
   private _prepared: boolean = false;
   private _discoveredUrls: string[] = [];
 
-  constructor(config: Partial<GoogleDriveLoaderConfig> = {}) {
+  constructor(config: GoogleDriveLoaderInnerConfig) {
     this.apiKey = config.apiKey ?? '';
     this.apiEndpoint = config.apiEndpoint ?? 'https://www.googleapis.com/drive/v3/files';
     this.debugLogging = config.debugLogging ?? false;
@@ -45,13 +45,13 @@ export class GoogleDriveLoader implements ImageLoader {
     this._discoveredUrls = [];
 
     for (const source of this.sources) {
-      if (source.type === 'folder') {
+      if ('folders' in source) {
         for (const folderUrl of source.folders) {
           const recursive = source.recursive !== undefined ? source.recursive : true;
           const urls = await this.loadFromFolder(folderUrl, filter, recursive);
           this._discoveredUrls.push(...urls);
         }
-      } else if (source.type === 'files') {
+      } else if ('files' in source) {
         const urls = await this.loadFiles(source.files, filter);
         this._discoveredUrls.push(...urls);
       }

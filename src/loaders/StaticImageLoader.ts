@@ -10,7 +10,7 @@
  * - isPrepared() - Check if loader has been prepared
  */
 
-import type { ImageLoader, IImageFilter, StaticSource, StaticLoaderConfig } from '../config/types';
+import type { ImageLoader, IImageFilter, StaticSource, StaticLoaderInnerConfig } from '../config/types';
 
 export class StaticImageLoader implements ImageLoader {
   private validateUrls: boolean;
@@ -23,22 +23,16 @@ export class StaticImageLoader implements ImageLoader {
   private _prepared: boolean = false;
   private _discoveredUrls: string[] = [];
 
-  constructor(config: Partial<StaticLoaderConfig> = {}) {
+  constructor(config: StaticLoaderInnerConfig) {
     this.validateUrls = config.validateUrls !== false;
     this.validationTimeout = config.validationTimeout ?? 5000;
     this.validationMethod = config.validationMethod ?? 'head';
     this.debugLogging = config.debugLogging ?? false;
-
-    // Handle urls shorthand: auto-wrap as a sources entry
-    if (config.urls && Array.isArray(config.urls) && config.urls.length > 0) {
-      this.sources = [{ type: 'urls', urls: config.urls }, ...(config.sources ?? [])];
-    } else {
-      this.sources = config.sources ?? [];
-    }
+    this.sources = config.sources ?? [];
 
     // Validate that we have sources configured
     if (!this.sources || this.sources.length === 0) {
-      throw new Error('StaticImageLoader requires at least one source (or urls shorthand) to be configured');
+      throw new Error('StaticImageLoader requires at least one source to be configured');
     }
 
     this.log('StaticImageLoader initialized with config:', config);
@@ -98,25 +92,25 @@ export class StaticImageLoader implements ImageLoader {
   }
 
   /**
-   * Process a single source object
-   * @param source - Source configuration with type, urls, basePath, files
+   * Process a single source object using shape-based detection
+   * @param source - Source configuration detected by key presence
    * @param filter - Filter to apply to discovered images
    * @returns Promise resolving to array of valid URLs from this source
    */
   private async processSource(source: StaticSource, filter: IImageFilter): Promise<string[]> {
-    if (!source || !source.type) {
-      console.warn('Invalid source object (missing type):', source);
+    if (!source) {
+      console.warn('Invalid source object:', source);
       return [];
     }
 
-    if (source.type === 'urls') {
-      return await this.processUrls(source.urls || [], filter);
-    } else if (source.type === 'path') {
-      return await this.processPath(source.basePath, source.files || [], filter);
-    } else if (source.type === 'json') {
-      return await this.processJson(source.url, filter);
+    if ('urls' in source) {
+      return await this.processUrls(source.urls, filter);
+    } else if ('path' in source) {
+      return await this.processPath(source.path, source.files, filter);
+    } else if ('json' in source) {
+      return await this.processJson(source.json, filter);
     } else {
-      console.warn(`Unknown source type: ${source.type}`);
+      console.warn('Unknown source shape:', source);
       return [];
     }
   }
@@ -166,11 +160,7 @@ export class StaticImageLoader implements ImageLoader {
    * @param filter - Filter to apply to discovered images
    * @returns Promise resolving to array of validated URLs
    */
-  private async processPath(basePath: string | undefined, files: string[], filter: IImageFilter): Promise<string[]> {
-    if (!basePath) {
-      console.warn('basePath is required for path-type sources');
-      return [];
-    }
+  private async processPath(basePath: string, files: string[], filter: IImageFilter): Promise<string[]> {
 
     if (!Array.isArray(files)) {
       console.warn('files must be an array:', files);
@@ -211,11 +201,7 @@ export class StaticImageLoader implements ImageLoader {
    * @param filter - Filter to apply to discovered images
    * @returns Promise resolving to array of validated URLs
    */
-  private async processJson(url: string | undefined, filter: IImageFilter): Promise<string[]> {
-    if (!url) {
-      console.warn('url is required for json-type sources');
-      return [];
-    }
+  private async processJson(url: string, filter: IImageFilter): Promise<string[]> {
 
     this.log(`Fetching JSON endpoint: ${url}`);
 

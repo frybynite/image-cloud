@@ -38,42 +38,40 @@ export interface TransformParams {
 // Loader Configuration
 // ============================================================================
 
-export type GoogleDriveSourceType = 'folder' | 'files';
+// === Static source types (shape-based, no 'type' discriminant) ===
+
+export interface StaticUrlsSource {
+  urls: string[];
+}
+
+export interface StaticPathSource {
+  path: string;
+  files: string[];
+}
+
+export interface StaticJsonSource {
+  json: string;
+}
+
+export type StaticSource = StaticUrlsSource | StaticPathSource | StaticJsonSource;
+
+// === Google Drive source types (shape-based) ===
 
 export interface GoogleDriveFolderSource {
-  type: 'folder';
   folders: string[];
   recursive?: boolean;
 }
 
 export interface GoogleDriveFilesSource {
-  type: 'files';
   files: string[];
 }
 
 export type GoogleDriveSource = GoogleDriveFolderSource | GoogleDriveFilesSource;
 
-export interface GoogleDriveLoaderConfig {
-  apiKey: string;
-  sources: GoogleDriveSource[];
-  apiEndpoint?: string;
-  allowedExtensions?: string[];
-  debugLogging?: boolean;
-}
+// === Loader configs (inner config objects) ===
 
-export type StaticSourceType = 'urls' | 'path' | 'json';
-
-export interface StaticSource {
-  type: StaticSourceType;
-  urls?: string[];
-  basePath?: string;
-  files?: string[];
-  url?: string;            // For 'json' source type: JSON endpoint URL
-}
-
-export interface StaticLoaderConfig {
-  sources?: StaticSource[];
-  urls?: string[];          // Shorthand: auto-wrapped as sources: [{ type: 'urls', urls: [...] }]
+export interface StaticLoaderInnerConfig {
+  sources: StaticSource[];
   validateUrls?: boolean;
   validationTimeout?: number;
   validationMethod?: 'head' | 'simple' | 'none';
@@ -82,16 +80,41 @@ export interface StaticLoaderConfig {
   debugLogging?: boolean;
 }
 
-export interface CompositeLoaderConfigJson {
-  loaders: LoaderConfig[];
+export interface GoogleDriveLoaderInnerConfig {
+  apiKey: string;
+  sources: GoogleDriveSource[];
+  apiEndpoint?: string;
+  allowedExtensions?: string[];
   debugLogging?: boolean;
 }
 
-export interface LoaderConfig {
-  type: 'googleDrive' | 'static' | 'composite';
-  googleDrive?: GoogleDriveLoaderConfig;
-  static?: StaticLoaderConfig;
-  composite?: CompositeLoaderConfigJson;
+// === Loader entries (key-based identification) ===
+
+export interface StaticLoaderEntry {
+  static: StaticLoaderInnerConfig;
+}
+
+export interface GoogleDriveLoaderEntry {
+  googleDrive: GoogleDriveLoaderInnerConfig;
+}
+
+export type LoaderEntry = StaticLoaderEntry | GoogleDriveLoaderEntry;
+
+// === Shared loader config ===
+
+export interface SharedLoaderConfig {
+  validateUrls?: boolean;
+  validationTimeout?: number;
+  validationMethod?: 'head' | 'simple' | 'none';
+  failOnAllMissing?: boolean;
+  allowedExtensions?: string[];
+  debugLogging?: boolean;
+}
+
+// === Config section ===
+
+export interface ConfigSection {
+  loaders?: SharedLoaderConfig;
 }
 
 // ============================================================================
@@ -467,7 +490,8 @@ export interface RenderingConfig {
 // ============================================================================
 
 export interface ImageCloudConfig {
-  loader: LoaderConfig;
+  loaders: LoaderEntry[];
+  config: ConfigSection;
   image: ImageConfig;
   layout: LayoutConfig;
   animation: AnimationConfig;
@@ -482,7 +506,9 @@ export type GalleryConfig = ImageCloudConfig;
 
 export interface ImageCloudOptions {
   container?: string | HTMLElement;
-  loader?: Partial<LoaderConfig>;
+  images?: string[];
+  loaders?: LoaderEntry[];
+  config?: ConfigSection;
   image?: Partial<ImageConfig>;
   layout?: Partial<LayoutConfig>;
   animation?: Partial<AnimationConfig>;
@@ -536,10 +562,6 @@ export interface LegacyConfig {
     apiEndpoint?: string;
     imageExtensions?: string[];
   };
-  loader?: {
-    type?: 'googleDrive' | 'static';
-    static?: StaticLoaderConfig;
-  };
   breakpoints?: {
     mobile?: number;
     tablet?: number;
@@ -558,8 +580,6 @@ export interface LegacyImageGalleryOptions {
   googleDrive?: {
     apiKey?: string;
   };
-  staticLoader?: StaticLoaderConfig;
-  config?: LegacyConfig;
 }
 
 // ============================================================================

@@ -38,7 +38,7 @@ test.describe('CompositeLoader Unit Tests', () => {
         try {
           // @ts-ignore
           const staticLoader = new window.StaticImageLoader({
-            sources: [{ type: 'urls', urls: ['https://example.com/image.jpg'] }]
+            sources: [{ urls: ['https://example.com/image.jpg'] }]
           });
           // @ts-ignore
           new window.CompositeLoader({ loaders: [staticLoader] });
@@ -58,7 +58,7 @@ test.describe('CompositeLoader Unit Tests', () => {
       const result = await page.evaluate(() => {
         // @ts-ignore
         const staticLoader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/image.jpg'] }]
+          sources: [{ urls: ['https://example.com/image.jpg'] }]
         });
         // @ts-ignore
         const loader = new window.CompositeLoader({ loaders: [staticLoader] });
@@ -71,7 +71,7 @@ test.describe('CompositeLoader Unit Tests', () => {
       const error = await page.evaluate(() => {
         // @ts-ignore
         const staticLoader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/image.jpg'] }]
+          sources: [{ urls: ['https://example.com/image.jpg'] }]
         });
         // @ts-ignore
         const loader = new window.CompositeLoader({ loaders: [staticLoader] });
@@ -89,7 +89,7 @@ test.describe('CompositeLoader Unit Tests', () => {
       const error = await page.evaluate(() => {
         // @ts-ignore
         const staticLoader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/image.jpg'] }]
+          sources: [{ urls: ['https://example.com/image.jpg'] }]
         });
         // @ts-ignore
         const loader = new window.CompositeLoader({ loaders: [staticLoader] });
@@ -111,12 +111,12 @@ test.describe('CompositeLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader1 = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/a.jpg', 'https://example.com/b.jpg'] }],
+          sources: [{ urls: ['https://example.com/a.jpg', 'https://example.com/b.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
         const loader2 = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/c.jpg'] }],
+          sources: [{ urls: ['https://example.com/c.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
@@ -145,17 +145,17 @@ test.describe('CompositeLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader1 = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/first.jpg'] }],
+          sources: [{ urls: ['https://example.com/first.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
         const loader2 = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/second.jpg'] }],
+          sources: [{ urls: ['https://example.com/second.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
         const loader3 = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/third.jpg'] }],
+          sources: [{ urls: ['https://example.com/third.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
@@ -177,12 +177,12 @@ test.describe('CompositeLoader Unit Tests', () => {
         // Loader with URLs that will be filtered out
         // @ts-ignore
         const emptyLoader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/file.pdf'] }], // PDFs filtered
+          sources: [{ urls: ['https://example.com/file.pdf'] }], // PDFs filtered
           validationMethod: 'none'
         });
         // @ts-ignore
         const validLoader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/image.jpg'] }],
+          sources: [{ urls: ['https://example.com/image.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
@@ -205,7 +205,7 @@ test.describe('CompositeLoader Unit Tests', () => {
       const result = await page.evaluate(async () => {
         // @ts-ignore
         const loader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/a.jpg'] }],
+          sources: [{ urls: ['https://example.com/a.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
@@ -241,12 +241,12 @@ test.describe('CompositeLoader Unit Tests', () => {
       const result = await page.evaluate(() => {
         // @ts-ignore
         const staticLoader = new window.StaticImageLoader({
-          sources: [{ type: 'urls', urls: ['https://example.com/static.jpg'] }],
+          sources: [{ urls: ['https://example.com/static.jpg'] }],
           validationMethod: 'none'
         });
         // @ts-ignore
         const driveLoader = new window.GoogleDriveLoader({
-          sources: [{ type: 'folder', folders: ['https://drive.google.com/drive/folders/test'] }]
+          sources: [{ folders: ['https://drive.google.com/drive/folders/test'] }]
         });
         // @ts-ignore
         const composite = new window.CompositeLoader({

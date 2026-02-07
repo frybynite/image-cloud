@@ -4,7 +4,7 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig } from './config/types';
+import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig, LoaderEntry, SharedLoaderConfig, StaticLoaderInnerConfig, GoogleDriveLoaderInnerConfig } from './config/types';
 import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
@@ -117,50 +117,63 @@ export class ImageCloud {
   }
 
   /**
-   * Create image filter based on config
+   * Create image filter based on shared loader config
    */
   private createImageFilter(): ImageFilter {
-    const loaderType = this.fullConfig.loader.type;
-
-    // Get extensions from the appropriate loader config
-    let extensions: string[] | undefined;
-    if (loaderType === 'googleDrive') {
-      extensions = this.fullConfig.loader.googleDrive?.allowedExtensions;
-    } else {
-      extensions = this.fullConfig.loader.static?.allowedExtensions;
-    }
-
+    const extensions = this.fullConfig.config.loaders?.allowedExtensions;
     return new ImageFilter(extensions);
   }
 
   /**
    * Create appropriate image loader based on config
+   * Processes loaders array, merges shared config, wraps in CompositeLoader if needed
    */
   private createLoader(): ImageLoader {
-    return this.createLoaderFromConfig(this.fullConfig.loader);
+    const entries = this.fullConfig.loaders;
+    const shared = this.fullConfig.config.loaders ?? {};
+
+    if (!entries || entries.length === 0) {
+      throw new Error('No loaders configured. Provide `images`, `loaders`, or both.');
+    }
+
+    const childLoaders = entries.map(entry => this.createLoaderFromEntry(entry, shared));
+
+    if (childLoaders.length === 1) {
+      return childLoaders[0];
+    }
+
+    return new CompositeLoader({
+      loaders: childLoaders,
+      debugLogging: shared.debugLogging
+    });
   }
 
   /**
-   * Create a loader from a LoaderConfig object (supports recursive composite loaders)
+   * Create a single loader from a LoaderEntry, merging shared config
    */
-  private createLoaderFromConfig(config: typeof this.fullConfig.loader): ImageLoader {
-    const loaderType = config.type;
-
-    if (loaderType === 'static') {
-      const staticConfig = config.static!;
-      return new StaticImageLoader(staticConfig);
-    } else if (loaderType === 'composite') {
-      const compositeConfig = config.composite!;
-      const childLoaders = compositeConfig.loaders.map(loaderConfig =>
-        this.createLoaderFromConfig(loaderConfig)
-      );
-      return new CompositeLoader({
-        loaders: childLoaders,
-        debugLogging: compositeConfig.debugLogging
-      });
+  private createLoaderFromEntry(entry: LoaderEntry, shared: SharedLoaderConfig): ImageLoader {
+    if ('static' in entry) {
+      const inner = entry.static;
+      const merged: StaticLoaderInnerConfig = {
+        ...inner,
+        validateUrls: inner.validateUrls ?? shared.validateUrls,
+        validationTimeout: inner.validationTimeout ?? shared.validationTimeout,
+        validationMethod: inner.validationMethod ?? shared.validationMethod,
+        failOnAllMissing: inner.failOnAllMissing ?? shared.failOnAllMissing,
+        allowedExtensions: inner.allowedExtensions ?? shared.allowedExtensions,
+        debugLogging: inner.debugLogging ?? shared.debugLogging
+      };
+      return new StaticImageLoader(merged);
+    } else if ('googleDrive' in entry) {
+      const inner = entry.googleDrive;
+      const merged: GoogleDriveLoaderInnerConfig = {
+        ...inner,
+        allowedExtensions: inner.allowedExtensions ?? shared.allowedExtensions,
+        debugLogging: inner.debugLogging ?? shared.debugLogging
+      };
+      return new GoogleDriveLoader(merged);
     } else {
-      const driveConfig = config.googleDrive!;
-      return new GoogleDriveLoader(driveConfig);
+      throw new Error(`Unknown loader entry: ${JSON.stringify(entry)}`);
     }
   }
 

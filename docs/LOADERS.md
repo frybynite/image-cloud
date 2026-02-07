@@ -4,8 +4,8 @@ Image Cloud supports multiple image sources through configurable loaders.
 
 ## Table of Contents
 
-- [Static Loader](#static-loader) *(recommended)*
-  - [URLs Shorthand](#urls-shorthand) *(simplest)*
+- [Quick Start — `images` shorthand](#quick-start--images-shorthand)
+- [Static Loader](#static-loader)
   - [Configuration Options](#static-loader-configuration-options)
   - [Source Types](#static-source-types)
   - [URL Validation](#url-validation)
@@ -14,8 +14,29 @@ Image Cloud supports multiple image sources through configurable loaders.
   - [Configuration Options](#google-drive-configuration-options)
   - [Source Types](#google-drive-source-types)
   - [Domain Restrictions](#domain-restrictions)
-- [Composite Loader](#composite-loader)
-- [Common Options](#common-options)
+- [Multiple Loaders (Composite)](#multiple-loaders-composite)
+- [Shared Loader Config](#shared-loader-config)
+
+---
+
+## Quick Start — `images` shorthand
+
+The simplest way to load images — pass a top-level `images` array:
+
+```javascript
+const gallery = new ImageCloud({
+  container: 'imageCloud',
+  images: [
+    'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
+    'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800',
+    'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=800'
+  ]
+});
+
+gallery.init();
+```
+
+The `images` shorthand is prepended as the first static loader entry. You can combine `images` with explicit `loaders` — the shorthand images come first.
 
 ---
 
@@ -23,38 +44,12 @@ Image Cloud supports multiple image sources through configurable loaders.
 
 Load images from direct URLs, local file paths, or JSON endpoints. The static loader is the recommended loader for most use cases.
 
-### URLs Shorthand
-
-The simplest way to load images — pass a direct array of URLs without the `sources` wrapper:
-
-```javascript
-const gallery = new ImageCloud({
-  container: 'imageCloud',
-  loader: {
-    type: 'static',
-    static: {
-      urls: [
-        'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
-        'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800',
-        'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=800'
-      ]
-    }
-  }
-});
-
-gallery.init();
-```
-
-The `urls` shorthand is automatically wrapped as `sources: [{ type: 'urls', urls: [...] }]`. You can combine `urls` with additional `sources` entries — the shorthand URLs are prepended.
-
 ### Static Loader Configuration Options
 
 ```typescript
-loader: {
-  type: 'static',
+loaders: [{
   static: {
-    sources: [...],                      // Array of sources (or use urls shorthand)
-    urls: [...],                         // Shorthand: direct URL array
+    sources: [...],                      // Required: Array of sources
     validateUrls: true,                  // Optional: Verify URLs exist
     validationTimeout: 5000,             // Optional: Timeout in ms
     validationMethod: 'head',            // Optional: 'head', 'simple', or 'none'
@@ -62,57 +57,54 @@ loader: {
     allowedExtensions: ['jpg', 'png'],   // Optional: Filter by extension
     debugLogging: false                  // Optional: Enable debug output
   }
-}
+}]
 ```
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `sources` | `StaticSource[]` | `[]` | Array of URL, path, or JSON sources. Required unless `urls` is used. |
-| `urls` | `string[]` | - | **Shorthand.** Direct URL array, auto-wrapped as a `sources` entry. |
+| `sources` | `StaticSource[]` | `[]` | Array of URL, path, or JSON sources. Required. |
 | `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading |
 | `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms) |
-| `validationMethod` | `string` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (img load), `'none'` |
+| `validationMethod` | `string` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (URL format check), `'none'` |
 | `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation |
 | `allowedExtensions` | `string[]` | All images | Filter images by file extension |
 | `debugLogging` | `boolean` | `false` | Log debug information to console |
 
 ### Static Source Types
 
+Sources are identified by shape (which key is present), not by a `type` field.
+
 #### URLs Source
 
-Load from direct image URLs:
+Load from direct image URLs (identified by the `urls` key):
 
 ```javascript
 {
-  type: 'urls',
   urls: [
     'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
-    'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800',
-    'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=800'
+    'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800'
   ]
 }
 ```
 
 #### Path Source
 
-Load from a base path with file names:
+Load from a base path with file names (identified by the `path` key):
 
 ```javascript
 {
-  type: 'path',
-  basePath: '/images/gallery/',
+  path: '/images/gallery/',
   files: ['photo1.jpg', 'photo2.jpg', 'photo3.png']
 }
 ```
 
 #### JSON Source
 
-Load image URLs from a JSON endpoint:
+Load image URLs from a JSON endpoint (identified by the `json` key):
 
 ```javascript
 {
-  type: 'json',
-  url: '/api/gallery/images.json'
+  json: '/api/gallery/images.json'
 }
 ```
 
@@ -122,36 +114,36 @@ The endpoint must return JSON with the shape `{ "images": ["url1", "url2", ...] 
 
 The static loader can validate URLs before attempting to display them:
 
-- **`'head'`** (default): Sends HTTP HEAD request - fast but may not work with all servers
-- **`'simple'`**: Creates an Image element to test loading - works universally but slower
-- **`'none'`**: Skip validation - fastest but broken images won't be filtered
+- **`'head'`** (default): Sends HTTP HEAD request for same-origin URLs. Cross-origin URLs are assumed valid.
+- **`'simple'`**: Basic URL format check only.
+- **`'none'`**: Skip validation — fastest but broken images won't be filtered.
 
 ### Complete Static Loader Example
 
 ```javascript
 const gallery = new ImageCloud({
   container: 'imageCloud',
-  loader: {
-    type: 'static',
+  loaders: [{
     static: {
       sources: [
         {
-          type: 'urls',
           urls: [
             'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
             'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'
           ]
         },
         {
-          type: 'path',
-          basePath: '/assets/photos/',
+          path: '/assets/photos/',
           files: ['vacation1.jpg', 'vacation2.jpg', 'vacation3.jpg']
         },
         {
-          type: 'json',
-          url: '/api/gallery/images.json'
+          json: '/api/gallery/images.json'
         }
-      ],
+      ]
+    }
+  }],
+  config: {
+    loaders: {
       validateUrls: true,
       validationMethod: 'simple'
     }
@@ -168,7 +160,7 @@ gallery.init();
 Load images from public Google Drive folders using the Google Drive API.
 
 [! WARNING] ⚠️
-Using a Google Drive API key can result in a security risk that gives anyone who can reference your key access to shared folders. The risk is low if you're not sharing folders, but it is not zero. Also you will likely get a notification from Google when a key is found to be exposed. Make sure your key is restricted to Google Drive, don't share anything publicly unless your understand the risk. Create a Google Drive space that only shares this content as an option. Use this feature with the caution it deserves. 
+Using a Google Drive API key can result in a security risk that gives anyone who can reference your key access to shared folders. The risk is low if you're not sharing folders, but it is not zero. Also you will likely get a notification from Google when a key is found to be exposed. Make sure your key is restricted to Google Drive, don't share anything publicly unless your understand the risk. Create a Google Drive space that only shares this content as an option. Use this feature with the caution it deserves.
 
 ### Setting Up a Google API Key
 
@@ -206,15 +198,14 @@ Using a Google Drive API key can result in a security risk that gives anyone who
 ### Google Drive Configuration Options
 
 ```typescript
-loader: {
-  type: 'googleDrive',
+loaders: [{
   googleDrive: {
     apiKey: 'YOUR_API_KEY',           // Required: Google API key
     sources: [...],                    // Required: Array of sources
     allowedExtensions: ['jpg', 'png'], // Optional: Filter by extension
     debugLogging: false                // Optional: Enable debug output
   }
-}
+}]
 ```
 
 | Option | Type | Default | Description |
@@ -226,13 +217,14 @@ loader: {
 
 ### Google Drive Source Types
 
+Sources are identified by shape (which key is present).
+
 #### Folder Source
 
-Load all images from a folder (optionally recursive):
+Load all images from a folder (identified by the `folders` key):
 
 ```javascript
 {
-  type: 'folder',
   folders: [
     'https://drive.google.com/drive/folders/FOLDER_ID?usp=sharing'
   ],
@@ -242,11 +234,10 @@ Load all images from a folder (optionally recursive):
 
 #### Files Source
 
-Load specific files by URL or ID:
+Load specific files by URL or ID (identified by the `files` key):
 
 ```javascript
 {
-  type: 'files',
   files: [
     'https://drive.google.com/file/d/FILE_ID/view',
     'FILE_ID_2',
@@ -260,19 +251,17 @@ Load specific files by URL or ID:
 ```javascript
 const gallery = new ImageCloud({
   container: 'imageCloud',
-  loader: {
-    type: 'googleDrive',
+  loaders: [{
     googleDrive: {
       apiKey: 'AIzaSy...',
       sources: [
         {
-          type: 'folder',
           folders: ['https://drive.google.com/drive/folders/1ABC...?usp=sharing'],
           recursive: true
         }
       ]
     }
-  }
+  }]
 });
 
 gallery.init();
@@ -290,46 +279,80 @@ Without this, you'll see CORS errors and the loader will fail.
 
 ---
 
-## Composite Loader
+## Multiple Loaders (Composite)
 
-Combine multiple loaders to pull images from different sources into a single gallery.
+Use the `loaders` array with multiple entries to pull images from different sources into a single gallery. Composite behavior is implicit — no wrapper needed.
 
 ```javascript
 const gallery = new ImageCloud({
   container: 'imageCloud',
-  loader: {
-    type: 'composite',
-    composite: {
-      loaders: [
-        {
-          type: 'googleDrive',
-          googleDrive: {
-            apiKey: 'YOUR_API_KEY',
-            sources: [{ type: 'folder', folders: ['https://drive.google.com/...'] }]
-          }
-        },
-        {
-          type: 'static',
-          static: {
-            sources: [{ type: 'urls', urls: ['https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?w=800'] }]
-          }
-        }
-      ],
-      debugLogging: false
+  loaders: [
+    {
+      googleDrive: {
+        apiKey: 'YOUR_API_KEY',
+        sources: [{ folders: ['https://drive.google.com/...'] }]
+      }
+    },
+    {
+      static: {
+        sources: [{ urls: ['https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?w=800'] }]
+      }
     }
-  }
+  ]
 });
 
 gallery.init();
 ```
 
+All loaders are prepared in parallel. If one loader fails, others continue (failed loader contributes 0 images). URLs are combined in the order loaders appear in the array.
+
+You can also combine the `images` shorthand with explicit `loaders`:
+
+```javascript
+const gallery = new ImageCloud({
+  container: 'imageCloud',
+  images: ['https://example.com/photo1.jpg', 'https://example.com/photo2.jpg'],
+  loaders: [{
+    googleDrive: {
+      apiKey: 'YOUR_API_KEY',
+      sources: [{ folders: ['https://drive.google.com/...'] }]
+    }
+  }]
+});
+```
+
+The `images` URLs appear first, followed by images from the explicit loaders.
+
 ---
 
-## Common Options
+## Shared Loader Config
 
-These options are available for all loader types:
+Use `config.loaders` to set defaults that apply to all loaders. Individual loader entries can override these settings.
+
+```javascript
+const gallery = new ImageCloud({
+  container: 'imageCloud',
+  images: ['img1.jpg', 'img2.jpg'],
+  config: {
+    loaders: {
+      validateUrls: true,            // Default: true
+      validationTimeout: 5000,       // Default: 5000
+      validationMethod: 'head',      // Default: 'head'
+      failOnAllMissing: true,        // Default: true
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
+      debugLogging: false            // Default: false
+    }
+  }
+});
+```
+
+**Config merge order:** `config.loaders` (shared defaults) → individual loader entry overrides → final config passed to loader constructor.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `allowedExtensions` | `string[]` | `['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']` | Filter images by extension |
+| `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading |
+| `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms) |
+| `validationMethod` | `string` | `'head'` | `'head'`, `'simple'`, or `'none'` |
+| `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation |
+| `allowedExtensions` | `string[]` | `['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']` | Filter images by extension |
 | `debugLogging` | `boolean` | `false` | Output debug information to console |

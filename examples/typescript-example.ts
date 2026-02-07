@@ -12,20 +12,20 @@ import '@frybynite/image-cloud/style.css';
 function basicExample() {
     const cloud = new ImageCloud({
         container: 'cloud',
-        loader: {
-            type: 'static',
-            static: {
-                sources: [
-                    {
-                        type: 'urls',
-                        urls: [
-                            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-                            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800'
-                        ]
-                    }
-                ]
+        loaders: [
+            {
+                static: {
+                    sources: [
+                        {
+                            urls: [
+                                'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+                                'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800'
+                            ]
+                        }
+                    ]
+                }
             }
-        }
+        ]
     });
 
     cloud.init();
@@ -35,18 +35,18 @@ function basicExample() {
 function typedExample() {
     const options: ImageCloudOptions = {
         container: 'cloud',
-        loader: {
-            type: 'static',
-            static: {
-                sources: [
-                    {
-                        type: 'path',
-                        basePath: '/images',
-                        files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
-                    }
-                ]
+        loaders: [
+            {
+                static: {
+                    sources: [
+                        {
+                            path: '/images',
+                            files: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg']
+                        }
+                    ]
+                }
             }
-        },
+        ],
         layout: {
             algorithm: 'radial',
             sizing: {
@@ -89,31 +89,29 @@ function typedExample() {
 async function googleDriveExample() {
     const cloud = new ImageCloud({
         container: 'cloud',
-        loader: {
-            type: 'googleDrive',
-            googleDrive: {
-                apiKey: 'YOUR_GOOGLE_API_KEY',
-                sources: [
-                    {
-                        type: 'folder',
-                        folders: ['https://drive.google.com/drive/folders/FOLDER_ID_1'],
-                        recursive: true
-                    },
-                    {
-                        type: 'folder',
-                        folders: ['https://drive.google.com/drive/folders/FOLDER_ID_2'],
-                        recursive: false  // Only images directly in this folder
-                    },
-                    {
-                        type: 'files',
-                        files: [
-                            'https://drive.google.com/file/d/FILE_ID_1/view',
-                            'https://drive.google.com/file/d/FILE_ID_2/view'
-                        ]
-                    }
-                ]
+        loaders: [
+            {
+                googleDrive: {
+                    apiKey: 'YOUR_GOOGLE_API_KEY',
+                    sources: [
+                        {
+                            folders: ['https://drive.google.com/drive/folders/FOLDER_ID_1'],
+                            recursive: true
+                        },
+                        {
+                            folders: ['https://drive.google.com/drive/folders/FOLDER_ID_2'],
+                            recursive: false  // Only images directly in this folder
+                        },
+                        {
+                            files: [
+                                'https://drive.google.com/file/d/FILE_ID_1/view',
+                                'https://drive.google.com/file/d/FILE_ID_2/view'
+                            ]
+                        }
+                    ]
+                }
             }
-        },
+        ],
         layout: {
             algorithm: 'radial'
         }
@@ -138,17 +136,17 @@ function CloudComponent() {
         if (containerRef.current) {
             cloudRef.current = new ImageCloud({
                 container: containerRef.current.id,
-                loader: {
-                    type: 'static',
-                    static: {
-                        sources: [
-                            {
-                                type: 'urls',
-                                urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
-                            }
-                        ]
+                loaders: [
+                    {
+                        static: {
+                            sources: [
+                                {
+                                    urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
+                                }
+                            ]
+                        }
                     }
-                }
+                ]
             });
 
             cloudRef.current.init();

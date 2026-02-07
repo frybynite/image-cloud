@@ -94,13 +94,10 @@ test.describe('Layout Algorithms', () => {
         // @ts-ignore
         window.gallery = new window.ImageCloud({
           container: 'imageCloud',
-          loader: {
-            type: 'static',
-            static: {
-              sources: [{type:'urls',urls:['/test/fixtures/images/image1.jpg','/test/fixtures/images/image2.jpg','/test/fixtures/images/image3.jpg']}],
+          loaders: [{ static: {
+              sources: [{urls:['/test/fixtures/images/image1.jpg','/test/fixtures/images/image2.jpg','/test/fixtures/images/image3.jpg']}],
               validateUrls: false
-            }
-          },
+            } }],
           layout: { algorithm: 'random' }
         });
         // @ts-ignore

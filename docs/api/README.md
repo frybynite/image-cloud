@@ -33,12 +33,7 @@ import type { ImageCloudOptions, ImageLayout } from '@frybynite/image-cloud';
 ```typescript
 const cloud = new ImageCloud({
   container: 'myCloud',
-  loader: {
-    type: 'static',
-    static: {
-      sources: [{ type: 'urls', urls: ['image1.jpg', 'image2.jpg'] }]
-    }
-  }
+  images: ['image1.jpg', 'image2.jpg']
 });
 
 await cloud.init();

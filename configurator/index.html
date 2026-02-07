@@ -3219,10 +3219,7 @@
         function buildConfig() {
             const config = {
                 container: 'imageCloud',
-                loader: {
-                    type: 'static',
-                    static: { urls: getSelectedImages() }
-                }
+                images: getSelectedImages()
             };
 
             // Layout
@@ -3796,12 +3793,12 @@
             await gallery.init();
         };
 
-        // Generate config for display (without loader)
+        // Generate config for display (without images)
         function getDisplayConfig() {
             const config = buildConfig();
-            // Remove container and loader from display config
+            // Remove container and images from display config
             delete config.container;
-            delete config.loader;
+            delete config.images;
             return config;
         }
 
