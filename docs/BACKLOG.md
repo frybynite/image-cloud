@@ -8,8 +8,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
 - [ ] Fix: Dragging window between screens triggers re-animation even when staying within same breakpoint.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
-- [ ] Review failing test: "unfocusing restores default state" - Escape key doesn't restore border to default state after unfocus.
-- [ ] Review failing test: "handles empty styling config" - Default shadow not being applied when styling config is empty.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
@@ -19,8 +17,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Swipe gestures: Swipes inside an iframe don't work consistently.
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
 - [x] Security: Set up CodeQL for code security analysis
-- [ ] Security: Enable secret scanning for the repository (manual step in GitHub settings)
-- [ ] Document risks of using the Google Drive approach (API key exposure, rate limits, dependency on Google API availability, folder permission requirements)
 ---
 
 ## Planned
@@ -73,7 +69,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Lightbox mode
 - Thumbnail navigation
 - Touch gesture improvements
-- For options like image border where the border can be applied overall, or separately to top, bottom, left, right - list all the options available and discuss how we can give them overall control.
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
 - Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).
@@ -118,3 +113,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Fix skipped test "initializes multiple galleries on same page" - library CSS was overriding fixture's 50% width causing galleries to stack vertically; IntersectionObserver wouldn't fire for off-screen gallery.
 - [x] Invert option for image default/hover/focused states.
 - [x] Fix auto-init export - subpath `./auto-init` now exported in package.json and `autoInitialize` exported from module.
+- [x] Granular border control (top/bottom/left/right) - per-side border overrides in library and configurator with side selector UI.
