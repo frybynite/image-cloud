@@ -134,3 +134,17 @@ On mobile devices (< 768px viewport):
 3. **Use the eye toggle** when you need to reference exact JSON paths in documentation
 4. **Test different algorithms** - each layout algorithm creates a distinct visual effect
 5. **Experiment with filters** - combining subtle filters can create unique aesthetics
+
+## Technical: Field Description Attributes
+
+Each configurator field uses two data attributes to separate description lookup from path display:
+
+| Attribute | Purpose | Example |
+|-----------|---------|---------|
+| `data-desc-key` | Full canonical path for tooltip lookup in `field-descriptions.json` | `layout.grid.columns` |
+| `data-path` | Context-aware partial path shown when eye toggle is active | `grid.columns` |
+| `data-label` | Human-readable label shown by default | `Columns` |
+
+`data-desc-key` always matches the nested structure in `field-descriptions.json`. `data-path` omits prefixes already shown by the current section context (e.g., styling fields omit the `styling.` prefix since the state selector already displays `styling.default` / `styling.hover` / `styling.focused`).
+
+The `initTooltips()` function queries `[data-desc-key]` elements and uses `getDescription()` to traverse the JSON. The `togglePaths()` function reads `data-path` for display.

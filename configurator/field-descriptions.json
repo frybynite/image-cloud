@@ -62,49 +62,6 @@
       "synchronization": "How wave phases align across rows (default: offset)"
     }
   },
-  "algorithm": "The algorithm used to arrange images in the gallery (default: radial)",
-  "scaleDecay": "Center images larger, outer images smaller for spiral/radial layouts (default: 0)",
-  "grid": {
-    "_title": "Grid-specific layout options",
-    "columns": "Number of columns in the grid layout (default: auto)",
-    "rows": "Number of rows in the grid layout (default: auto)",
-    "gap": "Space between grid cells in pixels (default: 10)",
-    "stagger": "Offset every other row for a staggered pattern (default: none)",
-    "jitter": "Random offset applied to image positions (default: 0)",
-    "overlap": "How much images can overlap each other (default: 0)",
-    "fillDirection": "Order in which grid cells are filled (default: row)",
-    "alignment": "Alignment of images within their cells (default: center)",
-    "overflowOffset": "Offset for overflow images when count exceeds cells (default: 0.25)"
-  },
-  "spiral": {
-    "_title": "Spiral-specific layout options",
-    "spiralType": "Mathematical curve used: golden, archimedean, logarithmic (default: golden)",
-    "direction": "Clockwise or counter-clockwise spiral direction (default: counterclockwise)",
-    "tightness": "How close spiral arms are to each other (default: 1.0)",
-    "startAngle": "Rotation offset for the spiral pattern in degrees (default: 0)"
-  },
-  "cluster": {
-    "_title": "Cluster-specific layout options",
-    "clusterCount": "Number of image clusters to create (default: auto)",
-    "clusterSpread": "How far images spread within each cluster (default: 150)",
-    "clusterSpacing": "Distance between cluster centers (default: 200)",
-    "overlap": "How much images can overlap within clusters (default: 0.3)",
-    "density": "Distribution of images within clusters (default: uniform)",
-    "distribution": "Mathematical distribution for cluster placement (default: gaussian)"
-  },
-  "wave": {
-    "_title": "Wave-specific layout options",
-    "rows": "Number of wave rows (default: 1)",
-    "amplitude": "Height of the wave peaks and troughs (default: 100)",
-    "frequency": "Number of wave cycles across the container (default: 2)",
-    "phaseShift": "Offset between rows in the wave pattern (default: 0)",
-    "synchronization": "How wave phases align across rows (default: offset)"
-  },
-  "spacing": {
-    "_title": "Control spacing around and between images",
-    "padding": "Space between images and container edges (default: 50)",
-    "minGap": "Minimum space between adjacent images (default: 20)"
-  },
   "image": {
     "_title": "Configure image appearance and sizing",
     "sizing": {
@@ -210,15 +167,6 @@
       "_title": "Appearance when image is clicked/focused. Inherits from default when not explicitly set."
     }
   },
-  "default": {
-    "_title": "Default appearance of images - base styling that hover and focused inherit from"
-  },
-  "hover": {
-    "_title": "Appearance when mouse hovers over image. Inherits from default when not explicitly set."
-  },
-  "focused": {
-    "_title": "Appearance when image is clicked/focused. Inherits from default when not explicitly set."
-  },
   "animation": {
     "_title": "Configure entry animations",
     "duration": "How long animations take to complete in milliseconds (default: 600)",
@@ -249,7 +197,12 @@
         "mode": "How images rotate as they enter: none, spin, settle, random, wobble (default: none)",
         "spinCount": "Number of full rotations during spin animation (default: 1)",
         "direction": "Spin direction: clockwise, counterclockwise, auto, random (default: clockwise)",
-        "startRotation": "Starting rotation range for settle mode in degrees (default: -45 to 45)"
+        "startRotation": "Starting rotation range for settle mode in degrees (default: -45 to 45)",
+        "wobble": {
+          "_title": "Wobble animation settings",
+          "amplitude": "Maximum wobble angle in degrees (default: 15)",
+          "frequency": "Number of wobble oscillations during animation (default: 3)"
+        }
       },
       "scale": {
         "_title": "Entry scale animation settings",
@@ -268,57 +221,6 @@
       }
     }
   },
-  "duration": "How long animations take to complete in milliseconds (default: 600)",
-  "queue": {
-    "_title": "Animation queue settings",
-    "enabled": "Enable staggered animation queue (default: true)",
-    "interval": "Delay between each image's animation start (default: 150)"
-  },
-  "entry": {
-    "_title": "Entry animation settings",
-    "start": {
-      "_title": "Starting position for animations",
-      "position": "Where images animate in from (default: nearest-edge)",
-      "offset": "Distance from edge where animation begins (default: 100)"
-    },
-    "timing": {
-      "_title": "Animation timing settings",
-      "duration": "Duration of entry animation (default: 600)",
-      "stagger": "Delay increment between consecutive images (default: 150)"
-    },
-    "path": {
-      "_title": "Animation path settings",
-      "type": "Animation trajectory: linear, bounce, elastic, wave (default: linear)",
-      "preset": "Preset configuration for the selected path type"
-    },
-    "rotation": {
-      "_title": "Entry rotation animation settings",
-      "mode": "How images rotate as they enter: none, spin, settle, random, wobble (default: none)",
-      "spinCount": "Number of full rotations during spin animation (default: 1)",
-      "direction": "Spin direction: clockwise, counterclockwise, auto, random (default: clockwise)",
-      "startRotation": "Starting rotation range for settle mode in degrees (default: -45 to 45)",
-      "wobble": {
-        "_title": "Wobble animation settings",
-        "amplitude": "Maximum wobble angle in degrees (default: 15)",
-        "frequency": "Number of wobble oscillations during animation (default: 3)"
-      }
-    },
-    "scale": {
-      "_title": "Entry scale animation settings",
-      "mode": "How images scale as they enter: none, grow, shrink, pop, random (default: none)",
-      "startScale": "Starting scale multiplier 0.1-4.0 for grow/shrink modes (default: 0.3 for grow, 1.5 for shrink)",
-      "pop": {
-        "_title": "Pop animation settings",
-        "overshoot": "How much to overshoot final scale, 1.05-1.5 (default: 1.2)",
-        "bounces": "Number of bounces before settling, 1-3 (default: 1)"
-      },
-      "range": {
-        "_title": "Random scale range settings",
-        "min": "Minimum random scale multiplier (default: 0.5)",
-        "max": "Maximum random scale multiplier (default: 1.0)"
-      }
-    }
-  },
   "interaction": {
     "_title": "Configure user interaction behavior",
     "focus": {
@@ -326,10 +228,5 @@
       "scalePercent": "Size of focused image relative to container (default: 0.8)",
       "zIndex": "Stack order of focused image (default: 1000)"
     }
-  },
-  "focus": {
-    "_title": "Focus/zoom behavior when clicking images",
-    "scalePercent": "Size of focused image relative to container (default: 0.8)",
-    "zIndex": "Stack order of focused image (default: 1000)"
   }
 }
