@@ -6,12 +6,10 @@ Future enhancements and feature ideas for Image Cloud.
 
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
-- [ ] Fix: Dragging window between screens triggers re-animation even when staying within same breakpoint.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Add border-image to functionality and configurator
-- [ ] Configurator: Split image border and style into separate sections - currently too large in one section
 - [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.
 - [ ] Swipe gestures: Swipes inside an iframe don't work consistently.
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
@@ -70,6 +68,8 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Touch gesture improvements
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
+- Consolidate debug parameters — currently spread across `debug` (top-level), `config.loaders.debugLogging`, per-loader `debugLogging`, `layout.debugRadials`, and `layout.debugCenters`. Consider unifying under `config.debug` namespace while preserving per-loader granularity.
+- Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
 - Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).
 
 ---
@@ -114,3 +114,5 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Fix auto-init export - subpath `./auto-init` now exported in package.json and `autoInitialize` exported from module.
 - [x] Granular border control (top/bottom/left/right) - per-side border overrides in library and configurator with side selector UI.
 - [x] Configurator: Separated `data-path` into `data-desc-key` (full canonical path for tooltip lookup) and `data-path` (context-aware partial path for eye-toggle display). Cleaned up duplicated keys in field-descriptions.json.
+- [x] Dragging window between screens triggers re-animation — this is just the way it's going to work.
+- [x] Configurator: Separated image size & rotation from style into distinct sections.

@@ -55,6 +55,8 @@ export class ImageCloud {
   private containerEl: HTMLElement | null;
   private loadingEl: HTMLElement | null;
   private errorEl: HTMLElement | null;
+  private loadingElAutoCreated: boolean;
+  private errorElAutoCreated: boolean;
 
   constructor(options: ImageCloudOptions = {}) {
     this.fullConfig = mergeConfig(options);
@@ -79,6 +81,8 @@ export class ImageCloud {
     this.displayQueue = [];
     this.queueInterval = null;
     this.loadGeneration = 0;
+    this.loadingElAutoCreated = false;
+    this.errorElAutoCreated = false;
 
     // Initialize engines with new config structure
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
@@ -233,9 +237,52 @@ export class ImageCloud {
   }
 
   private setupUI(): void {
-    // Look for existing elements or create them
-    this.loadingEl = document.getElementById('loading');
-    this.errorEl = document.getElementById('error');
+    const uiConfig = this.fullConfig.rendering.ui;
+
+    // Loading element
+    if (uiConfig.showLoadingSpinner) {
+      if (uiConfig.loadingElement) {
+        this.loadingEl = this.resolveElement(uiConfig.loadingElement);
+        this.loadingElAutoCreated = false;
+      } else {
+        this.loadingEl = this.createDefaultLoadingElement();
+        this.loadingElAutoCreated = true;
+      }
+    }
+
+    // Error element
+    if (uiConfig.errorElement) {
+      this.errorEl = this.resolveElement(uiConfig.errorElement);
+      this.errorElAutoCreated = false;
+    } else {
+      this.errorEl = this.createDefaultErrorElement();
+      this.errorElAutoCreated = true;
+    }
+  }
+
+  private resolveElement(ref: string | HTMLElement): HTMLElement | null {
+    if (ref instanceof HTMLElement) return ref;
+    return document.getElementById(ref);
+  }
+
+  private createDefaultLoadingElement(): HTMLElement {
+    const el = document.createElement('div');
+    el.className = 'fbn-ic-loading fbn-ic-hidden';
+    const spinner = document.createElement('div');
+    spinner.className = 'fbn-ic-spinner';
+    el.appendChild(spinner);
+    const text = document.createElement('p');
+    text.textContent = 'Loading images...';
+    el.appendChild(text);
+    this.containerEl!.appendChild(el);
+    return el;
+  }
+
+  private createDefaultErrorElement(): HTMLElement {
+    const el = document.createElement('div');
+    el.className = 'fbn-ic-error fbn-ic-hidden';
+    this.containerEl!.appendChild(el);
+    return el;
   }
 
   private setupEventListeners(): void {
@@ -795,7 +842,7 @@ export class ImageCloud {
     this.displayQueue = [];
 
     if (this.containerEl) {
-      this.containerEl.innerHTML = '';
+      this.containerEl.querySelectorAll('.fbn-ic-image, .fbn-ic-debug-center').forEach(el => el.remove());
     }
     this.imageElements = [];
     this.imageLayouts = [];
@@ -832,6 +879,15 @@ export class ImageCloud {
    */
   destroy(): void {
     this.clearImageCloud();
+    // Remove auto-created UI elements
+    if (this.loadingElAutoCreated && this.loadingEl) {
+      this.loadingEl.remove();
+      this.loadingEl = null;
+    }
+    if (this.errorElAutoCreated && this.errorEl) {
+      this.errorEl.remove();
+      this.errorEl = null;
+    }
     // Remove event listeners
     if (this.resizeTimeout !== null) {
       clearTimeout(this.resizeTimeout);

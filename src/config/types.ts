@@ -471,6 +471,8 @@ export interface UIRenderingConfig {
   showImageCounter?: boolean;
   showThumbnails?: boolean;
   theme?: 'light' | 'dark' | 'auto';
+  loadingElement?: string | HTMLElement;
+  errorElement?: string | HTMLElement;
 }
 
 export interface PerformanceRenderingConfig {

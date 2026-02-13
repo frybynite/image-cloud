@@ -8,7 +8,7 @@ test.describe('Loading Spinner', () => {
       // Check the initial state before gallery init
       await page.goto('/test/fixtures/loading-spinner.html');
 
-      const loading = page.locator('#loading');
+      const loading = page.locator('.fbn-ic-loading');
       await expect(loading).toBeAttached();
 
       // The hidden class should be present initially (from HTML)
@@ -26,7 +26,7 @@ test.describe('Loading Spinner', () => {
       const debugInfo = await page.evaluate(() => {
         const gallery = (window as any).gallery;
         return {
-          hasLoadingEl: !!document.getElementById('loading'),
+          hasLoadingEl: !!document.querySelector('.fbn-ic-loading'),
           configShowSpinner: gallery?.fullConfig?.rendering?.ui?.showLoadingSpinner
         };
       });
@@ -42,7 +42,7 @@ test.describe('Loading Spinner', () => {
       // Use fixture with custom slow loader (3 second delay)
       await page.goto('/test/fixtures/loading-spinner-slow.html');
 
-      const loading = page.locator('#loading');
+      const loading = page.locator('.fbn-ic-loading');
 
       // Spinner should be visible while images are loading (custom loader has 3s delay)
       await expect(loading).not.toHaveClass(/fbn-ic-hidden/, { timeout: 2000 });
@@ -65,7 +65,7 @@ test.describe('Loading Spinner', () => {
       await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
       await page.waitForTimeout(500); // Allow animation to complete
 
-      const loading = page.locator('#loading');
+      const loading = page.locator('.fbn-ic-loading');
 
       // Spinner should be hidden after loading
       await expect(loading).toHaveClass(/fbn-ic-hidden/);
@@ -74,7 +74,7 @@ test.describe('Loading Spinner', () => {
     test('spinner element contains spinner div and text', async ({ page }) => {
       await page.goto('/test/fixtures/loading-spinner.html');
 
-      const loading = page.locator('#loading');
+      const loading = page.locator('.fbn-ic-loading');
       const spinner = loading.locator('.fbn-ic-spinner');
       const text = loading.locator('p');
 
@@ -87,57 +87,7 @@ test.describe('Loading Spinner', () => {
 
   test.describe('When showLoadingSpinner is disabled (default)', () => {
 
-    test('spinner stays hidden throughout loading', async ({ page }) => {
-      // Track if spinner ever becomes visible
-      let spinnerEverVisible = false;
-
-      await page.route('**/test/fixtures/images/*.jpg', async route => {
-        // Delay image responses
-        await new Promise(resolve => setTimeout(resolve, 300));
-        await route.continue();
-      });
-
-      await page.goto('/test/fixtures/loading-spinner-disabled.html');
-
-      const loading = page.locator('#loading');
-
-      // Check immediately - should be hidden
-      await expect(loading).toHaveClass(/fbn-ic-hidden/);
-
-      // Set up a MutationObserver to detect if hidden class is ever removed
-      spinnerEverVisible = await page.evaluate(() => {
-        return new Promise<boolean>((resolve) => {
-          const loading = document.getElementById('loading');
-          if (!loading) {
-            resolve(false);
-            return;
-          }
-
-          let wasVisible = false;
-          const observer = new MutationObserver((mutations) => {
-            for (const mutation of mutations) {
-              if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                if (!loading.classList.contains('fbn-ic-hidden')) {
-                  wasVisible = true;
-                }
-              }
-            }
-          });
-
-          observer.observe(loading, { attributes: true });
-
-          // Wait for loading to complete then check
-          setTimeout(() => {
-            observer.disconnect();
-            resolve(wasVisible);
-          }, 2000);
-        });
-      });
-
-      expect(spinnerEverVisible).toBe(false);
-    });
-
-    test('spinner remains hidden after images load', async ({ page }) => {
+    test('no loading element is created when spinner is disabled', async ({ page }) => {
       await page.goto('/test/fixtures/loading-spinner-disabled.html');
 
       // Wait for gallery to fully initialize
@@ -148,10 +98,9 @@ test.describe('Loading Spinner', () => {
       await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
       await page.waitForTimeout(500);
 
-      const loading = page.locator('#loading');
-
-      // Spinner should still be hidden
-      await expect(loading).toHaveClass(/fbn-ic-hidden/);
+      // No loading element should exist when showLoadingSpinner is false
+      const loading = page.locator('.fbn-ic-loading');
+      await expect(loading).toHaveCount(0);
     });
 
   });
@@ -173,7 +122,7 @@ test.describe('Loading Spinner', () => {
       expect(count).toBeGreaterThan(0);
 
       // No loading element should exist
-      const loading = page.locator('#loading');
+      const loading = page.locator('.fbn-ic-loading');
       await expect(loading).toHaveCount(0);
     });
 
