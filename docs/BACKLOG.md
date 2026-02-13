@@ -10,7 +10,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
-- [ ] Configurator: `data-path` attribute serves two conflicting purposes - displaying partial path labels vs looking up hover descriptions in field-descriptions.json. These require different path formats (short vs full). Consider separate attributes (e.g., `data-path-label` and `data-description-key`).
 - [ ] Add border-image to functionality and configurator
 - [ ] Configurator: Split image border and style into separate sections - currently too large in one section
 - [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.
@@ -114,3 +113,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Invert option for image default/hover/focused states.
 - [x] Fix auto-init export - subpath `./auto-init` now exported in package.json and `autoInitialize` exported from module.
 - [x] Granular border control (top/bottom/left/right) - per-side border overrides in library and configurator with side selector UI.
+- [x] Configurator: Separated `data-path` into `data-desc-key` (full canonical path for tooltip lookup) and `data-path` (context-aware partial path for eye-toggle display). Cleaned up duplicated keys in field-descriptions.json.
