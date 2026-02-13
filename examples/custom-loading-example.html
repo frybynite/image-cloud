@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Custom loading spinner example for Image Cloud">
+    <title>Image Cloud - Custom Loading Spinner</title>
+    <!-- Required: Image Cloud CSS for gallery layout, animations, and zoom -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05060F;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+        #imageCloud {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Custom loading spinner styles */
+        .my-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+        }
+        .my-loader.fbn-ic-hidden {
+            display: none;
+        }
+        .my-loader-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .my-loader-dots span {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #6366f1;
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+        .my-loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .my-loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+        .my-loader-text {
+            color: #a5b4fc;
+            font-family: system-ui, sans-serif;
+            font-size: 14px;
+            letter-spacing: 0.05em;
+        }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Required: Container div — its id must match the 'container' option -->
+        <div id="imageCloud" class="image-cloud" role="main" aria-label="Image cloud"></div>
+
+        <!-- Custom loading spinner — your own design, referenced by id in config -->
+        <div id="myLoader" class="my-loader fbn-ic-hidden">
+            <div class="my-loader-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="my-loader-text">Gathering your images...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ImageCloud } from '@frybynite/image-cloud';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cloud = new ImageCloud({
+                container: 'imageCloud',
+                images: [
+                    'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/1671324/pexels-photo-1671324.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/2835562/pexels-photo-2835562.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    'https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&w=800'
+                ],
+                rendering: {
+                    ui: {
+                        showLoadingSpinner: true,
+                        // Reference your custom loading element by its id
+                        loadingElement: 'myLoader'
+                    }
+                }
+            });
+
+            cloud.init().catch(error => {
+                console.error('Image cloud initialization failed:', error);
+            });
+        });
+    </script>
+    <script src="view-source-popup.js"></script>
+</body>
+</html>
