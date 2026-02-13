@@ -1,0 +1,39 @@
+{
+    // Every class can read the config.
+  "config": {
+    "loaders" : {
+        "validateUrls": true,
+        "validationMethod": "head"
+    },
+    "debugXXX" : true
+  },
+  // Shortcut to static + sources.urls array
+  "images": ["https://pexels.com/image.jpg", "https://pexels.com/image2.jpg"],
+  "loaders": [
+    {
+      "static": {
+        "sources": [
+          { "files": ["https://pexels.com/image1.jpg", "https://pexels.com/image2.jpg"] },
+          { "path" : "https://example.com/img/", "files": ["file1.jpg", "file2.jpg"] },
+          { "json" : "https://example.com/list-of-files.json" }
+        ]
+      }
+    },
+    {
+      "googleDrive": {
+        "apiKey": "KEY",
+        "sources" : [
+            { "files" : ["http://drive.google.com/g/<ID>", "http://drive.google.com/<ID2>"]},
+            { "folders" : ["http://drive.google.com/g/<FOLDER>", "http://drive.google.com/g/<FOLDER>"], "recursive":true }
+        ]
+      }
+    },
+    {
+        // User has the ability to register a customer loader by name. It will use the loader interface
+        // and can parse it's own parameter structure as needed.
+        "myCustom": {
+
+        }
+    }
+  ]
+}
