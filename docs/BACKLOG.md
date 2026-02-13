@@ -5,7 +5,7 @@ Future enhancements and feature ideas for Image Cloud.
 ## Active Issues
 
 - [ ] Radial layout has some extra border on the edges that we could take out.
-- [ ] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly)
+- [x] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly) — resolved by auto-creating loading elements inside the container (v0.3.3)
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
