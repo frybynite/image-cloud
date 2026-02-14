@@ -215,6 +215,8 @@ loaders: [{
 | `allowedExtensions` | `string[]` | All images | Filter images by file extension |
 | `debugLogging` | `boolean` | `false` | Log debug information to console |
 
+> **Note:** The `validateUrls`, `validationTimeout`, `validationMethod`, and `failOnAllMissing` options from `config.loaders` do not apply to the Google Drive loader. The Drive API confirms file existence when listing folder contents, so URLs are already validated. Additionally, Google Drive image proxy URLs (`lh3.googleusercontent.com`) do not support cross-origin HEAD requests due to CORS restrictions, making browser-side validation impossible.
+
 ### Google Drive Source Types
 
 Sources are identified by shape (which key is present).
