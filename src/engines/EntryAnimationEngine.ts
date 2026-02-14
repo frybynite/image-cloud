@@ -285,15 +285,14 @@ export class EntryAnimationEngine {
   /**
    * Get animation parameters for an image
    */
-  getAnimationParams(imageIndex: number): AnimationParams {
+  getAnimationParams(_imageIndex: number): AnimationParams {
     const duration = this.config.timing.duration;
-    const stagger = this.config.timing.stagger;
     const easing = this.config.easing;
 
     return {
       startTransform: '',  // Will be computed by caller based on start position
       duration,
-      delay: imageIndex * stagger,
+      delay: 0,
       easing
     };
   }
@@ -392,10 +391,9 @@ export class EntryAnimationEngine {
   /**
    * Get animation timing configuration
    */
-  getTiming(): { duration: number; stagger: number } {
+  getTiming(): { duration: number } {
     return {
-      duration: this.config.timing.duration,
-      stagger: this.config.timing.stagger
+      duration: this.config.timing.duration
     };
   }
 

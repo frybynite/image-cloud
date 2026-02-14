@@ -392,7 +392,6 @@ export interface EntryStartConfig {
 
 export interface EntryTimingConfig {
   duration: number;  // default: 600ms
-  stagger: number;   // default: 150ms
 }
 
 export interface EntryAnimationConfig {

@@ -688,8 +688,7 @@ animation: {
       }
     },
     timing: {
-      duration: 600,             // Animation duration (ms)
-      stagger: 150               // Delay between images (ms)
+      duration: 600              // Animation duration (ms)
     },
     easing: 'cubic-bezier(0.25, 1, 0.5, 1)'  // CSS easing
   }
@@ -705,7 +704,6 @@ animation: {
 | `start.circular.radius` | `number \| string` | `'120%'` | Circle radius in pixels or % of container diagonal |
 | `start.circular.distribution` | `string` | `'even'` | `'even'` (evenly spaced) or `'random'` |
 | `timing.duration` | `number` | `600` | Animation duration in milliseconds |
-| `timing.stagger` | `number` | `150` | Delay between each image's animation start |
 | `easing` | `string` | `cubic-bezier(0.25, 1, 0.5, 1)` | CSS easing function |
 
 ### Start Position Options
@@ -745,12 +743,12 @@ const gallery = new ImageCloud({
 });
 ```
 
-**Center burst with fast stagger:**
+**Center burst:**
 ```typescript
 animation: {
   entry: {
     start: { position: 'center' },
-    timing: { duration: 500, stagger: 50 }
+    timing: { duration: 500 }
   }
 }
 ```
@@ -760,7 +758,7 @@ animation: {
 animation: {
   entry: {
     start: { position: 'top' },
-    timing: { duration: 800, stagger: 100 },
+    timing: { duration: 800 },
     easing: 'ease-out'
   }
 }
@@ -777,7 +775,7 @@ animation: {
         distribution: 'even'   // Evenly spaced on circle
       }
     },
-    timing: { duration: 1000, stagger: 80 }
+    timing: { duration: 1000 }
   }
 }
 ```
@@ -793,7 +791,7 @@ animation: {
         distribution: 'random' // Random positions on circle
       }
     },
-    timing: { duration: 1200, stagger: 60 }
+    timing: { duration: 1200 }
   }
 }
 ```
@@ -803,7 +801,7 @@ animation: {
 animation: {
   entry: {
     start: { position: 'bottom', offset: 200 },
-    timing: { duration: 1500, stagger: 200 },
+    timing: { duration: 1500 },
     easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'  // Overshoot easing
   }
 }
@@ -814,7 +812,7 @@ animation: {
 animation: {
   entry: {
     start: { position: 'random-edge' },
-    timing: { duration: 600, stagger: 80 }
+    timing: { duration: 600 }
   }
 }
 ```
@@ -831,7 +829,7 @@ Controls the trajectory that images follow during their entry animation. By defa
 animation: {
   entry: {
     start: { position: 'nearest-edge' },
-    timing: { duration: 600, stagger: 150 },
+    timing: { duration: 600 },
     easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
     path: {
       type: 'bounce',                    // Path type
@@ -996,7 +994,7 @@ animation: {
 - **Linear/Arc**: Uses CSS transitions (most efficient)
 - **Bounce/Elastic/Wave**: Uses JavaScript animation (requestAnimationFrame)
 - All paths are optimized for smooth 60fps animation
-- For galleries with 50+ images, consider using linear path or longer stagger times
+- For galleries with 50+ images, consider using linear path
 
 ---
 
@@ -1010,7 +1008,7 @@ Controls how images rotate during their entry animation. By default, images main
 animation: {
   entry: {
     start: { position: 'nearest-edge' },
-    timing: { duration: 600, stagger: 150 },
+    timing: { duration: 600 },
     path: { type: 'bounce' },
     rotation: {
       mode: 'spin',                         // Rotation mode
@@ -1126,7 +1124,7 @@ animation: {
 animation: {
   entry: {
     start: { position: 'random-edge' },
-    timing: { duration: 600, stagger: 100 },
+    timing: { duration: 600 },
     rotation: {
       mode: 'settle',
       startRotation: { min: -60, max: 60 }
@@ -1168,7 +1166,7 @@ Controls how images scale during their entry animation. By default, images maint
 animation: {
   entry: {
     start: { position: 'nearest-edge' },
-    timing: { duration: 600, stagger: 150 },
+    timing: { duration: 600 },
     path: { type: 'bounce' },
     scale: {
       mode: 'grow',                         // Scale mode
@@ -1285,7 +1283,7 @@ animation: {
 animation: {
   entry: {
     start: { position: 'circular' },
-    timing: { duration: 1000, stagger: 100 },
+    timing: { duration: 1000 },
     path: { type: 'elastic' },
     rotation: {
       mode: 'spin',
@@ -1698,8 +1696,7 @@ All available parameters with example values:
         }
       },
       "timing": {
-        "duration": 600,                        // Default. Entry animation duration
-        "stagger": 150                          // Default. Delay between images
+        "duration": 600                         // Default. Entry animation duration
       },
       "easing": "cubic-bezier(0.25, 1, 0.5, 1)", // Default. Entry animation easing
       "path": {
@@ -2061,7 +2058,7 @@ const gallery = new ImageCloud({
   animation: {
     entry: {
       start: { position: 'center' },
-      timing: { duration: 500, stagger: 50 }
+      timing: { duration: 500 }
     }
   }
 });
@@ -2083,7 +2080,7 @@ const gallery = new ImageCloud({
   animation: {
     entry: {
       start: { position: 'top' },
-      timing: { duration: 800, stagger: 100 },
+      timing: { duration: 800 },
       easing: 'ease-out'
     }
   }
@@ -2111,7 +2108,7 @@ const gallery = new ImageCloud({
           distribution: 'even'   // Evenly distributed on circle
         }
       },
-      timing: { duration: 1000, stagger: 80 }
+      timing: { duration: 1000 }
     }
   }
 });
@@ -2133,8 +2130,7 @@ const gallery = new ImageCloud({
         "position": "center"
       },
       "timing": {
-        "duration": 600,
-        "stagger": 100
+        "duration": 600
       },
       "easing": "cubic-bezier(0.25, 1, 0.5, 1)"
     }
@@ -2164,7 +2160,7 @@ const gallery = new ImageCloud({
   animation: {
     entry: {
       start: { position: 'left' },  // Enter from left for flow effect
-      timing: { duration: 800, stagger: 80 }
+      timing: { duration: 800 }
     }
   }
 });

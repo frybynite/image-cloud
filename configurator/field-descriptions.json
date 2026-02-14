@@ -200,8 +200,7 @@
       },
       "timing": {
         "_title": "Animation timing settings",
-        "duration": "Duration of entry animation (default: 600)",
-        "stagger": "Delay increment between consecutive images (default: 150)"
+        "duration": "Duration of entry animation (default: 600)"
       },
       "path": {
         "_title": "Animation path settings",

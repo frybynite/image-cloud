@@ -1777,14 +1777,6 @@
                                 </div>
                             </div>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-stagger">
-                                <label class="control-label" data-label="Stagger" data-path="timing.stagger" data-desc-key="animation.entry.timing.stagger">Stagger</label>
-                                <div class="control-input">
-                                    <input type="number" id="entry-stagger" value="150" min="0" max="500" step="25">
-                                    <span class="value-display">ms</span>
-                                </div>
-                            </div>
-                            <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-path">
                                 <label class="control-label" data-label="Path Type" data-path="path.type" data-desc-key="animation.entry.path.type">Path Type</label>
                                 <div class="control-input">
@@ -3486,9 +3478,7 @@
 
             const entryTiming = {};
             const entryDuration = getEnabledValue('enable-entry-duration', 'entry-duration', parseInt);
-            const entryStagger = getEnabledValue('enable-entry-stagger', 'entry-stagger', parseInt);
             if (entryDuration !== undefined) entryTiming.duration = entryDuration;
-            if (entryStagger !== undefined) entryTiming.stagger = entryStagger;
             if (Object.keys(entryTiming).length > 0) entry.timing = entryTiming;
 
             // Path configuration

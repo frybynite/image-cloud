@@ -22,7 +22,6 @@
     const circularRadius = params.get('radius') || '120%';
     const circularDistribution = params.get('distribution') || 'even';
     const duration = parseInt(params.get('duration') || '600');
-    const stagger = parseInt(params.get('stagger') || '150');
     const useDefault = params.get('useDefault') === 'true';
     const pathType = params.get('path') || null;
     const bouncePreset = params.get('bouncePreset') || null;
@@ -69,8 +68,7 @@
             offset: 100
           },
           timing: {
-            duration: duration,
-            stagger: stagger
+            duration: duration
           },
           easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
         }

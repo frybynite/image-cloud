@@ -235,8 +235,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
         })
       }),
       timing: Object.freeze({
-        duration: 600,  // ms
-        stagger: 150  // ms between images
+        duration: 600  // ms
       }),
       easing: 'cubic-bezier(0.25, 1, 0.5, 1)',  // smooth deceleration
       path: DEFAULT_PATH_CONFIG,

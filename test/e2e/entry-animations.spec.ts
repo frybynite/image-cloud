@@ -61,13 +61,12 @@ test.describe('Entry Animations', () => {
   test.describe('Configuration Verification', () => {
 
     test('entry config is passed to gallery', async ({ page }) => {
-      await page.goto('/test/fixtures/entry-animations.html?position=center&duration=800&stagger=100');
+      await page.goto('/test/fixtures/entry-animations.html?position=center&duration=800');
       await waitForGalleryInit(page);
 
       const config = await getGalleryConfig(page);
       expect(config.animation.entry.start.position).toBe('center');
       expect(config.animation.entry.timing.duration).toBe(800);
-      expect(config.animation.entry.timing.stagger).toBe(100);
     });
 
     test('circular config is passed correctly', async ({ page }) => {
@@ -297,24 +296,6 @@ test.describe('Entry Animations', () => {
 
       // Transition should include 0.3s
       expect(transition).toContain('0.3s');
-    });
-
-    test('stagger delays appearance of subsequent images', async ({ page }) => {
-      // Use a long stagger to make timing easier to verify
-      await page.goto('/test/fixtures/entry-animations.html?position=top&stagger=400');
-
-      await page.waitForSelector('#imageCloud img', { state: 'attached' });
-
-      // Wait a short time - not all images should be in DOM yet due to queue
-      await page.waitForTimeout(200);
-      const earlyCount = await page.locator('#imageCloud img').count();
-
-      // Wait for more images
-      await page.waitForTimeout(2000);
-      const laterCount = await page.locator('#imageCloud img').count();
-
-      // More images should appear over time (stagger working)
-      expect(laterCount).toBeGreaterThan(earlyCount);
     });
 
   });
