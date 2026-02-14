@@ -125,6 +125,16 @@
     z-index: 100;
 }
 
+/* Image Counter */
+.fbn-ic-counter {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+}
+
 /* Utility Classes */
 .fbn-ic-hidden {
     display: none !important;

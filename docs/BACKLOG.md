@@ -11,7 +11,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Add border-image to functionality and configurator
 - [ ] Implement `rendering.performance` options (`lazyLoad`, `preloadCount`, `imageQuality`) — types and config merging exist but values are unused stubs
-- [ ] Implement `rendering.ui` stubs: `showImageCounter`, `showThumbnails`, `theme` ('light'|'dark'|'auto') — types exist but values are unused
+- [ ] Implement `rendering.ui` stubs: `showThumbnails`, `theme` ('light'|'dark'|'auto') — types exist but values are unused
 - [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.
 - [ ] Swipe gestures: Swipes inside an iframe don't work consistently.
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
@@ -119,3 +119,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Configurator: Separated `data-path` into `data-desc-key` (full canonical path for tooltip lookup) and `data-path` (context-aware partial path for eye-toggle display). Cleaned up duplicated keys in field-descriptions.json.
 - [x] Dragging window between screens triggers re-animation — this is just the way it's going to work.
 - [x] Configurator: Separated image size & rotation from style into distinct sections.
+- [x] Image counter (`showImageCounter`) — displays "N of M" when an image is focused, hidden on unfocus. Supports custom element via `counterElement` config. Auto-created at bottom-center with fixed positioning.

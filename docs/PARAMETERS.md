@@ -1348,6 +1348,8 @@ Controls UI elements and responsiveness.
 | `ui.showLoadingSpinner` | `boolean` | `false` | Show a spinner while loading images. |
 | `ui.loadingElement` | `string \| HTMLElement` | `undefined` | Custom loading element (ID string or HTMLElement reference). If omitted and `showLoadingSpinner` is true, a default loading element is auto-created inside the container. |
 | `ui.errorElement` | `string \| HTMLElement` | `undefined` | Custom error element (ID string or HTMLElement reference). If omitted, a default error element is auto-created inside the container. |
+| `ui.showImageCounter` | `boolean` | `false` | Show a "1 of N" counter when an image is focused. Hidden when no image is focused. |
+| `ui.counterElement` | `string \| HTMLElement` | `undefined` | Custom counter element (ID string or HTMLElement reference). If omitted and `showImageCounter` is true, a default counter is auto-created inside the container (positioned bottom-center, fixed). |
 | `responsive.breakpoints`| `object` | `{ mobile: 768 }`| Breakpoint definitions. |
 
 ### 7. Styling Configuration (`styling`)
@@ -1753,7 +1755,8 @@ All available parameters with example values:
     },
 
     "ui": {
-      "showLoadingSpinner": false               // Default
+      "showLoadingSpinner": false,              // Default
+      "showImageCounter": false                 // Default
     }
   },
 

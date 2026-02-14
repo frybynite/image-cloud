@@ -57,6 +57,8 @@ export class ImageCloud {
   private errorEl: HTMLElement | null;
   private loadingElAutoCreated: boolean;
   private errorElAutoCreated: boolean;
+  private counterEl: HTMLElement | null;
+  private counterElAutoCreated: boolean;
 
   constructor(options: ImageCloudOptions = {}) {
     this.fullConfig = mergeConfig(options);
@@ -83,6 +85,8 @@ export class ImageCloud {
     this.loadGeneration = 0;
     this.loadingElAutoCreated = false;
     this.errorElAutoCreated = false;
+    this.counterEl = null;
+    this.counterElAutoCreated = false;
 
     // Initialize engines with new config structure
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
@@ -258,6 +262,17 @@ export class ImageCloud {
       this.errorEl = this.createDefaultErrorElement();
       this.errorElAutoCreated = true;
     }
+
+    // Counter element
+    if (uiConfig.showImageCounter) {
+      if (uiConfig.counterElement) {
+        this.counterEl = this.resolveElement(uiConfig.counterElement);
+        this.counterElAutoCreated = false;
+      } else {
+        this.counterEl = this.createDefaultCounterElement();
+        this.counterElAutoCreated = true;
+      }
+    }
   }
 
   private resolveElement(ref: string | HTMLElement): HTMLElement | null {
@@ -285,6 +300,13 @@ export class ImageCloud {
     return el;
   }
 
+  private createDefaultCounterElement(): HTMLElement {
+    const el = document.createElement('div');
+    el.className = 'fbn-ic-counter fbn-ic-hidden';
+    this.containerEl!.appendChild(el);
+    return el;
+  }
+
   private setupEventListeners(): void {
     // Global keyboard events
     document.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -292,6 +314,7 @@ export class ImageCloud {
         this.zoomEngine.unfocusImage();
         this.currentFocusIndex = null;
         this.swipeEngine?.disable();
+        this.hideCounter();
       } else if (e.key === 'ArrowRight') {
         this.navigateToNextImage();
       } else if (e.key === 'ArrowLeft') {
@@ -312,6 +335,7 @@ export class ImageCloud {
         this.zoomEngine.unfocusImage();
         this.currentFocusIndex = null;
         this.swipeEngine?.disable();
+        this.hideCounter();
       }
     });
 
@@ -327,6 +351,7 @@ export class ImageCloud {
 
     const nextIndex = (this.currentFocusIndex + 1) % this.imageElements.length;
     this.navigateToImage(nextIndex);
+    this.updateCounter(nextIndex);
   }
 
   /**
@@ -337,6 +362,7 @@ export class ImageCloud {
 
     const prevIndex = (this.currentFocusIndex - 1 + this.imageElements.length) % this.imageElements.length;
     this.navigateToImage(prevIndex);
+    this.updateCounter(prevIndex);
   }
 
   /**
@@ -819,12 +845,16 @@ export class ImageCloud {
       await this.zoomEngine.unfocusImage();
       this.currentFocusIndex = null;
       this.swipeEngine?.disable();
+      this.hideCounter();
     } else {
       // Track the focused image index for keyboard navigation
       const imageId = imageElement.dataset.imageId;
       this.currentFocusIndex = imageId !== undefined ? parseInt(imageId, 10) : null;
       this.swipeEngine?.enable();
       await this.zoomEngine.focusImage(imageElement, bounds, originalLayout);
+      if (this.currentFocusIndex !== null) {
+        this.updateCounter(this.currentFocusIndex);
+      }
     }
   }
 
@@ -874,6 +904,18 @@ export class ImageCloud {
     }
   }
 
+  private updateCounter(index: number): void {
+    if (!this.fullConfig.rendering.ui.showImageCounter || !this.counterEl) return;
+    this.counterEl.textContent = `${index + 1} of ${this.imageElements.length}`;
+    this.counterEl.classList.remove('fbn-ic-hidden');
+  }
+
+  private hideCounter(): void {
+    if (this.counterEl) {
+      this.counterEl.classList.add('fbn-ic-hidden');
+    }
+  }
+
   /**
    * Destroy the gallery and clean up resources
    */
@@ -887,6 +929,10 @@ export class ImageCloud {
     if (this.errorElAutoCreated && this.errorEl) {
       this.errorEl.remove();
       this.errorEl = null;
+    }
+    if (this.counterElAutoCreated && this.counterEl) {
+      this.counterEl.remove();
+      this.counterEl = null;
     }
     // Remove event listeners
     if (this.resizeTimeout !== null) {

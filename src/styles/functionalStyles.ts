@@ -39,6 +39,15 @@ export const FUNCTIONAL_CSS = `
   will-change: auto;
 }
 
+.fbn-ic-counter {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10001;
+  pointer-events: none;
+}
+
 .fbn-ic-hidden {
   display: none !important;
 }

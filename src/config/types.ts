@@ -473,6 +473,7 @@ export interface UIRenderingConfig {
   theme?: 'light' | 'dark' | 'auto';
   loadingElement?: string | HTMLElement;
   errorElement?: string | HTMLElement;
+  counterElement?: string | HTMLElement;
 }
 
 export interface PerformanceRenderingConfig {
