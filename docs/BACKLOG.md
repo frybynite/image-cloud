@@ -52,6 +52,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 *Future feature ideas to explore*
 
+- Rename `generators/` directory to `layouts/` — the parameter structure uses `layout` as the key and we refer to them as "layouts" everywhere in the API, but the internal source directory and class names still say "generators" (e.g., `RadialPlacementGenerator`). Align internal naming with the public-facing terminology.
 - Enhance `styling.hover` and `styling.focused` with additional style options:
   - Note: `opacity` already works via `ImageStyleState.opacity` and `filter.opacity`
   - `transform` - scale, rotate, translateX/Y for hover lift/grow effects
@@ -64,13 +65,11 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Vue component wrapper
 - Web Component wrapper
 - Additional layout algorithms (honeycomb, physics-based)
-- Drag-to-reorder functionality
 - Lightbox mode
 - Thumbnail navigation
 - Touch gesture improvements
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
-- Consolidate debug parameters — currently spread across `debug` (top-level), `config.loaders.debugLogging`, per-loader `debugLogging`, `layout.debugRadials`, and `layout.debugCenters`. Consider unifying under `config.debug` namespace while preserving per-loader granularity.
 - Loading spinner until images render — option to keep the loading spinner visible until the first N images have actually loaded and animated in, rather than hiding it after `prepare()` completes. Currently the spinner only covers the URL-list fetch phase, which is near-instant for static URLs.
 - Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
 - Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).
@@ -79,6 +78,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 ## Completed
 
+- [x] Consolidate debug parameters under `config.debug` namespace — unified `config.debug.enabled`, `config.debug.centers`, `config.debug.loaders`. Old paths (`debug`, `layout.debugCenters`, `config.loaders.debugLogging`) removed (breaking change). Per-loader `debugLogging` retained as override. `debugRadials` removed entirely.
 - [x] Swipe gesture navigation - Left/right swipe gestures on touch devices navigate between focused images (SwipeEngine with drag feedback, threshold detection, horizontal angle filtering).
 - [x] Packaging & Distribution Strategy - CDN deployment (unpkg/jsdelivr), simplified README examples, separate auto-init bundle.
 - [x] Fix image centering - images now correctly center on their layout positions (using pixel-based translate transforms).

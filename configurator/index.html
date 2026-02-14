@@ -961,14 +961,6 @@
                     </div>
                 </div>
 
-                <div class="preset-section">
-                    <label>Debug</label>
-                    <div class="control-row" style="margin: 0;">
-                        <input type="checkbox" class="control-checkbox" id="debug-centers">
-                        <label class="control-label" data-label="Show center markers" data-path="debugCenters" data-desc-key="debugCenters" style="flex: 0 0 auto;">Show center markers</label>
-                    </div>
-                </div>
-
                 <!-- Layout Section -->
                 <div class="accordion open" data-section="layout">
                     <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
@@ -1954,6 +1946,73 @@
                                 <div class="control-input">
                                     <input type="number" id="focus-zIndex" value="1000" min="100" max="9999">
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Config Section -->
+                <div class="accordion" data-section="config">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="Config" data-path="config" data-desc-key="config">Config</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- Loaders -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Loaders" data-path="config.loaders" data-desc-key="config.loaders">Loaders</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-validate-urls">
+                                <label class="control-label" data-label="Validate URLs" data-path="config.loaders.validateUrls" data-desc-key="config.loaders.validateUrls">Validate URLs</label>
+                                <div class="control-input">
+                                    <select id="config-validate-urls">
+                                        <option value="true" selected>Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-validation-method">
+                                <label class="control-label" data-label="Validation Method" data-path="config.loaders.validationMethod" data-desc-key="config.loaders.validationMethod">Validation Method</label>
+                                <div class="control-input">
+                                    <select id="config-validation-method">
+                                        <option value="head" selected>Head</option>
+                                        <option value="simple">Simple</option>
+                                        <option value="none">None</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-validation-timeout">
+                                <label class="control-label" data-label="Validation Timeout" data-path="config.loaders.validationTimeout" data-desc-key="config.loaders.validationTimeout">Validation Timeout</label>
+                                <div class="control-input">
+                                    <input type="number" id="config-validation-timeout" value="5000" min="1000" max="30000" step="1000">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-allowed-extensions">
+                                <label class="control-label" data-label="Allowed Extensions" data-path="config.loaders.allowedExtensions" data-desc-key="config.loaders.allowedExtensions">Allowed Extensions</label>
+                                <div class="control-input">
+                                    <input type="text" id="config-allowed-extensions" value="jpg,jpeg,png,gif,webp,bmp" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Debug -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Debug" data-path="config.debug" data-desc-key="config.debug">Debug</h5>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="debug-enabled">
+                                <label class="control-label" data-label="Enable debug logging" data-path="config.debug.enabled" data-desc-key="config.debug.enabled" style="flex: 0 0 auto;">Enable debug logging</label>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="debug-centers">
+                                <label class="control-label" data-label="Show center markers" data-path="config.debug.centers" data-desc-key="config.debug.centers" style="flex: 0 0 auto;">Show center markers</label>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="debug-loaders">
+                                <label class="control-label" data-label="Loader debug output" data-path="config.debug.loaders" data-desc-key="config.debug.loaders" style="flex: 0 0 auto;">Loader debug output</label>
                             </div>
                         </div>
                     </div>
@@ -3227,10 +3286,27 @@
                 layout.algorithm = algorithm;
             }
 
-            // Debug Centers (only include when enabled, since default is off)
-            if (document.getElementById('debug-centers')?.checked) {
-                layout.debugCenters = true;
+            // Shared loader config (only include non-default values)
+            const loaderConfig = {};
+            if (document.getElementById('enable-validate-urls')?.checked) {
+                loaderConfig.validateUrls = document.getElementById('config-validate-urls').value === 'true';
             }
+            if (document.getElementById('enable-validation-method')?.checked) {
+                loaderConfig.validationMethod = document.getElementById('config-validation-method').value;
+            }
+            if (document.getElementById('enable-validation-timeout')?.checked) {
+                loaderConfig.validationTimeout = parseInt(document.getElementById('config-validation-timeout').value);
+            }
+            if (document.getElementById('enable-allowed-extensions')?.checked) {
+                const extStr = document.getElementById('config-allowed-extensions').value.trim();
+                if (extStr) loaderConfig.allowedExtensions = extStr.split(',').map(e => e.trim()).filter(Boolean);
+            }
+
+            // Debug config (only include when enabled, since defaults are off)
+            const debugConfig = {};
+            if (document.getElementById('debug-enabled')?.checked) debugConfig.enabled = true;
+            if (document.getElementById('debug-centers')?.checked) debugConfig.centers = true;
+            if (document.getElementById('debug-loaders')?.checked) debugConfig.loaders = true;
 
             // Image Config (new structure)
             const image = {};
@@ -3608,6 +3684,13 @@
             if (Object.keys(focusedState).length > 0) styling.focused = focusedState;
 
             if (Object.keys(styling).length > 0) config.styling = styling;
+
+            // Config section (loaders + debug)
+            if (Object.keys(loaderConfig).length > 0 || Object.keys(debugConfig).length > 0) {
+                if (!config.config) config.config = {};
+                if (Object.keys(loaderConfig).length > 0) config.config.loaders = loaderConfig;
+                if (Object.keys(debugConfig).length > 0) config.config.debug = debugConfig;
+            }
 
             return config;
         }

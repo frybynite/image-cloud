@@ -33,6 +33,7 @@ export type {
   GoogleDriveLoaderInnerConfig,
   SharedLoaderConfig,
   ConfigSection,
+  DebugConfig,
   StaticUrlsSource,
   StaticPathSource,
   StaticJsonSource,

@@ -14,7 +14,6 @@ export interface ImageLayout {
   scale: number;
   baseSize: number;
   zIndex?: number;
-  borderColor?: string;
 }
 
 export interface ContainerBounds {
@@ -108,13 +107,21 @@ export interface SharedLoaderConfig {
   validationMethod?: 'head' | 'simple' | 'none';
   failOnAllMissing?: boolean;
   allowedExtensions?: string[];
-  debugLogging?: boolean;
+}
+
+// === Debug configuration ===
+
+export interface DebugConfig {
+  enabled?: boolean;    // General debug logging (was top-level `debug`)
+  centers?: boolean;    // Center position markers (was `layout.debugCenters`)
+  loaders?: boolean;    // Loader debug output (was `config.loaders.debugLogging`)
 }
 
 // === Config section ===
 
 export interface ConfigSection {
   loaders?: SharedLoaderConfig;
+  debug?: DebugConfig;
 }
 
 // ============================================================================
@@ -282,8 +289,6 @@ export interface LayoutConfig {
   responsive?: ResponsiveBreakpoints;  // Viewport width breakpoints (mobile/tablet)
   targetCoverage?: number;       // 0-1, for adaptive sizing (default: 0.6)
   densityFactor?: number;        // Controls center point spacing (default: 1.0)
-  debugRadials?: boolean;
-  debugCenters?: boolean;        // Show markers at calculated image center positions
   grid?: GridAlgorithmConfig;
   spiral?: SpiralAlgorithmConfig;
   cluster?: ClusterAlgorithmConfig;
@@ -501,7 +506,6 @@ export interface ImageCloudConfig {
   interaction: InteractionConfig;
   rendering: RenderingConfig;
   styling?: ImageStylingConfig;
-  debug: boolean;
 }
 
 // Backwards compatibility alias
@@ -518,7 +522,6 @@ export interface ImageCloudOptions {
   interaction?: Partial<InteractionConfig>;
   rendering?: Partial<RenderingConfig>;
   styling?: Partial<ImageStylingConfig>;
-  debug?: boolean;
 }
 
 // Backwards compatibility alias
@@ -532,7 +535,6 @@ export interface LegacyLayoutConfig {
   baseImageSize?: number;
   rotationRange?: { min: number; max: number };
   type?: 'random' | 'radial';
-  debugRadials?: boolean;
   sizeVarianceMin?: number;
   sizeVarianceMax?: number;
   responsiveHeights?: ResponsiveHeight[];
@@ -559,7 +561,6 @@ export interface LegacyConfig {
   layout?: LegacyLayoutConfig;
   animation?: LegacyAnimationConfig;
   zoom?: LegacyZoomConfig;
-  debugLogging?: boolean;
   googleDrive?: {
     apiKey?: string;
     apiEndpoint?: string;

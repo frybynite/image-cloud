@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.7] - 2026-02-14
+
+### Breaking Changes
+- Consolidate debug parameters under `config.debug` namespace; old paths (`debug`, `layout.debugRadials`, `layout.debugCenters`, `config.loaders.debugLogging`) removed
+- Remove `debugRadials` feature entirely (type, generator code, configurator, docs)
+
+### Added
+- "Config" accordion in configurator with Loaders and Debug sub-sections
+- Expose shared loader config (`validateUrls`, `validationMethod`, `validationTimeout`, `allowedExtensions`) in configurator
+- Field descriptions for `config.loaders.*` options
+
+### Fixed
+- Debug border application order bug where default styles overwrote debug borders
+
 ## [0.3.6] - 2026-02-13
 
 - Version bump release

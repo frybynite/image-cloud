@@ -152,7 +152,7 @@ export class ImageCloud {
 
     return new CompositeLoader({
       loaders: childLoaders,
-      debugLogging: shared.debugLogging
+      debugLogging: this.fullConfig.config.debug?.loaders
     });
   }
 
@@ -169,7 +169,7 @@ export class ImageCloud {
         validationMethod: inner.validationMethod ?? shared.validationMethod,
         failOnAllMissing: inner.failOnAllMissing ?? shared.failOnAllMissing,
         allowedExtensions: inner.allowedExtensions ?? shared.allowedExtensions,
-        debugLogging: inner.debugLogging ?? shared.debugLogging
+        debugLogging: inner.debugLogging ?? this.fullConfig.config.debug?.loaders
       };
       return new StaticImageLoader(merged);
     } else if ('googleDrive' in entry) {
@@ -177,7 +177,7 @@ export class ImageCloud {
       const merged: GoogleDriveLoaderInnerConfig = {
         ...inner,
         allowedExtensions: inner.allowedExtensions ?? shared.allowedExtensions,
-        debugLogging: inner.debugLogging ?? shared.debugLogging
+        debugLogging: inner.debugLogging ?? this.fullConfig.config.debug?.loaders
       };
       return new GoogleDriveLoader(merged);
     } else {
@@ -501,7 +501,7 @@ export class ImageCloud {
    * Helper for debug logging
    */
   private logDebug(...args: unknown[]): void {
-    if (this.fullConfig.debug && typeof console !== 'undefined') {
+    if (this.fullConfig.config.debug?.enabled && typeof console !== 'undefined') {
       console.log(...args);
     }
   }
@@ -587,7 +587,7 @@ export class ImageCloud {
 
         // Debug: log final state for first few images
         const imgIndex = parseInt(img.dataset.imageId || '0');
-        if (this.fullConfig.debug && imgIndex < 3) {
+        if (this.fullConfig.config.debug?.enabled && imgIndex < 3) {
           const finalTransform = img.dataset.finalTransform || '';
           console.log(`Image ${imgIndex} final state:`, {
             left: img.style.left,
@@ -665,8 +665,8 @@ export class ImageCloud {
       startQueueProcessing();
     }
 
-    // Debug: Draw center markers if debugCenters is enabled
-    if (this.fullConfig.layout.debugCenters && this.containerEl) {
+    // Debug: Draw center markers if debug.centers is enabled
+    if (this.fullConfig.config.debug?.centers && this.containerEl) {
       // Remove any existing debug markers
       this.containerEl.querySelectorAll('.fbn-ic-debug-center').forEach(el => el.remove());
 
@@ -707,11 +707,6 @@ export class ImageCloud {
       img.style.top = `${layout.y}px`;
       // Transform will be applied in onload after we know the actual dimensions
 
-      // Apply layout-specified border only if no styling config border is set
-      if (layout.borderColor && !this.fullConfig.styling?.default?.border) {
-        img.style.border = `5px solid ${layout.borderColor}`;
-        img.style.boxSizing = 'border-box';
-      }
       if (layout.zIndex) img.style.zIndex = String(layout.zIndex);
 
       // Apply default styling state
@@ -792,7 +787,7 @@ export class ImageCloud {
           startScale
         );
 
-        if (this.fullConfig.debug && index < 3) {
+        if (this.fullConfig.config.debug?.enabled && index < 3) {
           console.log(`Image ${index}:`, {
             finalPosition,
             imageSize,

@@ -1,5 +1,21 @@
 {
   "debugCenters": "Show center markers for debugging layout placement (default: false)",
+  "config": {
+    "_title": "Global configuration for loaders and debug options",
+    "loaders": {
+      "_title": "Shared loader configuration applied to all image loaders",
+      "validateUrls": "Check that image URLs are accessible before loading (default: true)",
+      "validationMethod": "HTTP method for URL validation: 'head' (lightweight), 'simple' (full GET), or 'none' (skip) (default: head)",
+      "validationTimeout": "Timeout in milliseconds for URL validation requests (default: 5000)",
+      "allowedExtensions": "Comma-separated list of allowed image file extensions (default: jpg,jpeg,png,gif,webp,bmp)"
+    },
+    "debug": {
+      "_title": "Debug configuration",
+      "enabled": "Enable general debug logging to console (default: false)",
+      "centers": "Show red markers at calculated image center positions (default: false)",
+      "loaders": "Enable debug output for image loaders (default: false)"
+    }
+  },
   "layout": {
     "_title": "Configure how images are arranged in the gallery",
     "algorithm": {

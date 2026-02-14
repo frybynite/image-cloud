@@ -32,7 +32,6 @@ export class RadialPlacementGenerator implements PlacementGenerator {
   ): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
-    const { debugRadials } = this.config;
     // Use fixedHeight if provided, otherwise use default 200
     const baseImageSize = options.fixedHeight ?? 200;
 
@@ -48,9 +47,6 @@ export class RadialPlacementGenerator implements PlacementGenerator {
 
     // Get scale decay from layout config
     const scaleDecay = this.config.scaleDecay ?? 0;
-
-    // Debug color palette
-    const debugPalette = ['green', 'blue', 'red', 'yellow', 'orange', 'purple'];
 
     // Use override fixedHeight if provided, else baseImageSize
     const imageSize = options.fixedHeight ?? baseImageSize;
@@ -73,8 +69,7 @@ export class RadialPlacementGenerator implements PlacementGenerator {
         rotation: rotationMode === 'random' ? this.random(minRotation * 0.33, maxRotation * 0.33) : 0, // Less rotation for center
         scale: varianceScale,
         baseSize: centerSize,
-        zIndex: 100, // Center image is highest
-        borderColor: debugRadials ? 'cyan' : undefined
+        zIndex: 100 // Center image is highest
       });
     }
 
@@ -151,8 +146,7 @@ export class RadialPlacementGenerator implements PlacementGenerator {
           rotation,
           scale: combinedScale,
           baseSize: scaledImageSize,
-          zIndex: Math.max(1, 100 - currentRing), // Outer rings have lower z-index
-          borderColor: debugRadials ? debugPalette[(currentRing - 1) % debugPalette.length] : undefined
+          zIndex: Math.max(1, 100 - currentRing) // Outer rings have lower z-index
         });
 
         processedCount++;

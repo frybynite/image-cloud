@@ -82,9 +82,12 @@ export class LegacyOptionsAdapter {
     // Convert rendering configuration
     newOptions.rendering = this.convertRendering(oldOptions);
 
-    // Convert debug flag
+    // Convert debug flag to new config.debug namespace
     if (legacyConfig?.debugLogging !== undefined) {
-      newOptions.debug = legacyConfig.debugLogging;
+      if (!newOptions.config) newOptions.config = {};
+      if (!newOptions.config.debug) newOptions.config.debug = {};
+      newOptions.config.debug.enabled = legacyConfig.debugLogging;
+      newOptions.config.debug.loaders = legacyConfig.debugLogging;
     }
 
     return newOptions;
@@ -118,8 +121,7 @@ export class LegacyOptionsAdapter {
           apiKey,
           sources,
           apiEndpoint: legacyConfig?.googleDrive?.apiEndpoint,
-          allowedExtensions: legacyConfig?.googleDrive?.imageExtensions,
-          debugLogging: legacyConfig?.debugLogging
+          allowedExtensions: legacyConfig?.googleDrive?.imageExtensions
         }
       }];
     } else if (loaderType === 'static') {
@@ -136,8 +138,7 @@ export class LegacyOptionsAdapter {
             validationTimeout: config.validationTimeout,
             validationMethod: config.validationMethod,
             failOnAllMissing: config.failOnAllMissing,
-            allowedExtensions: config.imageExtensions || config.allowedExtensions,
-            debugLogging: legacyConfig?.debugLogging
+            allowedExtensions: config.imageExtensions || config.allowedExtensions
           }
         }];
       }
@@ -154,8 +155,7 @@ export class LegacyOptionsAdapter {
     this.warn('layout', 'Flat layout configuration is deprecated. Use the pattern-based structure with sizing in "image" config and spacing in "layout" config.');
 
     const newLayout: Partial<LayoutConfig> = {
-      algorithm: oldLayout.type || 'radial',
-      debugRadials: oldLayout.debugRadials
+      algorithm: oldLayout.type || 'radial'
     };
 
     // Convert spacing configuration

@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry } from './types';
+import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -171,17 +171,26 @@ export const DEFAULT_SHARED_LOADER_CONFIG: SharedLoaderConfig = Object.freeze({
   validationTimeout: 5000,
   validationMethod: 'head' as const,
   failOnAllMissing: true,
-  allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
-  debugLogging: false
+  allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
+});
+
+/**
+ * Default debug configuration
+ */
+export const DEFAULT_DEBUG_CONFIG: DebugConfig = Object.freeze({
+  enabled: false,
+  centers: false,
+  loaders: false
 });
 
 export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   // Loader configuration (always an array, composite behavior is implicit)
   loaders: [] as LoaderEntry[],
 
-  // Shared loader settings
+  // Shared loader settings and debug config
   config: Object.freeze({
-    loaders: DEFAULT_SHARED_LOADER_CONFIG
+    loaders: DEFAULT_SHARED_LOADER_CONFIG,
+    debug: DEFAULT_DEBUG_CONFIG
   }),
 
   // Image sizing and rotation configuration
@@ -197,9 +206,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     spacing: Object.freeze({
       padding: 50,   // padding from viewport edges
       minGap: 20     // minimum spacing between images
-    }),
-    debugRadials: false,
-    debugCenters: false
+    })
   }),
 
   // Pattern-based animation configuration
@@ -284,10 +291,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   }),
 
   // Image styling
-  styling: DEFAULT_STYLING,
-
-  // Debug mode
-  debug: false
+  styling: DEFAULT_STYLING
 });
 
 /**
@@ -528,8 +532,7 @@ export function mergeConfig(
     animation: { ...DEFAULT_CONFIG.animation },
     interaction: { ...DEFAULT_CONFIG.interaction },
     rendering: { ...DEFAULT_CONFIG.rendering },
-    styling: deepMergeStyling(DEFAULT_STYLING, userConfig.styling as Partial<ImageStylingConfig> | undefined),
-    debug: DEFAULT_CONFIG.debug
+    styling: deepMergeStyling(DEFAULT_STYLING, userConfig.styling as Partial<ImageStylingConfig> | undefined)
   };
 
   // Deep merge layout config
@@ -692,10 +695,11 @@ export function mergeConfig(
     }
   }
 
-  // Merge debug flag
-  if (userConfig.debug !== undefined) {
-    merged.debug = userConfig.debug;
-  }
+  // Merge debug config
+  merged.config.debug = {
+    ...DEFAULT_DEBUG_CONFIG,
+    ...(userConfig.config?.debug ?? {})
+  };
 
   return merged;
 }
@@ -737,7 +741,7 @@ export function resolveWavePathConfig(
  * Debug logger
  */
 export function debugLog(config: ImageCloudConfig, ...args: unknown[]): void {
-  if (config.debug && typeof console !== 'undefined') {
+  if (config.config.debug?.enabled && typeof console !== 'undefined') {
     console.log(...args);
   }
 }

@@ -42,13 +42,19 @@ const gallery = new ImageCloud({
   container: 'my-gallery-id', // string ID or HTMLElement, defaults to 'imageCloud'
   images: [...],              // shorthand: array of image URLs
   loaders: [...],             // array of loader entries
-  config: { loaders: {...} }, // shared loader settings
+  config: {
+    loaders: {...},           // shared loader settings
+    debug: {                  // debug configuration
+      enabled: false,         // general logging
+      centers: false,         // center position markers
+      loaders: false          // loader debug output
+    }
+  },
   image: { ... },
   layout: { ... },
   animation: { ... },
   interaction: { ... },
-  rendering: { ... },
-  debug: false
+  rendering: { ... }
 });
 ```
 
@@ -190,8 +196,7 @@ config: {
     validationTimeout: 5000,       // Default: 5000
     validationMethod: 'head',      // Default: 'head'
     failOnAllMissing: true,        // Default: true
-    allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
-    debugLogging: false            // Default: false
+    allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
   }
 }
 ```
@@ -203,7 +208,8 @@ config: {
 | `validationMethod` | `'head' \| 'simple' \| 'none'` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (URL format check), `'none'`. |
 | `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation. |
 | `allowedExtensions` | `string[]` | `['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']` | Filter images by extension. |
-| `debugLogging` | `boolean` | `false` | Output debug information to console. |
+
+> **Note:** `debugLogging` has been removed from shared loader config. Use `config.debug.loaders` instead. Per-loader `debugLogging` is still available as an override on individual loader entries.
 
 **Config merge order:** `config.loaders` (shared defaults) → individual loader entry overrides → final config passed to loader constructor.
 
@@ -368,8 +374,6 @@ layout: {
 | `scaleDecay` | `number` | `0` | Size reduction for outer images in spiral/radial layouts (0 = none, 1 = 50% smaller at edge) |
 | `responsive.mobile.maxWidth` | `number` | `767` | Maximum viewport width for mobile breakpoint |
 | `responsive.tablet.maxWidth` | `number` | `1199` | Maximum viewport width for tablet breakpoint (screen is > tablet) |
-| `debugRadials` | `boolean` | `false` | Visualize the radial layout structure (debug). |
-| `debugCenters` | `boolean` | `false` | Show markers at calculated image center positions (debug). |
 | `spacing` | `LayoutSpacingConfig` | *See below* | Configuration for margins and gaps. |
 
 ---
@@ -612,14 +616,12 @@ Concentric rings emanating from center (built-in).
 
 ```typescript
 layout: {
-  algorithm: 'radial',
-  debugRadials: false  // Show colored borders per ring
+  algorithm: 'radial'
+},
+config: {
+  debug: { centers: true }  // Show center markers for debugging
 }
 ```
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `debugRadials` | `boolean` | `false` | Color-code images by ring for debugging |
 
 **Visual characteristics:**
 - Center image prominently featured
@@ -1493,11 +1495,27 @@ styling: {
 
 ---
 
-### 8. Debug (`debug`)
+### 8. Debug Configuration (`config.debug`)
+
+Controls debug output and visual debugging aids. All debug options default to `false`.
+
+```typescript
+config: {
+  debug: {
+    enabled: true,   // General logging (was top-level `debug`)
+    centers: true,   // Center position markers (was `layout.debugCenters`)
+    loaders: true    // Loader debug output (was `config.loaders.debugLogging`)
+  }
+}
+```
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `debug` | `boolean` | `false` | Enable global debug logging. |
+| `config.debug.enabled` | `boolean` | `false` | Enable general debug logging to console. |
+| `config.debug.centers` | `boolean` | `false` | Show markers at calculated image center positions. |
+| `config.debug.loaders` | `boolean` | `false` | Enable debug output for image loaders. |
+
+**Note:** The old paths (`debug`, `layout.debugCenters`, `config.loaders.debugLogging`) have been removed. Use `config.debug.*` instead.
 
 ---
 
@@ -1508,7 +1526,7 @@ All available parameters with example values:
 ```jsonc
 {
   "container": "imageCloud",                    // ID of the container element (string ID or HTMLElement in JS/TS)
-  "debug": false,                               // Default. Enable debug logging
+  // Debug: use config.debug (see below)
 
   "images": [                                   // Shorthand: array of image URLs
     "https://example.com/image1.jpg",
@@ -1572,7 +1590,11 @@ All available parameters with example values:
       "validationMethod": "head",               // Default. "head" | "simple" | "none"
       "failOnAllMissing": true,                 // Default
       "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
-      "debugLogging": false                     // Default
+    },
+    "debug": {                                  // Debug configuration
+      "enabled": false,                         // Default. General debug logging
+      "centers": false,                         // Default. Show center markers
+      "loaders": false                          // Default. Loader debug output
     }
   },
 
@@ -1610,8 +1632,6 @@ All available parameters with example values:
       "mobile": { "maxWidth": 767 },            // Default. Mobile breakpoint
       "tablet": { "maxWidth": 1199 }            // Default. Tablet breakpoint (screen > tablet)
     },
-    "debugRadials": false,                      // Default
-    "debugCenters": false,                      // Default. Show markers at image center positions
 
     "spacing": {
       "padding": 50,                            // Default. Container padding in px
