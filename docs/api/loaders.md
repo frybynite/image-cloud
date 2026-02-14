@@ -47,7 +47,6 @@ interface StaticLoaderConfig {
   validateUrls?: boolean;           // Default: true
   validationTimeout?: number;       // Default: 5000ms
   validationMethod?: 'head' | 'simple' | 'none';
-  failOnAllMissing?: boolean;       // Default: true
   allowedExtensions?: string[];     // Default: jpg, jpeg, png, gif, webp, bmp
   debugLogging?: boolean;
 }

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.1] - 2026-02-14
+
+### Removed
+- Remove `failOnAllMissing` feature (unused stub in types, defaults, adapter, docs)
+
+### Fixed
+- Fix two flaky image-counter e2e tests with proper animation-complete waits (replace `waitForTimeout` with `waitForFunction` opacity checks)
+
 ## [0.4.0] - 2026-02-14
 
 ### Breaking Changes

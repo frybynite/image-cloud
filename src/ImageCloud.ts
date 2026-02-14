@@ -167,7 +167,6 @@ export class ImageCloud {
         validateUrls: inner.validateUrls ?? shared.validateUrls,
         validationTimeout: inner.validationTimeout ?? shared.validationTimeout,
         validationMethod: inner.validationMethod ?? shared.validationMethod,
-        failOnAllMissing: inner.failOnAllMissing ?? shared.failOnAllMissing,
         allowedExtensions: inner.allowedExtensions ?? shared.allowedExtensions,
         debugLogging: inner.debugLogging ?? this.fullConfig.config.debug?.loaders
       };

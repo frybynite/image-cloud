@@ -74,7 +74,6 @@ export interface StaticLoaderInnerConfig {
   validateUrls?: boolean;
   validationTimeout?: number;
   validationMethod?: 'head' | 'simple' | 'none';
-  failOnAllMissing?: boolean;
   allowedExtensions?: string[];
   debugLogging?: boolean;
 }
@@ -105,7 +104,6 @@ export interface SharedLoaderConfig {
   validateUrls?: boolean;
   validationTimeout?: number;
   validationMethod?: 'head' | 'simple' | 'none';
-  failOnAllMissing?: boolean;
   allowedExtensions?: string[];
 }
 

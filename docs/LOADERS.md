@@ -53,7 +53,6 @@ loaders: [{
     validateUrls: true,                  // Optional: Verify URLs exist
     validationTimeout: 5000,             // Optional: Timeout in ms
     validationMethod: 'head',            // Optional: 'head', 'simple', or 'none'
-    failOnAllMissing: true,              // Optional: Fail if all URLs invalid
     allowedExtensions: ['jpg', 'png'],   // Optional: Filter by extension
     debugLogging: false                  // Optional: Enable debug output
   }
@@ -66,7 +65,6 @@ loaders: [{
 | `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading |
 | `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms) |
 | `validationMethod` | `string` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (URL format check), `'none'` |
-| `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation |
 | `allowedExtensions` | `string[]` | All images | Filter images by file extension |
 | `debugLogging` | `boolean` | `false` | Log debug information to console |
 
@@ -215,7 +213,7 @@ loaders: [{
 | `allowedExtensions` | `string[]` | All images | Filter images by file extension |
 | `debugLogging` | `boolean` | `false` | Log debug information to console |
 
-> **Note:** The `validateUrls`, `validationTimeout`, `validationMethod`, and `failOnAllMissing` options from `config.loaders` do not apply to the Google Drive loader. The Drive API confirms file existence when listing folder contents, so URLs are already validated. Additionally, Google Drive image proxy URLs (`lh3.googleusercontent.com`) do not support cross-origin HEAD requests due to CORS restrictions, making browser-side validation impossible.
+> **Note:** The `validateUrls`, `validationTimeout`, and `validationMethod` options from `config.loaders` do not apply to the Google Drive loader. The Drive API confirms file existence when listing folder contents, so URLs are already validated. Additionally, Google Drive image proxy URLs (`lh3.googleusercontent.com`) do not support cross-origin HEAD requests due to CORS restrictions, making browser-side validation impossible.
 
 ### Google Drive Source Types
 
@@ -340,7 +338,6 @@ const gallery = new ImageCloud({
       validateUrls: true,            // Default: true
       validationTimeout: 5000,       // Default: 5000
       validationMethod: 'head',      // Default: 'head'
-      failOnAllMissing: true,        // Default: true
       allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'],
       debugLogging: false            // Default: false
     }
@@ -355,6 +352,5 @@ const gallery = new ImageCloud({
 | `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading |
 | `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms) |
 | `validationMethod` | `string` | `'head'` | `'head'`, `'simple'`, or `'none'` |
-| `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation |
 | `allowedExtensions` | `string[]` | `['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']` | Filter images by extension |
 | `debugLogging` | `boolean` | `false` | Output debug information to console |

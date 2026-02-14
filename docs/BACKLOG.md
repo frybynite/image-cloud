@@ -10,7 +10,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Add border-image to functionality and configurator
-- [ ] Bug: `failOnAllMissing` is defined in types, has a default (`true`), and is merged in `ImageCloud.ts:170`, but no loader actually reads or enforces it — StaticImageLoader silently ignores it
 - [ ] Implement `rendering.performance` options (`lazyLoad`, `preloadCount`, `imageQuality`) — types and config merging exist but values are unused stubs
 - [ ] Implement `rendering.ui` stubs: `showThumbnails`, `theme` ('light'|'dark'|'auto') — types exist but values are unused
 - [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.

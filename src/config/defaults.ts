@@ -170,7 +170,6 @@ export const DEFAULT_SHARED_LOADER_CONFIG: SharedLoaderConfig = Object.freeze({
   validateUrls: true,
   validationTimeout: 5000,
   validationMethod: 'head' as const,
-  failOnAllMissing: true,
   allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
 });
 

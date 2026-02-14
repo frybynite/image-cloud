@@ -39,19 +39,24 @@ test.describe('Image Counter', () => {
       await page.waitForFunction(() => window.galleryInitPromise !== undefined);
       await page.evaluate(() => window.galleryInitPromise);
       await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
-      await page.waitForTimeout(500);
+      // Wait for all entrance animations to finish (all 5 images visible with opacity > 0)
+      await page.waitForFunction(() => {
+        const imgs = document.querySelectorAll('#imageCloud img');
+        return imgs.length >= 5 && Array.from(imgs).every(img => getComputedStyle(img).opacity !== '0');
+      }, { timeout: 10000 });
 
       // Click first image to focus
       const firstImage = page.locator('#imageCloud img').first();
       await firstImage.click();
-      await page.waitForTimeout(300);
 
       const counter = page.locator('.fbn-ic-counter');
+      // Wait for counter to become visible (focus animation complete)
+      await expect(counter).not.toHaveClass(/fbn-ic-hidden/, { timeout: 5000 });
       const initialText = await counter.textContent();
 
       // Navigate to next image
       await page.keyboard.press('ArrowRight');
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
 
       const nextText = await counter.textContent();
       expect(nextText).not.toBe(initialText);
@@ -110,20 +115,23 @@ test.describe('Image Counter', () => {
       await page.waitForFunction(() => window.galleryInitPromise !== undefined);
       await page.evaluate(() => window.galleryInitPromise);
       await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
-      await page.waitForTimeout(500);
+      // Wait for all entrance animations to finish (all 5 images visible with opacity > 0)
+      await page.waitForFunction(() => {
+        const imgs = document.querySelectorAll('#imageCloud img');
+        return imgs.length >= 5 && Array.from(imgs).every(img => getComputedStyle(img).opacity !== '0');
+      }, { timeout: 10000 });
 
       const firstImage = page.locator('#imageCloud img').first();
       await firstImage.click();
-      await page.waitForTimeout(300);
 
       const counter = page.locator('.fbn-ic-counter');
-      await expect(counter).not.toHaveClass(/fbn-ic-hidden/);
+      // Wait for counter to become visible (focus animation complete)
+      await expect(counter).not.toHaveClass(/fbn-ic-hidden/, { timeout: 5000 });
 
       // Click the same (focused) image to unfocus
       await firstImage.click();
-      await page.waitForTimeout(300);
 
-      await expect(counter).toHaveClass(/fbn-ic-hidden/);
+      await expect(counter).toHaveClass(/fbn-ic-hidden/, { timeout: 5000 });
     });
 
   });

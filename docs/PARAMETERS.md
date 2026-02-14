@@ -103,7 +103,6 @@ loaders: [{
     validateUrls: true,                  // Optional: Verify URLs exist
     validationTimeout: 5000,             // Optional: Timeout in ms
     validationMethod: 'head',            // Optional: 'head', 'simple', or 'none'
-    failOnAllMissing: true,              // Optional: Fail if all URLs invalid
     allowedExtensions: ['jpg', 'png'],   // Optional: Filter by extension
     debugLogging: false                  // Optional: Enable debug output
   }
@@ -116,7 +115,6 @@ loaders: [{
 | `validateUrls` | `boolean` | `true` | Check if image URLs exist before loading. |
 | `validationTimeout` | `number` | `5000` | Timeout (ms) for URL validation. |
 | `validationMethod` | `'head' \| 'simple' \| 'none'` | `'head'` | Method used to validate URLs. |
-| `failOnAllMissing` | `boolean` | `true` | Throw error if no images are found. |
 | `allowedExtensions` | `string[]` | `['jpg', 'jpeg', ...]` | Allowed image file extensions. |
 | `debugLogging` | `boolean` | `false` | Enable debug logs for the loader. |
 
@@ -195,7 +193,6 @@ config: {
     validateUrls: true,            // Default: true
     validationTimeout: 5000,       // Default: 5000
     validationMethod: 'head',      // Default: 'head'
-    failOnAllMissing: true,        // Default: true
     allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
   }
 }
@@ -206,7 +203,6 @@ config: {
 | `validateUrls` | `boolean` | `true` | Check if URLs are accessible before loading. |
 | `validationTimeout` | `number` | `5000` | Timeout for URL validation (ms). |
 | `validationMethod` | `'head' \| 'simple' \| 'none'` | `'head'` | `'head'` (HTTP HEAD), `'simple'` (URL format check), `'none'`. |
-| `failOnAllMissing` | `boolean` | `true` | Throw error if all URLs fail validation. |
 | `allowedExtensions` | `string[]` | `['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']` | Filter images by extension. |
 
 > **Note:** `debugLogging` has been removed from shared loader config. Use `config.debug.loaders` instead. Per-loader `debugLogging` is still available as an override on individual loader entries.
@@ -1554,7 +1550,6 @@ All available parameters with example values:
         "validateUrls": true,                   // Default (per-loader override)
         "validationTimeout": 5000,              // Default
         "validationMethod": "head",             // Default. "head" | "simple" | "none"
-        "failOnAllMissing": true,               // Default
         "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
         "debugLogging": false                   // Default
       }
@@ -1588,7 +1583,6 @@ All available parameters with example values:
       "validateUrls": true,                     // Default
       "validationTimeout": 5000,                // Default. Timeout in ms
       "validationMethod": "head",               // Default. "head" | "simple" | "none"
-      "failOnAllMissing": true,                 // Default
       "allowedExtensions": ["jpg", "jpeg", "png", "gif", "webp", "bmp"],  // Default
     },
     "debug": {                                  // Debug configuration

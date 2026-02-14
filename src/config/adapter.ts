@@ -137,7 +137,6 @@ export class LegacyOptionsAdapter {
             validateUrls: config.validateUrls,
             validationTimeout: config.validationTimeout,
             validationMethod: config.validationMethod,
-            failOnAllMissing: config.failOnAllMissing,
             allowedExtensions: config.imageExtensions || config.allowedExtensions
           }
         }];
