@@ -52,7 +52,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 *Future feature ideas to explore*
 
-- Rename `generators/` directory to `layouts/` — the parameter structure uses `layout` as the key and we refer to them as "layouts" everywhere in the API, but the internal source directory and class names still say "generators" (e.g., `RadialPlacementGenerator`). Align internal naming with the public-facing terminology.
 - Enhance `styling.hover` and `styling.focused` with additional style options:
   - Note: `opacity` already works via `ImageStyleState.opacity` and `filter.opacity`
   - `transform` - scale, rotate, translateX/Y for hover lift/grow effects
@@ -120,3 +119,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Dragging window between screens triggers re-animation — this is just the way it's going to work.
 - [x] Configurator: Separated image size & rotation from style into distinct sections.
 - [x] Image counter (`showImageCounter`) — displays "N of M" when an image is focused, hidden on unfocus. Supports custom element via `counterElement` config. Auto-created at bottom-center with fixed positioning.
+- [x] Renamed `generators/` directory to `layouts/` and all `*PlacementGenerator` classes to `*PlacementLayout` — aligned internal naming with the public-facing `layout` configuration key.

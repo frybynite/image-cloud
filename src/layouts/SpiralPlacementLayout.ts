@@ -1,9 +1,9 @@
 /**
- * SpiralPlacementGenerator.ts
+ * SpiralPlacementLayout.ts
  * Generates spiral layouts (golden, archimedean, logarithmic)
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, SpiralAlgorithmConfig, ImageConfig } from '../config/types';
+import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, SpiralAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface SpiralLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
@@ -20,7 +20,7 @@ const DEFAULT_SPIRAL_CONFIG: SpiralAlgorithmConfig = {
   startAngle: 0
 };
 
-export class SpiralPlacementGenerator implements PlacementGenerator {
+export class SpiralPlacementLayout implements PlacementLayout {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
 

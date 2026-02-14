@@ -1,15 +1,15 @@
 /**
- * RadialPlacementGenerator.ts
+ * RadialPlacementLayout.ts
  * Generates concentric radial layouts for image cloud
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
+import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
 
 interface RadialLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
 }
 
-export class RadialPlacementGenerator implements PlacementGenerator {
+export class RadialPlacementLayout implements PlacementLayout {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
 

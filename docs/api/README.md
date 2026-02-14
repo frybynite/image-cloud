@@ -9,7 +9,7 @@ This directory contains the API reference for the Image Cloud library.
 | [ImageCloud](./ImageCloud.md) | Main class - constructor, methods, lifecycle |
 | [Types](./types.md) | Configuration interfaces and data types |
 | [Loaders](./loaders.md) | Image source loaders (static, Google Drive, composite) |
-| [Generators](./generators.md) | Layout placement algorithms |
+| [Layouts](./layouts.md) | Layout placement algorithms |
 
 ## Installation
 
@@ -46,7 +46,7 @@ The library exports:
 - **ImageCloud** - Main class
 - **ImageGallery** - Alias for ImageCloud (backwards compatibility)
 - **Loaders** - `GoogleDriveLoader`, `StaticImageLoader`, `CompositeLoader`, `ImageFilter`
-- **Generators** - `RadialPlacementGenerator`, `GridPlacementGenerator`, `SpiralPlacementGenerator`, `ClusterPlacementGenerator`, `RandomPlacementGenerator`
+- **Layouts** - `RadialPlacementLayout`, `GridPlacementLayout`, `SpiralPlacementLayout`, `ClusterPlacementLayout`, `RandomPlacementLayout`, `WavePlacementLayout`
 - **Engines** - `AnimationEngine`, `LayoutEngine`, `ZoomEngine`, `EntryAnimationEngine`
 - **Config** - `DEFAULT_CONFIG`, `BOUNCE_PRESETS`, `ELASTIC_PRESETS`, `WAVE_PATH_PRESETS`
 - **Types** - 70+ TypeScript interfaces and types

@@ -261,7 +261,7 @@ interface EntryRotationConfig {
 
 **`settle` Mode:**
 - Image starts at `startRotation` degrees
-- Animates to its final layout rotation (from placement generator)
+- Animates to its final layout rotation (from placement layout)
 - Creates a "falling into place" effect
 
 ```typescript
@@ -319,10 +319,10 @@ rotation: {
 
 ### Interaction with Layout Rotation
 
-Layout generators can assign a final rotation to each image (e.g., `layout.rotation`). Entry rotation works *in addition to* this:
+Placement layouts can assign a final rotation to each image (e.g., `layout.rotation`). Entry rotation works *in addition to* this:
 
 1. **Start rotation** = `entryRotation.startRotation` (or calculated for spin/wobble)
-2. **End rotation** = `layout.rotation` (from placement generator)
+2. **End rotation** = `layout.rotation` (from placement layout)
 3. **Animation** = interpolate from start to end during entry
 
 If layout rotation is 0° and entry mode is `settle` with `startRotation: 30`, the image rotates from 30° → 0°.

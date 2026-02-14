@@ -1,15 +1,15 @@
 /**
- * RandomPlacementGenerator.ts
+ * RandomPlacementLayout.ts
  * Generates random overlapping layouts for image cloud
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
+import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
 
 interface RandomLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
 }
 
-export class RandomPlacementGenerator implements PlacementGenerator {
+export class RandomPlacementLayout implements PlacementLayout {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
 

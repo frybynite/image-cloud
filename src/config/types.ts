@@ -590,7 +590,7 @@ export interface LegacyImageGalleryOptions {
 // Interface Dependencies
 // ============================================================================
 
-export interface PlacementGenerator {
+export interface PlacementLayout {
   generate(
     imageCount: number,
     containerBounds: ContainerBounds,

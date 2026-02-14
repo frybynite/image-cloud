@@ -1,9 +1,9 @@
 /**
- * GridPlacementGenerator.ts
+ * GridPlacementLayout.ts
  * Generates grid-based layouts with optional stagger and jitter
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, GridAlgorithmConfig, ImageConfig } from '../config/types';
+import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, GridAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface GridLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
@@ -35,7 +35,7 @@ const OVERFLOW_OFFSET_PATTERN = [
   { x: 0, y: 1 },    // down
 ];
 
-export class GridPlacementGenerator implements PlacementGenerator {
+export class GridPlacementLayout implements PlacementLayout {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
 

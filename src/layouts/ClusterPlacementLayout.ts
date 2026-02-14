@@ -1,9 +1,9 @@
 /**
- * ClusterPlacementGenerator.ts
+ * ClusterPlacementLayout.ts
  * Generates organic cluster layouts with natural groupings
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ClusterAlgorithmConfig, ImageConfig } from '../config/types';
+import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, ClusterAlgorithmConfig, ImageConfig } from '../config/types';
 
 interface ClusterCenter {
   x: number;
@@ -24,7 +24,7 @@ const DEFAULT_CLUSTER_CONFIG: ClusterAlgorithmConfig = {
   distribution: 'gaussian'
 };
 
-export class ClusterPlacementGenerator implements PlacementGenerator {
+export class ClusterPlacementLayout implements PlacementLayout {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
 

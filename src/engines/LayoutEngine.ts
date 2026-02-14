@@ -9,13 +9,13 @@
  * - updateConfig(newConfig)
  */
 
-import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementGenerator, AdaptiveSizingResult, ImageConfig, FixedModeHeight, ResponsiveBreakpoints } from '../config/types';
-import { RandomPlacementGenerator } from '../generators/RandomPlacementGenerator';
-import { RadialPlacementGenerator } from '../generators/RadialPlacementGenerator';
-import { GridPlacementGenerator } from '../generators/GridPlacementGenerator';
-import { SpiralPlacementGenerator } from '../generators/SpiralPlacementGenerator';
-import { ClusterPlacementGenerator } from '../generators/ClusterPlacementGenerator';
-import { WavePlacementGenerator } from '../generators/WavePlacementGenerator';
+import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementLayout, AdaptiveSizingResult, ImageConfig, FixedModeHeight, ResponsiveBreakpoints } from '../config/types';
+import { RandomPlacementLayout } from '../layouts/RandomPlacementLayout';
+import { RadialPlacementLayout } from '../layouts/RadialPlacementLayout';
+import { GridPlacementLayout } from '../layouts/GridPlacementLayout';
+import { SpiralPlacementLayout } from '../layouts/SpiralPlacementLayout';
+import { ClusterPlacementLayout } from '../layouts/ClusterPlacementLayout';
+import { WavePlacementLayout } from '../layouts/WavePlacementLayout';
 
 export interface LayoutEngineConfig {
   layout: LayoutConfig;
@@ -26,7 +26,7 @@ export class LayoutEngine {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
   private layouts: Map<number, ImageLayout>;
-  private generator: PlacementGenerator;
+  private placementLayout: PlacementLayout;
 
   constructor(config: LayoutEngineConfig) {
     this.config = config.layout;
@@ -34,29 +34,29 @@ export class LayoutEngine {
 
     this.layouts = new Map();  // Store original states by image ID
 
-    // Initialize generator strategy
-    this.generator = this.initGenerator();
+    // Initialize placement layout strategy
+    this.placementLayout = this.initLayout();
   }
 
   /**
-   * Initialize the appropriate generator based on config type
-   * @returns Initialized placement generator
+   * Initialize the appropriate placement layout based on config type
+   * @returns Initialized placement layout
    */
-  private initGenerator(): PlacementGenerator {
+  private initLayout(): PlacementLayout {
     switch (this.config.algorithm) {
       case 'radial':
-        return new RadialPlacementGenerator(this.config, this.imageConfig);
+        return new RadialPlacementLayout(this.config, this.imageConfig);
       case 'grid':
-        return new GridPlacementGenerator(this.config, this.imageConfig);
+        return new GridPlacementLayout(this.config, this.imageConfig);
       case 'spiral':
-        return new SpiralPlacementGenerator(this.config, this.imageConfig);
+        return new SpiralPlacementLayout(this.config, this.imageConfig);
       case 'cluster':
-        return new ClusterPlacementGenerator(this.config, this.imageConfig);
+        return new ClusterPlacementLayout(this.config, this.imageConfig);
       case 'wave':
-        return new WavePlacementGenerator(this.config, this.imageConfig);
+        return new WavePlacementLayout(this.config, this.imageConfig);
       case 'random':
       default:
-        return new RandomPlacementGenerator(this.config, this.imageConfig);
+        return new RandomPlacementLayout(this.config, this.imageConfig);
     }
   }
 
@@ -68,7 +68,7 @@ export class LayoutEngine {
    * @returns Array of layout objects with position, rotation, scale
    */
   generateLayout(imageCount: number, containerBounds: ContainerBounds, options: Partial<LayoutConfig> = {}): ImageLayout[] {
-    const layouts = this.generator.generate(imageCount, containerBounds, options);
+    const layouts = this.placementLayout.generate(imageCount, containerBounds, options);
 
     // Store layouts for state retrieval
     layouts.forEach(layout => {
@@ -103,9 +103,9 @@ export class LayoutEngine {
     if (newConfig.layout) {
       Object.assign(this.config, newConfig.layout);
 
-      // Reinitialize generator if algorithm changed
+      // Reinitialize placement layout if algorithm changed
       if (newConfig.layout.algorithm && newConfig.layout.algorithm !== this.config.algorithm) {
-        this.generator = this.initGenerator();
+        this.placementLayout = this.initLayout();
       }
     }
 

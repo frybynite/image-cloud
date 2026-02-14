@@ -4,11 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-02-14
+
+### Breaking Changes
+- Rename `src/generators/` directory to `src/layouts/`
+- Rename all `*PlacementGenerator` classes to `*PlacementLayout` (e.g., `RadialPlacementGenerator` → `RadialPlacementLayout`)
+- Rename `PlacementGenerator` interface to `PlacementLayout`
+- Export `WavePlacementLayout` (previously missing from public exports)
+
+### Changed
+- Internal field `generator` renamed to `placementLayout` in LayoutEngine
+- Internal method `initGenerator()` renamed to `initLayout()` in LayoutEngine
+- Rename `docs/GENERATORS.md` to `docs/LAYOUTS.md`
+- Rename `docs/api/generators.md` to `docs/api/layouts.md`
+- Updated all documentation references to use "layouts" terminology
+
 ## [0.3.7] - 2026-02-14
 
 ### Breaking Changes
 - Consolidate debug parameters under `config.debug` namespace; old paths (`debug`, `layout.debugRadials`, `layout.debugCenters`, `config.loaders.debugLogging`) removed
-- Remove `debugRadials` feature entirely (type, generator code, configurator, docs)
+- Remove `debugRadials` feature entirely (type, layout code, configurator, docs)
 
 ### Added
 - "Config" accordion in configurator with Loaders and Debug sub-sections
