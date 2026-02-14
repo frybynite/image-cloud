@@ -51,13 +51,13 @@ src/
 │   ├── ZoomEngine.ts
 │   ├── EntryAnimationEngine.ts
 │   └── PathAnimator.ts  # Entry path animations (bounce, elastic, wave)
-├── generators/          # Layout algorithms
-│   ├── RadialPlacementGenerator.ts
-│   ├── GridPlacementGenerator.ts
-│   ├── SpiralPlacementGenerator.ts
-│   ├── ClusterPlacementGenerator.ts
-│   ├── WavePlacementGenerator.ts
-│   └── RandomPlacementGenerator.ts
+├── layouts/             # Layout algorithms
+│   ├── RadialPlacementLayout.ts
+│   ├── GridPlacementLayout.ts
+│   ├── SpiralPlacementLayout.ts
+│   ├── ClusterPlacementLayout.ts
+│   ├── WavePlacementLayout.ts
+│   └── RandomPlacementLayout.ts
 ├── loaders/
 │   ├── GoogleDriveLoader.ts
 │   ├── StaticImageLoader.ts

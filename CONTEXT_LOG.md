@@ -320,7 +320,7 @@ Pattern-based structure with 6 core patterns:
 
 ### Reference Only
 - `src/engines/*.ts` - No changes needed (take processed config)
-- `src/generators/*.ts` - No changes needed
+- `src/layouts/*.ts` - No changes needed
 
 ## Key Decisions
 

@@ -10,6 +10,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Add border-image to functionality and configurator
+- [ ] Bug: `failOnAllMissing` is defined in types, has a default (`true`), and is merged in `ImageCloud.ts:170`, but no loader actually reads or enforces it — StaticImageLoader silently ignores it
 - [ ] Implement `rendering.performance` options (`lazyLoad`, `preloadCount`, `imageQuality`) — types and config merging exist but values are unused stubs
 - [ ] Implement `rendering.ui` stubs: `showThumbnails`, `theme` ('light'|'dark'|'auto') — types exist but values are unused
 - [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.
@@ -52,7 +53,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 *Future feature ideas to explore*
 
-- Rename `generators/` directory to `layouts/` — the parameter structure uses `layout` as the key and we refer to them as "layouts" everywhere in the API, but the internal source directory and class names still say "generators" (e.g., `RadialPlacementGenerator`). Align internal naming with the public-facing terminology.
 - Enhance `styling.hover` and `styling.focused` with additional style options:
   - Note: `opacity` already works via `ImageStyleState.opacity` and `filter.opacity`
   - `transform` - scale, rotate, translateX/Y for hover lift/grow effects
@@ -120,3 +120,4 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Dragging window between screens triggers re-animation — this is just the way it's going to work.
 - [x] Configurator: Separated image size & rotation from style into distinct sections.
 - [x] Image counter (`showImageCounter`) — displays "N of M" when an image is focused, hidden on unfocus. Supports custom element via `counterElement` config. Auto-created at bottom-center with fixed positioning.
+- [x] Renamed `generators/` directory to `layouts/` and all `*PlacementGenerator` classes to `*PlacementLayout` — aligned internal naming with the public-facing `layout` configuration key.

@@ -46,7 +46,7 @@ export type {
   ResponsiveHeight,
   StaticSource,
   GoogleDriveSource,
-  PlacementGenerator,
+  PlacementLayout,
   ImageLoader,
   IImageFilter,
   TransformParams,
@@ -79,12 +79,13 @@ export { ZoomEngine } from './engines/ZoomEngine';
 export { EntryAnimationEngine } from './engines/EntryAnimationEngine';
 export { animatePath, requiresJSAnimation } from './engines/PathAnimator';
 
-// Export generators for custom implementations
-export { RandomPlacementGenerator } from './generators/RandomPlacementGenerator';
-export { RadialPlacementGenerator } from './generators/RadialPlacementGenerator';
-export { GridPlacementGenerator } from './generators/GridPlacementGenerator';
-export { SpiralPlacementGenerator } from './generators/SpiralPlacementGenerator';
-export { ClusterPlacementGenerator } from './generators/ClusterPlacementGenerator';
+// Export layouts for custom implementations
+export { RandomPlacementLayout } from './layouts/RandomPlacementLayout';
+export { RadialPlacementLayout } from './layouts/RadialPlacementLayout';
+export { GridPlacementLayout } from './layouts/GridPlacementLayout';
+export { SpiralPlacementLayout } from './layouts/SpiralPlacementLayout';
+export { ClusterPlacementLayout } from './layouts/ClusterPlacementLayout';
+export { WavePlacementLayout } from './layouts/WavePlacementLayout';
 
 // Export loaders for custom implementations
 export { GoogleDriveLoader } from './loaders/GoogleDriveLoader';

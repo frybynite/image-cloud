@@ -189,7 +189,7 @@ interface ResponsiveBreakpoints {
 
 ### Algorithm Configs
 
-See [Generators](./generators.md) for algorithm-specific configuration.
+See [Layouts](./layouts.md) for algorithm-specific configuration.
 
 ---
 

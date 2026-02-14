@@ -1,4 +1,4 @@
-# Layout Generators
+# Layouts
 
 ## Implemented
 
@@ -67,7 +67,7 @@ Scattered placement with collision avoidance.
 
 ## Future Ideas
 
-### Visual Variety Generators
+### Visual Variety Layouts
 - **Honeycomb** - Hexagonal tessellation pattern
 - **Mosaic** - Variable-sized tiles fitting together
 - **Burst/Explosion** - Images radiating outward with velocity falloff
@@ -75,7 +75,7 @@ Scattered placement with collision avoidance.
 - **Scatter with Physics** - Random with collision avoidance and physics simulation
 - **Flow/Stream** - Images follow a curved path
 
-### Content Organization Generators
+### Content Organization Layouts
 - **Timeline** - Chronological arrangement
 - **Category/Hierarchy** - Group by metadata or categories
 - **Relationship/Connection** - Position based on relationships between images

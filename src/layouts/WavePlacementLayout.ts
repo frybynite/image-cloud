@@ -1,16 +1,16 @@
 /**
- * WavePlacementGenerator.ts
+ * WavePlacementLayout.ts
  * Generates wave-based layouts for image cloud
  */
 
-import type { PlacementGenerator, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
+import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
 import { DEFAULT_WAVE_CONFIG } from '../config/defaults';
 
 interface WaveLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
 }
 
-export class WavePlacementGenerator implements PlacementGenerator {
+export class WavePlacementLayout implements PlacementLayout {
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
 

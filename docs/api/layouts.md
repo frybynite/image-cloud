@@ -1,25 +1,26 @@
-# Generators
+# Layouts
 
-Placement generators calculate image positions within the gallery container. Each implements a different layout algorithm.
+Placement layouts calculate image positions within the gallery container. Each implements a different layout algorithm.
 
 ## Import
 
 ```typescript
 import {
-  RadialPlacementGenerator,
-  GridPlacementGenerator,
-  SpiralPlacementGenerator,
-  ClusterPlacementGenerator,
-  RandomPlacementGenerator
+  RadialPlacementLayout,
+  GridPlacementLayout,
+  SpiralPlacementLayout,
+  ClusterPlacementLayout,
+  RandomPlacementLayout,
+  WavePlacementLayout
 } from '@frybynite/image-cloud';
 ```
 
-## PlacementGenerator Interface
+## PlacementLayout Interface
 
-All generators implement this interface:
+All layouts implement this interface:
 
 ```typescript
-interface PlacementGenerator {
+interface PlacementLayout {
   generate(
     imageCount: number,
     containerBounds: ContainerBounds,
@@ -44,7 +45,7 @@ interface ImageLayout {
 
 ---
 
-## Using Generators
+## Using Layouts
 
 ### Via Configuration (Recommended)
 
@@ -60,10 +61,10 @@ const cloud = new ImageCloud({
 ### Direct Usage
 
 ```typescript
-import { RadialPlacementGenerator } from '@frybynite/image-cloud';
+import { RadialPlacementLayout } from '@frybynite/image-cloud';
 
-const generator = new RadialPlacementGenerator();
-const layouts = generator.generate(
+const layout = new RadialPlacementLayout();
+const layouts = layout.generate(
   10,                          // image count
   { width: 1200, height: 800 }, // container bounds
   { /* layout options */ }
@@ -274,19 +275,19 @@ layout: {
 
 ---
 
-## Creating Custom Generators
+## Creating Custom Layouts
 
-Implement the `PlacementGenerator` interface:
+Implement the `PlacementLayout` interface:
 
 ```typescript
 import type {
-  PlacementGenerator,
+  PlacementLayout,
   ImageLayout,
   ContainerBounds,
   LayoutConfig
 } from '@frybynite/image-cloud';
 
-class DiagonalGenerator implements PlacementGenerator {
+class DiagonalLayout implements PlacementLayout {
   generate(
     imageCount: number,
     bounds: ContainerBounds,
@@ -313,4 +314,4 @@ class DiagonalGenerator implements PlacementGenerator {
 }
 ```
 
-Currently, custom generators must be used via the `CompositeLoader` pattern or by extending the library internals. Native support for registering custom generators is planned.
+Currently, custom layouts must be used via the `CompositeLoader` pattern or by extending the library internals. Native support for registering custom layouts is planned.

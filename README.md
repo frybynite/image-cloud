@@ -104,10 +104,10 @@ await cloud.init();
 For detailed configuration, see the documentation in the `docs/` folder:
 
 1. **[Loaders](docs/LOADERS.md)** — Configure image sources (static URLs, JSON endpoints, local paths, Google Drive folders)
-2. **[Layout Generators](docs/GENERATORS.md)** — Choose and customize layout algorithms (radial, grid, spiral, cluster, random)
+2. **[Layouts](docs/LAYOUTS.md)** — Choose and customize layout algorithms (radial, grid, spiral, cluster, random, wave)
 3. **[Image Sizing](docs/IMAGE_SIZING.md)** — Control base sizes, variance, and responsive/adaptive behavior
 4. **[Full Parameter Reference](docs/PARAMETERS.md)** — Complete configuration options for animation, interaction, styling, and more
-5. **[API Reference](docs/api/README.md)** — TypeScript API documentation for the ImageCloud class, types, loaders, and generators
+5. **[API Reference](docs/api/README.md)** — TypeScript API documentation for the ImageCloud class, types, loaders, and layouts
 
 ### Using the Configurator
 

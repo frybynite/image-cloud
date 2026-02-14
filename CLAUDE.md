@@ -32,7 +32,7 @@ npm run preview      # Preview production build
 
 ```
 src/
-├── ImageCloud.ts      # Main entry point - orchestrates loaders, engines, generators
+├── ImageCloud.ts      # Main entry point - orchestrates loaders, engines, layouts
 ├── index.ts             # Public exports
 ├── config/
 │   ├── types.ts         # TypeScript interfaces and types
@@ -41,12 +41,13 @@ src/
 │   ├── LayoutEngine.ts  # Calculates positions, manages adaptive sizing
 │   ├── AnimationEngine.ts # Handles fly-in animations
 │   └── ZoomEngine.ts    # Click-to-zoom functionality
-├── generators/          # Layout algorithms
-│   ├── RadialPlacementGenerator.ts
-│   ├── GridPlacementGenerator.ts
-│   ├── SpiralPlacementGenerator.ts
-│   ├── ClusterPlacementGenerator.ts
-│   └── RandomPlacementGenerator.ts
+├── layouts/             # Layout algorithms
+│   ├── RadialPlacementLayout.ts
+│   ├── GridPlacementLayout.ts
+│   ├── SpiralPlacementLayout.ts
+│   ├── ClusterPlacementLayout.ts
+│   ├── WavePlacementLayout.ts
+│   └── RandomPlacementLayout.ts
 └── loaders/
     ├── GoogleDriveLoader.ts  # Loads images from Google Drive folders
     ├── StaticImageLoader.ts  # Loads images from static URLs, paths, or JSON endpoints
@@ -57,7 +58,7 @@ src/
 
 - **Adaptive Sizing**: Images automatically resize based on container dimensions and image count
 - **Responsive Breakpoints**: Image sizes adjust at viewport breakpoints (set maximums)
-- **Layout Generators**: Each generator implements placement algorithm with consistent interface
+- **Placement Layouts**: Each layout implements a placement algorithm with consistent interface
 - **ImageLoader Interface**: Loaders implement `prepare()` (async fetch) and `access()` (sync get)
 
 ## Configuration
