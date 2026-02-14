@@ -349,9 +349,18 @@ export class ImageCloud {
   private navigateToNextImage(): void {
     if (this.currentFocusIndex === null || this.imageElements.length === 0) return;
 
-    const nextIndex = (this.currentFocusIndex + 1) % this.imageElements.length;
-    this.navigateToImage(nextIndex);
-    this.updateCounter(nextIndex);
+    const nextId = (this.currentFocusIndex + 1) % this.imageLayouts.length;
+    const nextElement = this.imageElements.find(
+      el => el.dataset.imageId === String(nextId)
+    );
+    if (!nextElement) return;
+
+    const layout = this.imageLayouts[nextId];
+    if (!layout) return;
+
+    this.currentFocusIndex = nextId;
+    this.handleImageClick(nextElement, layout);
+    this.updateCounter(nextId);
   }
 
   /**
@@ -360,26 +369,23 @@ export class ImageCloud {
   private navigateToPreviousImage(): void {
     if (this.currentFocusIndex === null || this.imageElements.length === 0) return;
 
-    const prevIndex = (this.currentFocusIndex - 1 + this.imageElements.length) % this.imageElements.length;
-    this.navigateToImage(prevIndex);
-    this.updateCounter(prevIndex);
+    const prevId = (this.currentFocusIndex - 1 + this.imageLayouts.length) % this.imageLayouts.length;
+    const prevElement = this.imageElements.find(
+      el => el.dataset.imageId === String(prevId)
+    );
+    if (!prevElement) return;
+
+    const layout = this.imageLayouts[prevId];
+    if (!layout) return;
+
+    this.currentFocusIndex = prevId;
+    this.handleImageClick(prevElement, layout);
+    this.updateCounter(prevId);
   }
 
   /**
    * Navigate to a specific image by index
    */
-  private async navigateToImage(index: number): Promise<void> {
-    if (index < 0 || index >= this.imageElements.length) return;
-
-    const imageElement = this.imageElements[index];
-    const layout = this.imageLayouts[index];
-
-    if (!imageElement || !layout) return;
-
-    // Reuse the same focus mechanism as clicking
-    await this.handleImageClick(imageElement, layout);
-  }
-
   private handleResize(): void {
     if (!this.imagesLoaded) return;
 
