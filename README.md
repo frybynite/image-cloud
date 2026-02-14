@@ -160,6 +160,10 @@ Check out the `examples/` directory for various usage patterns:
 - `typescript-example.ts` - TypeScript with React and Vue
 - See `examples/README.md` for detailed instructions
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a full list of changes across all versions.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

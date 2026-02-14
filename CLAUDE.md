@@ -101,3 +101,4 @@ Located in `examples/` folder:
   - update configurator labels, values, help text.
   - configurator help text should include defaults
 - Planning: all planning docs should be created in docs/plans/ directory.
+- When releasing a new version, update CHANGELOG.md (newest entries at top).
