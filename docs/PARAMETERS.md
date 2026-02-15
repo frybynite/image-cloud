@@ -4,6 +4,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
 
 ## Table of Contents
 
+- [Framework Wrappers](#framework-wrappers)
 - [Pattern-Based Configuration](#pattern-based-configuration)
 - [Loader Configuration](#1-loader-configuration)
   - [`images` Shorthand](#images-shorthand)
@@ -30,6 +31,93 @@ The Image Cloud library offers a flexible configuration system to customize ever
 - [Styling Configuration](#7-styling-configuration-styling)
 - [Complete JSON Reference](#complete-json-reference)
 - [Complete Examples](#complete-examples)
+
+---
+
+## Framework Wrappers
+
+Image Cloud provides thin lifecycle wrappers for React, Vue 3, and Web Components. Each wrapper manages mount/unmount/reinit and exposes the core `ImageCloud` instance. Install the main package — framework dependencies are optional peer deps.
+
+### React
+
+```bash
+npm install @frybynite/image-cloud react react-dom
+```
+
+```tsx
+import { ImageCloud } from '@frybynite/image-cloud/react';
+import '@frybynite/image-cloud/style.css';
+
+function App() {
+  return (
+    <ImageCloud
+      className="my-gallery"
+      style={{ width: '100%', height: '80vh' }}
+      images={['img1.jpg', 'img2.jpg', 'img3.jpg']}
+      layout={{ algorithm: 'radial' }}
+    />
+  );
+}
+```
+
+Props are the same as `ImageCloudOptions` (minus `container`) plus `className` and `style`. Use a ref to access the underlying instance:
+
+```tsx
+const ref = useRef<ImageCloudRef>(null);
+// ref.current.instance — the core ImageCloud instance
+```
+
+### Vue 3
+
+```bash
+npm install @frybynite/image-cloud vue
+```
+
+```vue
+<script setup>
+import { ImageCloud } from '@frybynite/image-cloud/vue';
+import '@frybynite/image-cloud/style.css';
+
+const options = {
+  images: ['img1.jpg', 'img2.jpg', 'img3.jpg'],
+  layout: { algorithm: 'radial' }
+};
+</script>
+
+<template>
+  <ImageCloud :options="options" class="my-gallery" />
+</template>
+```
+
+Pass configuration via the `options` prop (same as `ImageCloudOptions` minus `container`). Changes to `options` trigger automatic reinit. Use a template ref + `expose` to access the instance.
+
+### Web Component
+
+```bash
+npm install @frybynite/image-cloud
+```
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+<script type="module">
+  import '@frybynite/image-cloud/web-component';
+</script>
+
+<image-cloud
+  images='["img1.jpg", "img2.jpg", "img3.jpg"]'
+  layout="radial"
+></image-cloud>
+```
+
+**Attributes:**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `config` | JSON string | Full `ImageCloudOptions` (minus `container`) as JSON |
+| `images` | JSON array | Shorthand for image URLs |
+| `layout` | string | Layout algorithm name (`radial`, `grid`, `spiral`, `cluster`, `wave`, `random`) |
+
+The `<image-cloud>` element auto-registers on import. Use `element.getInstance()` for imperative access. Dispatches `initialized` and `error` custom events.
 
 ---
 

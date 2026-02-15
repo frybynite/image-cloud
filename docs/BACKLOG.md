@@ -20,21 +20,6 @@ Future enhancements and feature ideas for Image Cloud.
 
 ## Planned
 
-### React Component
-Create a React wrapper component for the Image Cloud library.
-
-**Scope:**
-- `<ImageCloud />` component with props mapping to configuration
-- TypeScript support with proper prop types
-- Ref forwarding for imperative access to gallery instance
-- Cleanup on unmount
-- Example usage in docs
-
-**Considerations:**
-- Publish as separate package (`@image-cloud/react`) or include in main package
-- Support for React 18+ features (concurrent rendering, Suspense)
-- SSR compatibility
-
 ### Simplify Initialization Process
 Reduce boilerplate and complexity for clients getting started with the library.
 
@@ -61,8 +46,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
 - Auth/credential hooks for static loader fetch options (e.g., custom headers, bearer tokens for authenticated image endpoints — applies to JSON source and URL validation)
-- Vue component wrapper
-- Web Component wrapper
 - Additional layout algorithms (honeycomb, physics-based)
 - Lightbox mode
 - Thumbnail navigation
@@ -120,3 +103,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - [x] Configurator: Separated image size & rotation from style into distinct sections.
 - [x] Image counter (`showImageCounter`) — displays "N of M" when an image is focused, hidden on unfocus. Supports custom element via `counterElement` config. Auto-created at bottom-center with fixed positioning.
 - [x] Renamed `generators/` directory to `layouts/` and all `*PlacementGenerator` classes to `*PlacementLayout` — aligned internal naming with the public-facing `layout` configuration key.
+- [x] React component wrapper — `<ImageCloud>` component with props, ref forwarding, auto-cleanup. Ships as `@frybynite/image-cloud/react` subpath export.
+- [x] Vue 3 component wrapper — `<ImageCloud>` component using Composition API with deep watch for reinit. Ships as `@frybynite/image-cloud/vue` subpath export.
+- [x] Web Component wrapper — `<image-cloud>` custom element with `config`, `images`, `layout` attributes. Ships as `@frybynite/image-cloud/web-component` subpath export.

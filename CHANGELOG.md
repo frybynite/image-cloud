@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-02-14
+
+### Added
+- React wrapper component (`@frybynite/image-cloud/react`) — `<ImageCloud>` with forwardRef, useImperativeHandle for instance access, auto-reinit on prop changes
+- Vue 3 wrapper component (`@frybynite/image-cloud/vue`) — `<ImageCloud>` using defineComponent + Composition API, deep watch for reinit
+- Web Component (`@frybynite/image-cloud/web-component`) — `<image-cloud>` custom element with `config`, `images`, `layout` observed attributes, auto-registration, custom events
+- Subpath exports: `./react`, `./vue`, `./web-component` with TypeScript declarations
+- Optional peer dependencies for React (>=18) and Vue (>=3.3)
+- Example HTML files for each wrapper (`examples/react-example.html`, `vue-example.html`, `web-component-example.html`)
+- Playwright e2e tests for Web Component (5 tests across chromium/mobile)
+- Framework Wrappers section in PARAMETERS.md documentation
+
 ## [0.4.2] - 2026-02-14
 
 ### Removed

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cloud - Vue 3 Example</title>
+    <!-- Required: Image Cloud CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .image-cloud {
+            width: 100%;
+            height: 80vh;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Cloud - Vue 3 Example</h1>
+    <div id="app"></div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "vue": "https://esm.sh/vue@3",
+            "@frybynite/image-cloud/vue": "https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/vue.js",
+            "@frybynite/image-cloud": "https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { createApp, h } from 'vue';
+        import { ImageCloud } from '@frybynite/image-cloud/vue';
+
+        const App = {
+            setup() {
+                const options = {
+                    images: [
+                        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1518173946687-a2b45696c110?w=800&auto=format&fit=crop'
+                    ],
+                    layout: {
+                        algorithm: 'radial'
+                    }
+                };
+
+                return () => h(ImageCloud, {
+                    options,
+                    class: 'image-cloud'
+                });
+            }
+        };
+
+        createApp(App).mount('#app');
+    </script>
+</body>
+</html>

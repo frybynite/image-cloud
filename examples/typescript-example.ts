@@ -125,72 +125,41 @@ async function googleDriveExample() {
     }
 }
 
-// Example 4: React component (NEW FORMAT)
-import { useEffect, useRef } from 'react';
+// Example 4: React wrapper component
+// See examples/react-example.html for a runnable demo
+//
+// import { ImageCloud } from '@frybynite/image-cloud/react';
+//
+// function App() {
+//     return (
+//         <ImageCloud
+//             className="image-cloud"
+//             images={['img1.jpg', 'img2.jpg', 'img3.jpg']}
+//             layout={{ algorithm: 'radial' }}
+//         />
+//     );
+// }
 
-function CloudComponent() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const cloudRef = useRef<ImageCloud | null>(null);
+// Example 5: Vue 3 wrapper component
+// See examples/vue-example.html for a runnable demo
+//
+// import { ImageCloud } from '@frybynite/image-cloud/vue';
+//
+// <template>
+//     <ImageCloud :options="{ images: ['img1.jpg'], layout: { algorithm: 'radial' } }" class="image-cloud" />
+// </template>
 
-    useEffect(() => {
-        if (containerRef.current) {
-            cloudRef.current = new ImageCloud({
-                container: containerRef.current.id,
-                loaders: [
-                    {
-                        static: {
-                            sources: [
-                                {
-                                    urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
-                                }
-                            ]
-                        }
-                    }
-                ]
-            });
-
-            cloudRef.current.init();
-        }
-
-        return () => {
-            cloudRef.current?.destroy();
-        };
-    }, []);
-
-    return <div id="cloud" ref={containerRef} className="image-cloud" />;
-}
-
-// Example 5: Vue 3 Composition API (NEW FORMAT)
-import { onMounted, onUnmounted, ref } from 'vue';
-
-function useImageCloud(containerId: string, options: Omit<ImageCloudOptions, 'container'>) {
-    const imageCloud = ref<ImageCloud | null>(null);
-
-    onMounted(async () => {
-        imageCloud.value = new ImageCloud({
-            container: containerId,
-            ...options
-        });
-
-        try {
-            await imageCloud.value.init();
-        } catch (error) {
-            console.error('Cloud initialization failed:', error);
-        }
-    });
-
-    onUnmounted(() => {
-        imageCloud.value?.destroy();
-    });
-
-    return { imageCloud };
-}
+// Example 6: Web Component (no framework needed)
+// See examples/web-component-example.html for a runnable demo
+//
+// <script type="module">
+//     import '@frybynite/image-cloud/web-component';
+// </script>
+// <image-cloud images='["img1.jpg", "img2.jpg"]' layout="radial"></image-cloud>
 
 // Export examples
 export {
     basicExample,
     typedExample,
-    googleDriveExample,
-    CloudComponent,
-    useImageCloud
+    googleDriveExample
 };
