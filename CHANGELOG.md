@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.2] - 2026-02-18
+
+### Fixed
+- **Security: resolved 10 npm vulnerabilities** — upgraded `vite-plugin-dts` to 5.0.0-beta.6, which includes patched dependencies (ajv ≥8.18.0, minimatch ≥10.2.1) to fix ReDoS vulnerabilities in dev dependencies. Reduces vulnerability count from 10 (4 high, 6 moderate) to 0.
+
 ## [0.5.1] - 2026-02-19
 
 ### Fixed
