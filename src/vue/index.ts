@@ -7,8 +7,8 @@ import {
   watch,
   type PropType,
 } from 'vue';
-import { ImageCloud as ImageCloudCore } from '../ImageCloud';
-import type { ImageCloudOptions } from '../config/types';
+import { ImageCloud as ImageCloudCore } from '@frybynite/image-cloud';
+import type { ImageCloudOptions } from '@frybynite/image-cloud';
 
 export type ImageCloudVueOptions = Omit<ImageCloudOptions, 'container'>;
 
@@ -73,4 +73,4 @@ export type {
   LayoutConfig,
   AnimationConfig,
   ImageStylingConfig,
-} from '../config/types';
+} from '@frybynite/image-cloud';

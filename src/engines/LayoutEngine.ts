@@ -10,12 +10,6 @@
  */
 
 import type { LayoutConfig, ImageLayout, ContainerBounds, PlacementLayout, AdaptiveSizingResult, ImageConfig, FixedModeHeight, ResponsiveBreakpoints } from '../config/types';
-import { RandomPlacementLayout } from '../layouts/RandomPlacementLayout';
-import { RadialPlacementLayout } from '../layouts/RadialPlacementLayout';
-import { GridPlacementLayout } from '../layouts/GridPlacementLayout';
-import { SpiralPlacementLayout } from '../layouts/SpiralPlacementLayout';
-import { ClusterPlacementLayout } from '../layouts/ClusterPlacementLayout';
-import { WavePlacementLayout } from '../layouts/WavePlacementLayout';
 
 export interface LayoutEngineConfig {
   layout: LayoutConfig;
@@ -23,10 +17,21 @@ export interface LayoutEngineConfig {
 }
 
 export class LayoutEngine {
+  private static readonly registry = new Map<string, new (config: LayoutConfig, imageConfig: ImageConfig) => PlacementLayout>();
+
   private config: LayoutConfig;
   private imageConfig: ImageConfig;
   private layouts: Map<number, ImageLayout>;
   private placementLayout: PlacementLayout;
+
+  /**
+   * Register a layout algorithm with the engine
+   * @param name - Algorithm name (e.g., 'radial', 'grid')
+   * @param Layout - Layout class to register
+   */
+  static registerLayout(name: string, Layout: new (config: LayoutConfig, imageConfig: ImageConfig) => PlacementLayout): void {
+    LayoutEngine.registry.set(name, Layout);
+  }
 
   constructor(config: LayoutEngineConfig) {
     this.config = config.layout;
@@ -41,23 +46,20 @@ export class LayoutEngine {
   /**
    * Initialize the appropriate placement layout based on config type
    * @returns Initialized placement layout
+   * @throws Error if the layout algorithm is not registered
    */
   private initLayout(): PlacementLayout {
-    switch (this.config.algorithm) {
-      case 'radial':
-        return new RadialPlacementLayout(this.config, this.imageConfig);
-      case 'grid':
-        return new GridPlacementLayout(this.config, this.imageConfig);
-      case 'spiral':
-        return new SpiralPlacementLayout(this.config, this.imageConfig);
-      case 'cluster':
-        return new ClusterPlacementLayout(this.config, this.imageConfig);
-      case 'wave':
-        return new WavePlacementLayout(this.config, this.imageConfig);
-      case 'random':
-      default:
-        return new RandomPlacementLayout(this.config, this.imageConfig);
+    const algorithm = this.config.algorithm ?? 'random';
+    const LayoutClass = LayoutEngine.registry.get(algorithm);
+
+    if (!LayoutClass) {
+      throw new Error(
+        `Layout algorithm "${algorithm}" is not registered. ` +
+        `Import "@frybynite/image-cloud/layouts/${algorithm}" or "@frybynite/image-cloud/layouts/all".`
+      );
     }
+
+    return new LayoutClass(this.config, this.imageConfig);
   }
 
   /**

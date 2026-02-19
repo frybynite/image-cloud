@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Loaders Example</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    #imageCloud {
+      width: 100%;
+      height: 100%;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-size: 12px;
+      z-index: 100;
+      max-width: 280px;
+      font-family: monospace;
+    }
+    #info h3 { margin: 0 0 8px 0; font-size: 13px; }
+    #info p { margin: 3px 0; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <div id="info">
+    <h3>🎯 Dynamic Loader Imports</h3>
+    <p><strong>Only StaticImageLoader is loaded</strong></p>
+    <p>GoogleDriveLoader NOT imported = tree-shaken (save ~8.5KB)</p>
+    <p><strong>CompositeLoader</strong> loaded only if needed</p>
+  </div>
+
+  <script type="module">
+    import { ImageCloud } from '/dist/image-cloud.js';
+    // Import only the layout needed
+    import '/dist/layouts/grid.js';
+
+    // Note: Loaders are dynamically imported inside ImageCloud.init()
+    // This example uses StaticImageLoader (imported via dynamic import internally)
+    // GoogleDriveLoader is NOT imported, so it's tree-shaken from the bundle
+
+    window.gallery = new ImageCloud({
+      container: 'imageCloud',
+      images: [
+        '/test/fixtures/images/image1.jpg',
+        '/test/fixtures/images/image2.jpg',
+        '/test/fixtures/images/image3.jpg',
+        '/test/fixtures/images/computing1.jpg',
+        '/test/fixtures/images/computing2.jpg',
+        '/test/fixtures/images/food1.jpg'
+      ],
+      layout: {
+        algorithm: 'grid',
+        grid: {
+          columns: 3,
+          rows: 2,
+          gap: 15,
+          jitter: false
+        }
+      },
+      rendering: {
+        ui: {
+          showLoadingSpinner: true
+        }
+      },
+      animation: {
+        duration: 400
+      }
+    });
+
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+      document.getElementById('info').innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
+    });
+  </script>
+</body>
+</html>

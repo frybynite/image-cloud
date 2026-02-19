@@ -9,6 +9,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Fixed
 - **Security: resolved 10 npm vulnerabilities** — upgraded `vite-plugin-dts` to 5.0.0-beta.6, which includes patched dependencies (ajv ≥8.18.0, minimatch ≥10.2.1) to fix ReDoS vulnerabilities in dev dependencies. Reduces vulnerability count from 10 (4 high, 6 moderate) to 0.
 
+### Breaking Changes
+- **Layouts must now be explicitly imported** — Layouts are no longer bundled with the core library. Apps must import the layout algorithms they use:
+  ```javascript
+  import '@frybynite/image-cloud/layouts/radial.js';  // Single layout (tree-shakable)
+  import '@frybynite/image-cloud/layouts/all.js';     // All 6 layouts
+  ```
+  This enables bundlers to tree-shake unused layout algorithms, significantly reducing bundle size for single-layout galleries.
+- If a layout is not imported, a helpful error is thrown: `Layout algorithm "X" is not registered. Import "@frybynite/image-cloud/layouts/X" or "@frybynite/image-cloud/layouts/all".`
+
+### Added
+- **Layout registry system** — Layouts register themselves dynamically when imported, allowing tree-shaking of unused algorithms
+- **Layout subpath exports** — Each layout available as a separate entry point:
+  - `@frybynite/image-cloud/layouts/radial.js` (~7KB)
+  - `@frybynite/image-cloud/layouts/grid.js` (~9KB)
+  - `@frybynite/image-cloud/layouts/spiral.js` (~8KB)
+  - `@frybynite/image-cloud/layouts/cluster.js` (~8KB)
+  - `@frybynite/image-cloud/layouts/wave.js` (~8KB)
+  - `@frybynite/image-cloud/layouts/random.js` (~6KB)
+  - `@frybynite/image-cloud/layouts/all.js` (~25KB, includes all 6)
+- **Loader dynamic imports** — StaticImageLoader and GoogleDriveLoader are now dynamically imported during `init()`, allowing tree-shaking of unused loaders (~8.5KB savings if only using static URLs)
+- **Wrapper bundle externalization** — React, Vue, and Web Component wrappers now import the core as an external dependency instead of embedding it:
+  - React wrapper: 0.8KB (was 122KB)
+  - Vue wrapper: 0.9KB (was 122KB)
+  - Web Component wrapper: 2.2KB (was 122KB)
+- **Bundle analysis tooling** — Added `npm run build:analyze` script using rollup-plugin-visualizer for inspecting bundle composition
+- **Tree-shaking examples** — New examples demonstrating single-layout imports, dynamic loader usage, and import patterns
+
+### Changed
+- Framework wrappers now have peer dependency on core library (`@frybynite/image-cloud`)
+- Updated PARAMETERS.md and LAYOUTS.md documentation with layout import requirements
+- Updated LOADERS.md documentation explaining dynamic loader imports
+
+### Performance
+- **Reduced npm package size** — From ~680KB to ~280KB (59% reduction in installed size)
+- **Reduced end-user download size** — Apps using single layout now download ~133KB instead of ~150KB
+- **Auto-init bundle** — Remains self-contained at ~110KB with all layouts and loaders included
+
 ## [0.5.1] - 2026-02-19
 
 ### Fixed
