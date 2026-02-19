@@ -2,6 +2,29 @@
 
 Image Cloud supports multiple image sources through configurable loaders.
 
+## How Loaders Work
+
+Loaders are **dynamically imported** on-demand during `gallery.init()`:
+
+```javascript
+const gallery = new ImageCloud({
+  container: 'gallery',
+  loaders: [{
+    static: {
+      sources: [{ urls: ['image1.jpg', 'image2.jpg'] }]
+    }
+  }]
+});
+
+// StaticImageLoader is imported dynamically when init() is called
+await gallery.init();
+```
+
+This means unused loaders are **tree-shaken from your bundle**, saving bundle size:
+- Using only **Static Loader**? GoogleDriveLoader won't be bundled (~8.5KB saved)
+- Using only **Google Drive Loader**? StaticImageLoader won't be bundled (~6.8KB saved)
+- Using **CompositeLoader** only when multiple loaders are configured
+
 ## Table of Contents
 
 - [Quick Start — `images` shorthand](#quick-start--images-shorthand)

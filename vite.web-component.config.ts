@@ -10,7 +10,10 @@ export default defineConfig({
       fileName: () => 'web-component.js'
     },
     emptyOutDir: false,
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      external: ['@frybynite/image-cloud']
+    }
   },
   plugins: [
     dts({

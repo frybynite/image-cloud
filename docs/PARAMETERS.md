@@ -34,6 +34,40 @@ The Image Cloud library offers a flexible configuration system to customize ever
 
 ---
 
+## ⚠️ Important: Layout Imports (v0.5.1+)
+
+**Layouts must now be explicitly imported.** This enables tree-shaking of unused layout algorithms:
+
+```javascript
+import { ImageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/layouts/radial.js';  // Import the layout you need
+
+const gallery = new ImageCloud({
+  container: 'gallery',
+  layout: { algorithm: 'radial' }
+});
+```
+
+**Why the change?** To reduce bundle size when you only use one or two layouts. Unused layouts are now tree-shaken by your bundler.
+
+**What if I forget to import a layout?**
+You'll get a helpful error:
+```
+Layout algorithm "radial" is not registered.
+Import "@frybynite/image-cloud/layouts/radial" or "@frybynite/image-cloud/layouts/all".
+```
+
+**Available imports:**
+- `@frybynite/image-cloud/layouts/radial.js`
+- `@frybynite/image-cloud/layouts/grid.js`
+- `@frybynite/image-cloud/layouts/spiral.js`
+- `@frybynite/image-cloud/layouts/cluster.js`
+- `@frybynite/image-cloud/layouts/wave.js`
+- `@frybynite/image-cloud/layouts/random.js`
+- `@frybynite/image-cloud/layouts/all.js` (all 6 layouts)
+
+---
+
 ## Framework Wrappers
 
 Image Cloud provides thin lifecycle wrappers for React, Vue 3, and Web Components. Each wrapper manages mount/unmount/reinit and exposes the core `ImageCloud` instance. Install the main package — framework dependencies are optional peer deps.
@@ -47,6 +81,8 @@ npm install @frybynite/image-cloud react react-dom
 ```tsx
 import { ImageCloud } from '@frybynite/image-cloud/react';
 import '@frybynite/image-cloud/style.css';
+// ⚠️ Import layouts explicitly (required for tree-shaking)
+import '@frybynite/image-cloud/layouts/radial.js';
 
 function App() {
   return (
@@ -59,6 +95,10 @@ function App() {
   );
 }
 ```
+
+**Note on Layouts:** Layouts are dynamically imported for tree-shaking. Import the specific layouts you need:
+- Single layout: `import '@frybynite/image-cloud/layouts/radial.js'`
+- Multiple layouts: `import '@frybynite/image-cloud/layouts/all.js'`
 
 Props are the same as `ImageCloudOptions` (minus `container`) plus `className` and `style`. Use a ref to access the underlying instance:
 
@@ -77,6 +117,8 @@ npm install @frybynite/image-cloud vue
 <script setup>
 import { ImageCloud } from '@frybynite/image-cloud/vue';
 import '@frybynite/image-cloud/style.css';
+// ⚠️ Import layouts explicitly (required for tree-shaking)
+import '@frybynite/image-cloud/layouts/radial.js';
 
 const options = {
   images: ['img1.jpg', 'img2.jpg', 'img3.jpg'],

@@ -12,7 +12,7 @@ export default defineConfig({
     emptyOutDir: false,
     sourcemap: true,
     rollupOptions: {
-      external: ['vue']
+      external: ['vue', '@frybynite/image-cloud']
     }
   },
   plugins: [

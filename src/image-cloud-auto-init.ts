@@ -10,6 +10,9 @@ import css from './styles/image-cloud.css?inline';
 
 import { ImageCloud } from './ImageCloud';
 
+// Register all layout algorithms
+import './layouts/index-all';
+
 /** Inject library styles into <head> (idempotent) */
 function injectStyles(): void {
   if (typeof document === 'undefined') return;

@@ -12,7 +12,7 @@ export default defineConfig({
     emptyOutDir: false,
     sourcemap: true,
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime', 'react-dom']
+      external: ['react', 'react/jsx-runtime', 'react-dom', '@frybynite/image-cloud']
     }
   },
   plugins: [

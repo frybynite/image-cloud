@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Single Layout Tree-Shaking Example</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-size: 12px;
+      z-index: 100;
+      max-width: 300px;
+    }
+    #info h3 { margin: 0 0 8px 0; font-size: 14px; }
+    #info p { margin: 4px 0; }
+    .bundle-size { color: #4ade80; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <div id="info">
+    <h3>📦 Tree-Shaking Example</h3>
+    <p>This gallery uses <strong>only the radial layout</strong>.</p>
+    <p>Bundle includes:</p>
+    <ul style="margin: 4px 0; padding-left: 16px;">
+      <li>Core ImageCloud (~126KB)</li>
+      <li>Radial layout only (~7KB)</li>
+      <li><strong>Other layouts NOT included</strong></li>
+      <li><strong>Unused loaders removed</strong></li>
+    </ul>
+    <p class="bundle-size">✓ Optimized for tree-shaking</p>
+  </div>
+
+  <script type="module">
+    // Import only what you need for tree-shaking
+    import { ImageCloud } from '/dist/image-cloud.js';
+
+    // Import ONLY the radial layout (not 'all')
+    // This allows bundlers to tree-shake unused layouts
+    import '/dist/layouts/radial.js';
+
+    window.gallery = new ImageCloud({
+      container: 'imageCloud',
+      images: [
+        '/test/fixtures/images/image1.jpg',
+        '/test/fixtures/images/image2.jpg',
+        '/test/fixtures/images/image3.jpg',
+        '/test/fixtures/images/computing1.jpg',
+        '/test/fixtures/images/computing2.jpg'
+      ],
+      layout: {
+        algorithm: 'radial',
+        rotation: { enabled: true }
+      },
+      rendering: {
+        ui: {
+          showLoadingSpinner: true,
+          showImageCounter: true
+        }
+      },
+      animation: {
+        duration: 400,
+        queue: { enabled: true, interval: 50 }
+      }
+    });
+
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+      document.getElementById('info').innerHTML = `
+        <h3>❌ Initialization Error</h3>
+        <p>${error.message}</p>
+      `;
+    });
+  </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   build: {
@@ -27,7 +28,8 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       rollupTypes: true
-    })
+    }),
+    ...(process.env.ANALYZE ? [visualizer({ open: true, filename: 'bundle-stats.html' })] : [])
   ],
   css: {
     extract: true

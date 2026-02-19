@@ -1,5 +1,52 @@
 # Layouts
 
+## Quick Start: Importing Layouts
+
+⚠️ **IMPORTANT:** Layouts are no longer bundled with the core. You must import them explicitly:
+
+```javascript
+import { ImageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/layouts/radial.js';  // Import the layout you need
+
+const gallery = new ImageCloud({
+  container: 'gallery',
+  layout: { algorithm: 'radial' }
+});
+```
+
+### Import Options
+
+**Single Layout (Recommended for Production):**
+```javascript
+// Import only what you use — other layouts are tree-shaken by your bundler
+import '@frybynite/image-cloud/layouts/radial.js';
+import '@frybynite/image-cloud/layouts/grid.js';
+```
+
+**All Layouts:**
+```javascript
+// Use when multiple layouts are needed in the same app
+import '@frybynite/image-cloud/layouts/all.js';
+```
+
+**Auto-Init Bundle (CDN/Script Tag):**
+```html
+<!-- Auto-init already includes all layouts -->
+<script src="https://cdn.example.com/image-cloud/auto-init.js"></script>
+```
+
+### Available Subpath Exports
+
+- `@frybynite/image-cloud/layouts/radial.js`
+- `@frybynite/image-cloud/layouts/grid.js`
+- `@frybynite/image-cloud/layouts/spiral.js`
+- `@frybynite/image-cloud/layouts/cluster.js`
+- `@frybynite/image-cloud/layouts/wave.js`
+- `@frybynite/image-cloud/layouts/random.js`
+- `@frybynite/image-cloud/layouts/all.js` (includes all 6 layouts)
+
+---
+
 ## Implemented
 
 ### Radial
