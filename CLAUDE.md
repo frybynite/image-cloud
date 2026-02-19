@@ -10,6 +10,13 @@ This file provides guidance to Claude Code (claude.ai/claude-code) when working 
 
 Image Cloud is a TypeScript library for creating interactive image galleries with animated scattered layouts and zoom effects. It supports multiple layout algorithms and image sources (Google Drive, static URLs).
 
+## Model Selection
+
+  - Use `opus` model for: planning multi-step features, architectural decisions, debugging complex
+  issues
+  - Use `haiku` for: quick edits, simple bug fixes, file operations
+
+
 ## Common Commands
 
 ```bash
@@ -28,32 +35,6 @@ npm run serve        # Serve on localhost:8080 via Python
 npm run preview      # Preview production build
 ```
 
-## Architecture
-
-```
-src/
-├── ImageCloud.ts      # Main entry point - orchestrates loaders, engines, layouts
-├── index.ts             # Public exports
-├── config/
-│   ├── types.ts         # TypeScript interfaces and types
-│   └── defaults.ts      # Default configuration values
-├── engines/
-│   ├── LayoutEngine.ts  # Calculates positions, manages adaptive sizing
-│   ├── AnimationEngine.ts # Handles fly-in animations
-│   └── ZoomEngine.ts    # Click-to-zoom functionality
-├── layouts/             # Layout algorithms
-│   ├── RadialPlacementLayout.ts
-│   ├── GridPlacementLayout.ts
-│   ├── SpiralPlacementLayout.ts
-│   ├── ClusterPlacementLayout.ts
-│   ├── WavePlacementLayout.ts
-│   └── RandomPlacementLayout.ts
-└── loaders/
-    ├── GoogleDriveLoader.ts  # Loads images from Google Drive folders
-    ├── StaticImageLoader.ts  # Loads images from static URLs, paths, or JSON endpoints
-    └── CompositeLoader.ts    # Combines multiple loaders
-```
-
 ## Key Concepts
 
 - **Adaptive Sizing**: Images automatically resize based on container dimensions and image count
@@ -64,15 +45,6 @@ src/
 ## Configuration
 
 See `docs/PARAMETERS.md` for full configuration reference. Key config structure:
-```typescript
-{
-  container: 'elementId',
-  images: ['url1', 'url2'],  // or loaders: [{ static: {...} }, { googleDrive: {...} }]
-  layout: { algorithm: 'radial' | 'grid' | 'spiral' | 'cluster' | 'random', ... },
-  sizing: { base, variance, responsive, adaptive }
-}
-```
-
 
 ## Code Style
 
@@ -87,10 +59,7 @@ Tests use Playwright. Test files are in `test/` directory with config at `test/p
 
 ## Examples
 
-Located in `examples/` folder:
-- `index.html` - Google Drive gallery
-- `index-static.html` - Static URL gallery
-- `layout-algorithms.html` - Compare all layout algorithms
+Put `examples/` folder, keep a reference to the key ones in the 'index.html'
 
 ## Remember
 
@@ -101,5 +70,5 @@ Located in `examples/` folder:
   - update the Parameters.md file
   - update configurator labels, values, help text.
   - configurator help text should include defaults
-- Planning: all planning docs should be created in docs/plans/ directory.
+- Planning: all planning docs should be created in docs/plans/ directory, NOT the .claude/plans directory. Give them a relevant name.
 - When releasing a new version, update CHANGELOG.md (newest entries at top).
