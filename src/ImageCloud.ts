@@ -12,6 +12,9 @@ import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
 import { SwipeEngine, SNAP_BACK_DURATION_MS } from './engines/SwipeEngine';
 import { animatePath } from './engines/PathAnimator';
+import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
+import { StaticImageLoader } from './loaders/StaticImageLoader';
+import { CompositeLoader } from './loaders/CompositeLoader';
 import { ImageFilter } from './loaders/ImageFilter';
 import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
 import { injectFunctionalStyles } from './styles/functionalStyles';
@@ -45,7 +48,7 @@ export class ImageCloud {
   private layoutEngine: LayoutEngine;
   private zoomEngine: ZoomEngine;
   private swipeEngine: SwipeEngine | null;
-  private imageLoader!: ImageLoader;
+  private imageLoader: ImageLoader;
   private imageFilter: ImageFilter;
 
   // DOM Elements
@@ -112,6 +115,9 @@ export class ImageCloud {
     // Initialize image filter with configured extensions
     this.imageFilter = this.createImageFilter();
 
+    // Initialize image loader based on type
+    this.imageLoader = this.createLoader();
+
     // DOM Elements (will be fetched on init)
     this.containerEl = null;
     this.loadingEl = null;
@@ -129,9 +135,8 @@ export class ImageCloud {
   /**
    * Create appropriate image loader based on config
    * Processes loaders array, merges shared config, wraps in CompositeLoader if needed
-   * Uses dynamic imports for loaders to enable tree-shaking
    */
-  private async createLoader(): Promise<ImageLoader> {
+  private createLoader(): ImageLoader {
     const entries = this.fullConfig.loaders;
     const shared = this.fullConfig.config.loaders ?? {};
 
@@ -139,15 +144,12 @@ export class ImageCloud {
       throw new Error('No loaders configured. Provide `images`, `loaders`, or both.');
     }
 
-    const childLoaders = await Promise.all(
-      entries.map(entry => this.createLoaderFromEntry(entry, shared))
-    );
+    const childLoaders = entries.map(entry => this.createLoaderFromEntry(entry, shared));
 
     if (childLoaders.length === 1) {
       return childLoaders[0];
     }
 
-    const { CompositeLoader } = await import('./loaders/CompositeLoader');
     return new CompositeLoader({
       loaders: childLoaders,
       debugLogging: this.fullConfig.config.debug?.loaders
@@ -156,11 +158,9 @@ export class ImageCloud {
 
   /**
    * Create a single loader from a LoaderEntry, merging shared config
-   * Uses dynamic imports to allow tree-shaking of unused loaders
    */
-  private async createLoaderFromEntry(entry: LoaderEntry, shared: SharedLoaderConfig): Promise<ImageLoader> {
+  private createLoaderFromEntry(entry: LoaderEntry, shared: SharedLoaderConfig): ImageLoader {
     if ('static' in entry) {
-      const { StaticImageLoader } = await import('./loaders/StaticImageLoader');
       const inner = entry.static;
       const merged: StaticLoaderInnerConfig = {
         ...inner,
@@ -172,7 +172,6 @@ export class ImageCloud {
       };
       return new StaticImageLoader(merged);
     } else if ('googleDrive' in entry) {
-      const { GoogleDriveLoader } = await import('./loaders/GoogleDriveLoader');
       const inner = entry.googleDrive;
       const merged: GoogleDriveLoaderInnerConfig = {
         ...inner,
@@ -228,10 +227,7 @@ export class ImageCloud {
       // 2. Setup Event Listeners
       this.setupEventListeners();
 
-      // 3. Create Loaders (dynamic imports)
-      this.imageLoader = await this.createLoader();
-
-      // 4. Load Images
+      // 3. Load Images
       this.logDebug('ImageCloud initialized');
       await this.loadImages();
 

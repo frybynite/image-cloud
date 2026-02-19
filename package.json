@@ -25,34 +25,6 @@
     "./web-component": {
       "types": "./dist/web-component.d.ts",
       "import": "./dist/web-component.js"
-    },
-    "./layouts/radial": {
-      "types": "./dist/layouts/radial.d.ts",
-      "import": "./dist/layouts/radial.js"
-    },
-    "./layouts/grid": {
-      "types": "./dist/layouts/grid.d.ts",
-      "import": "./dist/layouts/grid.js"
-    },
-    "./layouts/spiral": {
-      "types": "./dist/layouts/spiral.d.ts",
-      "import": "./dist/layouts/spiral.js"
-    },
-    "./layouts/cluster": {
-      "types": "./dist/layouts/cluster.d.ts",
-      "import": "./dist/layouts/cluster.js"
-    },
-    "./layouts/wave": {
-      "types": "./dist/layouts/wave.d.ts",
-      "import": "./dist/layouts/wave.js"
-    },
-    "./layouts/random": {
-      "types": "./dist/layouts/random.d.ts",
-      "import": "./dist/layouts/random.js"
-    },
-    "./layouts/all": {
-      "types": "./dist/layouts/all.d.ts",
-      "import": "./dist/layouts/all.js"
     }
   },
   "files": [
@@ -60,14 +32,13 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run clean && tsc && vite build && vite build --config vite.image-cloud-auto-init.config.ts && vite build --config vite.layout-radial.config.ts && vite build --config vite.layout-grid.config.ts && vite build --config vite.layout-spiral.config.ts && vite build --config vite.layout-cluster.config.ts && vite build --config vite.layout-wave.config.ts && vite build --config vite.layout-random.config.ts && vite build --config vite.layout-all.config.ts && vite build --config vite.react.config.ts && vite build --config vite.vue.config.ts && vite build --config vite.web-component.config.ts",
+    "build": "npm run clean && tsc && vite build && vite build --config vite.image-cloud-auto-init.config.ts && vite build --config vite.react.config.ts && vite build --config vite.vue.config.ts && vite build --config vite.web-component.config.ts",
     "test": "playwright test --config=test/playwright.config.ts",
     "test:ui": "playwright test --config=test/playwright.config.ts --ui",
     "test:headed": "playwright test --config=test/playwright.config.ts --headed",
     "test:update-snapshots": "playwright test --config=test/playwright.config.ts --update-snapshots",
     "build:dev": "./scripts/build.sh",
     "build:prod": "./scripts/build.sh --production",
-    "build:analyze": "ANALYZE=true npm run build",
     "build:watch": "vite build --watch",
     "build:types": "tsc --emitDeclarationOnly",
     "clean": "rm -rf dist",
@@ -103,10 +74,9 @@
   },
   "homepage": "https://github.com/frybynite/image-cloud#readme",
   "peerDependencies": {
-    "@frybynite/image-cloud": "*",
-    "react": ">=17",
-    "react-dom": ">=17",
-    "vue": ">=3"
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "vue": ">=3.3.0"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -126,7 +96,6 @@
     "@vitejs/plugin-react": "^5.1.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "rollup-plugin-visualizer": "^5.x",
     "typescript": "^5.3.3",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^5.0.0-beta.6",
