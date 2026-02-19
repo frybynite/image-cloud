@@ -86,6 +86,46 @@ test.describe('User Interactions', () => {
 
   test.describe('Unfocus Actions', () => {
 
+    test('pressing ESC twice during unfocus does not restart the animation', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 500);
+
+      await forceClickImage(page, 0);
+      await waitForAnimation(page, 300); // wait for 150ms focus animation + buffer
+
+      expect(await isImageFocused(page, 0)).toBe(true);
+
+      // Use browser-side timing to reliably hit the mid-animation window.
+      // animationDuration is 150ms in this fixture.
+      // Esc #1 at t=0 → unfocus animation runs (ends at t=150ms, class removed).
+      // Esc #2 at t=100ms → with bug: cancels first, restarts from focused (ends t=250ms).
+      // Check at t=200ms:
+      //   fix present  → animation done at t=150ms → class absent → false ✓
+      //   bug present  → animation done at t=250ms → class still present → true ✗
+      const hasFocusedClassAt200ms = await page.evaluate(() => {
+        return new Promise<boolean>((resolve) => {
+          const img = document.querySelector('#imageCloud img') as HTMLElement;
+
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+          setTimeout(() => {
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+            setTimeout(() => {
+              resolve(img.classList.contains('fbn-ic-focused'));
+            }, 100); // 100ms after second Esc = 200ms after first
+          }, 100); // second Esc at 100ms (well within 150ms animation)
+        });
+      });
+
+      expect(hasFocusedClassAt200ms).toBe(false);
+
+      // Also confirm everything settles cleanly
+      await waitForAnimation(page, 400);
+      expect(await isImageFocused(page, 0)).toBe(false);
+    });
+
     test('pressing ESC unfocuses image', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
       await waitForGalleryInit(page);

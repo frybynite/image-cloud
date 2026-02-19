@@ -381,6 +381,47 @@ export class ZoomEngine {
   }
 
   /**
+   * Capture the current visual state of an element mid-animation, BEFORE cancelling.
+   *
+   * The computed matrix.e/f include the -50%/-50% centering offset resolved to pixels.
+   * buildDimensionZoomTransform prepends its own translate(-50%,-50%), so passing raw
+   * matrix.e/f doubles the centering and produces the wrong starting position.
+   *
+   * This method extracts the PURE positional offset (pureX = matrix.e + 0.5*midWidth)
+   * and commits width/height/transform to inline styles before the animation is cancelled,
+   * preventing any visual snap.
+   *
+   * Must be called while the animation is still running (offsetWidth reflects animated size).
+   * Caller is responsible for calling animationEngine.cancelAllAnimations() afterwards.
+   */
+  private captureMidAnimationState(element: HTMLElement): {
+    transform: TransformParams;
+    dimensions: { width: number; height: number };
+  } {
+    const computed = getComputedStyle(element);
+    const matrix = new DOMMatrix(computed.transform);
+    const midWidth = element.offsetWidth;
+    const midHeight = element.offsetHeight;
+
+    // Remove the -50%/-50% centering that is baked into matrix.e/f
+    const pureX = matrix.e + midWidth * 0.5;
+    const pureY = matrix.f + midHeight * 0.5;
+    const rotation = Math.atan2(matrix.b, matrix.a) * (180 / Math.PI);
+
+    // Commit current visual state to inline styles so cancelling the animation
+    // does not cause the element to snap to a different size/position
+    element.style.width = `${midWidth}px`;
+    element.style.height = `${midHeight}px`;
+    element.style.transform = `translate(-50%, -50%) translate(${pureX}px, ${pureY}px) rotate(${rotation}deg)`;
+    element.style.transition = 'none';
+
+    return {
+      transform: { x: pureX, y: pureY, rotation, scale: 1 },
+      dimensions: { width: midWidth, height: midHeight }
+    };
+  }
+
+  /**
    * Handle animation completion
    */
   private async waitForAnimation(handle: AnimationHandle): Promise<void> {
@@ -439,18 +480,11 @@ export class ZoomEngine {
 
     // Same image clicked while it's animating in - reverse to unfocus
     if (this.incoming?.element === imageElement && this.state === ZoomState.FOCUSING) {
-      // Capture current position and dimensions, then reverse
-      const snapshot = this.animationEngine.cancelAnimation(this.incoming.animationHandle, true);
-      const fromTransform: TransformParams = {
-        x: snapshot.x,
-        y: snapshot.y,
-        rotation: snapshot.rotation,
-        scale: 1  // No scale transform - using dimensions
-      };
-      const fromDimensions = {
-        width: imageElement.offsetWidth,
-        height: imageElement.offsetHeight
-      };
+      // Capture mid-animation state BEFORE cancelling (offsetWidth reflects animated size;
+      // pure positional offset strips the -50% centering already baked into matrix.e/f)
+      const { transform: fromTransform, dimensions: fromDimensions } =
+        this.captureMidAnimationState(imageElement);
+      this.animationEngine.cancelAllAnimations(imageElement);
 
       this.outgoing = this.startUnfocusAnimation(
         imageElement,
@@ -589,32 +623,16 @@ export class ZoomEngine {
         // If clicking the same image that's animating out, let it become the new focus target
         // (reverse direction - it should animate back to focused)
         if (this.outgoing?.element === imageElement) {
-          // Cancel outgoing animation and capture current state
-          const snapshot = this.animationEngine.cancelAnimation(this.outgoing.animationHandle, true);
-          const fromTransform: TransformParams = {
-            x: snapshot.x,
-            y: snapshot.y,
-            rotation: snapshot.rotation,
-            scale: 1  // No scale - using dimensions
-          };
-          const fromDimensions = {
-            width: imageElement.offsetWidth,
-            height: imageElement.offsetHeight
-          };
+          // Capture mid-animation state for outgoing before cancelling
+          const { transform: fromTransform, dimensions: fromDimensions } =
+            this.captureMidAnimationState(imageElement);
+          this.animationEngine.cancelAllAnimations(imageElement);
 
           // Redirect current incoming to become outgoing
           if (this.incoming) {
-            const incomingSnapshot = this.animationEngine.cancelAnimation(this.incoming.animationHandle, true);
-            const incomingFrom: TransformParams = {
-              x: incomingSnapshot.x,
-              y: incomingSnapshot.y,
-              rotation: incomingSnapshot.rotation,
-              scale: 1  // No scale - using dimensions
-            };
-            const incomingFromDimensions = {
-              width: this.incoming.element.offsetWidth,
-              height: this.incoming.element.offsetHeight
-            };
+            const { transform: incomingFrom, dimensions: incomingFromDimensions } =
+              this.captureMidAnimationState(this.incoming.element);
+            this.animationEngine.cancelAllAnimations(this.incoming.element);
             this.outgoing = this.startUnfocusAnimation(
               this.incoming.element,
               this.incoming.originalState,
@@ -667,17 +685,9 @@ export class ZoomEngine {
 
         // Redirect incoming to outgoing (animate from current position back to original)
         if (this.incoming) {
-          const snapshot = this.animationEngine.cancelAnimation(this.incoming.animationHandle, true);
-          const fromTransform: TransformParams = {
-            x: snapshot.x,
-            y: snapshot.y,
-            rotation: snapshot.rotation,
-            scale: 1  // No scale - using dimensions
-          };
-          const fromDimensions = {
-            width: this.incoming.element.offsetWidth,
-            height: this.incoming.element.offsetHeight
-          };
+          const { transform: fromTransform, dimensions: fromDimensions } =
+            this.captureMidAnimationState(this.incoming.element);
+          this.animationEngine.cancelAllAnimations(this.incoming.element);
 
           this.outgoing = this.startUnfocusAnimation(
             this.incoming.element,
@@ -715,23 +725,20 @@ export class ZoomEngine {
    * Unfocus current image, returning it to original position
    */
   async unfocusImage(): Promise<void> {
+    // Already animating out - ignore duplicate requests (e.g. ESC pressed twice)
+    if (this.state === ZoomState.UNFOCUSING) {
+      return;
+    }
+
     // Increment generation to invalidate any previous in-flight calls
     const myGeneration = ++this.focusGeneration;
 
     if (!this.currentFocus || !this.focusData) {
       // Handle case where we're in FOCUSING state
       if (this.incoming && this.state === ZoomState.FOCUSING) {
-        const snapshot = this.animationEngine.cancelAnimation(this.incoming.animationHandle, true);
-        const fromTransform: TransformParams = {
-          x: snapshot.x,
-          y: snapshot.y,
-          rotation: snapshot.rotation,
-          scale: 1  // No scale - using dimensions
-        };
-        const fromDimensions = {
-          width: this.incoming.element.offsetWidth,
-          height: this.incoming.element.offsetHeight
-        };
+        const { transform: fromTransform, dimensions: fromDimensions } =
+          this.captureMidAnimationState(this.incoming.element);
+        this.animationEngine.cancelAllAnimations(this.incoming.element);
 
         this.outgoing = this.startUnfocusAnimation(
           this.incoming.element,
@@ -758,17 +765,9 @@ export class ZoomEngine {
     if (this.state === ZoomState.CROSS_ANIMATING) {
       // Cancel incoming and animate it back
       if (this.incoming) {
-        const snapshot = this.animationEngine.cancelAnimation(this.incoming.animationHandle, true);
-        const fromTransform: TransformParams = {
-          x: snapshot.x,
-          y: snapshot.y,
-          rotation: snapshot.rotation,
-          scale: 1  // No scale - using dimensions
-        };
-        const fromDimensions = {
-          width: this.incoming.element.offsetWidth,
-          height: this.incoming.element.offsetHeight
-        };
+        const { transform: fromTransform, dimensions: fromDimensions } =
+          this.captureMidAnimationState(this.incoming.element);
+        this.animationEngine.cancelAllAnimations(this.incoming.element);
 
         // Start unfocus for incoming from its current position
         const incomingUnfocus = this.startUnfocusAnimation(

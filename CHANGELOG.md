@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.1] - 2026-02-19
+
+### Fixed
+- **ZoomEngine: wrong animation start position when interrupting mid-animation** — `cancelAnimation()` returned raw `matrix.e/f` values (centering offset already baked in); `buildDimensionZoomTransform` then added another `translate(-50%, -50%)`, doubling the centering and causing the reversed animation to start from an entirely wrong location. New `captureMidAnimationState()` helper captures width/height and pure positional offset *before* cancelling, and commits them to inline styles to prevent visual snap. Affects Esc during zoom-in, arrow-key navigation during zoom-in, and all cross-animation redirect paths.
+- **ZoomEngine: Esc pressed twice during unfocus restarts animation** — second `unfocusImage()` call while state was already `UNFOCUSING` fell through to the normal-unfocus path, cancelled the running animation, and restarted it from the fully-focused position. Added early-return guard for `ZoomState.UNFOCUSING`.
+
 ## [0.5.0] - 2026-02-14
 
 ### Added
