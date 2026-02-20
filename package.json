@@ -53,6 +53,22 @@
     "./layouts/all": {
       "types": "./dist/layouts/all.d.ts",
       "import": "./dist/layouts/all.js"
+    },
+    "./loaders/static": {
+      "types": "./dist/loaders/static.d.ts",
+      "import": "./dist/loaders/static.js"
+    },
+    "./loaders/google-drive": {
+      "types": "./dist/loaders/google-drive.d.ts",
+      "import": "./dist/loaders/google-drive.js"
+    },
+    "./loaders/composite": {
+      "types": "./dist/loaders/composite.d.ts",
+      "import": "./dist/loaders/composite.js"
+    },
+    "./loaders/all": {
+      "types": "./dist/loaders/all.d.ts",
+      "import": "./dist/loaders/all.js"
     }
   },
   "files": [
@@ -60,7 +76,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run clean && tsc && vite build && vite build --config vite.image-cloud-auto-init.config.ts && vite build --config vite.layout-radial.config.ts && vite build --config vite.layout-grid.config.ts && vite build --config vite.layout-spiral.config.ts && vite build --config vite.layout-cluster.config.ts && vite build --config vite.layout-wave.config.ts && vite build --config vite.layout-random.config.ts && vite build --config vite.layout-all.config.ts && vite build --config vite.react.config.ts && vite build --config vite.vue.config.ts && vite build --config vite.web-component.config.ts",
+    "build": "npm run clean && tsc && vite build && vite build --config vite.image-cloud-auto-init.config.ts && vite build --config vite.layout-radial.config.ts && vite build --config vite.layout-grid.config.ts && vite build --config vite.layout-spiral.config.ts && vite build --config vite.layout-cluster.config.ts && vite build --config vite.layout-wave.config.ts && vite build --config vite.layout-random.config.ts && vite build --config vite.layout-all.config.ts && vite build --config vite.loader-static.config.ts && vite build --config vite.loader-google-drive.config.ts && vite build --config vite.loader-composite.config.ts && vite build --config vite.loader-all.config.ts && vite build --config vite.react.config.ts && vite build --config vite.vue.config.ts && vite build --config vite.web-component.config.ts",
     "test": "playwright test --config=test/playwright.config.ts",
     "test:ui": "playwright test --config=test/playwright.config.ts --ui",
     "test:headed": "playwright test --config=test/playwright.config.ts --headed",

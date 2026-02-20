@@ -9,6 +9,7 @@ import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
+import { LoaderRegistry } from './engines/LoaderRegistry';
 import { ZoomEngine } from './engines/ZoomEngine';
 import { SwipeEngine, SNAP_BACK_DURATION_MS } from './engines/SwipeEngine';
 import { animatePath } from './engines/PathAnimator';
@@ -129,7 +130,7 @@ export class ImageCloud {
   /**
    * Create appropriate image loader based on config
    * Processes loaders array, merges shared config, wraps in CompositeLoader if needed
-   * Uses dynamic imports for loaders to enable tree-shaking
+   * Uses dynamic imports to trigger loader registration and enable tree-shaking
    */
   private async createLoader(): Promise<ImageLoader> {
     const entries = this.fullConfig.loaders;
@@ -147,7 +148,10 @@ export class ImageCloud {
       return childLoaders[0];
     }
 
-    const { CompositeLoader } = await import('./loaders/CompositeLoader');
+    // Import composite bundle to trigger registration
+    // @ts-expect-error - Dynamic import to trigger registration in loader registry
+    await import('@frybynite/image-cloud/loaders/composite');
+    const CompositeLoader = LoaderRegistry.getLoader('composite');
     return new CompositeLoader({
       loaders: childLoaders,
       debugLogging: this.fullConfig.config.debug?.loaders
@@ -156,11 +160,14 @@ export class ImageCloud {
 
   /**
    * Create a single loader from a LoaderEntry, merging shared config
-   * Uses dynamic imports to allow tree-shaking of unused loaders
+   * Uses dynamic imports to trigger loader registration and enable tree-shaking
    */
   private async createLoaderFromEntry(entry: LoaderEntry, shared: SharedLoaderConfig): Promise<ImageLoader> {
     if ('static' in entry) {
-      const { StaticImageLoader } = await import('./loaders/StaticImageLoader');
+      // Import bundle to trigger registration
+      // @ts-expect-error - Dynamic import to trigger registration in loader registry
+      await import('@frybynite/image-cloud/loaders/static');
+      const StaticImageLoader = LoaderRegistry.getLoader('static');
       const inner = entry.static;
       const merged: StaticLoaderInnerConfig = {
         ...inner,
@@ -172,7 +179,10 @@ export class ImageCloud {
       };
       return new StaticImageLoader(merged);
     } else if ('googleDrive' in entry) {
-      const { GoogleDriveLoader } = await import('./loaders/GoogleDriveLoader');
+      // Import bundle to trigger registration
+      // @ts-expect-error - Dynamic import to trigger registration in loader registry
+      await import('@frybynite/image-cloud/loaders/google-drive');
+      const GoogleDriveLoader = LoaderRegistry.getLoader('google-drive');
       const inner = entry.googleDrive;
       const merged: GoogleDriveLoaderInnerConfig = {
         ...inner,
