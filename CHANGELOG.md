@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.2] - 2026-02-22
+
+### Fixed
+- **Google Drive example**: Restored API key and folder ID to make the example functional on GitHub Pages
+
 ## [0.6.1] - 2026-02-22
 
 ### Fixed
