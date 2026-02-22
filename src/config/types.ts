@@ -471,8 +471,6 @@ export interface ResponsiveRenderingConfig {
 export interface UIRenderingConfig {
   showLoadingSpinner: boolean;
   showImageCounter?: boolean;
-  showThumbnails?: boolean;
-  theme?: 'light' | 'dark' | 'auto';
   loadingElement?: string | HTMLElement;
   errorElement?: string | HTMLElement;
   counterElement?: string | HTMLElement;

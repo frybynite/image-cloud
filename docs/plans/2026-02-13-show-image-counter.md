@@ -24,8 +24,6 @@ In `src/config/types.ts`, add to the `UIRenderingConfig` interface:
 export interface UIRenderingConfig {
   showLoadingSpinner: boolean;
   showImageCounter?: boolean;
-  showThumbnails?: boolean;
-  theme?: 'light' | 'dark' | 'auto';
   loadingElement?: string | HTMLElement;
   errorElement?: string | HTMLElement;
   counterElement?: string | HTMLElement;  // NEW
@@ -39,9 +37,7 @@ In `src/config/defaults.ts`, change the `showImageCounter` default:
 ```typescript
 ui: Object.freeze({
   showLoadingSpinner: false,
-  showImageCounter: false,  // Changed from undefined stub
-  showThumbnails: undefined,
-  theme: undefined
+  showImageCounter: false  // Changed from undefined stub
 }),
 ```
 

@@ -277,9 +277,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     }),
     ui: Object.freeze({
       showLoadingSpinner: false,
-      showImageCounter: false,
-      showThumbnails: undefined,  // STUB: Not implemented yet
-      theme: undefined  // STUB: Not implemented yet
+      showImageCounter: false
     }),
     performance: Object.freeze({
       lazyLoad: undefined,  // STUB: Not implemented yet

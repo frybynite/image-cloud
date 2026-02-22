@@ -11,7 +11,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`) — Confirmed: test remains skipped due to timing unreliability. Other spinner tests provide adequate coverage; `loading-spinner-slow.html` available for manual testing.
 - [ ] Add border-image to functionality and configurator
 - [ ] Implement `rendering.performance` options (`lazyLoad`, `preloadCount`, `imageQuality`) — types and config merging exist but values are unused stubs
-- [ ] Implement `rendering.ui` stubs: `showThumbnails`, `theme` ('light'|'dark'|'auto') — types exist but values are unused
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
 - [x] Security: Set up CodeQL for code security analysis
 ---
