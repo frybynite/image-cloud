@@ -7,13 +7,11 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [x] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly) — resolved by auto-creating loading elements inside the container (v0.3.3)
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
-- [ ] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
+- [x] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
 - [ ] Add border-image to functionality and configurator
 - [ ] Implement `rendering.performance` options (`lazyLoad`, `preloadCount`, `imageQuality`) — types and config merging exist but values are unused stubs
 - [ ] Implement `rendering.ui` stubs: `showThumbnails`, `theme` ('light'|'dark'|'auto') — types exist but values are unused
-- [ ] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem.
-- [ ] Swipe gestures: Swipes inside an iframe don't work consistently.
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
 - [x] Security: Set up CodeQL for code security analysis
 ---
@@ -30,6 +28,17 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Factory functions for common configurations (e.g., `ImageCloud.fromUrls([...])`)
 - Reduce required nesting in config object
 - Better error messages for missing/invalid config
+
+### Lower Bundle Size
+Reduce the overall package bundle size to improve load times and make the library lighter for consumers.
+
+**Ideas:**
+- Audit current bundle composition (identify largest contributors)
+- Tree-shake unused code paths
+- Evaluate dependencies for lighter alternatives or removal
+- Code-split optional features (e.g., individual layout algorithms, loaders)
+- Minification and compression improvements
+- Lazy-load non-critical modules (e.g., zoom, swipe engines)
 
 ---
 
@@ -52,7 +61,6 @@ Reduce boilerplate and complexity for clients getting started with the library.
 - Touch gesture improvements
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
-- Loading spinner until images render — option to keep the loading spinner visible until the first N images have actually loaded and animated in, rather than hiding it after `prepare()` completes. Currently the spinner only covers the URL-list fetch phase, which is near-instant for static URLs.
 - Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
 - Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).
 
@@ -60,6 +68,8 @@ Reduce boilerplate and complexity for clients getting started with the library.
 
 ## Completed
 
+- [x] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem
+- [x] Swipe gestures: Swipes inside an iframe don't work consistently
 - [x] Consolidate debug parameters under `config.debug` namespace — unified `config.debug.enabled`, `config.debug.centers`, `config.debug.loaders`. Old paths (`debug`, `layout.debugCenters`, `config.loaders.debugLogging`) removed (breaking change). Per-loader `debugLogging` retained as override. `debugRadials` removed entirely.
 - [x] Swipe gesture navigation - Left/right swipe gestures on touch devices navigate between focused images (SwipeEngine with drag feedback, threshold detection, horizontal angle filtering).
 - [x] Packaging & Distribution Strategy - CDN deployment (unpkg/jsdelivr), simplified README examples, separate auto-init bundle.

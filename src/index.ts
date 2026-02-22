@@ -60,8 +60,7 @@ export type {
   ElasticPreset,
   WavePathPreset,
   // Styling types
-  BorderStyle,
-  ImageStylingConfig
+  BorderStyle
 } from './config/types';
 
 // Default config export

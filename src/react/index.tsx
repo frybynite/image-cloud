@@ -5,8 +5,8 @@ import {
   useRef,
   type CSSProperties,
 } from 'react';
-import { ImageCloud as ImageCloudCore } from '@frybynite/image-cloud';
-import type { ImageCloudOptions } from '@frybynite/image-cloud';
+import { ImageCloud as ImageCloudCore } from '../ImageCloud';
+import type { ImageCloudOptions } from '../config/types';
 
 export type ImageCloudProps = Omit<ImageCloudOptions, 'container'> & {
   className?: string;
@@ -59,4 +59,4 @@ export type {
   LayoutConfig,
   AnimationConfig,
   ImageStylingConfig,
-} from '@frybynite/image-cloud';
+} from '../config/types';
