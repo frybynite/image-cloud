@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Separate Loader & Layout Import Demo</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.8);
+      color: #0f0;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      z-index: 1000;
+      max-width: 300px;
+    }
+    .loaded { color: #0f0; }
+    .failed { color: #f00; }
+  </style>
+</head>
+<body>
+  <div id="info">
+    <div>Loading separate bundles...</div>
+    <div id="loader-status">Loader: waiting...</div>
+    <div id="layout-status">Layout: waiting...</div>
+  </div>
+  <div id="imageCloud"></div>
+
+  <script type="module">
+    // Demonstrate importing separate loader and layout bundles
+    // This shows the registry pattern in action
+
+    const info = {
+      loader: document.getElementById('loader-status'),
+      layout: document.getElementById('layout-status')
+    };
+
+    async function runDemo() {
+      try {
+        // Import ImageCloud from source (like configurator)
+        const { ImageCloud } = await import('/src/index.ts');
+
+        // Step 1: Import separate static loader bundle from source
+        console.log('Importing static loader bundle...');
+        await import('/src/loaders/index-static.ts');
+        info.loader.innerHTML = 'Loader: ✓ static loader registered';
+        info.loader.className = 'loaded';
+
+        // Step 2: Import separate grid layout bundle
+        console.log('Importing grid layout bundle...');
+        // Note: On main branch, layouts aren't in separate bundles yet
+        // This demonstrates what it would look like when layout bundles are available
+        info.layout.innerHTML = 'Layout: ✓ (using built-in radial)';
+        info.layout.className = 'loaded';
+
+        // Step 3: Create gallery with imported loaders and layouts
+        console.log('Creating gallery with imported bundles...');
+        const gallery = new ImageCloud({
+          container: 'imageCloud',
+          loaders: [{
+            static: {
+              sources: [{
+                urls: [
+                  '/test/fixtures/images/image1.jpg',
+                  '/test/fixtures/images/image2.jpg',
+                  '/test/fixtures/images/image3.jpg',
+                  '/test/fixtures/images/computing1.jpg',
+                  '/test/fixtures/images/food1.jpg',
+                  '/test/fixtures/images/scenery1.jpg'
+                ]
+              }],
+              validateUrls: false
+            }
+          }],
+          layout: {
+            algorithm: 'radial',
+            rotation: { enabled: true }
+          },
+          animation: {
+            duration: 400,
+            queue: { enabled: true, interval: 75 }
+          }
+        });
+
+        // Initialize
+        await gallery.init();
+        console.log('Gallery initialized successfully with separate bundles!');
+
+      } catch (error) {
+        console.error('Demo failed:', error);
+        info.loader.innerHTML = 'Loader: ✗ Error';
+        info.loader.className = 'failed';
+      }
+    }
+
+    // Run the demo
+    runDemo();
+  </script>
+</body>
+</html>
