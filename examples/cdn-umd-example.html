@@ -32,6 +32,10 @@
     <!-- UMD bundle: loads via <script> tag, no module system needed.
          This exposes a global 'ImageCloud' object on window. -->
     <script src="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.umd.js"></script>
+    <!-- Load loaders as modules (UMD doesn't include them by default) -->
+    <script type="module">
+        import '@frybynite/image-cloud/loaders/static';
+    </script>
     <script>
         // With UMD, access ImageCloud from the global window object
         const { ImageCloud } = window.ImageCloud;
