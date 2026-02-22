@@ -1,4 +1,4 @@
-import { LoaderRegistry } from '../engines/LoaderRegistry';
+import { LoaderRegistry } from '@frybynite/image-cloud';
 import { StaticImageLoader } from './StaticImageLoader';
 
 LoaderRegistry.registerLoader('static', StaticImageLoader);

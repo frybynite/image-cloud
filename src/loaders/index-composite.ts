@@ -1,4 +1,4 @@
-import { LoaderRegistry } from '../engines/LoaderRegistry';
+import { LoaderRegistry } from '@frybynite/image-cloud';
 import { CompositeLoader } from './CompositeLoader';
 
 LoaderRegistry.registerLoader('composite', CompositeLoader);
