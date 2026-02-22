@@ -24,22 +24,14 @@ npm install @frybynite/image-cloud
 import { ImageCloud } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
 
-// Import loaders (required — choose what you need)
-import '@frybynite/image-cloud/loaders/static';        // For static URLs
-// import '@frybynite/image-cloud/loaders/google-drive'; // For Google Drive
-// import '@frybynite/image-cloud/loaders/all';          // For all loaders
-
 // Types (for TypeScript)
 import type { ImageCloudOptions, ImageLayout } from '@frybynite/image-cloud';
 ```
-
-**Note:** Loaders are imported as separate bundles to keep the main bundle small. Import only the loaders you use.
 
 ## Minimal Example
 
 ```typescript
 import { ImageCloud } from '@frybynite/image-cloud';
-import '@frybynite/image-cloud/loaders/static';
 
 const cloud = new ImageCloud({
   container: 'myCloud',
@@ -49,8 +41,6 @@ const cloud = new ImageCloud({
 await cloud.init();
 ```
 
-**Remember:** Always import the loaders you need before creating an ImageCloud instance.
-
 ## Exports Overview
 
 The library exports:
@@ -58,16 +48,11 @@ The library exports:
 - **ImageCloud** - Main class (`@frybynite/image-cloud`)
 - **ImageGallery** - Alias for ImageCloud (backwards compatibility)
 
-### Loaders (Imported Separately)
+### Loaders
 
-Loaders are in separate bundles to optimize bundle size. Import only what you need:
-
-- **Static** - `@frybynite/image-cloud/loaders/static` — Load from URLs, paths, or JSON endpoints
-- **Google Drive** - `@frybynite/image-cloud/loaders/google-drive` — Load from Google Drive folders
-- **Composite** - `@frybynite/image-cloud/loaders/composite` — Combine multiple loaders
-- **All** - `@frybynite/image-cloud/loaders/all` — Includes all loaders above
-
-Each loader bundle exports: `GoogleDriveLoader`, `StaticImageLoader`, `CompositeLoader`
+- **StaticImageLoader** — Load from URLs, paths, or JSON endpoints
+- **GoogleDriveLoader** — Load from Google Drive folders
+- **CompositeLoader** — Combine multiple loaders
 
 ### Other Exports
 

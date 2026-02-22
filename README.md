@@ -35,9 +35,6 @@ No install needed — load directly from a CDN:
 https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js              (Main - ESM)
 https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.umd.js          (Main - UMD)
 https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud-auto-init.js    (Auto-init)
-https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/loaders/static.js            (Static loader)
-https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/loaders/google-drive.js      (Google Drive loader)
-https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/loaders/all.js               (All loaders)
 https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css
 ```
 
@@ -46,15 +43,10 @@ https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css
 https://unpkg.com/@frybynite/image-cloud@latest/dist/image-cloud.js              (Main - ESM)
 https://unpkg.com/@frybynite/image-cloud@latest/dist/image-cloud.umd.js          (Main - UMD)
 https://unpkg.com/@frybynite/image-cloud@latest/dist/image-cloud-auto-init.js    (Auto-init)
-https://unpkg.com/@frybynite/image-cloud@latest/dist/loaders/static.js            (Static loader)
-https://unpkg.com/@frybynite/image-cloud@latest/dist/loaders/google-drive.js      (Google Drive loader)
-https://unpkg.com/@frybynite/image-cloud@latest/dist/loaders/all.js               (All loaders)
 https://unpkg.com/@frybynite/image-cloud@latest/dist/style.css
 ```
 
 Replace `@latest` with a specific version (e.g., `@0.5.1`) to pin to that release.
-
-**Note:** Loaders are imported as separate bundles to reduce bundle size. Import only the loaders you need.
 
 ## Quick Start
 
@@ -62,7 +54,6 @@ Replace `@latest` with a specific version (e.g., `@0.5.1`) to pin to that releas
 
 ```typescript
 import { ImageCloud } from '@frybynite/image-cloud';
-import '@frybynite/image-cloud/loaders/static';  // Import loaders separately for optimal bundle size
 import '@frybynite/image-cloud/style.css';
 
 const cloud = new ImageCloud({
@@ -84,11 +75,6 @@ const cloud = new ImageCloud({
 });
 
 await cloud.init();
-```
-
-**Tip:** If you're using multiple loaders or want to include all of them, import the all-in-one bundle:
-```typescript
-import '@frybynite/image-cloud/loaders/all';  // Includes static, google-drive, and composite loaders
 ```
 
 ### HTML (Auto-initialization)
@@ -123,24 +109,11 @@ import '@frybynite/image-cloud/loaders/all';  // Includes static, google-drive, 
 
 For detailed configuration, see the documentation in the `docs/` folder:
 
-1. **[Loaders](docs/LOADERS.md)** — Configure image sources (static URLs, JSON endpoints, local paths, Google Drive folders). Loaders are imported as separate bundles to reduce bundle size.
+1. **[Loaders](docs/LOADERS.md)** — Configure image sources (static URLs, JSON endpoints, local paths, Google Drive folders)
 2. **[Layouts](docs/LAYOUTS.md)** — Choose and customize layout algorithms (radial, grid, spiral, cluster, random, wave)
 3. **[Image Sizing](docs/IMAGE_SIZING.md)** — Control base sizes, variance, and responsive/adaptive behavior
 4. **[Full Parameter Reference](docs/PARAMETERS.md)** — Complete configuration options for animation, interaction, styling, and more
 5. **[API Reference](docs/api/README.md)** — TypeScript API documentation for the ImageCloud class, types, loaders, and layouts
-
-### Bundle Size Optimization
-
-Image Cloud uses a **loader registry pattern** to optimize bundle size:
-- The **main bundle** contains the core ImageCloud class (~30KB gzipped)
-- **Loader bundles** (static, google-drive, composite) are imported separately and auto-register when loaded
-- **Import only the loaders you need** to minimize bundle size
-
-Example: Using only the static loader
-```typescript
-import { ImageCloud } from '@frybynite/image-cloud';
-import '@frybynite/image-cloud/loaders/static';  // ~2.3KB gzipped
-```
 
 ### Using the Configurator
 

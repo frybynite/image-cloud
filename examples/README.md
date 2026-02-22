@@ -2,18 +2,6 @@
 
 This directory contains various examples demonstrating different ways to use the Image Cloud library.
 
-## Important: Loader Imports
-
-**All examples require loader imports.** The main Image Cloud package does not include loaders — they are imported separately to keep the bundle small:
-
-```typescript
-import '@frybynite/image-cloud/loaders/static';        // For static URLs/paths
-import '@frybynite/image-cloud/loaders/google-drive';  // For Google Drive
-import '@frybynite/image-cloud/loaders/all';           // For all loaders
-```
-
-See the examples below for how each type uses loaders.
-
 ## Examples
 
 ### Basic Usage
@@ -22,7 +10,6 @@ See the examples below for how each type uses loaders.
 Modern ES module usage in the browser.
 - Uses ES6 modules (`<script type="module">`)
 - Direct import from `dist/image-cloud.js`
-- **Requires loader import** (e.g., `@frybynite/image-cloud/loaders/static`)
 
 #### UMD/CDN Example (`cdn-umd-example.html`)
 Traditional script tag without module system (CDN-style).
@@ -36,18 +23,14 @@ HTML data attribute initialization.
 
 ### Loaders
 
-Loaders are imported as separate bundles. Choose the loaders you need for your gallery.
-
 #### Static Loader Example (`static-loader-example.html`)
 Load images from static URLs, paths, or JSON endpoints.
-- Requires: `import '@frybynite/image-cloud/loaders/static'`
 - URL-based image sources
 - Local path configuration
 - JSON endpoint support
 
 #### Google Drive Loader Example (`google-drive-loader-example.html`)
 Load images from Google Drive folders.
-- Requires: `import '@frybynite/image-cloud/loaders/google-drive'`
 - Google Drive API integration
 - Requires valid API key
 - Folder or file-based sources

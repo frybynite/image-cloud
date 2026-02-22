@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-02-22
+
+### Changed
+- **Reverted loader-split architecture** to unified bundle approach for stability and simplicity. After v0.6.0 attempted to split loaders into separate bundles for bundle size optimization, this reversion consolidates all loaders back into the main bundle.
+- **Removed LoaderRegistry pattern** — loaders are now included in the main bundle and don't require dynamic registration via separate bundle imports
+- **Simplified API**: Removed separate loader subpath exports (`@frybynite/image-cloud/loaders/static`, etc.). Users now import only from main package: `import { ImageCloud } from '@frybynite/image-cloud'`
+- **Build simplification**: Removed separate vite build configurations for individual loader bundles. Single unified build now outputs main ESM, UMD, React, Vue, and Web Component variants
+
+### Removed
+- Removed all references to separate loader bundle imports from documentation (README, PARAMETERS, LOADERS, API guides, examples)
+- Removed "Bundle Size Optimization" section explaining the loader registry pattern
+- Removed LoaderRegistry class and related infrastructure
+
+### Fixed
+- Stability: Unified architecture eliminates module resolution complexity and circular dependency risks from loader-split approach
+- All 589 tests passing with faster execution (4.1 minutes vs 11.5+ minutes in split architecture)
+
 ## [0.6.5] - 2026-02-22
 
 ### Fixed
