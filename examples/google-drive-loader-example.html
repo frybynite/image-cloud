@@ -51,16 +51,53 @@
         import { ImageCloud } from '@frybynite/image-cloud';
 
         document.addEventListener('DOMContentLoaded', () => {
+            // IMPORTANT: Replace 'YOUR_API_KEY' with your own Google API key
+            // See docs/LOADERS.md for instructions on how to create one
+            const apiKey = 'YOUR_API_KEY';
+
+            if (apiKey === 'YOUR_API_KEY') {
+                document.getElementById('imageCloud').innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        flex-direction: column;
+                        color: #ccc;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: system-ui, -apple-system, sans-serif;
+                    ">
+                        <h2>Google Drive Loader Example</h2>
+                        <p>To use this example, you need to:</p>
+                        <ol style="text-align: left; display: inline-block;">
+                            <li>Create a Google Cloud project and enable the Drive API</li>
+                            <li>Create an API key with Drive API access</li>
+                            <li>Replace <code>YOUR_API_KEY</code> in the HTML with your key</li>
+                            <li>Share a Google Drive folder publicly</li>
+                            <li>Update the folder URL in the example</li>
+                        </ol>
+                        <p style="margin-top: 20px;">
+                            <a href="../../docs/LOADERS.md" style="color: #4a9eff; text-decoration: none;">
+                                Read the full Google Drive setup guide →
+                            </a>
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
             const cloud = new ImageCloud({
                 // 'container' — the id of the div where images will be rendered (or an HTMLElement)
                 container: 'imageCloud',
                 loaders: [{
                     // 'googleDrive' loader fetches images from shared Google Drive folders
                     googleDrive: {
-                        apiKey: 'AIzaSyD5mCAAOFnUrTABbgZHeEHoq5h5YALI3jc',
+                        apiKey: apiKey,
                         sources: [
                             {
-                                folders: ['https://drive.google.com/drive/folders/1HYxzGcUmPl5I5pUHlGUHDx2i5IS1f3Ph?usp=sharing'],
+                                // Replace this with your own shared Google Drive folder URL
+                                folders: ['https://drive.google.com/drive/folders/YOUR_FOLDER_ID?usp=sharing'],
                                 recursive: true  // include subfolders
                             }
                         ]
