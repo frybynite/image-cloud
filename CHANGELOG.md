@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.3] - 2026-02-22
+
+### Removed
+- **Removed unused `rendering.ui` stubs**: `showThumbnails` and `theme` properties from configuration types, defaults, and backlog. These features were never implemented and have been removed after review to keep the codebase clean.
+
+### Reviewed
+- **Skipped test review**: Confirmed that the "spinner is visible during slow image loading" test (`test/e2e/loading-spinner.spec.ts:41`) remains skipped due to timing unreliability. Other spinner tests provide adequate coverage; `loading-spinner-slow.html` is available for manual testing.
+
 ## [0.7.2] - 2026-02-22
 
 ### Changed
