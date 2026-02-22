@@ -44,7 +44,9 @@
     </div>
 
     <script type="module">
+        // Import ImageCloud and register the static loader
         import { ImageCloud } from '@frybynite/image-cloud';
+        import '@frybynite/image-cloud/loaders/static';
 
         document.addEventListener('DOMContentLoaded', () => {
             // The simplest way to load images — use the images shorthand
