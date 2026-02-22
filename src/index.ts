@@ -94,8 +94,5 @@ export { CompositeLoader } from './loaders/CompositeLoader';
 export type { CompositeLoaderConfig } from './loaders/CompositeLoader';
 export { ImageFilter } from './loaders/ImageFilter';
 
-// Export LoaderRegistry for loader bundle registration
-export { LoaderRegistry } from './engines/LoaderRegistry';
-
 // Export functional styles for manual injection if needed
 export { injectFunctionalStyles, FUNCTIONAL_CSS } from './styles/functionalStyles';

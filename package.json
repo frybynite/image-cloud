@@ -25,22 +25,6 @@
     "./web-component": {
       "types": "./dist/web-component.d.ts",
       "import": "./dist/web-component.js"
-    },
-    "./loaders/static": {
-      "types": "./dist/loaders/static.d.ts",
-      "import": "./dist/loaders/static.js"
-    },
-    "./loaders/google-drive": {
-      "types": "./dist/loaders/google-drive.d.ts",
-      "import": "./dist/loaders/google-drive.js"
-    },
-    "./loaders/composite": {
-      "types": "./dist/loaders/composite.d.ts",
-      "import": "./dist/loaders/composite.js"
-    },
-    "./loaders/all": {
-      "types": "./dist/loaders/all.d.ts",
-      "import": "./dist/loaders/all.js"
     }
   },
   "files": [
@@ -48,14 +32,13 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run clean && tsc && vite build && vite build --config vite.image-cloud-auto-init.config.ts && vite build --config vite.loader-static.config.ts && vite build --config vite.loader-google-drive.config.ts && vite build --config vite.loader-composite.config.ts && vite build --config vite.loader-all.config.ts && vite build --config vite.react.config.ts && vite build --config vite.vue.config.ts && vite build --config vite.web-component.config.ts",
+    "build": "npm run clean && tsc && vite build && vite build --config vite.image-cloud-auto-init.config.ts && vite build --config vite.react.config.ts && vite build --config vite.vue.config.ts && vite build --config vite.web-component.config.ts",
     "test": "playwright test --config=test/playwright.config.ts",
     "test:ui": "playwright test --config=test/playwright.config.ts --ui",
     "test:headed": "playwright test --config=test/playwright.config.ts --headed",
     "test:update-snapshots": "playwright test --config=test/playwright.config.ts --update-snapshots",
     "build:dev": "./scripts/build.sh",
     "build:prod": "./scripts/build.sh --production",
-    "build:analyze": "ANALYZE=true npm run build",
     "build:watch": "vite build --watch",
     "build:types": "tsc --emitDeclarationOnly",
     "clean": "rm -rf dist",
@@ -91,10 +74,9 @@
   },
   "homepage": "https://github.com/frybynite/image-cloud#readme",
   "peerDependencies": {
-    "@frybynite/image-cloud": "*",
-    "react": ">=17",
-    "react-dom": ">=17",
-    "vue": ">=3"
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "vue": ">=3.3.0"
   },
   "peerDependenciesMeta": {
     "react": { "optional": true },
@@ -108,7 +90,6 @@
     "@vitejs/plugin-react": "^5.1.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "rollup-plugin-visualizer": "^5.x",
     "typescript": "^5.3.3",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
