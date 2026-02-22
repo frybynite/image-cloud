@@ -8,6 +8,7 @@
     "skipLibCheck": true,
 
     /* Emit */
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
