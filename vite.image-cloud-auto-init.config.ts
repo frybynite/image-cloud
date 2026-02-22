@@ -9,6 +9,13 @@ export default defineConfig({
       fileName: () => 'image-cloud-auto-init.js'
     },
     emptyOutDir: false,
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      external: [
+        '@frybynite/image-cloud/loaders/static',
+        '@frybynite/image-cloud/loaders/google-drive',
+        '@frybynite/image-cloud/loaders/composite'
+      ]
+    }
   }
 });

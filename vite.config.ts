@@ -15,6 +15,11 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
+      external: [
+        '@frybynite/image-cloud/loaders/static',
+        '@frybynite/image-cloud/loaders/google-drive',
+        '@frybynite/image-cloud/loaders/composite'
+      ],
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) return 'style.css';
