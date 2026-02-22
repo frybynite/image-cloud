@@ -8,7 +8,7 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly) — resolved by auto-creating loading elements inside the container (v0.3.3)
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [x] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
-- [ ] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`)
+- [x] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`) — Confirmed: test remains skipped due to timing unreliability. Other spinner tests provide adequate coverage; `loading-spinner-slow.html` available for manual testing.
 - [ ] Add border-image to functionality and configurator
 - [ ] Implement `rendering.performance` options (`lazyLoad`, `preloadCount`, `imageQuality`) — types and config merging exist but values are unused stubs
 - [ ] Implement `rendering.ui` stubs: `showThumbnails`, `theme` ('light'|'dark'|'auto') — types exist but values are unused
