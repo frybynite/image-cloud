@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.5] - 2026-02-22
+
+### Fixed
+- **Loader Registry Pattern**: Fixed critical issue where loader bundles were creating their own LoaderRegistry instances instead of using the shared instance from the main bundle. Now loaders properly register when imported, making all examples work on GitHub Pages. Export LoaderRegistry from main package and have loader bundles import from main package instead of relative paths.
+
 ## [0.6.4] - 2026-02-22
 
 ### Changed
