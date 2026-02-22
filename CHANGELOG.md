@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.4] - 2026-02-22
+
+### Changed
+- **Example CDN URLs**: Updated all example files to use `@0.6.3` (latest version) for consistent and immediate CDN availability on GitHub Pages
+
 ## [0.6.3] - 2026-02-22
 
 ### Changed
