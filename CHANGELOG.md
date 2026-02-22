@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.1] - 2026-02-22
+
+### Fixed
+- **GitHub action npm audit**: Changed to only audit production dependencies, preventing dev-only vulnerabilities from blocking releases
+- **Example files on GitHub Pages**: Added loader subpath imports to importmaps in all example HTML files so dynamic loader imports resolve to CDN URLs
+- All 11 example files now work correctly when served from static hosts
+
 ## [0.6.0] - 2026-02-21
 
 ### Added
