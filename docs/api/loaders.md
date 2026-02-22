@@ -1,16 +1,34 @@
 # Loaders
 
-Loaders discover and provide image URLs to the gallery. The library includes three loader types.
+Loaders discover and provide image URLs to the gallery. The library includes three loader types. **Loaders are available as separate npm subpath exports to optimize bundle size.**
 
-## Import
+## Bundle Imports
+
+Loaders are imported as separate bundles. Import only the loaders you need:
 
 ```typescript
+// Import loader bundles (choose what you need)
+import '@frybynite/image-cloud/loaders/static';        // For StaticImageLoader
+import '@frybynite/image-cloud/loaders/google-drive';  // For GoogleDriveLoader
+import '@frybynite/image-cloud/loaders/composite';     // For CompositeLoader
+import '@frybynite/image-cloud/loaders/all';           // For all loaders
+
+// Then import the main class
+import { ImageCloud } from '@frybynite/image-cloud';
+```
+
+## Class Import
+
+For direct class imports (TypeScript/advanced usage):
+
+```typescript
+// These are exported from their respective bundle entry points
 import {
   StaticImageLoader,
   GoogleDriveLoader,
   CompositeLoader,
   ImageFilter
-} from '@frybynite/image-cloud';
+} from '@frybynite/image-cloud/loaders/static';
 ```
 
 ## Loader Interface

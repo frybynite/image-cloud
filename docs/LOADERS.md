@@ -1,6 +1,31 @@
 # Image Loaders
 
-Image Cloud supports multiple image sources through configurable loaders.
+Image Cloud supports multiple image sources through configurable loaders. **Loaders are imported as separate bundles to optimize your bundle size** — import only the loaders you need.
+
+## Bundle Imports
+
+Loaders are provided as separate npm subpath exports. Each loader bundle automatically registers itself when imported via the LoaderRegistry pattern.
+
+### Available Loader Bundles
+
+```typescript
+// Import individual loaders (recommended for bundle size)
+import '@frybynite/image-cloud/loaders/static';        // ~2.3KB gzipped
+import '@frybynite/image-cloud/loaders/google-drive';  // ~1.8KB gzipped
+import '@frybynite/image-cloud/loaders/composite';     // <1KB gzipped
+
+// Or import all loaders at once
+import '@frybynite/image-cloud/loaders/all';           // ~5KB gzipped
+```
+
+After importing a loader bundle, it is automatically registered and available for use in your ImageCloud configuration. You do not need to pass the loader class explicitly — just reference it by name in your config.
+
+### Why Separate Bundles?
+
+- **Main bundle** is lightweight (~30KB gzipped) without any loaders
+- **Load only what you need** — if you only use static images, skip google-drive and composite
+- **Tree-shaking friendly** — unused loaders won't be included in your final bundle
+- **Progressive enhancement** — add loaders dynamically based on user choices
 
 ## Table of Contents
 
@@ -21,9 +46,12 @@ Image Cloud supports multiple image sources through configurable loaders.
 
 ## Quick Start — `images` shorthand
 
-The simplest way to load images — pass a top-level `images` array:
+The simplest way to load images — pass a top-level `images` array. Remember to **import a loader bundle** first:
 
 ```javascript
+import { ImageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/loaders/static';  // Required: register the static loader
+
 const gallery = new ImageCloud({
   container: 'imageCloud',
   images: [
@@ -33,16 +61,21 @@ const gallery = new ImageCloud({
   ]
 });
 
-gallery.init();
+await gallery.init();
 ```
 
-The `images` shorthand is prepended as the first static loader entry. You can combine `images` with explicit `loaders` — the shorthand images come first.
+**Important:** The `images` shorthand is prepended as the first static loader entry. You can combine `images` with explicit `loaders` — the shorthand images come first. All loaders (including the implicit static loader from the `images` shorthand) require their corresponding bundle import.
 
 ---
 
 ## Static Loader
 
 Load images from direct URLs, local file paths, or JSON endpoints. The static loader is the recommended loader for most use cases.
+
+**Bundle import required:**
+```typescript
+import '@frybynite/image-cloud/loaders/static';
+```
 
 ### Static Loader Configuration Options
 
@@ -156,6 +189,11 @@ gallery.init();
 ## Google Drive Loader
 
 Load images from public Google Drive folders using the Google Drive API.
+
+**Bundle import required:**
+```typescript
+import '@frybynite/image-cloud/loaders/google-drive';
+```
 
 [! WARNING] ⚠️
 Using a Google Drive API key can result in a security risk that gives anyone who can reference your key access to shared folders. The risk is low if you're not sharing folders, but it is not zero. Also you will likely get a notification from Google when a key is found to be exposed. Make sure your key is restricted to Google Drive, don't share anything publicly unless your understand the risk. Create a Google Drive space that only shares this content as an option. Use this feature with the caution it deserves.
@@ -283,6 +321,12 @@ Without this, you'll see CORS errors and the loader will fail.
 
 Use the `loaders` array with multiple entries to pull images from different sources into a single gallery. Composite behavior is implicit — no wrapper needed.
 
+**Bundle imports required (import the loaders you need):**
+```typescript
+import '@frybynite/image-cloud/loaders/google-drive';
+import '@frybynite/image-cloud/loaders/static';
+```
+
 ```javascript
 const gallery = new ImageCloud({
   container: 'imageCloud',
@@ -301,14 +345,30 @@ const gallery = new ImageCloud({
   ]
 });
 
-gallery.init();
+await gallery.init();
 ```
 
 All loaders are prepared in parallel. If one loader fails, others continue (failed loader contributes 0 images). URLs are combined in the order loaders appear in the array.
 
+### Using Multiple Loaders Efficiently
+
+When using multiple loaders, you have options:
+- **Import individual loaders** (recommended) — import only what you need
+  ```typescript
+  import '@frybynite/image-cloud/loaders/google-drive';
+  import '@frybynite/image-cloud/loaders/static';
+  ```
+- **Import the all-in-one bundle** — simpler if you're using 2+ different loaders
+  ```typescript
+  import '@frybynite/image-cloud/loaders/all';
+  ```
+
 You can also combine the `images` shorthand with explicit `loaders`:
 
 ```javascript
+import '@frybynite/image-cloud/loaders/static';
+import '@frybynite/image-cloud/loaders/google-drive';
+
 const gallery = new ImageCloud({
   container: 'imageCloud',
   images: ['https://example.com/photo1.jpg', 'https://example.com/photo2.jpg'],

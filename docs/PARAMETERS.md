@@ -38,6 +38,8 @@ The Image Cloud library offers a flexible configuration system to customize ever
 
 Image Cloud provides thin lifecycle wrappers for React, Vue 3, and Web Components. Each wrapper manages mount/unmount/reinit and exposes the core `ImageCloud` instance. Install the main package — framework dependencies are optional peer deps.
 
+**Important:** Remember to import loaders separately as required by your configuration.
+
 ### React
 
 ```bash
@@ -46,6 +48,7 @@ npm install @frybynite/image-cloud react react-dom
 
 ```tsx
 import { ImageCloud } from '@frybynite/image-cloud/react';
+import '@frybynite/image-cloud/loaders/static';  // Import loaders you need
 import '@frybynite/image-cloud/style.css';
 
 function App() {
@@ -53,7 +56,13 @@ function App() {
     <ImageCloud
       className="my-gallery"
       style={{ width: '100%', height: '80vh' }}
-      images={['img1.jpg', 'img2.jpg', 'img3.jpg']}
+      loaders={[{
+        static: {
+          sources: [{
+            urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
+          }]
+        }
+      }]}
       layout={{ algorithm: 'radial' }}
     />
   );
@@ -76,10 +85,17 @@ npm install @frybynite/image-cloud vue
 ```vue
 <script setup>
 import { ImageCloud } from '@frybynite/image-cloud/vue';
+import '@frybynite/image-cloud/loaders/static';  // Import loaders you need
 import '@frybynite/image-cloud/style.css';
 
 const options = {
-  images: ['img1.jpg', 'img2.jpg', 'img3.jpg'],
+  loaders: [{
+    static: {
+      sources: [{
+        urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
+      }]
+    }
+  }],
   layout: { algorithm: 'radial' }
 };
 </script>
@@ -100,12 +116,36 @@ npm install @frybynite/image-cloud
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
 <script type="module">
+  import '@frybynite/image-cloud/loaders/static';      // Import loaders you need
   import '@frybynite/image-cloud/web-component';
 </script>
 
 <image-cloud
   images='["img1.jpg", "img2.jpg", "img3.jpg"]'
   layout="radial"
+></image-cloud>
+```
+
+Or with full config:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+<script type="module">
+  import '@frybynite/image-cloud/loaders/static';
+  import '@frybynite/image-cloud/loaders/google-drive';
+  import '@frybynite/image-cloud/web-component';
+</script>
+
+<image-cloud
+  id="myGallery"
+  config='{
+    "loaders": [{
+      "static": {
+        "sources": [{"urls": ["img1.jpg", "img2.jpg"]}]
+      }
+    }],
+    "layout": {"algorithm": "radial"}
+  }'
 ></image-cloud>
 ```
 
@@ -125,10 +165,17 @@ The `<image-cloud>` element auto-registers on import. Use `element.getInstance()
 
 Initialize the gallery using the `ImageCloudOptions` structure.
 
+**Important:** Always import the loaders you need before creating an ImageCloud instance:
+
 ```typescript
+// Import loaders first (import only what you need)
+import '@frybynite/image-cloud/loaders/static';        // For static URLs/paths/JSON
+// import '@frybynite/image-cloud/loaders/google-drive'; // For Google Drive
+// import '@frybynite/image-cloud/loaders/all';          // For all loaders
+
 const gallery = new ImageCloud({
   container: 'my-gallery-id', // string ID or HTMLElement, defaults to 'imageCloud'
-  images: [...],              // shorthand: array of image URLs
+  images: [...],              // shorthand: array of image URLs (uses static loader)
   loaders: [...],             // array of loader entries
   config: {
     loaders: {...},           // shared loader settings
