@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.6.0] - 2026-02-21
 
 ### Added
 - **Bundle size reduction**: Loaders are now in separate npm subpath exports for optimal tree-shaking and bundle size control
@@ -14,8 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   - Composite loader: `@frybynite/image-cloud/loaders/composite` (<1KB gzipped)
   - All-in-one: `@frybynite/image-cloud/loaders/all` (~5KB gzipped)
 - Loader Registry Pattern: Loaders self-register when their bundles are imported via a centralized `LoaderRegistry` class
-- Comprehensive npm package import tests validating all export paths and usage patterns across browsers
-- Updated documentation (README, PARAMETERS, LOADERS, API) to reflect separate loader imports
+- Comprehensive npm package import tests (18 tests) validating all export paths and usage patterns across browsers
+- Demo fixture showing separate loader/layout bundle imports in action
+- Updated documentation (README, PARAMETERS, LOADERS, API, examples) to reflect separate loader imports and bundle size benefits
 
 ### Changed
 - **Breaking change**: Loaders must now be imported separately. Users importing loaders must add `import '@frybynite/image-cloud/loaders/static'` (or the loader they need) before using that loader.
