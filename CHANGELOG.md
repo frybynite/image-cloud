@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.2] - 2026-02-22
+
+### Changed
+- **Wave Layout Demo**: Added "1 Row" option to wave layout selector and made it the default for better initial display of the wave algorithm
+
+### Fixed
+- **Layout Algorithms Demo**: Fixed CSS selector in layout-algorithms.html that was looking for non-existent `.image-cloud` class combined with `.fbn-ic-gallery`. The `.image-cloud` class is not applied by JavaScript and should not be in the CSS selector.
+- **Layout Algorithms container height**: Increased container height from 400px to 500px to provide adequate space for image layouts without excessive empty space
+
+### Removed
+- **Removed unnecessary class="image-cloud" attribute** from all example files. This class is not used by the library (not referenced in JavaScript or CSS) and was cargo-cult code.
+
 ## [0.7.1] - 2026-02-22
 
 ### Fixed

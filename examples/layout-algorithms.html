@@ -48,9 +48,9 @@
             color: #888;
             font-size: 0.9rem;
         }
-        .cloud-section .image-cloud.fbn-ic-gallery {
+        .cloud-section .fbn-ic-gallery {
             width: 100%;
-            height: 400px;
+            height: 500px;
             position: relative;
             background: #0f0f23;
             border-radius: 8px;
@@ -100,7 +100,7 @@
         <div class="cloud-section">
             <h2>Grid Layout</h2>
             <p>Clean rows and columns with optional stagger and jitter for organic feel</p>
-            <div id="cloud-grid" class="image-cloud"></div>
+            <div id="cloud-grid"></div>
             <div class="controls">
                 <select id="grid-stagger">
                     <option value="none">No Stagger</option>
@@ -121,7 +121,7 @@
         <div class="cloud-section">
             <h2>Spiral Layout</h2>
             <p>Images arranged along a spiral path - golden, archimedean, or logarithmic</p>
-            <div id="cloud-spiral" class="image-cloud"></div>
+            <div id="cloud-spiral"></div>
             <div class="controls">
                 <select id="spiral-type">
                     <option value="golden">Golden Spiral</option>
@@ -140,7 +140,7 @@
         <div class="cloud-section">
             <h2>Cluster Layout</h2>
             <p>Organic groupings like photos scattered on a table</p>
-            <div id="cloud-cluster" class="image-cloud"></div>
+            <div id="cloud-cluster"></div>
             <div class="controls">
                 <select id="cluster-count">
                     <option value="auto">Auto Clusters</option>
@@ -160,11 +160,12 @@
         <div class="cloud-section">
             <h2>Wave Layout</h2>
             <p>Images positioned along flowing sine wave curves</p>
-            <div id="cloud-wave" class="image-cloud"></div>
+            <div id="cloud-wave"></div>
             <div class="controls">
                 <select id="wave-rows">
+                    <option value="1" selected>1 Row</option>
                     <option value="2">2 Rows</option>
-                    <option value="3" selected>3 Rows</option>
+                    <option value="3">3 Rows</option>
                     <option value="4">4 Rows</option>
                 </select>
                 <select id="wave-sync">
@@ -184,14 +185,14 @@
         <div class="cloud-section">
             <h2>Radial Layout</h2>
             <p>Concentric rings emanating from center (existing algorithm)</p>
-            <div id="cloud-radial" class="image-cloud"></div>
+            <div id="cloud-radial"></div>
         </div>
 
         <!-- Random Layout (existing) -->
         <div class="cloud-section">
             <h2>Random Layout</h2>
             <p>Randomly scattered images (existing algorithm)</p>
-            <div id="cloud-random" class="image-cloud"></div>
+            <div id="cloud-random"></div>
         </div>
     </div>
 
@@ -283,7 +284,7 @@
                 algorithm: 'wave',
                 sizing: { base: 100 },
                 wave: {
-                    rows: 3,                      // number of wave rows
+                    rows: 1,                      // number of wave rows
                     amplitude: 80,                 // wave height in pixels
                     frequency: 2,                  // number of wave cycles
                     synchronization: 'offset'      // 'offset', 'synchronized', or 'alternating'
