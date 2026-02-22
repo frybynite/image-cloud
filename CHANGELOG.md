@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.1] - 2026-02-22
+
+### Fixed
+- **Vite build config**: Removed stale external dependencies from rollupOptions that referenced non-existent loader subpath bundles (`@frybynite/image-cloud/loaders/static`, `google-drive`, `composite`) from v0.6.0 loader-split approach. Build configuration now accurately reflects unified bundle architecture.
+
 ## [0.7.0] - 2026-02-22
 
 ### Changed
