@@ -16,7 +16,7 @@ import { GoogleDriveLoader } from './loaders/GoogleDriveLoader';
 import { StaticImageLoader } from './loaders/StaticImageLoader';
 import { CompositeLoader } from './loaders/CompositeLoader';
 import { ImageFilter } from './loaders/ImageFilter';
-import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
+import { buildStyleProperties, applyStylesToElementWithState, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from './utils/styleUtils';
 import { injectFunctionalStyles } from './styles/functionalStyles';
 
 export class ImageCloud {
@@ -38,7 +38,6 @@ export class ImageCloud {
 
   // Precomputed styling
   private defaultStyles: StyleProperties;
-  private hoverStyles: StyleProperties;
   private defaultClassName: string | string[] | undefined;
   private hoverClassName: string | string[] | undefined;
 
@@ -98,7 +97,6 @@ export class ImageCloud {
 
     // Precompute styling properties
     this.defaultStyles = buildStyleProperties(this.fullConfig.styling?.default);
-    this.hoverStyles = buildStyleProperties(this.fullConfig.styling?.hover);
     this.defaultClassName = this.fullConfig.styling?.default?.className;
     this.hoverClassName = this.fullConfig.styling?.hover?.className;
 
@@ -708,8 +706,8 @@ export class ImageCloud {
 
       if (layout.zIndex) img.style.zIndex = String(layout.zIndex);
 
-      // Apply default styling state
-      applyStylesToElement(img, this.defaultStyles);
+      // Apply default styling state (with imageHeight for height-relative clip-paths)
+      applyStylesToElementWithState(img, this.fullConfig.styling?.default, imageHeight);
       applyClassNameToElement(img, this.defaultClassName);
 
       // Hover event handlers
@@ -717,7 +715,7 @@ export class ImageCloud {
       img.addEventListener('mouseenter', () => {
         this.hoveredImage = { element: img, layout };
         if (!this.zoomEngine.isInvolved(img)) {
-          applyStylesToElement(img, this.hoverStyles);
+          applyStylesToElementWithState(img, this.fullConfig.styling?.hover, imageHeight);
           applyClassNameToElement(img, this.hoverClassName);
         }
       });
@@ -725,7 +723,7 @@ export class ImageCloud {
       img.addEventListener('mouseleave', () => {
         this.hoveredImage = null;
         if (!this.zoomEngine.isInvolved(img)) {
-          applyStylesToElement(img, this.defaultStyles);
+          applyStylesToElementWithState(img, this.fullConfig.styling?.default, imageHeight);
           removeClassNameFromElement(img, this.hoverClassName);
           applyClassNameToElement(img, this.defaultClassName);
         }

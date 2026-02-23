@@ -1610,6 +1610,21 @@
                                 </div>
                             </div>
 
+                            <!-- Clip Path Mode (percent vs height-relative) -->
+                            <div class="control-row" id="clippath-mode-row" style="display: none;">
+                                <label class="control-label" data-path="clipPathMode" data-desc-key="styling.clipPathMode">Mode</label>
+                                <div class="control-input">
+                                    <select id="style-clipPath-mode" onchange="handleClipPathModeChange()">
+                                        <option value="percent" selected>Percent (Responsive)</option>
+                                        <option value="height-relative">Height-Relative (Consistent)</option>
+                                    </select>
+                                    <div style="font-size: 12px; color: #aaa; margin-top: 4px;">
+                                        <strong>Percent:</strong> Shape scales with aspect ratio (default)<br>
+                                        <strong>Height-Relative:</strong> Shape maintains appearance across aspect ratios
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Custom Clip Path Controls -->
                             <div class="custom-clippath-controls" id="custom-clippath-controls" style="display: none;">
                                 <div class="control-row">
@@ -2735,20 +2750,46 @@
         window.handleClipPathChange = function() {
             const clipPathSelect = document.getElementById('style-clipPath');
             const customControls = document.getElementById('custom-clippath-controls');
+            const modeRow = document.getElementById('clippath-mode-row');
             const isCustom = clipPathSelect.value === 'custom';
+            const isNone = clipPathSelect.value === 'none';
 
             customControls.style.display = isCustom ? 'block' : 'none';
+            // Show mode toggle only for predefined shapes (not custom or none)
+            if (modeRow) {
+                modeRow.style.display = !isCustom && !isNone ? 'flex' : 'none';
+            }
 
             if (!isCustom) {
                 // For predefined shapes, update the styling state
                 const checkbox = document.getElementById('enable-style-clipPath');
                 if (checkbox?.checked) {
+                    const modeSelect = document.getElementById('style-clipPath-mode');
+                    const mode = modeSelect?.value || 'percent';
                     stylingState[currentStylingState].clipPath = {
                         enabled: true,
-                        value: clipPathSelect.value
+                        value: clipPathSelect.value,
+                        mode: mode
                     };
                     scheduleAutoApply();
                 }
+            }
+        };
+
+        // Handle clip path mode change
+        window.handleClipPathModeChange = function() {
+            const checkbox = document.getElementById('enable-style-clipPath');
+            const clipPathSelect = document.getElementById('style-clipPath');
+            const modeSelect = document.getElementById('style-clipPath-mode');
+
+            if (checkbox?.checked && clipPathSelect?.value !== 'none' && clipPathSelect?.value !== 'custom') {
+                const mode = modeSelect?.value || 'percent';
+                stylingState[currentStylingState].clipPath = {
+                    enabled: true,
+                    value: clipPathSelect.value,
+                    mode: mode
+                };
+                scheduleAutoApply();
             }
         };
 
@@ -2772,10 +2813,15 @@
         // Setup custom clip path controls
         function setupCustomClipPathControls() {
             const clipPathSelect = document.getElementById('style-clipPath');
+            const modeSelect = document.getElementById('style-clipPath-mode');
             const customInput = document.getElementById('clippath-custom');
 
             if (clipPathSelect) {
                 clipPathSelect.addEventListener('change', handleClipPathChange);
+            }
+
+            if (modeSelect) {
+                modeSelect.addEventListener('change', handleClipPathModeChange);
             }
 
             if (customInput) {
@@ -2816,6 +2862,8 @@
         // Populate custom clip path controls based on state
         function populateCustomClipPathState(state) {
             const clipPathSelect = document.getElementById('style-clipPath');
+            const modeSelect = document.getElementById('style-clipPath-mode');
+            const modeRow = document.getElementById('clippath-mode-row');
             const customControls = document.getElementById('custom-clippath-controls');
             const customInput = document.getElementById('clippath-custom');
             const effectiveValue = getEffectiveValue(state, 'clipPath');
@@ -2830,17 +2878,30 @@
             if (isCustom) {
                 clipPathSelect.value = 'custom';
                 customControls.style.display = 'block';
+                if (modeRow) modeRow.style.display = 'none';
                 if (customInput) {
                     customInput.value = effectiveValue || '';
                 }
                 customClipPathState[state] = effectiveValue || '';
             } else {
+                const isNone = effectiveValue === 'none' || !effectiveValue;
                 clipPathSelect.value = effectiveValue || 'none';
                 customControls.style.display = 'none';
+                // Show mode toggle for predefined shapes (not custom or none)
+                if (modeRow) {
+                    modeRow.style.display = !isNone ? 'flex' : 'none';
+                }
                 if (customInput) {
                     customInput.value = '';
                 }
                 customClipPathState[state] = '';
+
+                // Restore clip-path mode from stored state
+                if (modeSelect) {
+                    const clipPathData = stylingState[state]?.clipPath;
+                    const mode = clipPathData?.mode || 'percent';
+                    modeSelect.value = mode;
+                }
             }
         }
 

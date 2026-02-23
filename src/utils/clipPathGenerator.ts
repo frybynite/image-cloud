@@ -1,6 +1,6 @@
 /**
- * Maps predefined shape names to CSS clip-path polygon values.
- * All coordinates use percentages for scalability across different image sizes.
+ * Maps predefined shape names to CSS clip-path values.
+ * Supports both percentage-based (responsive) and height-relative (aspect-ratio aware) modes.
  */
 
 import type { ClipPathShape } from '../config/types';
@@ -14,6 +14,54 @@ const CLIP_PATH_SHAPES: Record<ClipPathShape, string> = {
   hexagon: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
   octagon: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
   diamond: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
+};
+
+/**
+ * Height-relative shapes: normalized at a reference height of 100px
+ * Points are in pixels relative to the reference height
+ * When applied, coordinates scale based on actual image height
+ */
+interface HeightRelativeShape {
+  refHeight: number;
+  points: Array<[number, number]>;  // [x, y] coordinates
+}
+
+const CLIP_PATH_SHAPES_HEIGHT_RELATIVE: Record<ClipPathShape, HeightRelativeShape> = {
+  // Circle - uses radius in pixels (refHeight of 100px = 50px radius)
+  circle: {
+    refHeight: 100,
+    points: []  // Special case: handled separately
+  },
+  // Square - maintains perfect aspect ratio (always 1:1)
+  square: {
+    refHeight: 100,
+    points: [[0, 0], [100, 0], [100, 100], [0, 100]]
+  },
+  // Triangle - isosceles triangle
+  triangle: {
+    refHeight: 100,
+    points: [[50, 0], [100, 100], [0, 100]]
+  },
+  // Pentagon - regular pentagon
+  pentagon: {
+    refHeight: 100,
+    points: [[50, 0], [100, 38], [82, 100], [18, 100], [0, 38]]
+  },
+  // Hexagon - regular hexagon
+  hexagon: {
+    refHeight: 100,
+    points: [[25, 0], [75, 0], [100, 50], [75, 100], [25, 100], [0, 50]]
+  },
+  // Octagon - regular octagon
+  octagon: {
+    refHeight: 100,
+    points: [[30, 0], [70, 0], [100, 30], [100, 70], [70, 100], [30, 100], [0, 70], [0, 30]]
+  },
+  // Diamond - 45-degree rotated square
+  diamond: {
+    refHeight: 100,
+    points: [[50, 0], [100, 50], [50, 100], [0, 50]]
+  }
 };
 
 /**
@@ -38,4 +86,33 @@ export function getClipPath(shape: ClipPathShape | string | undefined): string |
  */
 export function getAvailableShapes(): ClipPathShape[] {
   return Object.keys(CLIP_PATH_SHAPES) as ClipPathShape[];
+}
+
+/**
+ * Calculates height-relative clip-path string for a given shape and image height.
+ * Scales the reference shape definition by (imageHeight / refHeight).
+ * @param shape - Predefined shape name
+ * @param imageHeight - Actual image height in pixels
+ * @returns CSS clip-path value (e.g., 'circle(50px)' or 'polygon(...)')
+ */
+export function calculateHeightRelativeClipPath(shape: ClipPathShape, imageHeight: number): string {
+  const shapeDef = CLIP_PATH_SHAPES_HEIGHT_RELATIVE[shape];
+  if (!shapeDef) return '';
+
+  const scale = imageHeight / shapeDef.refHeight;
+
+  // Special case: circle uses circle() function with radius
+  if (shape === 'circle') {
+    const radius = Math.round(50 * scale * 100) / 100; // Round to 2 decimals
+    return `circle(${radius}px)`;
+  }
+
+  // For polygon shapes, scale all points and format as polygon()
+  const scaledPoints = shapeDef.points.map(([x, y]) => {
+    const scaledX = Math.round(x * scale * 100) / 100;
+    const scaledY = Math.round(y * scale * 100) / 100;
+    return `${scaledX}px ${scaledY}px`;
+  });
+
+  return `polygon(${scaledPoints.join(', ')})`;
 }

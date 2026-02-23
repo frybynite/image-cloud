@@ -2,9 +2,9 @@
  * Style utilities for image styling configuration
  */
 
-import type { ImageStyleState, FilterConfig, BorderConfig, ShadowPreset, DropShadowConfig } from '../config/types';
+import type { ImageStyleState, FilterConfig, BorderConfig, ShadowPreset, DropShadowConfig, ClipPathConfig, ClipPathShape } from '../config/types';
 import { SHADOW_PRESETS } from '../config/defaults';
-import { getClipPath } from './clipPathGenerator';
+import { getClipPath, calculateHeightRelativeClipPath } from './clipPathGenerator';
 
 /**
  * Check if a value is a known shadow preset
@@ -111,8 +111,10 @@ export interface StyleProperties {
 
 /**
  * Build complete style properties object from ImageStyleState
+ * @param state - Image style state configuration
+ * @param imageHeight - Optional image height for height-relative clip-path calculations
  */
-export function buildStyleProperties(state: ImageStyleState | undefined): StyleProperties {
+export function buildStyleProperties(state: ImageStyleState | undefined, imageHeight?: number): StyleProperties {
   if (!state) return {};
 
   const styles: StyleProperties = {};
@@ -213,7 +215,21 @@ export function buildStyleProperties(state: ImageStyleState | undefined): StyleP
 
   // Clip path (cropping)
   if (state.clipPath !== undefined) {
-    const clipPathValue = getClipPath(state.clipPath);
+    let clipPathValue: string | undefined;
+
+    // Check if clipPath is a config object with height-relative mode
+    const isConfig = typeof state.clipPath === 'object' && state.clipPath !== null && 'shape' in state.clipPath;
+    const config = isConfig ? (state.clipPath as ClipPathConfig) : undefined;
+
+    if (config?.mode === 'height-relative' && imageHeight) {
+      // Use height-relative calculation if mode is specified and imageHeight is available
+      clipPathValue = calculateHeightRelativeClipPath(config.shape, imageHeight);
+    } else {
+      // Fall back to standard clip-path resolution
+      const clipPathInput = isConfig && config ? config.shape : state.clipPath;
+      clipPathValue = getClipPath(clipPathInput as ClipPathShape | string);
+    }
+
     if (clipPathValue) {
       // When 'none' is specified, use 'unset' to clear any inherited clip-path
       if (clipPathValue === 'none') {
@@ -252,6 +268,18 @@ export function applyStylesToElement(element: HTMLElement, styles: StyleProperti
   if (styles.aspectRatio !== undefined) element.style.aspectRatio = styles.aspectRatio;
   if (styles.clipPath !== undefined) element.style.clipPath = styles.clipPath;
   if (styles.overflow !== undefined) element.style.overflow = styles.overflow;
+}
+
+/**
+ * Build and apply style properties for a given state with image dimensions
+ * This is useful for height-relative clip-path calculations which depend on image height
+ * @param element - HTML element to apply styles to
+ * @param state - Image style state configuration
+ * @param imageHeight - Optional image height for height-relative clip-path calculations
+ */
+export function applyStylesToElementWithState(element: HTMLElement, state: ImageStyleState | undefined, imageHeight?: number): void {
+  const styles = buildStyleProperties(state, imageHeight);
+  applyStylesToElement(element, styles);
 }
 
 /**

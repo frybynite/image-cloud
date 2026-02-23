@@ -24,7 +24,7 @@ import type {
 } from '../config/types';
 import { ZoomState } from '../config/types';
 import { AnimationEngine } from './AnimationEngine';
-import { buildStyleProperties, applyStylesToElement, applyClassNameToElement, removeClassNameFromElement, StyleProperties } from '../utils/styleUtils';
+import { applyStylesToElementWithState, applyClassNameToElement, removeClassNameFromElement } from '../utils/styleUtils';
 
 interface FocusData {
   element: HTMLElement;
@@ -62,18 +62,16 @@ export class ZoomEngine {
   private focusGeneration: number = 0;
 
   // Styling
-  private defaultStyles: StyleProperties;
-  private focusedStyles: StyleProperties;
+  private styling?: ImageStylingConfig;
   private defaultClassName: string | string[] | undefined;
   private focusedClassName: string | string[] | undefined;
 
   constructor(config: FocusInteractionConfig, animationEngine: AnimationEngine, styling?: ImageStylingConfig) {
     this.config = config;
     this.animationEngine = animationEngine;
+    this.styling = styling;
 
-    // Precompute styling properties
-    this.defaultStyles = buildStyleProperties(styling?.default);
-    this.focusedStyles = buildStyleProperties(styling?.focused);
+    // Store styling config for on-demand recalculation with image dimensions
     this.defaultClassName = styling?.default?.className;
     this.focusedClassName = styling?.focused?.className;
   }
@@ -213,7 +211,9 @@ export class ZoomEngine {
   private applyFocusedStyling(element: HTMLElement, zIndex: number): void {
     element.style.zIndex = String(zIndex);
     element.classList.add('fbn-ic-focused');
-    applyStylesToElement(element, this.focusedStyles);
+    // Use element's current height for height-relative clip-path calculations
+    const imageHeight = element.offsetHeight;
+    applyStylesToElementWithState(element, this.styling?.focused, imageHeight);
     applyClassNameToElement(element, this.focusedClassName);
   }
 
@@ -224,7 +224,9 @@ export class ZoomEngine {
     element.style.zIndex = originalZIndex;
     element.classList.remove('fbn-ic-focused');
     removeClassNameFromElement(element, this.focusedClassName);
-    applyStylesToElement(element, this.defaultStyles);
+    // Use element's current height for height-relative clip-path calculations
+    const imageHeight = element.offsetHeight;
+    applyStylesToElementWithState(element, this.styling?.default, imageHeight);
     applyClassNameToElement(element, this.defaultClassName);
   }
 
