@@ -4,6 +4,7 @@
 
 import type { ImageStyleState, FilterConfig, BorderConfig, ShadowPreset, DropShadowConfig } from '../config/types';
 import { SHADOW_PRESETS } from '../config/defaults';
+import { getClipPath } from './clipPathGenerator';
 
 /**
  * Check if a value is a known shadow preset
@@ -104,6 +105,8 @@ export interface StyleProperties {
   outlineOffset?: string;
   objectFit?: string;
   aspectRatio?: string;
+  clipPath?: string;
+  overflow?: string;
 }
 
 /**
@@ -208,6 +211,15 @@ export function buildStyleProperties(state: ImageStyleState | undefined): StyleP
     styles.aspectRatio = state.aspectRatio;
   }
 
+  // Clip path (cropping)
+  if (state.clipPath !== undefined) {
+    const clipPathValue = getClipPath(state.clipPath);
+    if (clipPathValue) {
+      styles.clipPath = clipPathValue;
+      styles.overflow = 'hidden';  // Ensure clean boundaries
+    }
+  }
+
   return styles;
 }
 
@@ -233,6 +245,8 @@ export function applyStylesToElement(element: HTMLElement, styles: StyleProperti
   if (styles.outlineOffset !== undefined) element.style.outlineOffset = styles.outlineOffset;
   if (styles.objectFit !== undefined) element.style.objectFit = styles.objectFit;
   if (styles.aspectRatio !== undefined) element.style.aspectRatio = styles.aspectRatio;
+  if (styles.clipPath !== undefined) element.style.clipPath = styles.clipPath;
+  if (styles.overflow !== undefined) element.style.overflow = styles.overflow;
 }
 
 /**
