@@ -1519,6 +1519,28 @@ styling: {
 | `outline` | `OutlineConfig` | *See below* | Outline styling |
 | `objectFit` | `string` | - | CSS object-fit value |
 | `aspectRatio` | `string` | - | CSS aspect-ratio (e.g., '16/9') |
+| `clipPath` | `ClipPathShape \| string` | `undefined` | Crop image to a predefined shape or custom CSS clip-path. Predefined shapes: `'circle'`, `'square'`, `'triangle'`, `'pentagon'`, `'hexagon'`, `'octagon'`, `'diamond'`. Custom strings use CSS clip-path syntax (e.g., `'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'` or `'inset(10% 20% 30% 40%)'`). |
+
+#### Clip-Path Shapes
+
+Predefined shapes use percentage-based coordinates for responsive scaling:
+
+| Shape | Use Case |
+|-------|----------|
+| `'circle'` | Circular crops, user avatars |
+| `'square'` | Standard square thumbnails |
+| `'triangle'` | Directional or badge designs |
+| `'pentagon'` | Star-like geometric layouts |
+| `'hexagon'` | Honeycomb layouts, unique patterns |
+| `'octagon'` | Stop-sign or badge shapes |
+| `'diamond'` | Rotated square, gemstone effect |
+
+**Custom clip-path examples:**
+- `'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'` - Trapezoid
+- `'inset(10% 20% 30% 40%)'` - Rectangular inset
+- `'circle(40%)'` - Circle with specific radius
+
+**Note:** `overflow: hidden` is automatically applied when `clipPath` is used to ensure clean boundaries.
 
 #### Border Configuration (`BorderConfig`)
 

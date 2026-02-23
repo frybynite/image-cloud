@@ -53,6 +53,12 @@ Demonstrates image styling options.
 - Borders, shadows, filters
 - Default, hover, and focused states
 
+#### Image Cropping Demo (`image-cropping-demo.html`)
+Demonstrates image cropping with predefined shapes.
+- Circle, square, hexagon, octagon, pentagon, triangle, diamond shapes
+- Custom clip-path strings for creative cropping
+- Perfect for honeycomb layouts
+
 #### Styling Directory (`styling/`)
 Additional styling examples and demos.
 
@@ -139,9 +145,7 @@ zoom: {
 
 ## Notes
 
-- **All examples must import loaders** — this is not done automatically
 - Examples can load from jsDelivr CDN or local dist files
 - Static image URLs may have CORS restrictions
 - Google Drive examples require a valid API key
-- You can import individual loaders (`@frybynite/image-cloud/loaders/static`) or all loaders at once (`@frybynite/image-cloud/loaders/all`)
-- Loaders are provided as separate bundles to minimize bundle size — only import what you need
+- Image cropping supports 7 predefined shapes or custom clip-path strings for unlimited flexibility
