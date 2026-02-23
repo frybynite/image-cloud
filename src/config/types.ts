@@ -703,6 +703,15 @@ export interface OutlineConfig {
   offset?: number;       // pixels
 }
 
+export type ClipPathShape =
+  | 'circle'
+  | 'square'
+  | 'triangle'
+  | 'pentagon'
+  | 'hexagon'
+  | 'octagon'
+  | 'diamond';
+
 export interface ImageStyleState {
   // CSS class names (space-separated string or array)
   className?: string | string[];
@@ -732,6 +741,7 @@ export interface ImageStyleState {
   outline?: OutlineConfig;
   objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   aspectRatio?: string;       // e.g., '16/9', '1/1'
+  clipPath?: ClipPathShape | string;  // Predefined shape or custom clip-path string
 }
 
 export interface ImageStylingConfig {
