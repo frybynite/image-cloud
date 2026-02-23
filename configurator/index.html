@@ -1618,10 +1618,6 @@
                                         <option value="percent" selected>Percent (Responsive)</option>
                                         <option value="height-relative">Height-Relative (Consistent)</option>
                                     </select>
-                                    <div style="font-size: 12px; color: #aaa; margin-top: 4px;">
-                                        <strong>Percent:</strong> Shape scales with aspect ratio (default)<br>
-                                        <strong>Height-Relative:</strong> Shape maintains appearance across aspect ratios
-                                    </div>
                                 </div>
                             </div>
 
@@ -2782,13 +2778,20 @@
             const clipPathSelect = document.getElementById('style-clipPath');
             const modeSelect = document.getElementById('style-clipPath-mode');
 
-            if (checkbox?.checked && clipPathSelect?.value !== 'none' && clipPathSelect?.value !== 'custom') {
+            // Update whenever mode changes and clip path is enabled
+            if (checkbox?.checked) {
+                const clipPathValue = clipPathSelect?.value;
                 const mode = modeSelect?.value || 'percent';
-                stylingState[currentStylingState].clipPath = {
-                    enabled: true,
-                    value: clipPathSelect.value,
-                    mode: mode
-                };
+
+                // Update the stored state
+                if (!stylingState[currentStylingState].clipPath) {
+                    stylingState[currentStylingState].clipPath = { enabled: true };
+                }
+
+                stylingState[currentStylingState].clipPath.value = clipPathValue;
+                stylingState[currentStylingState].clipPath.mode = mode;
+                stylingState[currentStylingState].clipPath.enabled = true;
+
                 scheduleAutoApply();
             }
         };
