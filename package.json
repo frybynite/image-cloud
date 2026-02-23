@@ -25,6 +25,22 @@
     "./web-component": {
       "types": "./dist/web-component.d.ts",
       "import": "./dist/web-component.js"
+    },
+    "./loaders/static": {
+      "types": "./dist/loaders/static.d.ts",
+      "import": "./dist/image-cloud.js"
+    },
+    "./loaders/google-drive": {
+      "types": "./dist/loaders/google-drive.d.ts",
+      "import": "./dist/image-cloud.js"
+    },
+    "./loaders/composite": {
+      "types": "./dist/loaders/composite.d.ts",
+      "import": "./dist/image-cloud.js"
+    },
+    "./loaders/all": {
+      "types": "./dist/loaders/all.d.ts",
+      "import": "./dist/image-cloud.js"
     }
   },
   "files": [

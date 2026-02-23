@@ -80,9 +80,9 @@ test.describe('Wave Layout Algorithm', () => {
         imgs.map((img) => img.getBoundingClientRect().x).sort((a, b) => a - b)
       );
 
-      // Images should be spread horizontally
+      // Images should be spread horizontally (threshold accounts for mobile viewports)
       const xRange = xPositions[xPositions.length - 1] - xPositions[0];
-      expect(xRange).toBeGreaterThan(200);
+      expect(xRange).toBeGreaterThan(150);
 
       // Should be somewhat evenly spaced
       for (let i = 1; i < xPositions.length; i++) {
