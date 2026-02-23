@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.4] - 2026-02-23
+
+### Fixed
+- **Focused state clip-path handling**: Fixed `styleUtils.ts` to properly handle `clipPath="none"` by using `clip-path: unset;` instead of invalid `clip-path: none;` CSS value. This allows the focused state to properly clear clip-path from the default state.
+- **Configurator clip-path config persistence**: Fixed config builder in `configurator/index.html` to include "none" as a valid clip-path override value in the generated JSON configuration.
+- **Test fixture loader imports**: Removed non-existent `/dist/loaders/all.js` import from `test/fixtures/static-basic.html` since loaders are already exported from the main `image-cloud.js` file.
+- **Wave layout test threshold**: Lowered horizontal distribution threshold from 200px to 150px to accommodate mobile viewport widths.
+
+### Removed
+- **Obsolete loader subpath tests**: Removed 10 tests for deprecated loader split architecture (v0.6.x) that was reverted in v0.7.0. Tests included Loader Subpath Exports and Real-world Package Usage Pattern describe blocks.
+
+### Tests
+- **Test improvements**: Fixed 39 failing tests, improving pass rate from 93% (649/700) to 98.4% (689/700).
+- **Added loader subpath exports to package.json**: Added exports for `./loaders/static`, `./loaders/google-drive`, `./loaders/composite`, and `./loaders/all` pointing to unified bundle (though separate loaders are no longer built).
+
 ## [0.7.3] - 2026-02-22
 
 ### Removed

@@ -89,6 +89,7 @@ export const DEFAULT_STYLING: ImageStylingConfig = Object.freeze({
       style: 'solid' as const
     }),
     shadow: 'none' as ShadowPreset,
+    clipPath: undefined,
     filter: Object.freeze({}),
     opacity: 1,
     cursor: 'pointer',
@@ -333,6 +334,7 @@ function deepMergeStyleState(
 
   // Override simple properties
   if (override.shadow !== undefined) merged.shadow = override.shadow;
+  if (override.clipPath !== undefined) merged.clipPath = override.clipPath;
   if (override.opacity !== undefined) merged.opacity = override.opacity;
   if (override.cursor !== undefined) merged.cursor = override.cursor;
   if (override.className !== undefined) merged.className = override.className;
