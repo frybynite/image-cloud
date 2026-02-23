@@ -54,7 +54,7 @@ Reduce the overall package bundle size to improve load times and make the librar
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
 - Auth/credential hooks for static loader fetch options (e.g., custom headers, bearer tokens for authenticated image endpoints — applies to JSON source and URL validation)
-- Additional layout algorithms (honeycomb, physics-based)
+- Additional layout algorithms (honeycomb — use hexagon `clipPath` for preparation, physics-based)
 - Lightbox mode
 - Thumbnail navigation
 - Touch gesture improvements
