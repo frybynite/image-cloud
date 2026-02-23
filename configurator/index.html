@@ -1591,6 +1591,41 @@
                                 </div>
                             </div>
 
+                            <!-- Clip Path -->
+                            <div class="control-row" data-property="clipPath">
+                                <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-clipPath">
+                                <label class="control-label" data-label="Clip Path" data-path="clipPath" data-desc-key="styling.clipPath">Clip Path</label>
+                                <div class="control-input">
+                                    <select id="style-clipPath" onchange="handleClipPathChange()">
+                                        <option value="none" selected>None</option>
+                                        <option value="circle">Circle</option>
+                                        <option value="square">Square</option>
+                                        <option value="triangle">Triangle</option>
+                                        <option value="pentagon">Pentagon</option>
+                                        <option value="hexagon">Hexagon</option>
+                                        <option value="octagon">Octagon</option>
+                                        <option value="diamond">Diamond</option>
+                                        <option value="custom">Custom...</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Custom Clip Path Controls -->
+                            <div class="custom-clippath-controls" id="custom-clippath-controls" style="display: none;">
+                                <div class="control-row">
+                                    <label class="control-label" data-path="clipPathCustom" data-desc-key="styling.clipPathCustom">Custom clip-path</label>
+                                    <div class="control-input" style="display: flex; flex-direction: column; gap: 8px;">
+                                        <textarea id="clippath-custom" placeholder="polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)" style="width: 100%; height: 48px; padding: 8px; font-family: monospace; font-size: 12px; background: #2a2a3e; color: #e5e5e5; border: 1px solid #444; border-radius: 4px; resize: vertical;"></textarea>
+                                        <div style="font-size: 12px; color: #aaa;">
+                                            Quick fill:
+                                            <a id="clippath-circle-btn" href="#" style="color: #8b5cf6; text-decoration: none; cursor: pointer; margin-right: 12px;">circle</a>
+                                            <a id="clippath-square-btn" href="#" style="color: #8b5cf6; text-decoration: none; cursor: pointer; margin-right: 12px;">square</a>
+                                            <a id="clippath-polygon-btn" href="#" style="color: #8b5cf6; text-decoration: none; cursor: pointer;">pentagon</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Opacity -->
                             <div class="control-row" data-property="opacity">
                                 <input type="checkbox" class="control-checkbox styling-checkbox" id="enable-style-opacity">
@@ -2055,9 +2090,10 @@
         </div>
     </div>
 
-    <script type="module">
-        import { ImageCloud } from '../src/index.ts';
-        import '../src/loaders/index-all.ts';
+    <script src="../dist/image-cloud.umd.js"></script>
+    <script>
+        // UMD build exports to window.ImageCloud as an object with class as ImageCloud
+        const { ImageCloud } = window.ImageCloud;
 
         let gallery = null;
         let showingPaths = false;
@@ -2099,6 +2135,7 @@
             'outline.style': 'solid',
             'outline.offset': 0,
             'shadow': 'none',
+            'clipPath': 'none',
             'opacity': 1,
             'cursor': 'pointer',
             'filter.grayscale': 0,
@@ -2144,6 +2181,13 @@
             customShadowState.hover = { ...defaultCustom };
             customShadowState.focused = { ...defaultCustom };
         }
+
+        // Custom clip path state per styling state
+        const customClipPathState = {
+            default: '',
+            hover: '',
+            focused: ''
+        };
 
         // Shadow preset definitions (for copying values to custom)
         const shadowPresets = {
@@ -2474,6 +2518,9 @@
 
             // Populate custom shadow controls
             populateCustomShadowState(state);
+
+            // Populate custom clip path controls
+            populateCustomClipPathState(state);
         }
 
         // Populate custom shadow controls based on state
@@ -2572,6 +2619,9 @@
             // Reset custom shadow state for this state
             customShadowState[currentStylingState] = { offsetX: 0, offsetY: 4, blur: 16, color: '#000000', opacity: 0.4 };
 
+            // Reset custom clip path state for this state
+            customClipPathState[currentStylingState] = '';
+
             populateStylingForm(currentStylingState);
             scheduleAutoApply();
         };
@@ -2591,6 +2641,9 @@
 
             // Custom shadow controls setup
             setupCustomShadowControls();
+
+            // Custom clip path controls setup
+            setupCustomClipPathControls();
         }
 
         // Track shadow select value before changes (updated by populateCustomShadowState)
@@ -2676,6 +2729,119 @@
             document.getElementById('shadow-color').value = custom.color;
             document.getElementById('shadow-opacity').value = custom.opacity;
             document.getElementById('shadow-opacity-value').textContent = custom.opacity;
+        }
+
+        // Handle clip path select change
+        window.handleClipPathChange = function() {
+            const clipPathSelect = document.getElementById('style-clipPath');
+            const customControls = document.getElementById('custom-clippath-controls');
+            const isCustom = clipPathSelect.value === 'custom';
+
+            customControls.style.display = isCustom ? 'block' : 'none';
+
+            if (!isCustom) {
+                // For predefined shapes, update the styling state
+                const checkbox = document.getElementById('enable-style-clipPath');
+                if (checkbox?.checked) {
+                    stylingState[currentStylingState].clipPath = {
+                        enabled: true,
+                        value: clipPathSelect.value
+                    };
+                    scheduleAutoApply();
+                }
+            }
+        };
+
+        // Handle custom clip path input
+        function onCustomClipPathChange() {
+            const checkbox = document.getElementById('enable-style-clipPath');
+            if (!checkbox?.checked) return;
+
+            const customInput = document.getElementById('clippath-custom');
+            const customValue = customInput.value.trim();
+
+            if (customValue) {
+                stylingState[currentStylingState].clipPath = {
+                    enabled: true,
+                    value: customValue
+                };
+                scheduleAutoApply();
+            }
+        }
+
+        // Setup custom clip path controls
+        function setupCustomClipPathControls() {
+            const clipPathSelect = document.getElementById('style-clipPath');
+            const customInput = document.getElementById('clippath-custom');
+
+            if (clipPathSelect) {
+                clipPathSelect.addEventListener('change', handleClipPathChange);
+            }
+
+            if (customInput) {
+                customInput.addEventListener('change', onCustomClipPathChange);
+                customInput.addEventListener('input', onCustomClipPathChange);
+            }
+
+            // Setup quick-fill links for common clip-path shapes
+            const circleBtn = document.getElementById('clippath-circle-btn');
+            const squareBtn = document.getElementById('clippath-square-btn');
+            const polygonBtn = document.getElementById('clippath-polygon-btn');
+
+            if (circleBtn) {
+                circleBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    customInput.value = 'circle(50%)';
+                    onCustomClipPathChange();
+                });
+            }
+
+            if (squareBtn) {
+                squareBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    customInput.value = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
+                    onCustomClipPathChange();
+                });
+            }
+
+            if (polygonBtn) {
+                polygonBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    customInput.value = 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)';
+                    onCustomClipPathChange();
+                });
+            }
+        }
+
+        // Populate custom clip path controls based on state
+        function populateCustomClipPathState(state) {
+            const clipPathSelect = document.getElementById('style-clipPath');
+            const customControls = document.getElementById('custom-clippath-controls');
+            const customInput = document.getElementById('clippath-custom');
+            const effectiveValue = getEffectiveValue(state, 'clipPath');
+
+            if (!clipPathSelect) return;
+
+            // Determine if this is a custom clip-path string
+            const predefinedShapes = ['none', 'circle', 'square', 'triangle', 'pentagon', 'hexagon', 'octagon', 'diamond'];
+            const isCustom = effectiveValue && !predefinedShapes.includes(effectiveValue);
+
+            // Set the select value
+            if (isCustom) {
+                clipPathSelect.value = 'custom';
+                customControls.style.display = 'block';
+                if (customInput) {
+                    customInput.value = effectiveValue || '';
+                }
+                customClipPathState[state] = effectiveValue || '';
+            } else {
+                clipPathSelect.value = effectiveValue || 'none';
+                customControls.style.display = 'none';
+                if (customInput) {
+                    customInput.value = '';
+                }
+                customClipPathState[state] = '';
+            }
         }
 
         // Field descriptions for tooltips
@@ -3647,6 +3813,11 @@
                             stateConfig.shadow = buildCustomShadow(customShadowState[stateName]);
                         } else {
                             stateConfig.shadow = data.value;
+                        }
+                    } else if (prop === 'clipPath') {
+                        // Include clipPath value (predefined shape, 'none' to clear, or custom string)
+                        if (data.value) {
+                            stateConfig.clipPath = data.value;
                         }
                     } else if (prop === 'opacity') {
                         stateConfig.opacity = data.value;

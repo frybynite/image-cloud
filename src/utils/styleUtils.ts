@@ -215,8 +215,13 @@ export function buildStyleProperties(state: ImageStyleState | undefined): StyleP
   if (state.clipPath !== undefined) {
     const clipPathValue = getClipPath(state.clipPath);
     if (clipPathValue) {
-      styles.clipPath = clipPathValue;
-      styles.overflow = 'hidden';  // Ensure clean boundaries
+      // When 'none' is specified, use 'unset' to clear any inherited clip-path
+      if (clipPathValue === 'none') {
+        styles.clipPath = 'unset';
+      } else {
+        styles.clipPath = clipPathValue;
+        styles.overflow = 'hidden';  // Ensure clean boundaries
+      }
     }
   }
 
