@@ -761,8 +761,9 @@ export class ImageCloud {
         // Set explicit width so transform calculations are accurate
         img.style.width = `${renderedWidth}px`;
 
-        // Store rendered width on element for use in event handlers
+        // Store rendered width and aspect ratio on element for use in event handlers and focused state
         (img as any).cachedRenderedWidth = renderedWidth;
+        (img as any).aspectRatio = aspectRatio;
 
         // Reapply default styling with correct width for height-relative clip-path centering
         // Now we know both height and the rendered width (from aspect ratio)

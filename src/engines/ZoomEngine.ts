@@ -213,8 +213,13 @@ export class ZoomEngine {
     element.classList.add('fbn-ic-focused');
     // Use focused height for height-relative clip-path calculations if available, otherwise use current height
     const imageHeight = focusedHeight ?? element.offsetHeight;
-    const imageWidth = element.offsetWidth;
-    applyStylesToElementWithState(element, this.styling?.focused, imageHeight, imageWidth);
+    // Calculate rendered width from aspect ratio and focused height for proper clip-path centering
+    const aspectRatio = (element as any).aspectRatio || (element.offsetWidth / element.offsetHeight);
+    const imageWidth = imageHeight * aspectRatio;
+
+    // Use focused styling if set, otherwise fall back to default styling (for inherited properties like clip-path)
+    const focusedState = this.styling?.focused ?? this.styling?.default;
+    applyStylesToElementWithState(element, focusedState, imageHeight, imageWidth);
     applyClassNameToElement(element, this.focusedClassName);
   }
 
