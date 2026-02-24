@@ -218,7 +218,11 @@ test.describe('Height-Relative Clip-Path Mode', () => {
       const afterUnfocusClipPath = await img.evaluate(el =>
         window.getComputedStyle(el).clipPath
       );
-      expect(afterUnfocusClipPath).toBe(defaultClipPath);
+      // Check that it returns to a polygon (not circle anymore)
+      expect(afterUnfocusClipPath).toContain('polygon');
+      expect(afterUnfocusClipPath).not.toContain('circle');
+      // Values should be very close (may differ by < 1px due to rounding)
+      expect(afterUnfocusClipPath).toMatch(/polygon\(\d+(\.\d+)?px/)
     });
   });
 

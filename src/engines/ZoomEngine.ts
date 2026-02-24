@@ -208,25 +208,28 @@ export class ZoomEngine {
   /**
    * Apply focused styling to an element
    */
-  private applyFocusedStyling(element: HTMLElement, zIndex: number): void {
+  private applyFocusedStyling(element: HTMLElement, zIndex: number, focusedHeight?: number): void {
     element.style.zIndex = String(zIndex);
     element.classList.add('fbn-ic-focused');
-    // Use element's current height for height-relative clip-path calculations
-    const imageHeight = element.offsetHeight;
-    applyStylesToElementWithState(element, this.styling?.focused, imageHeight);
+    // Use focused height for height-relative clip-path calculations if available, otherwise use current height
+    const imageHeight = focusedHeight ?? element.offsetHeight;
+    const imageWidth = element.offsetWidth;
+    applyStylesToElementWithState(element, this.styling?.focused, imageHeight, imageWidth);
     applyClassNameToElement(element, this.focusedClassName);
   }
 
   /**
    * Remove focused styling from an element
    */
-  private removeFocusedStyling(element: HTMLElement, originalZIndex: string): void {
+  private removeFocusedStyling(element: HTMLElement, originalZIndex: string, originalHeight?: number): void {
     element.style.zIndex = originalZIndex;
     element.classList.remove('fbn-ic-focused');
     removeClassNameFromElement(element, this.focusedClassName);
-    // Use element's current height for height-relative clip-path calculations
-    const imageHeight = element.offsetHeight;
-    applyStylesToElementWithState(element, this.styling?.default, imageHeight);
+    // Use original height for height-relative clip-path calculations if available, otherwise use current height
+    const imageHeight = originalHeight ?? element.offsetHeight;
+    // Use cached rendered width if available (set during onload), otherwise use current offsetWidth
+    const imageWidth = (element as any).cachedRenderedWidth ?? element.offsetWidth;
+    applyStylesToElementWithState(element, this.styling?.default, imageHeight, imageWidth);
     applyClassNameToElement(element, this.defaultClassName);
   }
 
@@ -251,8 +254,8 @@ export class ZoomEngine {
     const focusDimensions = this.calculateFocusDimensions(originalWidth, originalHeight, containerBounds);
     const focusTransform = this.calculateFocusTransform(containerBounds, originalState);
 
-    // Apply focused styling immediately
-    this.applyFocusedStyling(element, Z_INDEX.FOCUSING);
+    // Apply focused styling immediately with focused height for clip-path calculations
+    this.applyFocusedStyling(element, Z_INDEX.FOCUSING, focusDimensions.height);
 
     // Cancel any existing animation
     this.animationEngine.cancelAllAnimations(element);
@@ -462,8 +465,8 @@ export class ZoomEngine {
       element.style.height = `${originalHeight}px`;
     }
 
-    // Remove focused styling
-    this.removeFocusedStyling(element, originalZIndex);
+    // Remove focused styling with original height for clip-path calculations
+    this.removeFocusedStyling(element, originalZIndex, originalHeight);
   }
 
   /**
@@ -498,7 +501,7 @@ export class ZoomEngine {
       this.state = ZoomState.UNFOCUSING;
 
       await this.waitForAnimation(this.outgoing.animationHandle);
-      this.removeFocusedStyling(this.outgoing.element, this.focusData?.originalZIndex || '');
+      this.removeFocusedStyling(this.outgoing.element, this.focusData?.originalZIndex || '', this.focusData?.originalHeight);
       this.outgoing = null;
       this.currentFocus = null;
       this.focusData = null;
@@ -553,7 +556,7 @@ export class ZoomEngine {
 
         // Cleanup outgoing
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '', this.focusData?.originalHeight);
           this.outgoing = null;
         }
 
@@ -605,7 +608,7 @@ export class ZoomEngine {
         if (this.focusGeneration !== myGeneration) return;
 
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '', this.focusData?.originalHeight);
           this.outgoing = null;
         }
 
@@ -657,7 +660,7 @@ export class ZoomEngine {
           if (this.focusGeneration !== myGeneration) return;
 
           if (this.outgoing) {
-            this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+            this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '', this.focusData?.originalHeight);
             this.outgoing = null;
           }
 
@@ -712,7 +715,7 @@ export class ZoomEngine {
         if (this.focusGeneration !== myGeneration) return;
 
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '', this.focusData?.originalHeight);
           this.outgoing = null;
         }
 
@@ -755,7 +758,7 @@ export class ZoomEngine {
 
         if (this.focusGeneration !== myGeneration) return;
 
-        this.removeFocusedStyling(this.outgoing.element, this.focusData?.originalZIndex || '');
+        this.removeFocusedStyling(this.outgoing.element, this.focusData?.originalZIndex || '', this.focusData?.originalHeight);
         this.outgoing = null;
         this.focusData = null;
         this.state = ZoomState.IDLE;
@@ -789,7 +792,7 @@ export class ZoomEngine {
 
         // Cleanup
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '', this.focusData?.originalHeight);
         }
         this.removeFocusedStyling(incomingUnfocus.element, this.incoming.originalState.zIndex?.toString() || '');
 
@@ -814,7 +817,7 @@ export class ZoomEngine {
 
     if (this.focusGeneration !== myGeneration) return;
 
-    this.removeFocusedStyling(element, originalZIndex);
+    this.removeFocusedStyling(element, originalZIndex, this.focusData.originalHeight);
     this.outgoing = null;
     this.currentFocus = null;
     this.focusData = null;

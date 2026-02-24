@@ -113,8 +113,9 @@ export interface StyleProperties {
  * Build complete style properties object from ImageStyleState
  * @param state - Image style state configuration
  * @param imageHeight - Optional image height for height-relative clip-path calculations
+ * @param imageWidth - Optional image width for centering height-relative clip-path shapes
  */
-export function buildStyleProperties(state: ImageStyleState | undefined, imageHeight?: number): StyleProperties {
+export function buildStyleProperties(state: ImageStyleState | undefined, imageHeight?: number, imageWidth?: number): StyleProperties {
   if (!state) return {};
 
   const styles: StyleProperties = {};
@@ -223,7 +224,7 @@ export function buildStyleProperties(state: ImageStyleState | undefined, imageHe
 
     if (config?.mode === 'height-relative' && imageHeight) {
       // Use height-relative calculation if mode is specified and imageHeight is available
-      clipPathValue = calculateHeightRelativeClipPath(config.shape, imageHeight);
+      clipPathValue = calculateHeightRelativeClipPath(config.shape, imageHeight, imageWidth);
     } else {
       // Fall back to standard clip-path resolution
       const clipPathInput = isConfig && config ? config.shape : state.clipPath;
@@ -272,13 +273,14 @@ export function applyStylesToElement(element: HTMLElement, styles: StyleProperti
 
 /**
  * Build and apply style properties for a given state with image dimensions
- * This is useful for height-relative clip-path calculations which depend on image height
+ * This is useful for height-relative clip-path calculations which depend on image height and width
  * @param element - HTML element to apply styles to
  * @param state - Image style state configuration
  * @param imageHeight - Optional image height for height-relative clip-path calculations
+ * @param imageWidth - Optional image width for centering height-relative clip-path shapes
  */
-export function applyStylesToElementWithState(element: HTMLElement, state: ImageStyleState | undefined, imageHeight?: number): void {
-  const styles = buildStyleProperties(state, imageHeight);
+export function applyStylesToElementWithState(element: HTMLElement, state: ImageStyleState | undefined, imageHeight?: number, imageWidth?: number): void {
+  const styles = buildStyleProperties(state, imageHeight, imageWidth);
   applyStylesToElement(element, styles);
 }
 

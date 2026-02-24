@@ -3879,9 +3879,14 @@
                             stateConfig.shadow = data.value;
                         }
                     } else if (prop === 'clipPath') {
-                        // Include clipPath value (predefined shape, 'none' to clear, or custom string)
-                        if (data.value) {
-                            stateConfig.clipPath = data.value;
+                        // Include clipPath value (predefined shape, 'none' to clear, custom string, or config object with mode)
+                        if (data.value || data.shape) {
+                            // If data has mode, use the full object with shape and mode; otherwise use just the value
+                            if (data.mode) {
+                                stateConfig.clipPath = { shape: data.value, mode: data.mode };
+                            } else {
+                                stateConfig.clipPath = data.value;
+                            }
                         }
                     } else if (prop === 'opacity') {
                         stateConfig.opacity = data.value;

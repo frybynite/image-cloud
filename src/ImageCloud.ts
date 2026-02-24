@@ -695,6 +695,7 @@ export class ImageCloud {
       img.referrerPolicy = 'no-referrer';
       img.classList.add('fbn-ic-image');
       img.dataset.imageId = String(index);
+      img.dataset.createdFlag = 'true';  // Debug flag
 
       const layout = layouts[index];
       img.style.position = 'absolute';
@@ -706,8 +707,9 @@ export class ImageCloud {
 
       if (layout.zIndex) img.style.zIndex = String(layout.zIndex);
 
-      // Apply default styling state (with imageHeight for height-relative clip-paths)
-      applyStylesToElementWithState(img, this.fullConfig.styling?.default, imageHeight);
+      // NOTE: Default styling will be applied in onload after image dimensions are known
+      // This ensures height-relative clip-path is calculated correctly with proper width
+      // Element starts with opacity 0 so it's not visible until onload completes
       applyClassNameToElement(img, this.defaultClassName);
 
       // Hover event handlers
@@ -715,7 +717,9 @@ export class ImageCloud {
       img.addEventListener('mouseenter', () => {
         this.hoveredImage = { element: img, layout };
         if (!this.zoomEngine.isInvolved(img)) {
-          applyStylesToElementWithState(img, this.fullConfig.styling?.hover, imageHeight);
+          // Use cached rendered width for consistent clip-path centering (prevents shifting)
+          const cachedWidth = (img as any).cachedRenderedWidth;
+          applyStylesToElementWithState(img, this.fullConfig.styling?.hover, imageHeight, cachedWidth);
           applyClassNameToElement(img, this.hoverClassName);
         }
       });
@@ -723,7 +727,9 @@ export class ImageCloud {
       img.addEventListener('mouseleave', () => {
         this.hoveredImage = null;
         if (!this.zoomEngine.isInvolved(img)) {
-          applyStylesToElementWithState(img, this.fullConfig.styling?.default, imageHeight);
+          // Use cached rendered width for consistent clip-path centering (prevents shifting)
+          const cachedWidth = (img as any).cachedRenderedWidth;
+          applyStylesToElementWithState(img, this.fullConfig.styling?.default, imageHeight, cachedWidth);
           removeClassNameFromElement(img, this.hoverClassName);
           applyClassNameToElement(img, this.defaultClassName);
         }
@@ -746,8 +752,21 @@ export class ImageCloud {
         const aspectRatio = img.naturalWidth / img.naturalHeight;
         const renderedWidth = imageHeight * aspectRatio;
 
+        // Debug: mark that onload was called
+        img.dataset.onloadCalled = 'true';
+        if ((window as any).DEBUG_CLIPPATH) {
+          console.log(`[onload #${index}] Called with imageHeight=${imageHeight}, renderedWidth=${renderedWidth}`);
+        }
+
         // Set explicit width so transform calculations are accurate
         img.style.width = `${renderedWidth}px`;
+
+        // Store rendered width on element for use in event handlers
+        (img as any).cachedRenderedWidth = renderedWidth;
+
+        // Reapply default styling with correct width for height-relative clip-path centering
+        // Now we know both height and the rendered width (from aspect ratio)
+        applyStylesToElementWithState(img, this.fullConfig.styling?.default, imageHeight, renderedWidth);
 
         // Use EntryAnimationEngine for start position calculation
         const finalPosition = { x: layout.x, y: layout.y };

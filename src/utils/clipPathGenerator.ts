@@ -89,13 +89,14 @@ export function getAvailableShapes(): ClipPathShape[] {
 }
 
 /**
- * Calculates height-relative clip-path string for a given shape and image height.
- * Scales the reference shape definition by (imageHeight / refHeight).
+ * Calculates height-relative clip-path string for a given shape and image dimensions.
+ * Scales the reference shape definition by (imageHeight / refHeight) and centers it horizontally.
  * @param shape - Predefined shape name
  * @param imageHeight - Actual image height in pixels
+ * @param imageWidth - Actual image width in pixels (used to center the shape horizontally)
  * @returns CSS clip-path value (e.g., 'circle(50px)' or 'polygon(...)')
  */
-export function calculateHeightRelativeClipPath(shape: ClipPathShape, imageHeight: number): string {
+export function calculateHeightRelativeClipPath(shape: ClipPathShape, imageHeight: number, imageWidth?: number): string {
   const shapeDef = CLIP_PATH_SHAPES_HEIGHT_RELATIVE[shape];
   if (!shapeDef) return '';
 
@@ -107,10 +108,28 @@ export function calculateHeightRelativeClipPath(shape: ClipPathShape, imageHeigh
     return `circle(${radius}px)`;
   }
 
+  // Calculate offsets to center the shape's bounding box within the image
+  // The shape's original bounding box is 100x100, centered at (50, 50)
+  // After scaling, it's scaledSize x scaledSize, centered at (scaledSize/2, scaledSize/2)
+  // We want to move that center to the image's center: (imageWidth/2, imageHeight/2)
+  const scaledSize = shapeDef.refHeight * scale;  // e.g., 100 * 2 = 200
+
+  // Shape's bounding box center in scaled coordinates
+  const shapeCenterX = scaledSize / 2;  // e.g., 100
+  const shapeCenterY = scaledSize / 2;  // e.g., 100
+
+  // Image's center
+  const imageCenterX = (imageWidth ?? scaledSize) / 2;
+  const imageCenterY = imageHeight / 2;
+
+  // Offsets to move shape center to image center
+  const horizontalOffset = imageCenterX - shapeCenterX;
+  const verticalOffset = imageCenterY - shapeCenterY;
+
   // For polygon shapes, scale all points and format as polygon()
   const scaledPoints = shapeDef.points.map(([x, y]) => {
-    const scaledX = Math.round(x * scale * 100) / 100;
-    const scaledY = Math.round(y * scale * 100) / 100;
+    const scaledX = Math.round((x * scale + horizontalOffset) * 100) / 100;
+    const scaledY = Math.round((y * scale + verticalOffset) * 100) / 100;
     return `${scaledX}px ${scaledY}px`;
   });
 
