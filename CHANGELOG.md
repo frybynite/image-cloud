@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.6] - 2026-02-24
+
+### Fixed
+- **Focused State Styling**: Fixed focused state styling properties (opacity, filters, borders, shadows, outline, cursor, objectFit, aspectRatio) not being applied when an image is focused/zoomed. These properties are now correctly applied in `applyFocusedStyling()` and restored in `removeFocusedStyling()`.
+
+### Tests
+- **Test improvements**: Fixed 20 failing tests, improving pass rate from 690 passing to 710 passing (98.1% pass rate). All 118 styling tests now pass; all 48 clip-path tests remain passing.
+
 ## [0.7.5] - 2026-02-24
 
 ### Added
