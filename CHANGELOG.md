@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.5] - 2026-02-24
+
+### Added
+- **Height-Relative Clip-Path Mode**: New clip-path scaling mode that scales shapes based on image height for consistent, aspect-ratio-aware sizing across different image proportions. Ideal for portrait images.
+- **Clip-Path Animation**: Smooth clip-path transitions during focus/unfocus animations. Clip-path continuously updates each frame as dimensions animate, staying perfectly centered.
+- **Configurator Improvements**: Height-relative mode now default in clip-path selector; improved indentation of mode control under Clip Path section.
+
+### Fixed
+- **Focused State Clip-Path**: Fixed focused state to properly clear clip-path when explicitly set to 'none' or when focused styling doesn't define clipPath.
+- **Z-Index During Unfocus**: Fixed z-index to remain high throughout unfocus animation, only resetting to original value after animation completes. Ensures unfocusing image stays on top while shrinking.
+- **Clip-Path Centering**: Improved centered positioning calculation for height-relative mode, using actual animated element dimensions instead of calculated values.
+
+### Changed
+- **Default Clip-Path Mode**: Changed default from 'percent' (responsive) to 'height-relative' (aspect-ratio aware) for better portrait image handling.
+- **Clip-Path Mode Labels**: Simplified mode labels from "Percent (Responsive)" and "Height-Relative (Consistent)" to "Percent" and "Height-relative".
+
+### Documentation
+- Updated PARAMETERS.md with detailed clip-path modes, examples, and animation behavior.
+- Updated CONFIGURATOR.md with clip-path feature documentation.
+- Updated types.md with ClipPathConfig interface and mode descriptions.
+
 ## [0.7.4] - 2026-02-23
 
 ### Fixed
