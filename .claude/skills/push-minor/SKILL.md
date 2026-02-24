@@ -7,6 +7,7 @@ description: Bump minor version, commit all session changes, push, and tag
 
 Follow these steps exactly:
 
+0. first check if we are on a branch. **DO NOT CONTINUE IF WE ARE ON A BRANCH** we can't publish from branches.
 1. Read `package.json` and extract the current `version` field.
 2. Parse the version as `major.minor.patch`. Calculate the new version by incrementing `minor` by 1 and resetting `patch` to 0.
 3. Display the version change (e.g., `0.3.1 → 0.4.0`) and **ask the user for confirmation** before proceeding. DO NOT continue without explicit approval.
