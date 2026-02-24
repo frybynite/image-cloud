@@ -229,9 +229,16 @@ export class ZoomEngine {
    */
   private startClipPathAnimation(element: HTMLElement, handle: AnimationHandle, isToFocused: boolean): void {
     // Determine which styling config to use
-    const styleConfig = isToFocused
+    // If focused is explicitly defined but has no clipPath, don't fall back to default clipPath
+    let styleConfig: any = isToFocused
       ? (this.styling?.focused ?? this.styling?.default)
       : this.styling?.default;
+
+    // If focused config is explicitly set but missing clipPath, explicitly set it to undefined
+    // to prevent inheriting default clipPath
+    if (isToFocused && this.styling?.focused && this.styling.focused.clipPath === undefined) {
+      styleConfig = { ...styleConfig, clipPath: undefined };
+    }
 
     const updateClipPath = () => {
       // Use actual animated element dimensions (both width and height are being animated)
@@ -241,10 +248,12 @@ export class ZoomEngine {
       // Build style properties with current dimensions to get updated clip-path
       const styles = buildStyleProperties(styleConfig, currentHeight, currentWidth);
 
-
-      // Apply only the clip-path style
+      // Apply clip-path - clear it if not defined
       if (styles.clipPath !== undefined) {
         element.style.clipPath = styles.clipPath;
+      } else {
+        // No clip-path defined - clear any inherited clip-path
+        element.style.clipPath = 'unset';
       }
       if (styles.overflow !== undefined) {
         element.style.overflow = styles.overflow;
