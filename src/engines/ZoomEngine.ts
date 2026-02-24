@@ -205,22 +205,71 @@ export class ZoomEngine {
 
   /**
    * Apply focused styling to an element
-   * Applies non-clip-path styles immediately, clip-path will be updated during animation via startClipPathAnimation
+   * Applies all focused styling properties, classes, and z-index
    */
   private applyFocusedStyling(element: HTMLElement, zIndex: number): void {
     element.style.zIndex = String(zIndex);
     element.classList.add('fbn-ic-focused');
     applyClassNameToElement(element, this.focusedClassName);
+
+    // Apply all styling properties (opacity, filters, borders, shadows, etc.)
+    // for the focused state
+    if (this.styling?.focused) {
+      const styles = buildStyleProperties(this.styling.focused, element.offsetHeight, element.offsetWidth);
+      // Apply styles directly, skipping clip-path and overflow (updated in startClipPathAnimation)
+      if (styles.borderRadius !== undefined) element.style.borderRadius = styles.borderRadius;
+      if (styles.borderTopLeftRadius !== undefined) element.style.borderTopLeftRadius = styles.borderTopLeftRadius;
+      if (styles.borderTopRightRadius !== undefined) element.style.borderTopRightRadius = styles.borderTopRightRadius;
+      if (styles.borderBottomRightRadius !== undefined) element.style.borderBottomRightRadius = styles.borderBottomRightRadius;
+      if (styles.borderBottomLeftRadius !== undefined) element.style.borderBottomLeftRadius = styles.borderBottomLeftRadius;
+      if (styles.border !== undefined) element.style.border = styles.border;
+      if (styles.borderTop !== undefined) element.style.borderTop = styles.borderTop;
+      if (styles.borderRight !== undefined) element.style.borderRight = styles.borderRight;
+      if (styles.borderBottom !== undefined) element.style.borderBottom = styles.borderBottom;
+      if (styles.borderLeft !== undefined) element.style.borderLeft = styles.borderLeft;
+      if (styles.boxShadow !== undefined) element.style.boxShadow = styles.boxShadow;
+      if (styles.filter !== undefined) element.style.filter = styles.filter;
+      if (styles.opacity !== undefined) element.style.opacity = styles.opacity;
+      if (styles.cursor !== undefined) element.style.cursor = styles.cursor;
+      if (styles.outline !== undefined) element.style.outline = styles.outline;
+      if (styles.outlineOffset !== undefined) element.style.outlineOffset = styles.outlineOffset;
+      if (styles.objectFit !== undefined) element.style.objectFit = styles.objectFit;
+      if (styles.aspectRatio !== undefined) element.style.aspectRatio = styles.aspectRatio;
+    }
   }
 
   /**
    * Remove focused styling from an element
-   * Removes classes and z-index, clip-path will be updated during animation via startClipPathAnimation
+   * Restores default styling properties, removes classes, and resets z-index
    */
   private removeFocusedStyling(element: HTMLElement, originalZIndex: string): void {
     element.style.zIndex = originalZIndex;
     element.classList.remove('fbn-ic-focused');
     removeClassNameFromElement(element, this.focusedClassName);
+
+    // Restore default styling properties (opacity, filters, borders, shadows, etc.)
+    if (this.styling?.default) {
+      const styles = buildStyleProperties(this.styling.default, element.offsetHeight, element.offsetWidth);
+      // Apply styles directly, skipping clip-path and overflow (updated in startClipPathAnimation)
+      if (styles.borderRadius !== undefined) element.style.borderRadius = styles.borderRadius;
+      if (styles.borderTopLeftRadius !== undefined) element.style.borderTopLeftRadius = styles.borderTopLeftRadius;
+      if (styles.borderTopRightRadius !== undefined) element.style.borderTopRightRadius = styles.borderTopRightRadius;
+      if (styles.borderBottomRightRadius !== undefined) element.style.borderBottomRightRadius = styles.borderBottomRightRadius;
+      if (styles.borderBottomLeftRadius !== undefined) element.style.borderBottomLeftRadius = styles.borderBottomLeftRadius;
+      if (styles.border !== undefined) element.style.border = styles.border;
+      if (styles.borderTop !== undefined) element.style.borderTop = styles.borderTop;
+      if (styles.borderRight !== undefined) element.style.borderRight = styles.borderRight;
+      if (styles.borderBottom !== undefined) element.style.borderBottom = styles.borderBottom;
+      if (styles.borderLeft !== undefined) element.style.borderLeft = styles.borderLeft;
+      if (styles.boxShadow !== undefined) element.style.boxShadow = styles.boxShadow;
+      if (styles.filter !== undefined) element.style.filter = styles.filter;
+      if (styles.opacity !== undefined) element.style.opacity = styles.opacity;
+      if (styles.cursor !== undefined) element.style.cursor = styles.cursor;
+      if (styles.outline !== undefined) element.style.outline = styles.outline;
+      if (styles.outlineOffset !== undefined) element.style.outlineOffset = styles.outlineOffset;
+      if (styles.objectFit !== undefined) element.style.objectFit = styles.objectFit;
+      if (styles.aspectRatio !== undefined) element.style.aspectRatio = styles.aspectRatio;
+    }
   }
 
   /**
