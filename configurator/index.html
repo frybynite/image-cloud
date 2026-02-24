@@ -2761,7 +2761,7 @@
                 const checkbox = document.getElementById('enable-style-clipPath');
                 if (checkbox?.checked) {
                     const modeSelect = document.getElementById('style-clipPath-mode');
-                    const mode = modeSelect?.value || 'percent';
+                    const mode = modeSelect?.value || 'height-relative';
                     stylingState[currentStylingState].clipPath = {
                         enabled: true,
                         value: clipPathSelect.value,
@@ -2781,7 +2781,7 @@
             // Update whenever mode changes and clip path is enabled
             if (checkbox?.checked) {
                 const clipPathValue = clipPathSelect?.value;
-                const mode = modeSelect?.value || 'percent';
+                const mode = modeSelect?.value || 'height-relative';
 
                 // Update the stored state
                 if (!stylingState[currentStylingState].clipPath) {
@@ -2902,7 +2902,7 @@
                 // Restore clip-path mode from stored state
                 if (modeSelect) {
                     const clipPathData = stylingState[state]?.clipPath;
-                    const mode = clipPathData?.mode || 'percent';
+                    const mode = clipPathData?.mode || 'height-relative';
                     modeSelect.value = mode;
                 }
             }
