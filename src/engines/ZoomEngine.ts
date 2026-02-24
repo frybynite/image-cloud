@@ -228,20 +228,19 @@ export class ZoomEngine {
    * This ensures clip-path changes smoothly as width/height animate
    */
   private startClipPathAnimation(element: HTMLElement, handle: AnimationHandle, isToFocused: boolean): void {
-    const aspectRatio = (element as any).aspectRatio || 1;
-
     // Determine which styling config to use
     const styleConfig = isToFocused
       ? (this.styling?.focused ?? this.styling?.default)
       : this.styling?.default;
 
     const updateClipPath = () => {
-      // Calculate current image dimensions based on current element size
+      // Use actual animated element dimensions (both width and height are being animated)
       const currentHeight = element.offsetHeight;
-      const currentWidth = currentHeight * aspectRatio;
+      const currentWidth = element.offsetWidth;
 
       // Build style properties with current dimensions to get updated clip-path
       const styles = buildStyleProperties(styleConfig, currentHeight, currentWidth);
+
 
       // Apply only the clip-path style
       if (styles.clipPath !== undefined) {
@@ -252,7 +251,7 @@ export class ZoomEngine {
       }
 
       // Continue updating if animation is still running
-      if (!handle.animation.finished) {
+      if (handle.animation.playState === 'running') {
         requestAnimationFrame(updateClipPath);
       }
     };
