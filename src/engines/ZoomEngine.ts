@@ -378,8 +378,10 @@ export class ZoomEngine {
     // Get animation duration
     const duration = this.config.animationDuration ?? 600;
 
-    // Remove focused classes (clip-path will be animated separately)
-    this.removeFocusedStyling(element, originalState.zIndex?.toString() || '');
+    // Remove focused classes but keep z-index high during animation
+    // (z-index will be reset after animation completes)
+    element.classList.remove('fbn-ic-focused');
+    removeClassNameFromElement(element, this.focusedClassName);
 
     // Start from current focused state (or provided state for interrupted animations)
     const startTransform = fromTransform ?? this.focusData?.focusTransform ?? { x: 0, y: 0, rotation: 0, scale: 1 };
