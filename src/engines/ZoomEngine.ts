@@ -207,10 +207,18 @@ export class ZoomEngine {
 
   /**
    * Apply focused styling to an element
+   * @param duration - Optional animation duration in ms for clip-path transition
    */
-  private applyFocusedStyling(element: HTMLElement, zIndex: number, focusedHeight?: number): void {
+  private applyFocusedStyling(element: HTMLElement, zIndex: number, focusedHeight?: number, duration?: number): void {
     element.style.zIndex = String(zIndex);
     element.classList.add('fbn-ic-focused');
+
+    // Enable clip-path animation if duration provided
+    if (duration) {
+      const easing = 'cubic-bezier(0.4, 0, 0.2, 1)';
+      element.style.transition = `clip-path ${duration}ms ${easing}`;
+    }
+
     // Use focused height for height-relative clip-path calculations if available, otherwise use current height
     const imageHeight = focusedHeight ?? element.offsetHeight;
     // Calculate rendered width from aspect ratio and focused height for proper clip-path centering
@@ -221,21 +229,43 @@ export class ZoomEngine {
     const focusedState = this.styling?.focused ?? this.styling?.default;
     applyStylesToElementWithState(element, focusedState, imageHeight, imageWidth);
     applyClassNameToElement(element, this.focusedClassName);
+
+    // Remove transition after animation completes
+    if (duration) {
+      setTimeout(() => {
+        element.style.transition = 'none';
+      }, duration);
+    }
   }
 
   /**
    * Remove focused styling from an element
+   * @param duration - Optional animation duration in ms for clip-path transition
    */
-  private removeFocusedStyling(element: HTMLElement, originalZIndex: string, originalHeight?: number): void {
+  private removeFocusedStyling(element: HTMLElement, originalZIndex: string, originalHeight?: number, duration?: number): void {
     element.style.zIndex = originalZIndex;
     element.classList.remove('fbn-ic-focused');
     removeClassNameFromElement(element, this.focusedClassName);
+
+    // Enable clip-path animation if duration provided
+    if (duration) {
+      const easing = 'cubic-bezier(0.4, 0, 0.2, 1)';
+      element.style.transition = `clip-path ${duration}ms ${easing}`;
+    }
+
     // Use original height for height-relative clip-path calculations if available, otherwise use current height
     const imageHeight = originalHeight ?? element.offsetHeight;
     // Use cached rendered width if available (set during onload), otherwise use current offsetWidth
     const imageWidth = (element as any).cachedRenderedWidth ?? element.offsetWidth;
     applyStylesToElementWithState(element, this.styling?.default, imageHeight, imageWidth);
     applyClassNameToElement(element, this.defaultClassName);
+
+    // Remove transition after animation completes
+    if (duration) {
+      setTimeout(() => {
+        element.style.transition = 'none';
+      }, duration);
+    }
   }
 
   /**
@@ -259,11 +289,15 @@ export class ZoomEngine {
     const focusDimensions = this.calculateFocusDimensions(originalWidth, originalHeight, containerBounds);
     const focusTransform = this.calculateFocusTransform(containerBounds, originalState);
 
-    // Apply focused styling immediately with focused height for clip-path calculations
-    this.applyFocusedStyling(element, Z_INDEX.FOCUSING, focusDimensions.height);
-
     // Cancel any existing animation
     this.animationEngine.cancelAllAnimations(element);
+
+    // Get animation duration
+    const duration = this.config.animationDuration ?? 600;
+
+    // Apply focused styling immediately with focused height for clip-path calculations
+    // Pass duration to enable clip-path animation
+    this.applyFocusedStyling(element, Z_INDEX.FOCUSING, focusDimensions.height, duration);
 
     // Start animation from provided state or original position
     const startTransform: TransformParams = fromTransform ?? {
@@ -275,8 +309,6 @@ export class ZoomEngine {
 
     const startWidth = fromDimensions?.width ?? originalWidth;
     const startHeight = fromDimensions?.height ?? originalHeight;
-
-    const duration = this.config.animationDuration ?? 600;
 
     // Create dimension-based animation
     const animation = this.animateWithDimensions(
@@ -340,6 +372,13 @@ export class ZoomEngine {
     // Cancel any existing animation
     this.animationEngine.cancelAllAnimations(element);
 
+    // Get animation duration
+    const duration = this.config.animationDuration ?? 600;
+
+    // Start animating clip-path back to default with the same duration as the unfocus animation
+    const originalHeight = this.focusData?.originalHeight;
+    this.removeFocusedStyling(element, originalState.zIndex?.toString() || '', originalHeight, duration);
+
     // Start from current focused state (or provided state for interrupted animations)
     const startTransform = fromTransform ?? this.focusData?.focusTransform ?? { x: 0, y: 0, rotation: 0, scale: 1 };
     const startWidth = fromDimensions?.width ?? this.focusData?.focusWidth ?? element.offsetWidth;
@@ -355,7 +394,6 @@ export class ZoomEngine {
 
     const targetWidth = this.focusData?.originalWidth ?? element.offsetWidth;
     const targetHeight = this.focusData?.originalHeight ?? element.offsetHeight;
-    const duration = this.config.animationDuration ?? 600;
 
     // Create dimension-based animation
     const animation = this.animateWithDimensions(
