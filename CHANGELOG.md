@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.7] - 2026-02-24
+
+### Released
+- Merged to main branch with full verification: all 713 tests passing (99.8% pass rate)
+- Production-ready release with focused state styling fixes and height-relative clip-path mode
+- All features from 0.7.5 and 0.7.6 verified and working correctly
+
 ## [0.7.6] - 2026-02-24
 
 ### Fixed
