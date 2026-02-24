@@ -323,8 +323,39 @@ interface ImageStyleState {
   outline?: OutlineConfig;
   objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   aspectRatio?: string;
+  clipPath?: ClipPathShape | string | ClipPathConfig;
 }
 ```
+
+### ClipPathConfig
+
+```typescript
+interface ClipPathConfig {
+  shape: ClipPathShape;
+  mode?: 'percent' | 'height-relative';  // default: 'height-relative'
+}
+
+type ClipPathShape = 'circle' | 'square' | 'triangle' | 'pentagon' | 'hexagon' | 'octagon' | 'diamond' | 'none';
+```
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `shape` | `ClipPathShape` | - | Predefined geometric shape for cropping |
+| `mode` | `'percent' \| 'height-relative'` | `'height-relative'` | Scaling mode: "percent" uses responsive percentage-based coords, "height-relative" scales based on image height for aspect-ratio-aware sizing |
+
+**Clip-Path Shapes:**
+- `'circle'` - Circular crop
+- `'square'` - Square crop
+- `'triangle'` - Triangle crop
+- `'pentagon'` - Pentagon crop
+- `'hexagon'` - Hexagon crop (honeycomb layouts)
+- `'octagon'` - Octagon crop
+- `'diamond'` - Diamond/rotated-square crop
+- `'none'` - Remove clip-path
+
+**Modes:**
+- **Percent**: Uses percentage-based coordinates that scale responsively with image dimensions. Works well for varied aspect ratios.
+- **Height-Relative**: Scales shape based on image height for consistent visual sizing across different aspect ratios. Ideal for portrait images.
 
 ### BorderConfig
 

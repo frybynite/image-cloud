@@ -1519,11 +1519,38 @@ styling: {
 | `outline` | `OutlineConfig` | *See below* | Outline styling |
 | `objectFit` | `string` | - | CSS object-fit value |
 | `aspectRatio` | `string` | - | CSS aspect-ratio (e.g., '16/9') |
-| `clipPath` | `ClipPathShape \| string` | `undefined` | Crop image to a predefined shape or custom CSS clip-path. Predefined shapes: `'circle'`, `'square'`, `'triangle'`, `'pentagon'`, `'hexagon'`, `'octagon'`, `'diamond'`. Custom strings use CSS clip-path syntax (e.g., `'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'` or `'inset(10% 20% 30% 40%)'`). |
+| `clipPath` | `ClipPathShape \| string \| ClipPathConfig` | `undefined` | Crop image to a predefined shape or custom CSS clip-path. Can be a string (shape name or custom CSS), or a config object with `shape` and `mode` properties. |
+
+#### Clip-Path Configuration
+
+The `clipPath` property accepts three formats:
+
+1. **Predefined shape name** (string): `'circle'`, `'square'`, `'triangle'`, `'pentagon'`, `'hexagon'`, `'octagon'`, `'diamond'`
+2. **Custom clip-path** (string): CSS clip-path syntax like `'polygon(...)'` or `'inset(...)'`
+3. **Configuration object** (for advanced control):
+   ```typescript
+   {
+     shape: ClipPathShape,      // Predefined shape name
+     mode: 'percent' | 'height-relative'  // Scaling mode
+   }
+   ```
+
+#### Clip-Path Modes
+
+**Percent (Responsive)** - Default mode
+- Uses percentage-based coordinates that scale responsively with the image dimensions
+- Shape maintains the same visual proportion regardless of image size
+- Works well when images have varied aspect ratios
+
+**Height-Relative (Consistent)** - Aspect-ratio aware
+- Scales the shape based on the image height, then centers it horizontally
+- Maintains consistent visual sizing across images with different aspect ratios
+- Ideal for portrait images where percentage mode may appear off-center
+- The shape size is calculated as: `scaleFactor = imageHeight / referenceHeight (100px)`
 
 #### Clip-Path Shapes
 
-Predefined shapes use percentage-based coordinates for responsive scaling:
+Predefined shapes use the selected mode for scaling:
 
 | Shape | Use Case |
 |-------|----------|
@@ -1535,10 +1562,34 @@ Predefined shapes use percentage-based coordinates for responsive scaling:
 | `'octagon'` | Stop-sign or badge shapes |
 | `'diamond'` | Rotated square, gemstone effect |
 
-**Custom clip-path examples:**
+#### Usage Examples
+
+**Simple predefined shape (uses default "percent" mode):**
+```javascript
+styling: {
+  default: { clipPath: 'hexagon' }
+}
+```
+
+**Height-relative mode for consistent aspect-ratio-aware shapes:**
+```javascript
+styling: {
+  default: {
+    clipPath: {
+      shape: 'hexagon',
+      mode: 'height-relative'
+    }
+  }
+}
+```
+
+**Custom clip-path (always uses percent mode):**
 - `'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'` - Trapezoid
 - `'inset(10% 20% 30% 40%)'` - Rectangular inset
 - `'circle(40%)'` - Circle with specific radius
+
+**Animated clip-path transitions:**
+Clip-path smoothly animates during focus/unfocus transitions. The animation updates continuously as image dimensions change, ensuring the shape stays perfectly centered.
 
 **Note:** `overflow: hidden` is automatically applied when `clipPath` is used to ensure clean boundaries.
 

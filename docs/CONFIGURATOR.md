@@ -88,6 +88,10 @@ Configure visual appearance for three states:
 - Shadow (preset or custom)
 - Opacity
 - Filters (grayscale, blur, brightness, contrast, saturate, sepia, hue-rotate)
+- **Clip Path**: Predefined shapes (circle, square, hexagon, etc.) or custom CSS clip-path
+  - **Mode**: Choose between "Height-relative" (default, aspect-ratio aware) or "Percent" (responsive)
+  - Height-relative mode scales shapes based on image height for consistent sizing across different aspect ratios
+  - Clip-path animates smoothly during focus/unfocus transitions
 
 **Hover State**:
 - Shadow
