@@ -57,7 +57,7 @@ Reduce the overall package bundle size to improve load times and make the librar
 - Lightbox mode
 - Idle animations — configurable per-state animations especially on hover: pulse (subtle grow/shrink), wiggle (rotate back and forth), blink (disappear or brighten). Also consider a custom animation escape hatch where users can supply their own animation code.
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
-- Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
+- Custom entry easing — allow user-supplied cubic-bezier curves for entry animations, beyond the current preset path types (linear, bounce, elastic, wave)
 - Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
 - Add border-image support to functionality and configurator.
 - Consider using SVG for clip path in order to support borders.
