@@ -167,9 +167,9 @@ test.describe('Honeycomb Layout Algorithm', () => {
       const minDist = Math.min(...distances);
       const maxDist = Math.max(...distances);
 
-      // Hex ring-1 has two distances (from math): ≈90.1px and 100px (hexH=100)
-      // Max variance should be ≤ 10px (theoretical) — allow 12px for float precision
-      expect(maxDist - minDist).toBeLessThan(12);
+      // Regular hexagon: all 6 ring-1 distances are exactly hexH (100px).
+      // Allow 2px for float precision in style.left/top values.
+      expect(maxDist - minDist).toBeLessThan(2);
       // Images should be away from center (not collapsed)
       expect(minDist).toBeGreaterThan(40);
     });

@@ -109,18 +109,19 @@ export function calculateHeightRelativeClipPath(shape: ClipPathShape, imageHeigh
     return `circle(${radius}px)`;
   }
 
-  // Calculate offsets to center the shape's bounding box within the image
-  // The shape's original bounding box is 100x100, centered at (50, 50)
-  // After scaling, it's scaledSize x scaledSize, centered at (scaledSize/2, scaledSize/2)
-  // We want to move that center to the image's center: (imageWidth/2, imageHeight/2)
-  const scaledSize = shapeDef.refHeight * scale;  // e.g., 100 * 2 = 200
+  // Calculate offsets to center the shape's bounding box within the image.
+  // Compute the bounding box from the actual points (handles non-square shapes
+  // like the regular hexagon whose width ≠ refHeight).
+  const xs = shapeDef.points.map(([x]) => x);
+  const ys = shapeDef.points.map(([, y]) => y);
+  const shapeCenterX = ((Math.min(...xs) + Math.max(...xs)) / 2) * scale;
+  const shapeCenterY = ((Math.min(...ys) + Math.max(...ys)) / 2) * scale;
 
-  // Shape's bounding box center in scaled coordinates
-  const shapeCenterX = scaledSize / 2;  // e.g., 100
-  const shapeCenterY = scaledSize / 2;  // e.g., 100
+  // Fallback imageWidth: use the scaled bounding box width when unknown
+  const scaledBBoxWidth = (Math.max(...xs) - Math.min(...xs)) * scale;
 
   // Image's center
-  const imageCenterX = (imageWidth ?? scaledSize) / 2;
+  const imageCenterX = (imageWidth ?? scaledBBoxWidth) / 2;
   const imageCenterY = imageHeight / 2;
 
   // Offsets to move shape center to image center

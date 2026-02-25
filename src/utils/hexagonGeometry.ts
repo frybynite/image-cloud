@@ -7,15 +7,32 @@
 /** Reference height for the canonical hexagon definition (100px) */
 export const HEXAGON_REF_HEIGHT = 100;
 
-/** Reference polygon points matching the height-relative hexagon in clipPathGenerator */
+/**
+ * Regular flat-top hexagon reference points (refHeight = 100).
+ * Circumradius r = 100/√3 so that height = r√3 = 100 exactly.
+ * Width = 2r = 200/√3 ≈ 115.47.  All 6 vertices are equidistant from center.
+ *
+ *   x = r/2  = 50/√3 ≈ 28.87    (upper/lower inner)
+ *   x = 3r/2 = 150/√3 ≈ 86.60   (upper/lower outer)
+ *   x = 2r   = 200/√3 ≈ 115.47  (mid right vertex)
+ */
+const _R = 100 / Math.sqrt(3);
 export const HEXAGON_REF_POINTS: Array<[number, number]> = [
-  [25, 0], [75, 0], [100, 50], [75, 100], [25, 100], [0, 50]
+  [_R / 2,     0  ],   // upper-left
+  [3 * _R / 2, 0  ],   // upper-right
+  [2 * _R,     50 ],   // right  ← tiling key vertex
+  [3 * _R / 2, 100],   // lower-right
+  [_R / 2,     100],   // lower-left
+  [0,          50 ],   // left
 ];
 
-/** Col-step ratio derived from reference points: x of top-right vertex / refHeight = 75/100 = 0.75 */
-export const HEXAGON_COL_STEP_RATIO = HEXAGON_REF_POINTS[1][0] / HEXAGON_REF_HEIGHT; // 0.75
+/**
+ * Col-step ratio = x of upper-right vertex / refHeight = (3r/2) / 100 = √3/2 ≈ 0.866.
+ * (Previously 0.75 with the non-regular hexagon.)
+ */
+export const HEXAGON_COL_STEP_RATIO = HEXAGON_REF_POINTS[1][0] / HEXAGON_REF_HEIGHT; // √3/2 ≈ 0.866
 
-/** Row-offset ratio derived from reference points: y of right vertex / refHeight = 50/100 = 0.50 */
+/** Row-offset ratio = y of right vertex / refHeight = 50/100 = 0.50 (unchanged) */
 export const HEXAGON_ROW_OFFSET_RATIO = HEXAGON_REF_POINTS[2][1] / HEXAGON_REF_HEIGHT; // 0.50
 
 /**
