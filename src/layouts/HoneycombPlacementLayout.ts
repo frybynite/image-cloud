@@ -24,6 +24,8 @@ export class HoneycombPlacementLayout implements PlacementLayout {
   ): ImageLayout[] {
     const layouts: ImageLayout[] = [];
     const { width, height } = containerBounds;
+    const containerCX = width / 2;
+    const containerCY = height / 2;
 
     const baseImageSize = options.fixedHeight ?? 200;
 
@@ -37,10 +39,8 @@ export class HoneycombPlacementLayout implements PlacementLayout {
 
     // hexH is the pitch (hex height + gap). Since the clip path is height-relative,
     // the hex's visual height equals baseImageSize. We add spacing on top.
+    // Note: baseImageSize is already capped to fit the container by LayoutEngine.calculateAdaptiveSize().
     const hexH = baseImageSize + spacing;
-
-    const containerCX = width / 2;
-    const containerCY = height / 2;
 
     let placed = 0;
     let ring = 0;

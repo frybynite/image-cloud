@@ -1239,7 +1239,7 @@
                                     <input type="range" id="layout-coverage" min="0.3" max="0.9" step="0.05" value="0.6" oninput="updateRangeDisplay(this)">
                                 </div>
                             </div>
-                            <div class="control-row">
+                            <div class="control-row" id="density-factor-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-layout-density">
                                 <label class="control-label" data-label="Density Factor" data-path="densityFactor" data-desc-key="layout.densityFactor">Density Factor</label>
                                 <div class="control-input">
@@ -1271,7 +1271,7 @@
                                     <span class="value-display">px</span>
                                 </div>
                             </div>
-                            <div class="control-row">
+                            <div class="control-row" id="spacing-mingap-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-spacing-minGap">
                                 <label class="control-label" data-label="Min Gap" data-path="minGap" data-desc-key="layout.spacing.minGap">Min Gap</label>
                                 <div class="control-input">
@@ -3365,8 +3365,25 @@
                     }
                 }
             });
-            // Lock clip path controls for honeycomb default/hover states
+            // Hide density factor and min gap for honeycomb — neither has effect;
+            // honeycomb.spacing is the correct control for pitch.
             const isHoneycomb = algorithm === 'honeycomb';
+            const densityRow = document.getElementById('density-factor-row');
+            const minGapRow = document.getElementById('spacing-mingap-row');
+            if (densityRow) densityRow.style.display = isHoneycomb ? 'none' : '';
+            if (minGapRow) minGapRow.style.display = isHoneycomb ? 'none' : '';
+            if (isHoneycomb) {
+                const densityInput = document.getElementById('layout-density');
+                const densityCheckbox = document.getElementById('enable-layout-density');
+                if (densityInput) { densityInput.value = '1.0'; updateRangeDisplay(densityInput); }
+                if (densityCheckbox) densityCheckbox.checked = false;
+                const minGapInput = document.getElementById('spacing-minGap');
+                const minGapCheckbox = document.getElementById('enable-spacing-minGap');
+                if (minGapInput) minGapInput.value = '20';
+                if (minGapCheckbox) minGapCheckbox.checked = false;
+            }
+
+            // Lock clip path controls for honeycomb default/hover states
             const lockClipPath = isHoneycomb && (currentStylingState !== 'focused');
             ['style-clipPath', 'style-clipPath-mode', 'enable-style-clipPath'].forEach(id => {
                 const el = document.getElementById(id);
