@@ -487,7 +487,7 @@ layout: {
 | :--- | :--- | :--- | :--- |
 | `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'`, `'wave'` |
 | `targetCoverage` | `number` | `0.6` | Target percentage of container to fill (0.0-1.0) when using adaptive sizing |
-| `densityFactor` | `number` | `1.0` | Multiplier for calculated sizes and spacing |
+| `densityFactor` | `number` | `1.0` | Multiplier for calculated sizes and spacing. In radial layouts, affects image size only; ring spacing is controlled by `layout.radial.tightness`. |
 | `scaleDecay` | `number` | `0` | Size reduction for outer images in spiral/radial layouts (0 = none, 1 = 50% smaller at edge) |
 | `responsive.mobile.maxWidth` | `number` | `767` | Maximum viewport width for mobile breakpoint |
 | `responsive.tablet.maxWidth` | `number` | `1199` | Maximum viewport width for tablet breakpoint (screen is > tablet) |
@@ -733,7 +733,10 @@ Concentric rings emanating from center (built-in).
 
 ```typescript
 layout: {
-  algorithm: 'radial'
+  algorithm: 'radial',
+  radial: {
+    tightness: 1.0  // Ring spacing multiplier (0.3-2.0, default: 1.0)
+  }
 },
 config: {
   debug: { centers: true }  // Show center markers for debugging
@@ -745,6 +748,12 @@ config: {
 - Elliptical rings (wider than tall)
 - Automatic ring calculation based on image count
 - Great for hero/featured content
+
+**Radial-specific parameters:**
+
+| Parameter | Type | Default | Range | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `radial.tightness` | `number` | `1.0` | `0.3` to `2.0` | Ring spacing multiplier. At `1.0`, rings are evenly distributed to fill the available container space. Values below `1.0` tighten rings (more compact). Values above `1.0` spread rings further apart. Controls ring spacing only — image size is controlled separately by `densityFactor`. |
 
 ---
 
