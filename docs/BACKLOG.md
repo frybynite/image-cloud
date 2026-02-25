@@ -60,6 +60,7 @@ Reduce the overall package bundle size to improve load times and make the librar
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
 - Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
 - Add border-image support to functionality and configurator.
+- Consider using SVG for clip path in order to support borders.
 - Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).
 
 ---
