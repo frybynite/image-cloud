@@ -10,7 +10,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [x] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`) — Confirmed: test remains skipped due to timing unreliability. Other spinner tests provide adequate coverage; `loading-spinner-slow.html` available for manual testing.
 - [ ] Add border-image to functionality and configurator
-- [ ] Implement `rendering.performance` options (`lazyLoad`, `preloadCount`, `imageQuality`) — types and config merging exist but values are unused stubs
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
 - [x] Security: Set up CodeQL for code security analysis
 ---

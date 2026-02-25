@@ -280,11 +280,6 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
       showLoadingSpinner: false,
       showImageCounter: false
     }),
-    performance: Object.freeze({
-      lazyLoad: undefined,  // STUB: Not implemented yet
-      preloadCount: undefined,  // STUB: Not implemented yet
-      imageQuality: undefined  // STUB: Not implemented yet
-    })
   }),
 
   // Image styling
@@ -684,13 +679,6 @@ export function mergeConfig(
       };
     }
 
-    // Deep merge performance config
-    if (userConfig.rendering.performance) {
-      merged.rendering.performance = {
-        ...DEFAULT_CONFIG.rendering.performance,
-        ...userConfig.rendering.performance
-      };
-    }
   }
 
   // Merge debug config

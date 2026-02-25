@@ -476,16 +476,9 @@ export interface UIRenderingConfig {
   counterElement?: string | HTMLElement;
 }
 
-export interface PerformanceRenderingConfig {
-  lazyLoad?: boolean;
-  preloadCount?: number;
-  imageQuality?: 'auto' | 'high' | 'medium' | 'low';
-}
-
 export interface RenderingConfig {
   responsive: ResponsiveRenderingConfig;
   ui: UIRenderingConfig;
-  performance?: PerformanceRenderingConfig;
 }
 
 // ============================================================================
