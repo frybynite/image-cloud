@@ -82,6 +82,17 @@
             color: white;
             font-size: 0.85rem;
         }
+        .controls label {
+            color: #aaa;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .controls input[type="range"] {
+            width: 100px;
+            accent-color: #7f5af0;
+        }
     </style>
     <script type="importmap">
     {
@@ -178,6 +189,20 @@
                     <option value="none" selected>Stay Upright</option>
                 </select>
                 <button id="wave-refresh">Try it</button>
+            </div>
+        </div>
+
+        <!-- Honeycomb Layout -->
+        <div class="cloud-section">
+            <h2>Honeycomb Layout</h2>
+            <p>Images in hexagonal rings filling outward from center — edge-to-edge tiling with configurable spacing</p>
+            <div id="cloud-honeycomb"></div>
+            <div class="controls">
+                <label>
+                    Spacing: <span id="honeycomb-spacing-value">0</span>px
+                    <input type="range" id="honeycomb-spacing" min="0" max="40" step="2" value="0">
+                </label>
+                <button id="honeycomb-refresh">Try it</button>
             </div>
         </div>
 
@@ -295,6 +320,16 @@
             }
         });
 
+        // Honeycomb: hexagonal rings filling outward from center
+        const honeycombCloud = new ImageCloud({
+            container: 'cloud-honeycomb',
+            loaders: [loaderConfig],
+            layout: {
+                algorithm: 'honeycomb',
+                honeycomb: { spacing: 0 }
+            }
+        });
+
         // Radial Cloud (existing)
         const radialCloud = new ImageCloud({
             container: 'cloud-radial',
@@ -321,6 +356,7 @@
             spiral: spiralCloud,
             cluster: clusterCloud,
             wave: waveCloud,
+            honeycomb: honeycombCloud,
             radial: radialCloud,
             random: randomCloud
         };
@@ -331,6 +367,7 @@
             spiralCloud.init(),
             clusterCloud.init(),
             waveCloud.init(),
+            honeycombCloud.init(),
             radialCloud.init(),
             randomCloud.init()
         ]).catch(error => {
@@ -406,6 +443,20 @@
                     overlap: 0.4,
                     distribution: distribution
                 }
+            });
+        });
+
+        // Honeycomb spacing slider live update label
+        document.getElementById('honeycomb-spacing').addEventListener('input', (e) => {
+            document.getElementById('honeycomb-spacing-value').textContent = e.target.value;
+        });
+
+        // Honeycomb refresh handler
+        document.getElementById('honeycomb-refresh').addEventListener('click', async () => {
+            const spacing = parseInt(document.getElementById('honeycomb-spacing').value);
+            clouds.honeycomb = await refreshCloud('cloud-honeycomb', {
+                algorithm: 'honeycomb',
+                honeycomb: { spacing }
             });
         });
 
