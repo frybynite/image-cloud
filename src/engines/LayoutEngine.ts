@@ -16,6 +16,7 @@ import { GridPlacementLayout } from '../layouts/GridPlacementLayout';
 import { SpiralPlacementLayout } from '../layouts/SpiralPlacementLayout';
 import { ClusterPlacementLayout } from '../layouts/ClusterPlacementLayout';
 import { WavePlacementLayout } from '../layouts/WavePlacementLayout';
+import { HoneycombPlacementLayout } from '../layouts/HoneycombPlacementLayout';
 
 export interface LayoutEngineConfig {
   layout: LayoutConfig;
@@ -54,6 +55,8 @@ export class LayoutEngine {
         return new ClusterPlacementLayout(this.config, this.imageConfig);
       case 'wave':
         return new WavePlacementLayout(this.config, this.imageConfig);
+      case 'honeycomb':
+        return new HoneycombPlacementLayout(this.config, this.imageConfig);
       case 'random':
       default:
         return new RandomPlacementLayout(this.config, this.imageConfig);

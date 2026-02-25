@@ -76,6 +76,10 @@
       "frequency": "Number of wave cycles across the container (default: 2)",
       "phaseShift": "Offset between rows in the wave pattern (default: 0)",
       "synchronization": "How wave phases align across rows (default: offset)"
+    },
+    "honeycomb": {
+      "_title": "Honeycomb layout options",
+      "spacing": "Extra gap between hexagons in pixels. 0 = edge-to-edge tiling (default: 0)"
     }
   },
   "image": {

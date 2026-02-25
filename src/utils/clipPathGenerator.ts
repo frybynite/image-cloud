@@ -4,6 +4,7 @@
  */
 
 import type { ClipPathShape } from '../config/types';
+import { HEXAGON_REF_HEIGHT, HEXAGON_REF_POINTS } from './hexagonGeometry';
 
 const CLIP_PATH_SHAPES: Record<ClipPathShape, string> = {
   // Geometric shapes - uses percentages for responsive sizing
@@ -47,10 +48,10 @@ const CLIP_PATH_SHAPES_HEIGHT_RELATIVE: Record<ClipPathShape, HeightRelativeShap
     refHeight: 100,
     points: [[50, 0], [100, 38], [82, 100], [18, 100], [0, 38]]
   },
-  // Hexagon - regular hexagon
+  // Hexagon - regular hexagon (reference points imported from hexagonGeometry)
   hexagon: {
-    refHeight: 100,
-    points: [[25, 0], [75, 0], [100, 50], [75, 100], [25, 100], [0, 50]]
+    refHeight: HEXAGON_REF_HEIGHT,
+    points: HEXAGON_REF_POINTS
   },
   // Octagon - regular octagon
   octagon: {

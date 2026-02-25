@@ -981,6 +981,7 @@
                                         <option value="spiral">Spiral</option>
                                         <option value="cluster">Cluster</option>
                                         <option value="wave">Wave</option>
+                                        <option value="honeycomb">Honeycomb</option>
                                         <option value="random">Random</option>
                                     </select>
                                 </div>
@@ -1209,6 +1210,21 @@
                                     </div>
                                 </div>
                                 <!-- Note: Wave orientation is now controlled via Image > Rotation > Mode = Tangent -->
+                            </div>
+
+                            <!-- Honeycomb-specific options -->
+                            <div class="algorithm-specific" data-algorithm="honeycomb">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-honeycomb-spacing">
+                                    <label class="control-label" data-label="Spacing" data-path="honeycomb.spacing" data-desc-key="layout.honeycomb.spacing">Spacing</label>
+                                    <div class="control-input">
+                                        <span class="value-display">0</span>
+                                        <input type="range" id="honeycomb-spacing" min="0" max="50" step="2" value="0" oninput="updateRangeDisplay(this)">
+                                    </div>
+                                </div>
+                                <div class="control-row" style="grid-column: 1/-1; padding: 6px 8px; background: rgba(139,92,246,0.1); border-radius: 4px; border-left: 3px solid #8b5cf6; font-size: 11px; color: #a78bfa;">
+                                    Clip path for Default &amp; Hover states is locked to hexagon (height-relative) for edge-to-edge tiling. The Focused state clip path remains configurable.
+                                </div>
                             </div>
                         </div>
 
@@ -2268,6 +2284,9 @@
 
             // Populate form with state values
             populateStylingForm(state);
+
+            // Re-evaluate clip path locking (honeycomb locks default/hover but not focused)
+            if (typeof onAlgorithmChange === 'function') onAlgorithmChange();
         };
 
         // Get border property prefix based on current side
@@ -3346,6 +3365,27 @@
                     }
                 }
             });
+            // Lock clip path controls for honeycomb default/hover states
+            const isHoneycomb = algorithm === 'honeycomb';
+            const lockClipPath = isHoneycomb && (currentStylingState !== 'focused');
+            ['style-clipPath', 'style-clipPath-mode', 'enable-style-clipPath'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = lockClipPath;
+            });
+            if (lockClipPath) {
+                const clipPathSelect = document.getElementById('style-clipPath');
+                const modeSelect = document.getElementById('style-clipPath-mode');
+                const checkbox = document.getElementById('enable-style-clipPath');
+                if (clipPathSelect) clipPathSelect.value = 'hexagon';
+                if (checkbox) checkbox.checked = true;
+                if (modeSelect) modeSelect.value = 'height-relative';
+                const clipPathModeRow = document.getElementById('clippath-mode-row');
+                if (clipPathModeRow) clipPathModeRow.style.display = 'flex';
+                if (stylingState[currentStylingState]) {
+                    stylingState[currentStylingState].clipPath = { enabled: true, value: 'hexagon', mode: 'height-relative' };
+                }
+            }
+
             scheduleAutoApply();
         };
 
@@ -3676,6 +3716,11 @@
                 if (phaseShift !== undefined) wave.phaseShift = phaseShift;
                 if (synchronization !== undefined) wave.synchronization = synchronization;
                 if (Object.keys(wave).length > 0) layout.wave = wave;
+            } else if (algorithm === 'honeycomb') {
+                const honeycomb = {};
+                const spacing = getEnabledValue('enable-honeycomb-spacing', 'honeycomb-spacing', parseInt);
+                if (spacing !== undefined) honeycomb.spacing = spacing;
+                if (Object.keys(honeycomb).length > 0) layout.honeycomb = honeycomb;
             }
 
             if (Object.keys(layout).length > 0) config.layout = layout;
