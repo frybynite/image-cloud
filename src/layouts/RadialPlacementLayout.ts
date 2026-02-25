@@ -63,10 +63,10 @@ export class RadialPlacementLayout implements PlacementLayout {
     const estimatedMaxRings = Math.ceil(Math.sqrt(imageCount));
 
     const padding = this.config.spacing.padding ?? 50;
-    const maxRadius = Math.min(
+    const maxRadius = Math.max(1, Math.min(
       cx - padding - imageSize / 2,
       cy - padding - imageSize / 2
-    );
+    ));
 
     // Add center image (using center position)
     if (imageCount > 0) {
