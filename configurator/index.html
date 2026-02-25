@@ -1190,22 +1190,22 @@
                                     </div>
                                 </div>
                                 <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-wave-synchronization" onchange="updateWaveSyncOptions()">
+                                    <label class="control-label" data-label="Synchronization" data-path="wave.synchronization" data-desc-key="layout.wave.synchronization">Synchronization</label>
+                                    <div class="control-input">
+                                        <select id="wave-synchronization" onchange="updateWaveSyncOptions()">
+                                            <option value="offset">Offset</option>
+                                            <option value="synchronized">Synchronized</option>
+                                            <option value="alternating">Alternating</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-row" id="wave-phaseShift-row">
                                     <input type="checkbox" class="control-checkbox" id="enable-wave-phaseShift">
                                     <label class="control-label" data-label="Phase Shift" data-path="wave.phaseShift" data-desc-key="layout.wave.phaseShift">Phase Shift</label>
                                     <div class="control-input">
                                         <span class="value-display">1.0</span>
                                         <input type="range" id="wave-phaseShift" min="0" max="6.28" step="0.1" value="1.047" oninput="updateRangeDisplay(this)">
-                                    </div>
-                                </div>
-                                <div class="control-row">
-                                    <input type="checkbox" class="control-checkbox" id="enable-wave-synchronization">
-                                    <label class="control-label" data-label="Synchronization" data-path="wave.synchronization" data-desc-key="layout.wave.synchronization">Synchronization</label>
-                                    <div class="control-input">
-                                        <select id="wave-synchronization">
-                                            <option value="offset">Offset</option>
-                                            <option value="synchronized">Synchronized</option>
-                                            <option value="alternating">Alternating</option>
-                                        </select>
                                     </div>
                                 </div>
                                 <!-- Note: Wave orientation is now controlled via Image > Rotation > Mode = Tangent -->
@@ -3392,6 +3392,20 @@
             scheduleAutoApply();
         };
 
+        // Update wave phase shift visibility based on synchronization mode
+        window.updateWaveSyncOptions = function() {
+            const sync = document.getElementById('wave-synchronization').value;
+            const phaseShiftRow = document.getElementById('wave-phaseShift-row');
+            const phaseShiftInput = document.getElementById('wave-phaseShift');
+            const phaseShiftCheckbox = document.getElementById('enable-wave-phaseShift');
+            const syncEnabled = document.getElementById('enable-wave-synchronization').checked;
+            const isOffset = syncEnabled && sync === 'offset';
+            phaseShiftRow.style.display = isOffset ? 'flex' : 'none';
+            phaseShiftInput.disabled = !isOffset;
+            phaseShiftCheckbox.disabled = !isOffset;
+            scheduleAutoApply();
+        };
+
         // Update rotation options visibility based on selected rotation mode
         window.updateRotationOptions = function() {
             const rotationMode = document.getElementById('entry-rotation-mode').value;
@@ -4176,6 +4190,7 @@
             setupStylingListeners();
             setupAutoApply();
             onAlgorithmChange();
+            updateWaveSyncOptions();
             populateStylingForm('default');
             applyChanges();
             loadFieldDescriptions();
