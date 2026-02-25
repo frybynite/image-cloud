@@ -1068,6 +1068,18 @@
                                 </div>
                             </div>
 
+                            <!-- Radial-specific options -->
+                            <div class="algorithm-specific" data-algorithm="radial">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-radial-tightness">
+                                    <label class="control-label" data-label="Tightness" data-path="radial.tightness" data-desc-key="layout.radial.tightness">Tightness</label>
+                                    <div class="control-input">
+                                        <span class="value-display">1.0</span>
+                                        <input type="range" id="radial-tightness" min="0.3" max="2.0" step="0.1" value="1.0" oninput="updateRangeDisplay(this)">
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Spiral-specific options -->
                             <div class="algorithm-specific" data-algorithm="spiral">
                                 <div class="control-row">
@@ -3650,6 +3662,11 @@
                 if (alignment !== undefined) grid.alignment = alignment;
                 if (overflowOffset !== undefined) grid.overflowOffset = overflowOffset;
                 if (Object.keys(grid).length > 0) layout.grid = grid;
+            } else if (algorithm === 'radial') {
+                const radial = {};
+                const tightness = getEnabledValue('enable-radial-tightness', 'radial-tightness', parseFloat);
+                if (tightness !== undefined) radial.tightness = tightness;
+                if (Object.keys(radial).length > 0) layout.radial = radial;
             } else if (algorithm === 'spiral') {
                 const spiral = {};
                 const spiralType = getEnabledValue('enable-spiral-type', 'spiral-type');
