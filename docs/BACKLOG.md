@@ -55,8 +55,7 @@ Reduce the overall package bundle size to improve load times and make the librar
 - Auth/credential hooks for static loader fetch options (e.g., custom headers, bearer tokens for authenticated image endpoints — applies to JSON source and URL validation)
 - Additional layout algorithms (honeycomb — use hexagon `clipPath` for preparation, physics-based)
 - Lightbox mode
-- Thumbnail navigation
-- Touch gesture improvements
+- Idle animations — configurable per-state animations especially on hover: pulse (subtle grow/shrink), wiggle (rotate back and forth), blink (disappear or brighten). Also consider a custom animation escape hatch where users can supply their own animation code.
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
 - Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
