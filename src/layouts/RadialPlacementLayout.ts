@@ -3,7 +3,8 @@
  * Generates concentric radial layouts for image cloud
  */
 
-import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, ImageConfig } from '../config/types';
+import type { PlacementLayout, ImageLayout, ContainerBounds, LayoutConfig, RadialAlgorithmConfig, ImageConfig } from '../config/types';
+import { DEFAULT_RADIAL_CONFIG } from '../config/defaults';
 
 interface RadialLayoutOptions extends Partial<LayoutConfig> {
   fixedHeight?: number;
@@ -48,6 +49,11 @@ export class RadialPlacementLayout implements PlacementLayout {
     // Get scale decay from layout config
     const scaleDecay = this.config.scaleDecay ?? 0;
 
+    const radialConfig: RadialAlgorithmConfig = {
+      ...DEFAULT_RADIAL_CONFIG,
+      ...this.config.radial,
+    };
+
     // Use override fixedHeight if provided, else baseImageSize
     const imageSize = options.fixedHeight ?? baseImageSize;
     const cx = width / 2;
@@ -55,6 +61,12 @@ export class RadialPlacementLayout implements PlacementLayout {
 
     // Calculate max rings for scale decay calculation
     const estimatedMaxRings = Math.ceil(Math.sqrt(imageCount));
+
+    const padding = this.config.spacing.padding ?? 50;
+    const maxRadius = Math.min(
+      cx - padding - imageSize / 2,
+      cy - padding - imageSize / 2
+    );
 
     // Add center image (using center position)
     if (imageCount > 0) {
@@ -85,7 +97,8 @@ export class RadialPlacementLayout implements PlacementLayout {
 
       // Ring settings
       // Scale X more than Y to create horizontal oval shape
-      const radiusY = currentRing * (imageSize * 0.8); // Reduce overlap by 20% (1.0 -> 0.8)
+      const ringStep = (maxRadius / estimatedMaxRings) * radialConfig.tightness;
+      const radiusY = currentRing * ringStep;
       const radiusX = radiusY * 1.5; // Horizontal stretching factor
 
       const circumference = Math.PI * (3 * (radiusX + radiusY) - Math.sqrt((3 * radiusX + radiusY) * (radiusX + 3 * radiusY))); // Ramanujan's approximation
@@ -118,7 +131,6 @@ export class RadialPlacementLayout implements PlacementLayout {
 
         // Boundary Clamping - clamp center position with conservative estimate
         // Use 16:9 aspect ratio (1.78) as maximum to handle most landscape images
-        const padding = this.config.spacing.padding ?? 50;
         const estAspectRatio = 1.5; // 3:2 - balanced for mixed portrait/landscape
         const halfWidth = (scaledImageSize * estAspectRatio) / 2;
         const halfHeight = scaledImageSize / 2;
