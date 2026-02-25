@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.8.1] - 2026-02-25
+
+### Fixed
+- **Example pages**: Fixed compressed gallery boxes in Entry Animations and Image Style demos — CSS selector `.image-cloud.fbn-ic-gallery` never matched (ImageCloud only adds `fbn-ic-gallery`); corrected to `.fbn-ic-gallery` and bumped height to 500px to match Layout Algorithms demo.
+- **Layout Algorithms Demo**: Added Honeycomb section with spacing slider; removed standalone `honeycomb-demo.html`.
+
 ## [0.8.0] - 2026-02-25
 
 ### Added
