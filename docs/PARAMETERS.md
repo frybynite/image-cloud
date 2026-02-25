@@ -727,6 +727,31 @@ layout: {
 
 ---
 
+### Honeycomb Algorithm
+
+Places images in hexagonal rings filling outward clockwise from center-top.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `layout.honeycomb.spacing` | `number` | `0` | Extra gap in pixels between hexagons. `0` = edge-to-edge tiling. |
+
+**Forced clip path:** When `layout.algorithm` is `'honeycomb'`, the `default` and `hover` clip paths are automatically forced to `{ shape: 'hexagon', mode: 'height-relative' }` for proper edge-to-edge tiling. The `focused` clip path remains user-configurable.
+
+**Note:** `image.sizing.variance` and `image.rotation` have no effect in honeycomb layout — uniform sizing is required for tiles to align correctly.
+
+```js
+{
+  layout: {
+    algorithm: 'honeycomb',
+    honeycomb: {
+      spacing: 0  // pixels of extra gap (default: 0)
+    }
+  }
+}
+```
+
+---
+
 ### Radial Algorithm
 
 Concentric rings emanating from center (built-in).

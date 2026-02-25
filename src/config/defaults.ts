@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig } from './types';
+import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, HoneycombAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -118,6 +118,10 @@ export const DEFAULT_WAVE_CONFIG: WaveAlgorithmConfig = Object.freeze({
   phaseShift: 0,
   synchronization: 'offset' as const
   // Note: Image rotation along wave is now controlled via image.rotation.mode = 'tangent'
+});
+
+export const DEFAULT_HONEYCOMB_CONFIG: HoneycombAlgorithmConfig = Object.freeze({
+  spacing: 0
 });
 
 /**
@@ -686,6 +690,17 @@ export function mergeConfig(
     ...DEFAULT_DEBUG_CONFIG,
     ...(userConfig.config?.debug ?? {})
   };
+
+  // Honeycomb forces default/hover clip path to hexagon height-relative for edge-to-edge tiling
+  if (merged.layout.algorithm === 'honeycomb' && merged.styling) {
+    const honeycombClip = { shape: 'hexagon' as const, mode: 'height-relative' as const };
+    merged.styling = {
+      ...merged.styling,
+      default: { ...merged.styling.default, clipPath: honeycombClip },
+      hover:   { ...merged.styling.hover,   clipPath: honeycombClip },
+      // focused: untouched — user config respected
+    };
+  }
 
   return merged;
 }

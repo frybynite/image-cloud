@@ -16,6 +16,7 @@ import { GridPlacementLayout } from '../layouts/GridPlacementLayout';
 import { SpiralPlacementLayout } from '../layouts/SpiralPlacementLayout';
 import { ClusterPlacementLayout } from '../layouts/ClusterPlacementLayout';
 import { WavePlacementLayout } from '../layouts/WavePlacementLayout';
+import { HoneycombPlacementLayout } from '../layouts/HoneycombPlacementLayout';
 
 export interface LayoutEngineConfig {
   layout: LayoutConfig;
@@ -54,6 +55,8 @@ export class LayoutEngine {
         return new ClusterPlacementLayout(this.config, this.imageConfig);
       case 'wave':
         return new WavePlacementLayout(this.config, this.imageConfig);
+      case 'honeycomb':
+        return new HoneycombPlacementLayout(this.config, this.imageConfig);
       case 'random':
       default:
         return new RandomPlacementLayout(this.config, this.imageConfig);
@@ -237,7 +240,48 @@ export class LayoutEngine {
       finalHeight = Math.max(floor, calculatedHeight);
     }
 
+    // Honeycomb: cap so the outermost ring stays within the container.
+    // Must apply here (not in generate()) so img.style.height matches tiling pitch.
+    if (this.config.algorithm === 'honeycomb') {
+      finalHeight = Math.min(finalHeight, this.honeycombMaxImageHeight(imageCount, containerBounds));
+    }
+
     return { height: finalHeight };
+  }
+
+  /**
+   * Returns the largest image height at which all honeycomb rings fit within the container.
+   * Spacing is 0 for this calculation (user spacing is additive on top of the image height;
+   * any non-zero spacing only makes the constraint tighter).
+   */
+  private honeycombMaxImageHeight(imageCount: number, containerBounds: ContainerBounds): number {
+    if (imageCount <= 1) return Infinity;
+
+    // Find outermost ring: cells in rings 0..k = 1 + 3k(k+1)
+    let maxRing = 0;
+    let total = 1;
+    while (total < imageCount) {
+      maxRing++;
+      total += 6 * maxRing;
+    }
+
+    const padding = this.config.spacing?.padding ?? 50;
+    const spacing = this.config.honeycomb?.spacing ?? 0;
+    const containerCX = containerBounds.width / 2;
+    const containerCY = containerBounds.height / 2;
+
+    // colStep = √3/2 ≈ 0.866 * hexH; hex half-width = 1/√3 ≈ 0.577 * imageSize
+    const COL_STEP_RATIO = Math.sqrt(3) / 2;
+    const HALF_WIDTH_RATIO = 1 / Math.sqrt(3);
+
+    // Vertical: containerCY - maxRing*(size+spacing) - size/2 >= padding
+    const maxV = (containerCY - padding - spacing * maxRing) / (maxRing + 0.5);
+
+    // Horizontal: containerCX - COL_STEP_RATIO*maxRing*(size+spacing) - HALF_WIDTH_RATIO*size >= padding
+    const maxH = (containerCX - padding - COL_STEP_RATIO * spacing * maxRing)
+                 / (COL_STEP_RATIO * maxRing + HALF_WIDTH_RATIO);
+
+    return Math.max(10, Math.min(maxV, maxH));
   }
 
   /**

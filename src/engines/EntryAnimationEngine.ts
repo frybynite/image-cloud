@@ -29,7 +29,8 @@ const LAYOUT_ENTRY_DEFAULTS: Record<LayoutAlgorithm, EntryStartPosition> = {
   grid: 'top',
   cluster: 'nearest-edge',
   random: 'nearest-edge',
-  wave: 'left'
+  wave: 'left',
+  honeycomb: 'center'
 };
 
 export interface StartPosition {

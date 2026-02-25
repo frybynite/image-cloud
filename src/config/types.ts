@@ -278,7 +278,11 @@ export interface WaveAlgorithmConfig {
   // Note: Image rotation along wave is now controlled via image.rotation.mode = 'tangent'
 }
 
-export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster' | 'wave';
+export type LayoutAlgorithm = 'random' | 'radial' | 'grid' | 'spiral' | 'cluster' | 'wave' | 'honeycomb';
+
+export interface HoneycombAlgorithmConfig {
+  spacing?: number;  // extra gap in pixels beyond edge-to-edge (default: 0)
+}
 
 export interface LayoutConfig {
   algorithm: LayoutAlgorithm;
@@ -291,6 +295,7 @@ export interface LayoutConfig {
   spiral?: SpiralAlgorithmConfig;
   cluster?: ClusterAlgorithmConfig;
   wave?: WaveAlgorithmConfig;
+  honeycomb?: HoneycombAlgorithmConfig;
 }
 
 // ============================================================================
