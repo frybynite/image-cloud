@@ -9,7 +9,6 @@ Future enhancements and feature ideas for Image Cloud.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [x] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
 - [x] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`) — Confirmed: test remains skipped due to timing unreliability. Other spinner tests provide adequate coverage; `loading-spinner-slow.html` available for manual testing.
-- [ ] Add border-image to functionality and configurator
 - [x] Security: Set up Dependabot for dependency vulnerability scanning
 - [x] Security: Set up CodeQL for code security analysis
 ---
@@ -60,6 +59,7 @@ Reduce the overall package bundle size to improve load times and make the librar
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom fly-in animations - configurable entrance animation styles for images (different directions, easing, stagger patterns)
 - Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
+- Add border-image support to functionality and configurator.
 - Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).
 
 ---

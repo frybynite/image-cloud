@@ -1537,16 +1537,17 @@ The `clipPath` property accepts three formats:
 
 #### Clip-Path Modes
 
-**Percent (Responsive)** - Default mode
-- Uses percentage-based coordinates that scale responsively with the image dimensions
-- Shape maintains the same visual proportion regardless of image size
-- Works well when images have varied aspect ratios
-
-**Height-Relative (Consistent)** - Aspect-ratio aware
+**Height-Relative (Consistent)** - Aspect-ratio aware (default)
 - Scales the shape based on the image height, then centers it horizontally
 - Maintains consistent visual sizing across images with different aspect ratios
 - Ideal for portrait images where percentage mode may appear off-center
 - The shape size is calculated as: `scaleFactor = imageHeight / referenceHeight (100px)`
+
+**Percent (Responsive)** - stretches to image size
+- Uses percentage-based coordinates that scale responsively with the image dimensions
+- Shape maintains the same visual proportion regardless of image size
+- Works well when images have varied aspect ratios
+
 
 #### Clip-Path Shapes
 
