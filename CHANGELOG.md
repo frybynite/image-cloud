@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-02-25
+
+### Added
+- **Honeycomb Layout**: New `layout.algorithm: 'honeycomb'` places images in hexagonal rings filling outward clockwise from center-top. Default and hover clip paths are automatically forced to hexagon height-relative for edge-to-edge tiling; focused clip path remains user-configurable.
+- **`layout.honeycomb.spacing`**: Extra gap in pixels between hexagons (default: 0 = edge-to-edge tiling).
+
+### Fixed
+- **Honeycomb container fit**: Image height is now automatically capped so the outermost ring always fits within the container bounds. Previously, adaptive sizing could produce images large enough to push outer-ring images offscreen.
+- **Regular hexagon proportions**: Clip-path hexagon reference points updated to use circumradius `r = 100/√3`, giving proper `width:height = 2:√3` proportions. Previous hexagon was ~15% too tall. Column-step ratio updated from 0.75 to `√3/2 ≈ 0.866` to maintain edge-to-edge tiling.
+- **Clip-path centering**: `calculateHeightRelativeClipPath` now derives the shape's bounding-box center from its actual points rather than assuming a square reference box, correctly centering the regular (non-square) hexagon.
+
+### Changed
+- **Configurator**: Density Factor and Min Gap controls are hidden when Honeycomb is selected (neither has any effect on the honeycomb layout).
+- **TypeScript**: Pinned to `~5.8.2` to silence api-extractor version mismatch warning until api-extractor ships support for TS 5.9.x.
+
 ## [0.7.7] - 2026-02-24
 
 ### Released
