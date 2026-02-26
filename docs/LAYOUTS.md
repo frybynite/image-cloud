@@ -3,7 +3,20 @@
 ## Implemented
 
 ### Radial
-Concentric rings emanating from center. Images placed in circles at increasing radii.
+Concentric rings emanating from center. Images placed in elliptical rings at increasing radii.
+
+**Configuration options:**
+```typescript
+interface RadialConfig {
+  tightness: number;  // Ring spacing (0.3-2.0, default: 1.0). Higher = tighter rings.
+}
+```
+
+**Visual characteristics:**
+- Center image prominently featured at highest z-index
+- Rings spread outward with a horizontal oval shape (1.5× wider than tall)
+- Ring spacing independent of image size (controlled by `tightness`, not `densityFactor`)
+- Works well with 5–30 images
 
 ### Spiral
 Golden ratio spiral emanating outward. Images placed along a logarithmic spiral using the golden angle (~137.5°) for optimal distribution.

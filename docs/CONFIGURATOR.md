@@ -65,7 +65,7 @@ You can then customize any setting from the preset starting point.
 - **Adaptive Sizing**: Auto-size based on container (min/max, coverage, density)
 - **Rotation**: Enable/disable with degree range
 - **Spacing**: Padding and minimum gap
-- **Algorithm-Specific**: Options for grid (columns, jitter), spiral (type, direction), cluster (count, spread)
+- **Algorithm-Specific**: Options for grid (columns, jitter), spiral (type, direction), cluster (count, spread), radial (tightness), wave (rows, amplitude, frequency, synchronization, phase shift)
 
 #### Animation
 

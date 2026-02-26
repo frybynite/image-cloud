@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.8.3] - 2026-02-25
+
+### Added
+- **`examples/layout-algorithms.html`**: Added interactive tightness slider to Radial Layout section, matching the pattern of other layouts.
+
+### Fixed
+- **`docs/LAYOUTS.md`**: Added `RadialAlgorithmConfig` documentation block for the Radial layout (type, default, range, visual characteristics).
+- **`docs/CONFIGURATOR.md`**: Updated algorithm-specific options list to include radial (tightness) and wave controls.
+- **`docs/BACKLOG.md`**: Cleaned up completed honeycomb item from ideas; refined radial ring-fill idea to reflect that tightness was implemented.
+
 ## [0.8.2] - 2026-02-25
 
 ### Added

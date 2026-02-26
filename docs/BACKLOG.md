@@ -53,12 +53,12 @@ Reduce the overall package bundle size to improve load times and make the librar
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
 - Auth/credential hooks for static loader fetch options (e.g., custom headers, bearer tokens for authenticated image endpoints — applies to JSON source and URL validation)
-- Additional layout algorithms (honeycomb — use hexagon `clipPath` for preparation, physics-based)
+- Additional layout algorithms (physics-based)
 - Lightbox mode
 - Idle animations — configurable per-state animations especially on hover: pulse (subtle grow/shrink), wiggle (rotate back and forth), blink (disappear or brighten). Also consider a custom animation escape hatch where users can supply their own animation code.
 - Consider `scaleDecay` for cluster layout - larger images at cluster centers, smaller at edges to create focal points within each group.
 - Custom entry easing — allow user-supplied cubic-bezier curves for entry animations, beyond the current preset path types (linear, bounce, elastic, wave)
-- Radial layout: option to tighten radials so they appear complete — if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
+- Radial layout: if a radial expects 10 images but only gets 7, spread images further along the outer radial to fill the ring and look like a complete external radius.
 - Add border-image support to functionality and configurator.
 - Consider using SVG for clip path in order to support borders.
 - Loader-level config inheritance - Move shared loader properties (`validateUrls`, `validationTimeout`, `validationMethod`, `allowedExtensions`, `debugLogging`) to the top-level `loader` config so they cascade down to individual loaders. Individual loaders can override. Especially useful with `CompositeLoader` to avoid repeating settings across multiple child loaders. Note: `validate*` properties only apply to `StaticImageLoader` today and would be no-ops for other loaders. Decide merge semantics for `allowedExtensions` (replace vs merge).

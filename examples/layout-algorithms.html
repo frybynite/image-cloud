@@ -206,11 +206,18 @@
             </div>
         </div>
 
-        <!-- Radial Layout (existing) -->
+        <!-- Radial Layout -->
         <div class="cloud-section">
             <h2>Radial Layout</h2>
-            <p>Concentric rings emanating from center (existing algorithm)</p>
+            <p>Concentric rings emanating from center — ring spacing controlled independently of image size</p>
             <div id="cloud-radial"></div>
+            <div class="controls">
+                <label>
+                    Tightness: <span id="radial-tightness-value">1.0</span>
+                    <input type="range" id="radial-tightness" min="0.3" max="2.0" step="0.1" value="1.0">
+                </label>
+                <button id="radial-refresh">Try it</button>
+            </div>
         </div>
 
         <!-- Random Layout (existing) -->
@@ -457,6 +464,21 @@
             clouds.honeycomb = await refreshCloud('cloud-honeycomb', {
                 algorithm: 'honeycomb',
                 honeycomb: { spacing }
+            });
+        });
+
+        // Radial tightness slider live update label
+        document.getElementById('radial-tightness').addEventListener('input', (e) => {
+            document.getElementById('radial-tightness-value').textContent = parseFloat(e.target.value).toFixed(1);
+        });
+
+        // Radial refresh handler
+        document.getElementById('radial-refresh').addEventListener('click', async () => {
+            const tightness = parseFloat(document.getElementById('radial-tightness').value);
+            clouds.radial = await refreshCloud('cloud-radial', {
+                algorithm: 'radial',
+                sizing: { base: 100 },
+                radial: { tightness }
             });
         });
 
