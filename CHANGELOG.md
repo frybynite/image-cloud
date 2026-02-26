@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-02-26
+
+### Added
+- **Idle Animation**: New `animation.idle` configuration for continuous ambient animations on gallery images. Supports five types:
+  - `wiggle` — images gently rock back and forth (rotation)
+  - `pulse` — images breathe in and out (scale)
+  - `blink` — images flash on/off with `snap` or `fade` style
+  - `spin` — images continuously rotate clockwise or counter-clockwise
+  - `custom` — user-supplied Web Animations API animation or teardown function
+- **`animation.idle.sync`**: `'random'` staggers phases per image; `'together'` uses a shared rAF loop to stamp identical `currentTime` on every animation each frame, guaranteeing perfect phase sync.
+- **`animation.idle.startDelay`**: Configurable delay (ms) before idle starts after an image appears. Defaults to entry animation duration.
+- **Idle + Focus integration**: Idle animation pauses immediately when an image is clicked/focused; resumes with a fresh animation after the unfocus animation fully completes.
+- **Blink opacity**: Blink `'on'` opacity reads from the element's computed style, honoring configured default and hover opacity values.
+- **Configurator**: Idle Animation section added inside the Animation accordion (Type, Start Delay, and type-specific sub-controls).
+- **Docs**: `animation.idle` section added to `PARAMETERS.md` and `field-descriptions.json`.
+- **Tests**: 12 new Playwright tests in `test/e2e/idle-animations.spec.ts`.
+
 ## [0.8.3] - 2026-02-25
 
 ### Added
