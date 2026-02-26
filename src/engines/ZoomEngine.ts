@@ -65,6 +65,9 @@ export class ZoomEngine {
   private styling?: ImageStylingConfig;
   private focusedClassName: string | string[] | undefined;
 
+  // Callback fired when an unfocus animation fully completes
+  private onUnfocusComplete: ((element: HTMLElement) => void) | null = null;
+
   constructor(config: FocusInteractionConfig, animationEngine: AnimationEngine, styling?: ImageStylingConfig) {
     this.config = config;
     this.animationEngine = animationEngine;
@@ -72,6 +75,13 @@ export class ZoomEngine {
 
     // Store focused class name for on-demand class management
     this.focusedClassName = styling?.focused?.className;
+  }
+
+  /**
+   * Set callback to be fired when an unfocus animation fully completes.
+   */
+  setOnUnfocusCompleteCallback(callback: ((element: HTMLElement) => void) | null): void {
+    this.onUnfocusComplete = callback;
   }
 
   /**
@@ -655,8 +665,10 @@ export class ZoomEngine {
 
         // Cleanup outgoing
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          const completedOutgoing = this.outgoing.element;
+          this.removeFocusedStyling(completedOutgoing, this.outgoing.originalState.zIndex?.toString() || '');
           this.outgoing = null;
+          this.onUnfocusComplete?.(completedOutgoing);
         }
 
         this.currentFocus = imageElement;
@@ -707,8 +719,10 @@ export class ZoomEngine {
         if (this.focusGeneration !== myGeneration) return;
 
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          const completedOutgoing = this.outgoing.element;
+          this.removeFocusedStyling(completedOutgoing, this.outgoing.originalState.zIndex?.toString() || '');
           this.outgoing = null;
+          this.onUnfocusComplete?.(completedOutgoing);
         }
 
         this.currentFocus = imageElement;
@@ -759,8 +773,10 @@ export class ZoomEngine {
           if (this.focusGeneration !== myGeneration) return;
 
           if (this.outgoing) {
-            this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+            const completedOutgoing = this.outgoing.element;
+            this.removeFocusedStyling(completedOutgoing, this.outgoing.originalState.zIndex?.toString() || '');
             this.outgoing = null;
+            this.onUnfocusComplete?.(completedOutgoing);
           }
 
           this.currentFocus = imageElement;
@@ -814,8 +830,10 @@ export class ZoomEngine {
         if (this.focusGeneration !== myGeneration) return;
 
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          const completedOutgoing = this.outgoing.element;
+          this.removeFocusedStyling(completedOutgoing, this.outgoing.originalState.zIndex?.toString() || '');
           this.outgoing = null;
+          this.onUnfocusComplete?.(completedOutgoing);
         }
 
         this.currentFocus = imageElement;
@@ -857,10 +875,12 @@ export class ZoomEngine {
 
         if (this.focusGeneration !== myGeneration) return;
 
-        this.removeFocusedStyling(this.outgoing.element, this.focusData?.originalZIndex || '');
+        const completedFocusing = this.outgoing.element;
+        this.removeFocusedStyling(completedFocusing, this.focusData?.originalZIndex || '');
         this.outgoing = null;
         this.focusData = null;
         this.state = ZoomState.IDLE;
+        this.onUnfocusComplete?.(completedFocusing);
       }
       return;
     }
@@ -890,16 +910,22 @@ export class ZoomEngine {
         if (this.focusGeneration !== myGeneration) return;
 
         // Cleanup
+        let outgoingElement: HTMLElement | null = null;
         if (this.outgoing) {
-          this.removeFocusedStyling(this.outgoing.element, this.outgoing.originalState.zIndex?.toString() || '');
+          outgoingElement = this.outgoing.element;
+          this.removeFocusedStyling(outgoingElement, this.outgoing.originalState.zIndex?.toString() || '');
         }
-        this.removeFocusedStyling(incomingUnfocus.element, this.incoming.originalState.zIndex?.toString() || '');
+        const incomingUnfocusElement = incomingUnfocus.element;
+        this.removeFocusedStyling(incomingUnfocusElement, this.incoming.originalState.zIndex?.toString() || '');
 
         this.outgoing = null;
         this.incoming = null;
         this.currentFocus = null;
         this.focusData = null;
         this.state = ZoomState.IDLE;
+
+        if (outgoingElement) this.onUnfocusComplete?.(outgoingElement);
+        this.onUnfocusComplete?.(incomingUnfocusElement);
         return;
       }
     }
@@ -921,6 +947,7 @@ export class ZoomEngine {
     this.currentFocus = null;
     this.focusData = null;
     this.state = ZoomState.IDLE;
+    this.onUnfocusComplete?.(element);
   }
 
   /**

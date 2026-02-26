@@ -1985,6 +1985,150 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Idle Animation -->
+                        <div class="control-group">
+                            <h5 class="control-group-title" data-label="Idle Animation" data-path="animation.idle" data-desc-key="animation.idle">Idle Animation</h5>
+                            <!-- Type -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-idle-type" checked>
+                                <label class="control-label" data-label="Type" data-path="type" data-desc-key="animation.idle.type">Type</label>
+                                <div class="control-input">
+                                    <select id="idle-type" onchange="updateIdleOptions()">
+                                        <option value="none" selected>None (default)</option>
+                                        <option value="wiggle">Wiggle</option>
+                                        <option value="pulse">Pulse</option>
+                                        <option value="blink">Blink</option>
+                                        <option value="spin">Spin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Start Delay -->
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-idle-startDelay">
+                                <label class="control-label" data-label="Start Delay" data-path="startDelay" data-desc-key="animation.idle.startDelay">Start Delay</label>
+                                <div class="control-input">
+                                    <input type="number" id="idle-startDelay" value="600" min="0" max="5000" step="100">
+                                    <span class="value-display">ms</span>
+                                </div>
+                            </div>
+                            <!-- Wiggle Options -->
+                            <div id="idle-wiggle-options" style="display: none;">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-wiggle-maxAngle" checked>
+                                    <label class="control-label" data-label="Max Angle" data-path="wiggle.maxAngle" data-desc-key="animation.idle.wiggle.maxAngle">Max Angle</label>
+                                    <div class="control-input">
+                                        <span class="value-display" id="idle-wiggle-maxAngle-display">5</span>
+                                        <input type="range" id="idle-wiggle-maxAngle" min="1" max="30" step="1" value="5" oninput="updateRangeDisplay(this, 'idle-wiggle-maxAngle-display')">
+                                        <span class="value-display">°</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-wiggle-speed" checked>
+                                    <label class="control-label" data-label="Speed" data-path="wiggle.speed" data-desc-key="animation.idle.wiggle.speed">Speed</label>
+                                    <div class="control-input">
+                                        <input type="number" id="idle-wiggle-speed" value="2000" min="500" max="8000" step="100">
+                                        <span class="value-display">ms</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-wiggle-sync" checked>
+                                    <label class="control-label" data-label="Sync" data-path="wiggle.sync" data-desc-key="animation.idle.wiggle.sync">Sync</label>
+                                    <div class="control-input">
+                                        <select id="idle-wiggle-sync">
+                                            <option value="random" selected>Random (default)</option>
+                                            <option value="together">Together</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pulse Options -->
+                            <div id="idle-pulse-options" style="display: none;">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-pulse-minScale" checked>
+                                    <label class="control-label" data-label="Min Scale" data-path="pulse.minScale" data-desc-key="animation.idle.pulse.minScale">Min Scale</label>
+                                    <div class="control-input">
+                                        <span class="value-display" id="idle-pulse-minScale-display">0.95</span>
+                                        <input type="range" id="idle-pulse-minScale" min="0.5" max="1.0" step="0.01" value="0.95" oninput="updateRangeDisplay(this, 'idle-pulse-minScale-display')">
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-pulse-maxScale" checked>
+                                    <label class="control-label" data-label="Max Scale" data-path="pulse.maxScale" data-desc-key="animation.idle.pulse.maxScale">Max Scale</label>
+                                    <div class="control-input">
+                                        <span class="value-display" id="idle-pulse-maxScale-display">1.05</span>
+                                        <input type="range" id="idle-pulse-maxScale" min="1.0" max="2.0" step="0.01" value="1.05" oninput="updateRangeDisplay(this, 'idle-pulse-maxScale-display')">
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-pulse-speed" checked>
+                                    <label class="control-label" data-label="Speed" data-path="pulse.speed" data-desc-key="animation.idle.pulse.speed">Speed</label>
+                                    <div class="control-input">
+                                        <input type="number" id="idle-pulse-speed" value="2400" min="500" max="8000" step="100">
+                                        <span class="value-display">ms</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-pulse-sync" checked>
+                                    <label class="control-label" data-label="Sync" data-path="pulse.sync" data-desc-key="animation.idle.pulse.sync">Sync</label>
+                                    <div class="control-input">
+                                        <select id="idle-pulse-sync">
+                                            <option value="random" selected>Random (default)</option>
+                                            <option value="together">Together</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Blink Options -->
+                            <div id="idle-blink-options" style="display: none;">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-blink-onRatio" checked>
+                                    <label class="control-label" data-label="On Ratio" data-path="blink.onRatio" data-desc-key="animation.idle.blink.onRatio">On Ratio</label>
+                                    <div class="control-input">
+                                        <span class="value-display" id="idle-blink-onRatio-display">0.7</span>
+                                        <input type="range" id="idle-blink-onRatio" min="0.1" max="0.99" step="0.01" value="0.7" oninput="updateRangeDisplay(this, 'idle-blink-onRatio-display')">
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-blink-speed" checked>
+                                    <label class="control-label" data-label="Speed" data-path="blink.speed" data-desc-key="animation.idle.blink.speed">Speed</label>
+                                    <div class="control-input">
+                                        <input type="number" id="idle-blink-speed" value="3000" min="500" max="10000" step="100">
+                                        <span class="value-display">ms</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-blink-style" checked>
+                                    <label class="control-label" data-label="Style" data-path="blink.style" data-desc-key="animation.idle.blink.style">Style</label>
+                                    <div class="control-input">
+                                        <select id="idle-blink-style">
+                                            <option value="snap" selected>Snap (default)</option>
+                                            <option value="fade">Fade</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Spin Options -->
+                            <div id="idle-spin-options" style="display: none;">
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-spin-speed" checked>
+                                    <label class="control-label" data-label="Speed" data-path="spin.speed" data-desc-key="animation.idle.spin.speed">Speed</label>
+                                    <div class="control-input">
+                                        <input type="number" id="idle-spin-speed" value="4000" min="500" max="20000" step="100">
+                                        <span class="value-display">ms/revolution</span>
+                                    </div>
+                                </div>
+                                <div class="control-row">
+                                    <input type="checkbox" class="control-checkbox" id="enable-idle-spin-direction" checked>
+                                    <label class="control-label" data-label="Direction" data-path="spin.direction" data-desc-key="animation.idle.spin.direction">Direction</label>
+                                    <div class="control-input">
+                                        <select id="idle-spin-direction">
+                                            <option value="clockwise" selected>Clockwise (default)</option>
+                                            <option value="counterclockwise">Counter-clockwise</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -3476,6 +3620,30 @@
         };
 
         // Update rotation options visibility based on selected rotation mode
+        // Update idle animation sub-options visibility based on selected type
+        window.updateIdleOptions = function() {
+            const idleType = document.getElementById('idle-type').value;
+
+            // Hide all type-specific option groups
+            document.getElementById('idle-wiggle-options').style.display = 'none';
+            document.getElementById('idle-pulse-options').style.display = 'none';
+            document.getElementById('idle-blink-options').style.display = 'none';
+            document.getElementById('idle-spin-options').style.display = 'none';
+
+            // Show relevant options
+            if (idleType === 'wiggle') {
+                document.getElementById('idle-wiggle-options').style.display = 'block';
+            } else if (idleType === 'pulse') {
+                document.getElementById('idle-pulse-options').style.display = 'block';
+            } else if (idleType === 'blink') {
+                document.getElementById('idle-blink-options').style.display = 'block';
+            } else if (idleType === 'spin') {
+                document.getElementById('idle-spin-options').style.display = 'block';
+            }
+
+            scheduleAutoApply();
+        };
+
         window.updateRotationOptions = function() {
             const rotationMode = document.getElementById('entry-rotation-mode').value;
 
@@ -3906,6 +4074,57 @@
             }
 
             if (Object.keys(entry).length > 0) animation.entry = entry;
+
+            // Idle Animation
+            const idleTypeEl = document.getElementById('idle-type');
+            const idleType = idleTypeEl ? idleTypeEl.value : 'none';
+            if (idleType !== 'none') {
+                const idle = { type: idleType };
+
+                const startDelay = getEnabledValue('enable-idle-startDelay', 'idle-startDelay', parseInt);
+                if (startDelay !== undefined) idle.startDelay = startDelay;
+
+                if (idleType === 'wiggle') {
+                    const wiggle = {};
+                    const maxAngle = getEnabledValue('enable-idle-wiggle-maxAngle', 'idle-wiggle-maxAngle', parseInt);
+                    const speed = getEnabledValue('enable-idle-wiggle-speed', 'idle-wiggle-speed', parseInt);
+                    const sync = getEnabledValue('enable-idle-wiggle-sync', 'idle-wiggle-sync');
+                    if (maxAngle !== undefined) wiggle.maxAngle = maxAngle;
+                    if (speed !== undefined) wiggle.speed = speed;
+                    if (sync !== undefined) wiggle.sync = sync;
+                    if (Object.keys(wiggle).length > 0) idle.wiggle = wiggle;
+                } else if (idleType === 'pulse') {
+                    const pulse = {};
+                    const minScale = getEnabledValue('enable-idle-pulse-minScale', 'idle-pulse-minScale', parseFloat);
+                    const maxScale = getEnabledValue('enable-idle-pulse-maxScale', 'idle-pulse-maxScale', parseFloat);
+                    const speed = getEnabledValue('enable-idle-pulse-speed', 'idle-pulse-speed', parseInt);
+                    const sync = getEnabledValue('enable-idle-pulse-sync', 'idle-pulse-sync');
+                    if (minScale !== undefined) pulse.minScale = minScale;
+                    if (maxScale !== undefined) pulse.maxScale = maxScale;
+                    if (speed !== undefined) pulse.speed = speed;
+                    if (sync !== undefined) pulse.sync = sync;
+                    if (Object.keys(pulse).length > 0) idle.pulse = pulse;
+                } else if (idleType === 'blink') {
+                    const blink = {};
+                    const onRatio = getEnabledValue('enable-idle-blink-onRatio', 'idle-blink-onRatio', parseFloat);
+                    const speed = getEnabledValue('enable-idle-blink-speed', 'idle-blink-speed', parseInt);
+                    const style = getEnabledValue('enable-idle-blink-style', 'idle-blink-style');
+                    if (onRatio !== undefined) blink.onRatio = onRatio;
+                    if (speed !== undefined) blink.speed = speed;
+                    if (style !== undefined) blink.style = style;
+                    if (Object.keys(blink).length > 0) idle.blink = blink;
+                } else if (idleType === 'spin') {
+                    const spin = {};
+                    const speed = getEnabledValue('enable-idle-spin-speed', 'idle-spin-speed', parseInt);
+                    const direction = getEnabledValue('enable-idle-spin-direction', 'idle-spin-direction');
+                    if (speed !== undefined) spin.speed = speed;
+                    if (direction !== undefined) spin.direction = direction;
+                    if (Object.keys(spin).length > 0) idle.spin = spin;
+                }
+
+                animation.idle = idle;
+            }
+
             if (Object.keys(animation).length > 0) config.animation = animation;
 
             // Interaction

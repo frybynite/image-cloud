@@ -243,6 +243,35 @@
           "max": "Maximum random scale multiplier (default: 1.0)"
         }
       }
+    },
+    "idle": {
+      "_title": "Continuous ambient animations that run while images are idle",
+      "type": "Animation type: none, wiggle, pulse, blink, spin, custom (default: none)",
+      "startDelay": "Milliseconds to wait before starting idle animation after image appears (default: entry animation duration)",
+      "wiggle": {
+        "_title": "Wiggle animation — images gently rock back and forth",
+        "maxAngle": "Maximum rotation angle in degrees, 1-30 (default: 5)",
+        "speed": "Duration of one wiggle cycle in milliseconds, 500-8000 (default: 2000)",
+        "sync": "Whether images wiggle together or at random offsets: together, random (default: random)"
+      },
+      "pulse": {
+        "_title": "Pulse animation — images gently scale up and down",
+        "minScale": "Minimum scale factor during pulse, 0.5-1.0 (default: 0.95)",
+        "maxScale": "Maximum scale factor during pulse, 1.0-2.0 (default: 1.05)",
+        "speed": "Duration of one pulse cycle in milliseconds, 500-8000 (default: 2400)",
+        "sync": "Whether images pulse together or at random offsets: together, random (default: random)"
+      },
+      "blink": {
+        "_title": "Blink animation — images flash on and off",
+        "onRatio": "Fraction of the cycle the image is visible, 0.1-0.99 (default: 0.7)",
+        "speed": "Duration of one blink cycle in milliseconds, 500-10000 (default: 3000)",
+        "style": "Blink transition style: snap (instant cut), fade (gradual) (default: snap)"
+      },
+      "spin": {
+        "_title": "Spin animation — images continuously rotate",
+        "speed": "Duration of one full revolution in milliseconds, 500-20000 (default: 4000)",
+        "direction": "Rotation direction: clockwise, counterclockwise (default: clockwise)"
+      }
     }
   },
   "interaction": {
