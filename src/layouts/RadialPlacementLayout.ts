@@ -97,7 +97,7 @@ export class RadialPlacementLayout implements PlacementLayout {
 
       // Ring settings
       // Scale X more than Y to create horizontal oval shape
-      const ringStep = (maxRadius / estimatedMaxRings) * radialConfig.tightness;
+      const ringStep = (maxRadius / estimatedMaxRings) * 1.5 / radialConfig.tightness;
       const radiusY = currentRing * ringStep;
       const radiusX = radiusY * 1.5; // Horizontal stretching factor
 

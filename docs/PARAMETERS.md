@@ -735,7 +735,7 @@ Concentric rings emanating from center (built-in).
 layout: {
   algorithm: 'radial',
   radial: {
-    tightness: 1.0  // Ring spacing multiplier (0.3-2.0, default: 1.0)
+    tightness: 1.0  // Ring packing (0.3-2.0, default: 1.0). Higher = tighter rings.
   }
 },
 config: {
@@ -753,7 +753,7 @@ config: {
 
 | Parameter | Type | Default | Range | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `radial.tightness` | `number` | `1.0` | `0.3` to `2.0` | Ring spacing multiplier. At `1.0`, rings are evenly distributed to fill the available container space. Values below `1.0` tighten rings (more compact). Values above `1.0` spread rings further apart. Controls ring spacing only — image size is controlled separately by `densityFactor`. |
+| `radial.tightness` | `number` | `1.0` | `0.3` to `2.0` | Controls how tightly rings are packed. Higher values bring rings closer together; lower values spread them further apart. Controls ring spacing only — image size is controlled separately by `densityFactor`. |
 
 ---
 
