@@ -26,6 +26,7 @@ The Image Cloud library offers a flexible configuration system to customize ever
 - [Entry Animation Paths](#entry-animation-paths)
 - [Entry Rotation Animation](#entry-rotation-animation)
 - [Entry Scale Animation](#entry-scale-animation)
+- [Idle Animation](#idle-animation)
 - [Interaction Configuration](#5-interaction-configuration-interaction)
 - [Rendering Configuration](#6-rendering-configuration-rendering)
 - [Styling Configuration](#7-styling-configuration-styling)
@@ -822,6 +823,7 @@ Controls entrance and interaction animations.
 | `queue.enabled` | `boolean` | `true` | Enable staggered entrance. |
 | `queue.interval` | `number` | `150` | Time between appearance of each image (ms). |
 | `entry` | `EntryAnimationConfig` | *See below* | Entry animation configuration. |
+| `idle` | `IdleAnimationConfig` | `{ type: 'none' }` | Idle/ambient animation configuration. |
 
 ---
 
@@ -1739,6 +1741,123 @@ config: {
 | `config.debug.loaders` | `boolean` | `false` | Enable debug output for image loaders. |
 
 **Note:** The old paths (`debug`, `layout.debugCenters`, `config.loaders.debugLogging`) have been removed. Use `config.debug.*` instead.
+
+---
+
+## Idle Animation
+
+Adds continuous ambient animations to gallery images while they are idle (not focused). Animations automatically pause when an image is clicked/focused and resume after the unfocus animation fully completes.
+
+Uses the Web Animations API with `composite: 'add'`, so idle animations layer on top of existing transforms without interfering with entry, focus, or hover effects.
+
+### Configuration
+
+```typescript
+animation: {
+  idle: {
+    type: 'wiggle',       // 'none' | 'wiggle' | 'pulse' | 'blink' | 'spin' | 'custom'
+    startDelay: 600,      // ms before idle starts (default: entry animation duration)
+    wiggle: { ... },      // wiggle-specific options
+    pulse: { ... },       // pulse-specific options
+    blink: { ... },       // blink-specific options
+    spin: { ... },        // spin-specific options
+    custom: (ctx) => ..., // custom animation function
+  }
+}
+```
+
+### Parameters
+
+#### Top-level
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.type` | `'none' \| 'wiggle' \| 'pulse' \| 'blink' \| 'spin' \| 'custom'` | `'none'` | Type of idle animation. |
+| `idle.startDelay` | `number` | entry duration | Milliseconds to wait after an image appears before starting idle animation. |
+
+#### Wiggle — images gently rock back and forth
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.wiggle.maxAngle` | `number` | `5` | Maximum rotation angle in degrees (range: 1–30). |
+| `idle.wiggle.speed` | `number` | `2000` | Duration of one wiggle cycle in ms (range: 500–8000). |
+| `idle.wiggle.sync` | `'random' \| 'together'` | `'random'` | Phase synchronisation across images. |
+
+#### Pulse — images gently scale up and down
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.pulse.minScale` | `number` | `0.95` | Minimum scale factor during pulse (range: 0.5–1.0). |
+| `idle.pulse.maxScale` | `number` | `1.05` | Maximum scale factor during pulse (range: 1.0–2.0). |
+| `idle.pulse.speed` | `number` | `2400` | Duration of one pulse cycle in ms (range: 500–8000). |
+| `idle.pulse.sync` | `'random' \| 'together'` | `'random'` | Phase synchronisation across images. |
+
+#### Blink — images flash on and off
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.blink.onRatio` | `number` | `0.7` | Fraction of the cycle the image is visible (range: 0.1–0.99). |
+| `idle.blink.speed` | `number` | `3000` | Duration of one blink cycle in ms (range: 500–10000). |
+| `idle.blink.style` | `'snap' \| 'fade'` | `'snap'` | Transition style: `snap` for instant cut, `fade` for gradual fade. |
+
+#### Spin — images continuously rotate
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.spin.speed` | `number` | `4000` | Duration of one full revolution in ms (range: 500–20000). |
+| `idle.spin.direction` | `'clockwise' \| 'counterclockwise'` | `'clockwise'` | Rotation direction. |
+
+#### Custom — user-provided animation
+
+```typescript
+idle: {
+  type: 'custom',
+  custom: ({ element, index, totalImages }) => {
+    // Return a Web Animations API Animation object:
+    return element.animate([
+      { transform: 'rotate(0deg)' },
+      { transform: 'rotate(360deg)' }
+    ], { duration: 3000, iterations: Infinity });
+
+    // Or return a teardown function:
+    // const interval = setInterval(() => { /* ... */ }, 100);
+    // return () => clearInterval(interval);
+  }
+}
+```
+
+### Examples
+
+**Gentle wiggle with random phases:**
+```javascript
+animation: {
+  idle: {
+    type: 'wiggle',
+    wiggle: { maxAngle: 5, speed: 2000, sync: 'random' }
+  }
+}
+```
+
+**Breathing pulse (all together):**
+```javascript
+animation: {
+  idle: {
+    type: 'pulse',
+    pulse: { minScale: 0.97, maxScale: 1.03, speed: 3000, sync: 'together' }
+  }
+}
+```
+
+**Slow clockwise spin:**
+```javascript
+animation: {
+  idle: {
+    type: 'spin',
+    startDelay: 600,
+    spin: { speed: 8000, direction: 'clockwise' }
+  }
+}
+```
 
 ---
 

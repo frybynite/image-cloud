@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, HoneycombAlgorithmConfig, RadialAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig } from './types';
+import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, HoneycombAlgorithmConfig, RadialAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig, IdleWiggleConfig, IdlePulseConfig, IdleBlinkConfig, IdleSpinConfig, IdleAnimationConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -194,6 +194,12 @@ export const DEFAULT_DEBUG_CONFIG: DebugConfig = Object.freeze({
   loaders: false
 });
 
+export const DEFAULT_IDLE_WIGGLE: IdleWiggleConfig = Object.freeze({ maxAngle: 5, speed: 2000, sync: 'random' as const });
+export const DEFAULT_IDLE_PULSE: IdlePulseConfig = Object.freeze({ minScale: 0.95, maxScale: 1.05, speed: 2400, sync: 'random' as const });
+export const DEFAULT_IDLE_BLINK: IdleBlinkConfig = Object.freeze({ onRatio: 0.7, speed: 3000, style: 'snap' as const });
+export const DEFAULT_IDLE_SPIN: IdleSpinConfig = Object.freeze({ speed: 4000, direction: 'clockwise' as const });
+export const DEFAULT_IDLE_CONFIG: IdleAnimationConfig = Object.freeze({ type: 'none' as const });
+
 export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   // Loader configuration (always an array, composite behavior is implicit)
   loaders: [] as LoaderEntry[],
@@ -253,7 +259,8 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
       path: DEFAULT_PATH_CONFIG,
       rotation: DEFAULT_ENTRY_ROTATION,
       scale: DEFAULT_ENTRY_SCALE
-    })
+    }),
+    idle: DEFAULT_IDLE_CONFIG
   }),
 
   // Pattern-based interaction configuration
@@ -625,6 +632,14 @@ export function mergeConfig(
         scale: userConfig.animation.entry.scale
           ? { ...DEFAULT_ENTRY_SCALE, ...userConfig.animation.entry.scale }
           : DEFAULT_CONFIG.animation.entry!.scale
+      };
+    }
+
+    // Deep merge idle animation config
+    if (userConfig.animation.idle) {
+      merged.animation.idle = {
+        ...DEFAULT_IDLE_CONFIG,
+        ...userConfig.animation.idle
       };
     }
   }

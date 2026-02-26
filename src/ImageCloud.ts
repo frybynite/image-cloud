@@ -8,6 +8,7 @@ import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds,
 import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
+import { IdleAnimationEngine } from './engines/IdleAnimationEngine';
 import { LayoutEngine } from './engines/LayoutEngine';
 import { ZoomEngine } from './engines/ZoomEngine';
 import { SwipeEngine, SNAP_BACK_DURATION_MS } from './engines/SwipeEngine';
@@ -44,6 +45,7 @@ export class ImageCloud {
   // Modules
   private animationEngine: AnimationEngine;
   private entryAnimationEngine: EntryAnimationEngine;
+  private idleAnimationEngine: IdleAnimationEngine | null;
   private layoutEngine: LayoutEngine;
   private zoomEngine: ZoomEngine;
   private swipeEngine: SwipeEngine | null;
@@ -106,6 +108,22 @@ export class ImageCloud {
       entryConfig as EntryAnimationConfig,
       this.fullConfig.layout.algorithm
     );
+
+    // Initialize idle animation engine if configured
+    const idleConfig = this.fullConfig.animation.idle;
+    if (idleConfig && idleConfig.type !== 'none') {
+      this.idleAnimationEngine = new IdleAnimationEngine(
+        idleConfig,
+        (entryConfig as EntryAnimationConfig).timing?.duration ?? 600
+      );
+    } else {
+      this.idleAnimationEngine = null;
+    }
+
+    // Wire unfocus complete callback to resume idle animations
+    this.zoomEngine.setOnUnfocusCompleteCallback((el) => {
+      this.idleAnimationEngine?.resumeForImage(el as HTMLImageElement);
+    });
 
     // SwipeEngine will be initialized after container is available
     this.swipeEngine = null;
@@ -597,6 +615,12 @@ export class ImageCloud {
             pathType: this.entryAnimationEngine.getPathType()
           });
         }
+
+        // Register with idle animation engine (starts after entry completes)
+        if (this.idleAnimationEngine) {
+          const entryDuration = this.entryAnimationEngine.getTiming().duration;
+          this.idleAnimationEngine.register(img, imgIndex, this.imageElements.length, entryDuration);
+        }
       });
 
       processedCount++;
@@ -865,6 +889,9 @@ export class ImageCloud {
       this.swipeEngine?.disable();
       this.hideCounter();
     } else {
+      // Pause idle animation immediately before focus animation begins
+      this.idleAnimationEngine?.pauseForImage(imageElement);
+
       // Track the focused image index for keyboard navigation
       const imageId = imageElement.dataset.imageId;
       this.currentFocusIndex = imageId !== undefined ? parseInt(imageId, 10) : null;
@@ -898,6 +925,7 @@ export class ImageCloud {
     this.hoveredImage = null;
     this.layoutEngine.reset();
     this.zoomEngine.reset();
+    this.idleAnimationEngine?.stopAll();
     this.imagesLoaded = false;
   }
 
@@ -957,5 +985,7 @@ export class ImageCloud {
       clearTimeout(this.resizeTimeout);
     }
     this.swipeEngine?.destroy();
+    this.idleAnimationEngine?.stopAll();
+    this.idleAnimationEngine = null;
   }
 }

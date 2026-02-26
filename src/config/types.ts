@@ -436,6 +436,56 @@ export interface AnimationConfig {
   queue: AnimationQueueConfig;
   performance?: AnimationPerformanceConfig;
   entry?: EntryAnimationConfig;
+  idle?: IdleAnimationConfig;
+}
+
+// ============================================================================
+// Idle Animation Configuration
+// ============================================================================
+
+export type IdleAnimationType = 'wiggle' | 'pulse' | 'blink' | 'spin' | 'custom' | 'none';
+export type IdleSyncMode = 'together' | 'random';
+
+export interface IdleWiggleConfig {
+  maxAngle: number;
+  speed: number;
+  sync: IdleSyncMode;
+}
+
+export interface IdlePulseConfig {
+  minScale: number;
+  maxScale: number;
+  speed: number;
+  sync: IdleSyncMode;
+}
+
+export interface IdleBlinkConfig {
+  onRatio: number;
+  speed: number;
+  style: 'snap' | 'fade';
+}
+
+export interface IdleSpinConfig {
+  speed: number;
+  direction: 'clockwise' | 'counterclockwise';
+}
+
+export interface IdleCustomContext {
+  element: HTMLElement;
+  index: number;
+  totalImages: number;
+}
+
+export type IdleCustomAnimationFn = (ctx: IdleCustomContext) => Animation | (() => void);
+
+export interface IdleAnimationConfig {
+  type: IdleAnimationType;
+  wiggle?: IdleWiggleConfig;
+  pulse?: IdlePulseConfig;
+  blink?: IdleBlinkConfig;
+  spin?: IdleSpinConfig;
+  custom?: IdleCustomAnimationFn;
+  startDelay?: number;
 }
 
 // ============================================================================
