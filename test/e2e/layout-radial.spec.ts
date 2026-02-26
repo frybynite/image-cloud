@@ -115,8 +115,8 @@ test.describe('Radial Layout Algorithm', () => {
       const centerX = viewport.width / 2;
       const centerY = viewport.height / 2;
 
-      // Measure max spread at low tightness
-      await initGallery(page, { tightness: 0.5 });
+      // Measure max spread at low tightness (0.3 ensures ringStep is above the imageSize floor on all viewports)
+      await initGallery(page, { tightness: 0.3 });
       const loosePositions = await getImagePositions(page);
       const looseDistances = getDistancesFromCenter(loosePositions, centerX, centerY);
       const looseMaxDist = Math.max(...looseDistances);

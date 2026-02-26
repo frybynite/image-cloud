@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.8.2] - 2026-02-25
+
+### Added
+- **`layout.radial.tightness`**: New parameter controlling radial ring spacing independently of image size. Higher values pack rings closer together; lower values spread them further apart. Default: `1.0`. Range: `0.3`–`2.0`.
+- **Configurator**: Added Tightness control for Radial layout.
+- **Tests**: Added `layout-radial.spec.ts` with 16 tests covering rendering, tightness, and edge cases.
+
+### Fixed
+- **Radial layout**: Decoupled ring spacing from `densityFactor` — rings now use container geometry as the base, so changing image size no longer affects ring positions.
+- **Configurator**: Wave `rows` default corrected to `1` (was `3`).
+- **Configurator**: Wave Synchronization moved above Phase Shift; Phase Shift is now hidden and disabled unless Synchronization is set to `offset`.
+
 ## [0.8.1] - 2026-02-25
 
 ### Fixed

@@ -63,7 +63,7 @@ export class RadialPlacementLayout implements PlacementLayout {
     const estimatedMaxRings = Math.ceil(Math.sqrt(imageCount));
 
     const padding = this.config.spacing.padding ?? 50;
-    const maxRadius = Math.max(1, Math.min(
+    const maxRadius = Math.max(imageSize * 0.8, Math.min(
       cx - padding - imageSize / 2,
       cy - padding - imageSize / 2
     ));
@@ -97,7 +97,7 @@ export class RadialPlacementLayout implements PlacementLayout {
 
       // Ring settings
       // Scale X more than Y to create horizontal oval shape
-      const ringStep = (maxRadius / estimatedMaxRings) * 1.5 / radialConfig.tightness;
+      const ringStep = Math.max(imageSize * 0.8, (maxRadius / estimatedMaxRings) * 1.5 / radialConfig.tightness);
       const radiusY = currentRing * ringStep;
       const radiusX = radiusY * 1.5; // Horizontal stretching factor
 
