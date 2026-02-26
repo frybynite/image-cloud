@@ -53,6 +53,9 @@
       "alignment": "Alignment of images within their cells (default: center)",
       "overflowOffset": "Offset for overflow images when count exceeds cells (default: 0.25)"
     },
+    "radial": {
+      "tightness": "Controls how tightly rings are packed. Higher values bring rings closer together; lower values spread them further apart. (default: 1.0)"
+    },
     "spiral": {
       "_title": "Spiral-specific layout options",
       "spiralType": "Mathematical curve used: golden, archimedean, logarithmic (default: golden)",

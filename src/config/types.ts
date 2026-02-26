@@ -252,6 +252,10 @@ export interface GridAlgorithmConfig {
   overflowOffset: number;  // 0-0.5, percentage of cell size for stacking overflow images (default: 0.25)
 }
 
+export interface RadialAlgorithmConfig {
+  tightness: number;  // Ring spacing multiplier (default: 1.0). Higher = more spread, lower = tighter.
+}
+
 export interface SpiralAlgorithmConfig {
   spiralType: 'golden' | 'archimedean' | 'logarithmic';
   direction: 'clockwise' | 'counterclockwise';
@@ -291,6 +295,7 @@ export interface LayoutConfig {
   responsive?: ResponsiveBreakpoints;  // Viewport width breakpoints (mobile/tablet)
   targetCoverage?: number;       // 0-1, for adaptive sizing (default: 0.6)
   densityFactor?: number;        // Controls center point spacing (default: 1.0)
+  radial?: RadialAlgorithmConfig;
   grid?: GridAlgorithmConfig;
   spiral?: SpiralAlgorithmConfig;
   cluster?: ClusterAlgorithmConfig;

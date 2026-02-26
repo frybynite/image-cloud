@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, HoneycombAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig } from './types';
+import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, HoneycombAlgorithmConfig, RadialAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -106,6 +106,13 @@ export const DEFAULT_STYLING: ImageStylingConfig = Object.freeze({
   focused: Object.freeze({
     shadow: 'none' as ShadowPreset
   })
+});
+
+/**
+ * Default radial layout configuration
+ */
+export const DEFAULT_RADIAL_CONFIG: RadialAlgorithmConfig = Object.freeze({
+  tightness: 1.0,
 });
 
 /**
