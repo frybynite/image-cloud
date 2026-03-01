@@ -29,6 +29,7 @@ interface ImageCloudOptions {
   animation?: Partial<AnimationConfig>;
   interaction?: Partial<InteractionConfig>;
   rendering?: Partial<RenderingConfig>;
+  ui?: Partial<UIConfig>;
   styling?: Partial<ImageStylingConfig>;
   debug?: boolean;
 }
@@ -43,6 +44,7 @@ interface ImageCloudOptions {
 | `animation` | `AnimationConfig` | - | Entry and transition animations |
 | `interaction` | `InteractionConfig` | - | Focus/zoom behavior |
 | `rendering` | `RenderingConfig` | - | Responsive breakpoints |
+| `ui` | `UIConfig` | - | UI elements (spinner, counter, custom elements) |
 | `styling` | `ImageStylingConfig` | - | Visual styling (borders, shadows) |
 | `debug` | `boolean` | `false` | Enable console logging |
 
@@ -400,11 +402,23 @@ interface FilterConfig {
 
 ```typescript
 interface RenderingConfig {
-  ui: UIRenderingConfig;
+  responsive?: ResponsiveConfig;
 }
+```
 
-interface UIRenderingConfig {
-  showLoadingSpinner: boolean;  // Default: false
+---
+
+## UI Configuration
+
+### UIConfig
+
+```typescript
+interface UIConfig {
+  showLoadingSpinner: boolean;   // Default: false
+  showImageCounter?: boolean;    // Default: false
+  loadingElement?: string | HTMLElement;
+  errorElement?: string | HTMLElement;
+  counterElement?: string | HTMLElement;
 }
 ```
 
