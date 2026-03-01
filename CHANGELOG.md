@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.1] - 2026-03-01
+
+### Added
+- **`interaction.disableDragging`**: New boolean option (default: `false`) that sets `draggable="false"` on each image element, suppressing the browser's native click-drag ghost-image behavior.
+- **Configurator**: Single checkbox in the Interaction section (matching the debug checkbox style) — auto-refreshes the gallery on change and only emits the property when checked.
+- **Tests**: 3 new Playwright tests in `test/e2e/interaction.spec.ts` covering default, enabled, and explicit-false cases, with a dedicated fixture `test/fixtures/interaction-disable-dragging.html`.
+- **Docs**: `interaction.disableDragging` row added to `PARAMETERS.md` and tooltip added to `field-descriptions.json`.
+
 ## [0.9.0] - 2026-02-26
 
 ### Added
