@@ -503,19 +503,15 @@ export interface InteractionConfig {
 }
 
 // ============================================================================
-// Rendering Configuration
+// UI Configuration
 // ============================================================================
 
-export interface UIRenderingConfig {
+export interface UIConfig {
   showLoadingSpinner: boolean;
   showImageCounter?: boolean;
   loadingElement?: string | HTMLElement;
   errorElement?: string | HTMLElement;
   counterElement?: string | HTMLElement;
-}
-
-export interface RenderingConfig {
-  ui: UIRenderingConfig;
 }
 
 // ============================================================================
@@ -529,7 +525,7 @@ export interface ImageCloudConfig {
   layout: LayoutConfig;
   animation: AnimationConfig;
   interaction: InteractionConfig;
-  rendering: RenderingConfig;
+  ui: UIConfig;
   styling?: ImageStylingConfig;
 }
 
@@ -545,7 +541,9 @@ export interface ImageCloudOptions {
   layout?: Partial<LayoutConfig>;
   animation?: Partial<AnimationConfig>;
   interaction?: Partial<InteractionConfig>;
-  rendering?: Partial<RenderingConfig>;
+  ui?: Partial<UIConfig>;
+  /** @deprecated Use `ui` instead of `rendering.ui` */
+  rendering?: { ui?: Partial<UIConfig> };
   styling?: Partial<ImageStylingConfig>;
 }
 

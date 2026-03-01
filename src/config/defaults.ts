@@ -262,12 +262,10 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     dragging: true
   }),
 
-  // Pattern-based rendering configuration
-  rendering: Object.freeze({
-    ui: Object.freeze({
-      showLoadingSpinner: false,
-      showImageCounter: false
-    }),
+  // UI configuration
+  ui: Object.freeze({
+    showLoadingSpinner: false,
+    showImageCounter: false
   }),
 
   // Image styling
@@ -512,7 +510,7 @@ export function mergeConfig(
     layout: { ...DEFAULT_CONFIG.layout },
     animation: { ...DEFAULT_CONFIG.animation },
     interaction: { ...DEFAULT_CONFIG.interaction },
-    rendering: { ...DEFAULT_CONFIG.rendering },
+    ui: { ...DEFAULT_CONFIG.ui },
     styling: deepMergeStyling(DEFAULT_STYLING, userConfig.styling as Partial<ImageStylingConfig> | undefined)
   };
 
@@ -631,22 +629,16 @@ export function mergeConfig(
 
   }
 
-  // Deep merge rendering config
-  if (userConfig.rendering) {
-    merged.rendering = {
-      ...DEFAULT_CONFIG.rendering,
-      ...userConfig.rendering
-    } as any;
-
-    // Deep merge ui config
-    if (userConfig.rendering.ui) {
-      merged.rendering.ui = {
-        ...DEFAULT_CONFIG.rendering.ui,
-        ...userConfig.rendering.ui
-      };
-    }
-
+  // Merge ui config (with backwards compat for old rendering.ui)
+  const legacyUi = (userConfig as any).rendering?.ui;
+  if (legacyUi) {
+    console.warn('[ImageCloud] rendering.ui is deprecated. Use top-level ui instead.');
   }
+  merged.ui = {
+    ...DEFAULT_CONFIG.ui,
+    ...legacyUi,
+    ...userConfig.ui
+  };
 
   // Merge debug config
   merged.config.debug = {
