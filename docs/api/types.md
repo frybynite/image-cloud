@@ -161,7 +161,7 @@ interface ImageRotationRange {
 ```typescript
 interface LayoutConfig {
   algorithm: 'random' | 'radial' | 'grid' | 'spiral' | 'cluster' | 'wave';
-  spacing: { padding: number; minGap: number };
+  spacing: { padding: number };
   targetCoverage?: number;    // 0-1 (default: 0.6)
   densityFactor?: number;     // Multiplier (default: 1.0)
   scaleDecay?: number;        // 0-1, outer image size reduction (radial/spiral)
@@ -286,7 +286,6 @@ interface EntryScaleConfig {
 interface InteractionConfig {
   focus: FocusInteractionConfig;
   navigation?: NavigationInteractionConfig;  // Future
-  gestures?: GestureInteractionConfig;       // Future
 }
 
 interface FocusInteractionConfig {

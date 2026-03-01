@@ -86,6 +86,7 @@ export { GridPlacementLayout } from './layouts/GridPlacementLayout';
 export { SpiralPlacementLayout } from './layouts/SpiralPlacementLayout';
 export { ClusterPlacementLayout } from './layouts/ClusterPlacementLayout';
 export { WavePlacementLayout } from './layouts/WavePlacementLayout';
+export { HoneycombPlacementLayout } from './layouts/HoneycombPlacementLayout';
 
 // Export loaders for custom implementations
 export { GoogleDriveLoader } from './loaders/GoogleDriveLoader';

@@ -458,10 +458,3 @@ export function requiresJSAnimation(pathType: EntryPathType): boolean {
   return pathType === 'bounce' || pathType === 'elastic' || pathType === 'wave';
 }
 
-/**
- * Get CSS easing for bounce (approximation for simple bounce)
- * Note: This is only used as a fallback; full bounce uses JS animation
- */
-export function getBounceCSSEasing(): string {
-  return 'cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-}

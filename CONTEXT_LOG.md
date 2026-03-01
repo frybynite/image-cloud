@@ -345,8 +345,6 @@ Mark with `// STUB: Not implemented yet`:
 - `interaction.gestures.*` (pinchToZoom, doubleTapToFocus)
 - `rendering.ui.*` (showImageCounter, showThumbnails, theme)
 - `rendering.performance.*` (lazyLoad, preloadCount, imageQuality)
-- `animation.queue.maxConcurrent`
-- `animation.performance.*` (useGPU control, reduceMotion)
 
 ## Next Steps
 

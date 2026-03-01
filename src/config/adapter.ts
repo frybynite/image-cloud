@@ -159,8 +159,7 @@ export class LegacyOptionsAdapter {
 
     // Convert spacing configuration
     newLayout.spacing = {
-      padding: oldLayout.padding ?? 50,
-      minGap: oldLayout.minSpacing ?? 20
+      padding: oldLayout.padding ?? 50
     };
 
     // Convert image configuration (sizing, variance and rotation now in image config)

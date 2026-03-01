@@ -263,8 +263,7 @@ layout: {
 
   // Spacing
   spacing: {
-    padding: 50,     // Container edge padding
-    minGap: 20       // Minimum gap between images
+    padding: 50      // Container edge padding
   },
 
   // Coverage
