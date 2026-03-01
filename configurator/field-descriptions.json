@@ -1,5 +1,4 @@
 {
-  "debugCenters": "Show center markers for debugging layout placement (default: false)",
   "config": {
     "_title": "Global configuration for loaders and debug options",
     "loaders": {
@@ -38,7 +37,7 @@
     "densityFactor": "Multiplier affecting how tightly images are packed (default: 1.0)",
     "spacing": {
       "_title": "Control spacing around and between images",
-      "padding": "Space between images and container edges (default: 50)",
+      "padding": "Space between images and container edges (default: 50)"
     },
     "grid": {
       "_title": "Grid-specific layout options",
@@ -272,6 +271,11 @@
         "direction": "Rotation direction: clockwise, counterclockwise (default: clockwise)"
       }
     }
+  },
+  "ui": {
+    "_title": "UI display options",
+    "showLoadingSpinner": "Show a spinner while images are loading. Default: false",
+    "showImageCounter": "Show a '1 of N' counter when an image is focused. Hidden when no image is focused. Default: false"
   },
   "interaction": {
     "_title": "Configure user interaction behavior",

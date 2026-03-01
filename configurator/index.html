@@ -2170,6 +2170,24 @@
                     </div>
                 </div>
 
+                <!-- UI Section -->
+                <div class="accordion" data-section="ui">
+                    <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <span class="accordion-title" data-label="UI" data-path="ui" data-desc-key="ui">UI</span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="control-row">
+                            <input type="checkbox" class="control-checkbox" id="ui-show-loading-spinner">
+                            <label class="control-label" data-label="Show Loading Spinner" data-path="ui.showLoadingSpinner" data-desc-key="ui.showLoadingSpinner" style="flex: 0 0 auto;">Show Loading Spinner</label>
+                        </div>
+                        <div class="control-row">
+                            <input type="checkbox" class="control-checkbox" id="ui-show-image-counter">
+                            <label class="control-label" data-label="Show Image Counter" data-path="ui.showImageCounter" data-desc-key="ui.showImageCounter" style="flex: 0 0 auto;">Show Image Counter</label>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Config Section -->
                 <div class="accordion" data-section="config">
                     <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
@@ -2222,12 +2240,12 @@
                         <div class="control-group">
                             <h5 class="control-group-title" data-label="Debug" data-path="config.debug" data-desc-key="config.debug">Debug</h5>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="debug-enabled">
-                                <label class="control-label" data-label="Enable debug logging" data-path="config.debug.enabled" data-desc-key="config.debug.enabled" style="flex: 0 0 auto;">Enable debug logging</label>
-                            </div>
-                            <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="debug-centers">
                                 <label class="control-label" data-label="Show center markers" data-path="config.debug.centers" data-desc-key="config.debug.centers" style="flex: 0 0 auto;">Show center markers</label>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="debug-enabled">
+                                <label class="control-label" data-label="Enable debug logging" data-path="config.debug.enabled" data-desc-key="config.debug.enabled" style="flex: 0 0 auto;">Enable debug logging</label>
                             </div>
                             <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="debug-loaders">
@@ -4145,6 +4163,14 @@
             const draggingEl = document.getElementById('interaction-dragging');
             if (draggingEl && !draggingEl.checked) interaction.dragging = false;
             if (Object.keys(interaction).length > 0) config.interaction = interaction;
+
+            // UI
+            const ui = {};
+            const showSpinnerEl = document.getElementById('ui-show-loading-spinner');
+            if (showSpinnerEl && showSpinnerEl.checked) ui.showLoadingSpinner = true;
+            const showCounterEl = document.getElementById('ui-show-image-counter');
+            if (showCounterEl && showCounterEl.checked) ui.showImageCounter = true;
+            if (Object.keys(ui).length > 0) config.ui = ui;
 
             // Styling - build from stylingState
             const styling = {};
