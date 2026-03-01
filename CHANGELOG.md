@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.5] - 2026-03-01
+
+### Fixed
+- **CHANGELOG**: 0.9.4 entry corrected to include missing hover-style fix and `SharedLoaderConfig` removal.
+
 ## [0.9.4] - 2026-03-01
 
 ### Added
