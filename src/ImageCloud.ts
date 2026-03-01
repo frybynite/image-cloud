@@ -60,6 +60,10 @@ export class ImageCloud {
   private errorElAutoCreated: boolean;
   private counterEl: HTMLElement | null;
   private counterElAutoCreated: boolean;
+  private prevButtonEl: HTMLElement | null;
+  private nextButtonEl: HTMLElement | null;
+  private prevButtonElAutoCreated: boolean;
+  private nextButtonElAutoCreated: boolean;
 
   constructor(options: ImageCloudOptions = {}) {
     this.fullConfig = mergeConfig(options);
@@ -88,6 +92,10 @@ export class ImageCloud {
     this.errorElAutoCreated = false;
     this.counterEl = null;
     this.counterElAutoCreated = false;
+    this.prevButtonEl = null;
+    this.nextButtonEl = null;
+    this.prevButtonElAutoCreated = false;
+    this.nextButtonElAutoCreated = false;
 
     // Initialize engines with new config structure
     this.animationEngine = new AnimationEngine(this.fullConfig.animation);
@@ -120,9 +128,24 @@ export class ImageCloud {
       this.idleAnimationEngine = null;
     }
 
-    // Wire unfocus complete callback to resume idle animations
+    // Wire unfocus complete callback to resume idle animations and re-apply hover styles
     this.zoomEngine.setOnUnfocusCompleteCallback((el) => {
       this.idleAnimationEngine?.resumeForImage(el as HTMLImageElement);
+      // If the cursor is still over this image, mouseenter won't re-fire — re-apply hover styles.
+      // Defer to next frame so the browser updates :hover after the animation finishes.
+      const img = el as HTMLImageElement;
+      requestAnimationFrame(() => {
+        if (img.matches(':hover') && this.fullConfig.styling?.hover) {
+          const idx = this.imageElements.indexOf(img);
+          if (idx !== -1) {
+            const imageHeight = img.offsetHeight;
+            const cachedWidth = (img as any).cachedRenderedWidth;
+            applyStylesToElementWithState(img, this.fullConfig.styling.hover, imageHeight, cachedWidth);
+            applyClassNameToElement(img, this.hoverClassName);
+            this.hoveredImage = { element: img, layout: this.imageLayouts[idx] };
+          }
+        }
+      });
     });
 
     // SwipeEngine will be initialized after container is available
@@ -291,6 +314,32 @@ export class ImageCloud {
         this.counterElAutoCreated = true;
       }
     }
+
+    // Nav button elements
+    if (uiConfig.showNavButtons) {
+      if (uiConfig.prevButtonElement) {
+        this.prevButtonEl = this.resolveElement(uiConfig.prevButtonElement);
+        this.prevButtonElAutoCreated = false;
+      } else {
+        this.prevButtonEl = this.createDefaultPrevButtonElement();
+        this.prevButtonElAutoCreated = true;
+      }
+      if (uiConfig.nextButtonElement) {
+        this.nextButtonEl = this.resolveElement(uiConfig.nextButtonElement);
+        this.nextButtonElAutoCreated = false;
+      } else {
+        this.nextButtonEl = this.createDefaultNextButtonElement();
+        this.nextButtonElAutoCreated = true;
+      }
+      this.prevButtonEl?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.navigateToPreviousImage();
+      });
+      this.nextButtonEl?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.navigateToNextImage();
+      });
+    }
   }
 
   private resolveElement(ref: string | HTMLElement): HTMLElement | null {
@@ -325,6 +374,26 @@ export class ImageCloud {
     return el;
   }
 
+  private createDefaultPrevButtonElement(): HTMLElement {
+    const el = document.createElement('button');
+    el.className = 'fbn-ic-nav-btn fbn-ic-nav-btn-prev fbn-ic-hidden';
+    el.textContent = '‹';
+    el.setAttribute('aria-label', 'Previous image');
+    el.setAttribute('tabindex', '-1');
+    this.containerEl!.appendChild(el);
+    return el;
+  }
+
+  private createDefaultNextButtonElement(): HTMLElement {
+    const el = document.createElement('button');
+    el.className = 'fbn-ic-nav-btn fbn-ic-nav-btn-next fbn-ic-hidden';
+    el.textContent = '›';
+    el.setAttribute('aria-label', 'Next image');
+    el.setAttribute('tabindex', '-1');
+    this.containerEl!.appendChild(el);
+    return el;
+  }
+
   private setupEventListeners(): void {
     // Keyboard navigation — scoped to container, guarded by config flag
     if (this.fullConfig.interaction.navigation?.keyboard !== false) {
@@ -334,6 +403,7 @@ export class ImageCloud {
           this.currentFocusIndex = null;
           this.swipeEngine?.disable();
           this.hideCounter();
+          this.hideNavButtons();
         } else if (e.key === 'ArrowRight') {
           this.navigateToNextImage();
         } else if (e.key === 'ArrowLeft') {
@@ -350,11 +420,13 @@ export class ImageCloud {
       if (this.swipeEngine?.hadRecentTouch()) {
         return;
       }
-      if (!(e.target as HTMLElement).closest('.fbn-ic-image')) {
+      if (!(e.target as HTMLElement).closest('.fbn-ic-image') &&
+          !(e.target as HTMLElement).closest('.fbn-ic-nav-btn')) {
         this.zoomEngine.unfocusImage();
         this.currentFocusIndex = null;
         this.swipeEngine?.disable();
         this.hideCounter();
+        this.hideNavButtons();
       }
     });
 
@@ -380,6 +452,7 @@ export class ImageCloud {
     this.currentFocusIndex = nextId;
     this.handleImageClick(nextElement, layout);
     this.updateCounter(nextId);
+    this.showNavButtons();
   }
 
   /**
@@ -400,6 +473,7 @@ export class ImageCloud {
     this.currentFocusIndex = prevId;
     this.handleImageClick(prevElement, layout);
     this.updateCounter(prevId);
+    this.showNavButtons();
   }
 
   /**
@@ -895,6 +969,7 @@ export class ImageCloud {
       this.currentFocusIndex = null;
       this.swipeEngine?.disable();
       this.hideCounter();
+      this.hideNavButtons();
     } else {
       // Pause idle animation immediately before focus animation begins
       this.idleAnimationEngine?.pauseForImage(imageElement);
@@ -907,6 +982,7 @@ export class ImageCloud {
       if (this.currentFocusIndex !== null) {
         this.updateCounter(this.currentFocusIndex);
       }
+      this.showNavButtons();
     }
   }
 
@@ -969,6 +1045,16 @@ export class ImageCloud {
     }
   }
 
+  private showNavButtons(): void {
+    this.prevButtonEl?.classList.remove('fbn-ic-hidden');
+    this.nextButtonEl?.classList.remove('fbn-ic-hidden');
+  }
+
+  private hideNavButtons(): void {
+    this.prevButtonEl?.classList.add('fbn-ic-hidden');
+    this.nextButtonEl?.classList.add('fbn-ic-hidden');
+  }
+
   /**
    * Destroy the gallery and clean up resources
    */
@@ -986,6 +1072,14 @@ export class ImageCloud {
     if (this.counterElAutoCreated && this.counterEl) {
       this.counterEl.remove();
       this.counterEl = null;
+    }
+    if (this.prevButtonElAutoCreated && this.prevButtonEl) {
+      this.prevButtonEl.remove();
+      this.prevButtonEl = null;
+    }
+    if (this.nextButtonElAutoCreated && this.nextButtonEl) {
+      this.nextButtonEl.remove();
+      this.nextButtonEl = null;
     }
     // Remove event listeners
     if (this.resizeTimeout !== null) {

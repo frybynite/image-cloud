@@ -995,6 +995,37 @@ test.describe('Image Styling', () => {
       expect(cursor).toBe('pointer'); // Default cursor style
     });
 
+    test('hover styles re-applied after unfocus when cursor stays over image', async ({ page }) => {
+      await initGallery(page, {
+        default: { border: { width: 1, color: '#000000', style: 'solid' } },
+        hover:   { border: { width: 4, color: '#ff0000', style: 'solid' } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+      const box = await image.boundingBox();
+      if (!box) throw new Error('Could not get image bounding box');
+
+      // Move cursor to the image's original position and keep it there throughout
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.waitForTimeout(100);
+
+      // Confirm hover styles are applied
+      const hoverBorder = await image.evaluate((el) => window.getComputedStyle(el).borderWidth);
+      expect(hoverBorder).toBe('4px');
+
+      // Focus the image via JS dispatch (cursor stays at original position)
+      await image.evaluate((el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+      await page.waitForTimeout(300);
+
+      // Unfocus via JS dispatch (cursor still at original position)
+      await image.evaluate((el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+      await page.waitForTimeout(300);
+
+      // Cursor is still at original image position — hover styles should be re-applied
+      const borderAfterUnfocus = await image.evaluate((el) => window.getComputedStyle(el).borderWidth);
+      expect(borderAfterUnfocus).toBe('4px');
+    });
+
     test('handles partial hover config', async ({ page }) => {
       await initGallery(page, {
         default: {
