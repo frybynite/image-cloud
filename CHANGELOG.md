@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **Tests**: 9 Playwright tests for nav buttons (enabled + disabled fixtures).
 - **Docs**: `PARAMETERS.md` updated with new `ui` rows and a focus outline customisation section.
 
+### Fixed
+- **Hover styles after unfocus**: When an image unfocuses and returns under the cursor, `mouseenter` does not re-fire (cursor never left). A `requestAnimationFrame` callback in `onUnfocusComplete` now re-applies hover styling if the cursor is still over the element.
+
+### Removed
+- **`SharedLoaderConfig`** removed from public exports (`src/index.ts`) — internal type, not intended for consumer use.
+
 ## [0.9.3] - 2026-03-01
 
 ### Added
