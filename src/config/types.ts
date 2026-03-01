@@ -512,6 +512,9 @@ export interface UIConfig {
   loadingElement?: string | HTMLElement;
   errorElement?: string | HTMLElement;
   counterElement?: string | HTMLElement;
+  showNavButtons?: boolean;
+  prevButtonElement?: string | HTMLElement;
+  nextButtonElement?: string | HTMLElement;
 }
 
 // ============================================================================

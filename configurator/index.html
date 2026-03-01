@@ -2185,6 +2185,10 @@
                             <input type="checkbox" class="control-checkbox" id="ui-show-image-counter">
                             <label class="control-label" data-label="Show Image Counter" data-path="ui.showImageCounter" data-desc-key="ui.showImageCounter" style="flex: 0 0 auto;">Show Image Counter</label>
                         </div>
+                        <div class="control-row">
+                            <input type="checkbox" class="control-checkbox" id="ui-show-nav-buttons">
+                            <label class="control-label" data-label="Show Nav Buttons" data-path="ui.showNavButtons" data-desc-key="ui.showNavButtons" style="flex: 0 0 auto;">Show Nav Buttons</label>
+                        </div>
                     </div>
                 </div>
 
@@ -4170,6 +4174,8 @@
             if (showSpinnerEl && showSpinnerEl.checked) ui.showLoadingSpinner = true;
             const showCounterEl = document.getElementById('ui-show-image-counter');
             if (showCounterEl && showCounterEl.checked) ui.showImageCounter = true;
+            const showNavButtonsEl = document.getElementById('ui-show-nav-buttons');
+            if (showNavButtonsEl && showNavButtonsEl.checked) ui.showNavButtons = true;
             if (Object.keys(ui).length > 0) config.ui = ui;
 
             // Styling - build from stylingState

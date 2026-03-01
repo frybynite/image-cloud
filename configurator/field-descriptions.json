@@ -275,7 +275,8 @@
   "ui": {
     "_title": "UI display options",
     "showLoadingSpinner": "Show a spinner while images are loading. Default: false",
-    "showImageCounter": "Show a '1 of N' counter when an image is focused. Hidden when no image is focused. Default: false"
+    "showImageCounter": "Show a '1 of N' counter when an image is focused. Hidden when no image is focused. Default: false",
+    "showNavButtons": "Show prev/next navigation buttons (‹ ›) when an image is focused. Hidden when no image is focused. Custom elements can be provided via prevButtonElement and nextButtonElement. Default: false"
   },
   "interaction": {
     "_title": "Configure user interaction behavior",

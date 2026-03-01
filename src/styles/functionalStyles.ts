@@ -48,6 +48,24 @@ export const FUNCTIONAL_CSS = `
   pointer-events: none;
 }
 
+.fbn-ic-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10001;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  line-height: 1;
+}
+.fbn-ic-nav-btn-prev {
+  left: 12px;
+}
+.fbn-ic-nav-btn-next {
+  right: 12px;
+}
+
 .fbn-ic-hidden {
   display: none !important;
 }

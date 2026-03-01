@@ -265,7 +265,8 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
   // UI configuration
   ui: Object.freeze({
     showLoadingSpinner: false,
-    showImageCounter: false
+    showImageCounter: false,
+    showNavButtons: false
   }),
 
   // Image styling

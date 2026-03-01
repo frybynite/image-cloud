@@ -135,6 +135,26 @@
     font-size: 14px;
 }
 
+/* Navigation Buttons */
+.fbn-ic-nav-btn {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-family: system-ui, sans-serif;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, opacity 0.2s ease;
+    opacity: 0.8;
+}
+.fbn-ic-nav-btn:hover {
+    background: rgba(0, 0, 0, 0.85);
+    opacity: 1.0;
+}
+
 /* Utility Classes */
 .fbn-ic-hidden {
     display: none !important;

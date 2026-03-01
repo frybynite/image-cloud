@@ -41,6 +41,7 @@ Reduce boilerplate and complexity for clients getting started with the library.
   - `zIndex` - bring hovered/focused images to front
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
+- Focus navigation buttons — optional prev/next UI buttons shown when navigation is active (image focused). Visible only during navigation, user-styleable via CSS, with a default built-in appearance. Configured via the `ui` section.
 - Auth/credential hooks for static loader fetch options (e.g., custom headers, bearer tokens for authenticated image endpoints — applies to JSON source and URL validation)
 - Additional layout algorithms (physics-based)
 - Lightbox mode
