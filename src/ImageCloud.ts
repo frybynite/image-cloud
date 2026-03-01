@@ -284,6 +284,13 @@ export class ImageCloud {
   private setupUI(): void {
     const uiConfig = this.fullConfig.ui;
 
+    // Manage focus outline: suppress browser ring by default, restore when showFocusOutline: true
+    if (!uiConfig.showFocusOutline) {
+      this.containerEl?.classList.add('fbn-ic-suppress-outline');
+    } else {
+      this.containerEl?.classList.remove('fbn-ic-suppress-outline');
+    }
+
     // Loading element
     if (uiConfig.showLoadingSpinner) {
       if (uiConfig.loadingElement) {
@@ -404,6 +411,7 @@ export class ImageCloud {
           this.swipeEngine?.disable();
           this.hideCounter();
           this.hideNavButtons();
+          this.hideFocusIndicator();
         } else if (e.key === 'ArrowRight') {
           this.navigateToNextImage();
         } else if (e.key === 'ArrowLeft') {
@@ -427,6 +435,7 @@ export class ImageCloud {
         this.swipeEngine?.disable();
         this.hideCounter();
         this.hideNavButtons();
+        this.hideFocusIndicator();
       }
     });
 
@@ -453,6 +462,7 @@ export class ImageCloud {
     this.handleImageClick(nextElement, layout);
     this.updateCounter(nextId);
     this.showNavButtons();
+    this.showFocusIndicator();
   }
 
   /**
@@ -474,6 +484,7 @@ export class ImageCloud {
     this.handleImageClick(prevElement, layout);
     this.updateCounter(prevId);
     this.showNavButtons();
+    this.showFocusIndicator();
   }
 
   /**
@@ -970,6 +981,7 @@ export class ImageCloud {
       this.swipeEngine?.disable();
       this.hideCounter();
       this.hideNavButtons();
+      this.hideFocusIndicator();
     } else {
       // Pause idle animation immediately before focus animation begins
       this.idleAnimationEngine?.pauseForImage(imageElement);
@@ -978,11 +990,13 @@ export class ImageCloud {
       const imageId = imageElement.dataset.imageId;
       this.currentFocusIndex = imageId !== undefined ? parseInt(imageId, 10) : null;
       this.swipeEngine?.enable();
+      this.containerEl?.focus({ preventScroll: true });
       await this.zoomEngine.focusImage(imageElement, bounds, originalLayout);
       if (this.currentFocusIndex !== null) {
         this.updateCounter(this.currentFocusIndex);
       }
       this.showNavButtons();
+      this.showFocusIndicator();
     }
   }
 
@@ -998,6 +1012,8 @@ export class ImageCloud {
     // Increment generation to invalidate pending image onload handlers
     this.loadGeneration++;
     this.displayQueue = [];
+
+    this.hideFocusIndicator();
 
     if (this.containerEl) {
       this.containerEl.querySelectorAll('.fbn-ic-image, .fbn-ic-debug-center').forEach(el => el.remove());
@@ -1043,6 +1059,14 @@ export class ImageCloud {
     if (this.counterEl) {
       this.counterEl.classList.add('fbn-ic-hidden');
     }
+  }
+
+  private showFocusIndicator(): void {
+    this.containerEl?.classList.add('fbn-ic-has-focus');
+  }
+
+  private hideFocusIndicator(): void {
+    this.containerEl?.classList.remove('fbn-ic-has-focus');
   }
 
   private showNavButtons(): void {

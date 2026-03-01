@@ -2189,6 +2189,10 @@
                             <input type="checkbox" class="control-checkbox" id="ui-show-nav-buttons">
                             <label class="control-label" data-label="Show Nav Buttons" data-path="ui.showNavButtons" data-desc-key="ui.showNavButtons" style="flex: 0 0 auto;">Show Nav Buttons</label>
                         </div>
+                        <div class="control-row">
+                            <input type="checkbox" class="control-checkbox" id="ui-show-focus-outline">
+                            <label class="control-label" data-label="Show Focus Outline" data-path="ui.showFocusOutline" data-desc-key="ui.showFocusOutline" style="flex: 0 0 auto;">Show Focus Outline</label>
+                        </div>
                     </div>
                 </div>
 
@@ -4176,6 +4180,8 @@
             if (showCounterEl && showCounterEl.checked) ui.showImageCounter = true;
             const showNavButtonsEl = document.getElementById('ui-show-nav-buttons');
             if (showNavButtonsEl && showNavButtonsEl.checked) ui.showNavButtons = true;
+            const showFocusOutlineEl = document.getElementById('ui-show-focus-outline');
+            if (showFocusOutlineEl && showFocusOutlineEl.checked) ui.showFocusOutline = true;
             if (Object.keys(ui).length > 0) config.ui = ui;
 
             // Styling - build from stylingState

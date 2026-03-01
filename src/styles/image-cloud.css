@@ -135,6 +135,12 @@
     font-size: 14px;
 }
 
+/* Focus Outline (keyboard navigation indicator) */
+.fbn-ic-gallery.fbn-ic-suppress-outline.fbn-ic-has-focus {
+    outline: 2px solid var(--fbn-ic-accent-primary);
+    outline-offset: -4px;
+}
+
 /* Navigation Buttons */
 .fbn-ic-nav-btn {
     background: rgba(0, 0, 0, 0.6);

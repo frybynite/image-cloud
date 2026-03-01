@@ -48,6 +48,19 @@ export const FUNCTIONAL_CSS = `
   pointer-events: none;
 }
 
+.fbn-ic-gallery:focus,
+.fbn-ic-gallery.fbn-ic-has-focus {
+  outline: 2px solid rgba(147, 197, 253, 0.8);
+  outline-offset: -4px;
+}
+.fbn-ic-gallery.fbn-ic-suppress-outline:focus {
+  outline: none;
+}
+.fbn-ic-gallery.fbn-ic-suppress-outline.fbn-ic-has-focus {
+  outline: 2px solid rgba(99, 102, 241, 0.6);
+  outline-offset: -4px;
+}
+
 .fbn-ic-nav-btn {
   position: absolute;
   top: 50%;

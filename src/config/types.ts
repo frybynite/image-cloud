@@ -515,6 +515,7 @@ export interface UIConfig {
   showNavButtons?: boolean;
   prevButtonElement?: string | HTMLElement;
   nextButtonElement?: string | HTMLElement;
+  showFocusOutline?: boolean;
 }
 
 // ============================================================================

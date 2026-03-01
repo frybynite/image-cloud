@@ -276,7 +276,8 @@
     "_title": "UI display options",
     "showLoadingSpinner": "Show a spinner while images are loading. Default: false",
     "showImageCounter": "Show a '1 of N' counter when an image is focused. Hidden when no image is focused. Default: false",
-    "showNavButtons": "Show prev/next navigation buttons (‹ ›) when an image is focused. Hidden when no image is focused. Custom elements can be provided via prevButtonElement and nextButtonElement. Default: false"
+    "showNavButtons": "Show prev/next navigation buttons (‹ ›) when an image is focused. Hidden when no image is focused. Custom elements can be provided via prevButtonElement and nextButtonElement. Default: false",
+    "showFocusOutline": "When false (default), suppresses the browser's default focus ring on the gallery container and instead shows a subtle accent-colored outline only when an image is focused (keyboard navigation active). When true, the browser default :focus outline is shown. Style the active outline via .fbn-ic-gallery.fbn-ic-has-focus { outline: ... }. Default: false"
   },
   "interaction": {
     "_title": "Configure user interaction behavior",

@@ -1518,6 +1518,29 @@ Controls UI elements shown during loading and interaction.
 | `ui.showNavButtons` | `boolean` | `false` | Show prev/next buttons (‹ ›) when an image is focused. Hidden on unfocus. |
 | `ui.prevButtonElement` | `string \| HTMLElement` | `undefined` | Custom prev button. If omitted, a default ‹ button is auto-created at left-center of container. |
 | `ui.nextButtonElement` | `string \| HTMLElement` | `undefined` | Custom next button. If omitted, a default › button is auto-created at right-center of container. |
+| `ui.showFocusOutline` | `boolean` | `false` | Controls the focus ring on the gallery container. When `false` (default), the browser's `:focus` outline is suppressed and a subtle accent outline appears only while an image is focused (indicating keyboard navigation is active). When `true`, the browser default `:focus` outline is always shown. |
+
+#### Customising the focus outline
+
+When `showFocusOutline: false` (default), the library adds `fbn-ic-suppress-outline` to the container permanently and toggles `fbn-ic-has-focus` while an image is focused. Override the active outline via CSS:
+
+```css
+/* Custom focus indicator colour / style */
+/* Use a negative outline-offset so the outline draws inside the element */
+/* (prevents clipping by parent overflow:hidden) */
+.fbn-ic-gallery.fbn-ic-has-focus {
+  outline: 3px solid hotpink;
+  outline-offset: -6px;
+}
+```
+
+The default appearance uses the library's accent colour (`#6366f1`). You can also remove the indicator entirely:
+
+```css
+.fbn-ic-gallery.fbn-ic-has-focus {
+  outline: none;
+}
+```
 
 ### 7. Styling Configuration (`styling`)
 
