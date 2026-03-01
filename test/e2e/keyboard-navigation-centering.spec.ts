@@ -46,6 +46,7 @@ test.describe('Keyboard Navigation Centering', () => {
     const totalImages = await page.locator('#imageCloud img').count();
     const imageIds: number[] = [parseInt(firstId!)];
 
+    await page.locator('#imageCloud').focus();
     for (let i = 1; i < totalImages; i++) {
       await page.keyboard.press('ArrowRight');
       await waitForAnimation(page, 300);
@@ -75,6 +76,7 @@ test.describe('Keyboard Navigation Centering', () => {
     const totalImages = await page.locator('#imageCloud img').count();
 
     // Navigate left
+    await page.locator('#imageCloud').focus();
     await page.keyboard.press('ArrowLeft');
     await waitForAnimation(page, 300);
 
@@ -95,6 +97,7 @@ test.describe('Keyboard Navigation Centering', () => {
     await waitForAnimation(page, 300);
 
     // Navigate through all images to wrap around
+    await page.locator('#imageCloud').focus();
     for (let i = 0; i < totalImages; i++) {
       await page.keyboard.press('ArrowRight');
       await waitForAnimation(page, 300);
@@ -123,6 +126,7 @@ test.describe('Keyboard Navigation Centering', () => {
     // (the zoom engine centers focused images in the viewport)
     const totalImages = await page.locator('#imageCloud img').count();
 
+    await page.locator('#imageCloud').focus();
     for (let i = 0; i < totalImages; i++) {
       const box = await page.evaluate(() => {
         const imgs = document.querySelectorAll('#imageCloud img');

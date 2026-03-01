@@ -39,7 +39,6 @@
     "spacing": {
       "_title": "Control spacing around and between images",
       "padding": "Space between images and container edges (default: 50)",
-      "minGap": "Minimum space between adjacent images (default: 20)"
     },
     "grid": {
       "_title": "Grid-specific layout options",
@@ -281,6 +280,11 @@
       "scalePercent": "Size of focused image relative to container (default: 0.8)",
       "zIndex": "Stack order of focused image (default: 1000)"
     },
-    "disableDragging": "Prevent browser's default image drag behavior (default: false)"
+    "navigation": {
+      "_title": "Control which navigation methods are active",
+      "keyboard": "Enable arrow key (← →) and Escape navigation, scoped to the gallery container. Click the gallery first to give it focus. Default: true",
+      "swipe": "Enable touch swipe gestures to navigate between focused images. Disable to prevent swipe conflicts with scrollable parent containers. Default: true"
+    },
+    "dragging": "Allow browser's default image drag behavior (default: true). Set to false to suppress the native click-drag ghost image."
   }
 }

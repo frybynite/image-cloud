@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cloud - Per-Container Keyboard Navigation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #05060F;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+        .instructions {
+            padding: 12px 20px;
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            flex-shrink: 0;
+        }
+        .instructions strong { color: #e2e8f0; }
+        .galleries {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .gallery-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .gallery-pane + .gallery-pane {
+            border-left: 2px solid #1e293b;
+        }
+        .gallery-label {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .label-on { background: #064e3b; color: #6ee7b7; }
+        .label-off { background: #3b0764; color: #d8b4fe; }
+        .gallery-container {
+            flex: 1;
+            outline: none;
+        }
+        .gallery-container:focus-visible {
+            box-shadow: inset 0 0 0 2px #60a5fa;
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="instructions">
+        <strong>Per-container keyboard navigation demo.</strong>
+        Click an image to focus it, then use <strong>&larr; &rarr;</strong> arrow keys to navigate.
+        The left gallery responds to keys; the right gallery does not.
+    </div>
+    <div class="galleries">
+        <div class="gallery-pane">
+            <div class="gallery-label label-on">Keyboard Navigation ON (default)</div>
+            <div id="galleryLeft" class="gallery-container" role="region" aria-label="Gallery with keyboard navigation"></div>
+        </div>
+        <div class="gallery-pane">
+            <div class="gallery-label label-off">Keyboard Navigation OFF</div>
+            <div id="galleryRight" class="gallery-container" role="region" aria-label="Gallery without keyboard navigation"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ImageCloud } from '@frybynite/image-cloud';
+
+        const IMAGES = [
+            'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&auto=format&fit=crop',
+            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&w=800',
+        ];
+
+        const sharedConfig = {
+            images: IMAGES,
+            layout: { type: 'grid' },
+        };
+
+        const leftCloud = new ImageCloud({
+            ...sharedConfig,
+            container: 'galleryLeft',
+        });
+
+        const rightCloud = new ImageCloud({
+            ...sharedConfig,
+            container: 'galleryRight',
+            interaction: {
+                navigation: { keyboard: false }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            leftCloud.init().catch(console.error);
+            rightCloud.init().catch(console.error);
+        });
+    </script>
+    <script src="view-source-popup.js"></script>
+</body>
+</html>

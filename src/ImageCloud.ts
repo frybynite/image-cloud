@@ -220,22 +220,25 @@ export class ImageCloud {
 
       // Add gallery class for CSS scoping
       this.containerEl.classList.add('fbn-ic-gallery');
+      this.containerEl.setAttribute('tabindex', '0');
 
-      // Initialize swipe engine for touch navigation
-      this.swipeEngine = new SwipeEngine(this.containerEl, {
-        onNext: () => this.navigateToNextImage(),
-        onPrev: () => this.navigateToPreviousImage(),
-        onDragOffset: (offset) => this.zoomEngine.setDragOffset(offset),
-        onDragEnd: (navigated) => {
-          if (!navigated) {
-            // Snap back to center with animation
-            this.zoomEngine.clearDragOffset(true, SNAP_BACK_DURATION_MS);
-          } else {
-            // Clear offset immediately (navigation handles transition)
-            this.zoomEngine.clearDragOffset(false);
+      // Initialize swipe engine for touch navigation (guarded by config flag)
+      if (this.fullConfig.interaction.navigation?.swipe !== false) {
+        this.swipeEngine = new SwipeEngine(this.containerEl, {
+          onNext: () => this.navigateToNextImage(),
+          onPrev: () => this.navigateToPreviousImage(),
+          onDragOffset: (offset) => this.zoomEngine.setDragOffset(offset),
+          onDragEnd: (navigated) => {
+            if (!navigated) {
+              // Snap back to center with animation
+              this.zoomEngine.clearDragOffset(true, SNAP_BACK_DURATION_MS);
+            } else {
+              // Clear offset immediately (navigation handles transition)
+              this.zoomEngine.clearDragOffset(false);
+            }
           }
-        }
-      });
+        });
+      }
 
       // Create or bind UI elements
       this.setupUI();
@@ -323,23 +326,24 @@ export class ImageCloud {
   }
 
   private setupEventListeners(): void {
-    // Global keyboard events
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        this.zoomEngine.unfocusImage();
-        this.currentFocusIndex = null;
-        this.swipeEngine?.disable();
-        this.hideCounter();
-      } else if (e.key === 'ArrowRight') {
-        this.navigateToNextImage();
-      } else if (e.key === 'ArrowLeft') {
-        this.navigateToPreviousImage();
-      } else if ((e.key === 'Enter' || e.key === ' ') && this.hoveredImage) {
-        // Focus the hovered image (works whether or not another image is focused)
-        this.handleImageClick(this.hoveredImage.element, this.hoveredImage.layout);
-        e.preventDefault(); // Prevent space from scrolling the page
-      }
-    });
+    // Keyboard navigation — scoped to container, guarded by config flag
+    if (this.fullConfig.interaction.navigation?.keyboard !== false) {
+      this.containerEl!.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          this.zoomEngine.unfocusImage();
+          this.currentFocusIndex = null;
+          this.swipeEngine?.disable();
+          this.hideCounter();
+        } else if (e.key === 'ArrowRight') {
+          this.navigateToNextImage();
+        } else if (e.key === 'ArrowLeft') {
+          this.navigateToPreviousImage();
+        } else if ((e.key === 'Enter' || e.key === ' ') && this.hoveredImage) {
+          this.handleImageClick(this.hoveredImage.element, this.hoveredImage.layout);
+          e.preventDefault();
+        }
+      });
+    }
 
     document.addEventListener('click', (e: MouseEvent) => {
       // Ignore clicks that follow touch events (prevents unfocus during swipe)
@@ -718,7 +722,7 @@ export class ImageCloud {
       // NOTE: img.src is set AFTER onload handler to ensure handler catches cached images
       img.referrerPolicy = 'no-referrer';
       img.classList.add('fbn-ic-image');
-      if (this.fullConfig.interaction.disableDragging) {
+      if (this.fullConfig.interaction.dragging === false) {
         img.draggable = false;
       }
       img.dataset.imageId = String(index);

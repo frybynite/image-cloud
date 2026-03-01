@@ -106,11 +106,12 @@ test.describe('User Interactions', () => {
       const hasFocusedClassAt200ms = await page.evaluate(() => {
         return new Promise<boolean>((resolve) => {
           const img = document.querySelector('#imageCloud img') as HTMLElement;
+          const container = document.querySelector('#imageCloud') as HTMLElement;
 
-          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
           setTimeout(() => {
-            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
             setTimeout(() => {
               resolve(img.classList.contains('fbn-ic-focused'));
@@ -136,6 +137,7 @@ test.describe('User Interactions', () => {
 
       expect(await isImageFocused(page, 0)).toBe(true);
 
+      await page.locator('#imageCloud').focus();
       await page.keyboard.press('Escape');
       await waitForAnimation(page, 300);
 
@@ -170,6 +172,7 @@ test.describe('User Interactions', () => {
       await forceClickImage(page, 0);
       await waitForAnimation(page, 300);
 
+      await page.locator('#imageCloud').focus();
       await page.keyboard.press('Escape');
       await waitForAnimation(page, 300);
 
@@ -188,6 +191,7 @@ test.describe('User Interactions', () => {
       await forceClickImage(page, 0);
       await waitForAnimation(page, 300);
 
+      await page.locator('#imageCloud').focus();
       await page.keyboard.press('Escape');
       await waitForAnimation(page, 300);
 
@@ -244,7 +248,7 @@ test.describe('User Interactions', () => {
 
   });
 
-  test.describe('Disable Dragging', () => {
+  test.describe('Dragging', () => {
 
     test('images are draggable by default', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
@@ -259,7 +263,7 @@ test.describe('User Interactions', () => {
       draggable.forEach((d) => expect(d).toBe(true));
     });
 
-    test('disableDragging: true sets draggable=false on all images', async ({ page }) => {
+    test('dragging: false sets draggable=false on all images', async ({ page }) => {
       await page.goto('/test/fixtures/interaction-disable-dragging.html');
       await waitForGalleryInit(page);
 
@@ -272,7 +276,7 @@ test.describe('User Interactions', () => {
       draggable.forEach((d) => expect(d).toBe(false));
     });
 
-    test('disableDragging: false leaves images draggable', async ({ page }) => {
+    test('dragging: true leaves images draggable', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
       await waitForGalleryInit(page);
 
@@ -353,6 +357,7 @@ test.describe('User Interactions', () => {
       await waitForAnimation(page, 200); // Let animation start properly
 
       // Press ESC during animation
+      await page.locator('#imageCloud').focus();
       await page.keyboard.press('Escape');
       await waitForAnimation(page, 1000); // Wait for unfocus animations to complete
 
@@ -380,6 +385,7 @@ test.describe('User Interactions', () => {
       await waitForAnimation(page, 200); // Let animation start
 
       // Cancel with ESC
+      await page.locator('#imageCloud').focus();
       await page.keyboard.press('Escape');
       await waitForAnimation(page, 1000); // Wait for unfocus animations
 

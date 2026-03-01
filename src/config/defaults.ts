@@ -66,16 +66,6 @@ export const DEFAULT_ENTRY_SCALE: EntryScaleConfig = Object.freeze({
   mode: 'none' as const
 });
 
-/**
- * Entry scale presets for common effects
- */
-export const ENTRY_SCALE_PRESETS = Object.freeze({
-  grow: Object.freeze({ mode: 'grow' as const, startScale: 0.3 }),
-  shrink: Object.freeze({ mode: 'shrink' as const, startScale: 1.5 }),
-  pop: Object.freeze({ mode: 'pop' as const, pop: Object.freeze({ overshoot: 1.2, bounces: 1 }) }),
-  randomSubtle: Object.freeze({ mode: 'random' as const, range: Object.freeze({ min: 0.7, max: 1.0 }) }),
-  randomWide: Object.freeze({ mode: 'random' as const, range: Object.freeze({ min: 0.3, max: 1.5 }) })
-});
 
 /**
  * Default image styling configuration
@@ -221,8 +211,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     targetCoverage: 0.6,           // Target 60% of container area
     densityFactor: 1.0,            // Default density
     spacing: Object.freeze({
-      padding: 50,   // padding from viewport edges
-      minGap: 20     // minimum spacing between images
+      padding: 50   // padding from viewport edges
     })
   }),
 
@@ -269,10 +258,6 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
       keyboard: true,
       swipe: true,
       mouseWheel: undefined  // STUB: Not implemented yet
-    }),
-    gestures: Object.freeze({
-      pinchToZoom: undefined,  // STUB: Not implemented yet
-      doubleTapToFocus: undefined  // STUB: Not implemented yet
     }),
     dragging: true
   }),
@@ -655,13 +640,6 @@ export function mergeConfig(
       };
     }
 
-    // Deep merge gestures config
-    if (userConfig.interaction.gestures) {
-      merged.interaction.gestures = {
-        ...DEFAULT_CONFIG.interaction.gestures,
-        ...userConfig.interaction.gestures
-      };
-    }
   }
 
   // Deep merge rendering config

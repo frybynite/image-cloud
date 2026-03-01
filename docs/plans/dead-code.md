@@ -12,43 +12,12 @@ These are declared in `src/config/types.ts` and `src/config/defaults.ts` but nev
 
 | Parameter | Notes |
 |---|---|
-| `animation.performance.useGPU` | Stub — never accessed |
-| `animation.performance.reduceMotion` | Stub — never accessed |
-| `interaction.navigation.keyboard` | Stub — keyboard nav is always-on, config flag ignored |
-| `interaction.navigation.swipe` | Stub — SwipeEngine always initialised, config flag ignored |
 | `interaction.navigation.mouseWheel` | Stub — never referenced |
-| `interaction.gestures.pinchToZoom` | Stub — never accessed |
-| `interaction.gestures.doubleTapToFocus` | Stub — never accessed |
 | `rendering.responsive.breakpoints.tablet` | Stub — breakpoints handled by LayoutEngine logic, not this config |
 | `rendering.responsive.breakpoints.desktop` | Stub — same as above |
 | `rendering.responsive.mobileDetection` | Stub — never called |
 
-**Options:** Remove the entire stub namespaces (`animation.performance`, `animation.queue`, `interaction.navigation`, `interaction.gestures`, `rendering.responsive`) or keep with a documented "reserved" status.
-
-### Functional dead parameters
-
-| Parameter | Notes |
-|---|---|
-| `layout.spacing.minGap` | Defined in types + defaults, no layout implementation reads it — already tracked in backlog |
-
----
-
-## Unused Functions / Constants
-
-| Symbol | Location | Notes |
-|---|---|---|
-| `getBounceCSSEasing()` | `src/engines/PathAnimator.ts:465` | Exported but never called anywhere in the codebase |
-| `ENTRY_SCALE_PRESETS` | `src/config/defaults.ts:72-78` | Exported constant, never imported or used |
-
----
-
-## Missing / Inconsistent Exports
-
-| Symbol | Notes |
-|---|---|
-| `HoneycombPlacementLayout` | Used internally by LayoutEngine but not exported from `src/index.ts` — inconsistent with other layout classes |
-| `IdleAnimationEngine` | Used internally, not exported |
-| `SwipeEngine` | Used internally, not exported |
+**Options:** Remove the remaining stub namespace (`rendering.responsive`) or keep with a documented "reserved" status. `interaction.navigation.mouseWheel` can be removed or reserved for a future implementation.
 
 ---
 
@@ -60,9 +29,5 @@ These are declared in `src/config/types.ts` and `src/config/defaults.ts` but nev
 
 ## Recommended Actions
 
-1. **Remove stub namespaces** — strip out `animation.performance`, `animation.queue`, `interaction.navigation`, `interaction.gestures`, `rendering.responsive` from types, defaults, and any config merging logic, unless there is a concrete plan to implement them.
-2. **Remove `getBounceCSSEasing()`** — or document and use it if bounce easing is needed.
-3. **Remove `ENTRY_SCALE_PRESETS`** — or export it from `src/index.ts` if it is intended as a public utility.
-4. **Export `HoneycombPlacementLayout`** from `src/index.ts` for consistency.
-5. **Fix configurator `debugCenters`** field path mapping.
-6. **Resolve `layout.spacing.minGap`** — implement or remove (tracked in backlog).
+1. **Remove stub parameters** — strip out `interaction.navigation.mouseWheel` and the `rendering.responsive` stub fields from types, defaults, and any config merging logic, unless there is a concrete plan to implement them. (`animation.performance`, `animation.queue.maxConcurrent`, and `interaction.gestures` already removed. `interaction.navigation.keyboard` and `interaction.navigation.swipe` are now implemented and documented.)
+2. **Fix configurator `debugCenters`** field path mapping.

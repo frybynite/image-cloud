@@ -224,7 +224,6 @@ export interface ResponsiveBreakpoints {
 
 export interface LayoutSpacingConfig {
   padding: number;
-  minGap: number;
 }
 
 // Legacy interface kept for backward compatibility in LayoutEngine
@@ -424,16 +423,10 @@ export interface AnimationQueueConfig {
   interval: number;
 }
 
-export interface AnimationPerformanceConfig {
-  useGPU?: boolean;
-  reduceMotion?: boolean;
-}
-
 export interface AnimationConfig {
   duration: number;
   easing: AnimationEasingConfig;
   queue: AnimationQueueConfig;
-  performance?: AnimationPerformanceConfig;
   entry?: EntryAnimationConfig;
   idle?: IdleAnimationConfig;
 }
@@ -503,16 +496,10 @@ export interface NavigationInteractionConfig {
   mouseWheel?: boolean;
 }
 
-export interface GestureInteractionConfig {
-  pinchToZoom?: boolean;
-  doubleTapToFocus?: boolean;
-}
-
 export interface InteractionConfig {
   focus: FocusInteractionConfig;
   navigation?: NavigationInteractionConfig;
-  gestures?: GestureInteractionConfig;
-  disableDragging?: boolean;
+  dragging?: boolean;
 }
 
 // ============================================================================

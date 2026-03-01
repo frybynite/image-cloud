@@ -808,7 +808,6 @@ No algorithm-specific options. Uses base `sizing` and `rotation` config.
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `padding` | `number` | `50` | Padding from container edges (px). |
-| `minGap` | `number` | `20` | Minimum space between images (px). |
 
 ### 4. Animation Configuration (`animation`)
 
@@ -1471,7 +1470,9 @@ Controls user interactions like clicking and zooming.
 | :--- | :--- | :--- | :--- |
 | `focus.scalePercent` | `number` | `0.8` | Target size as percentage of container. Values 0-1 are fractions (0.8 = 80%), values > 1 are treated as percentages (80 = 80%). |
 | `focus.zIndex` | `number` | `1000` | Z-index of the focused image. |
-| `disableDragging` | `boolean` | `false` | When `true`, sets `draggable="false"` on each image element, suppressing the browser's native click-drag behavior. |
+| `dragging` | `boolean` | `true` | When `false`, sets `draggable="false"` on each image element, suppressing the browser's native click-drag behavior. |
+| `navigation.keyboard` | `boolean` | `true` | When `false`, disables arrow key (← →), Escape, and Enter/Space keyboard navigation. Navigation is scoped to the gallery container — click the container to give it focus first. |
+| `navigation.swipe` | `boolean` | `true` | When `false`, disables touch swipe gestures for navigating between focused images. Useful when the gallery is inside a scrollable container. |
 
 **Focus Scaling Behavior:**
 
@@ -1976,7 +1977,6 @@ All available parameters with example values:
 
     "spacing": {
       "padding": 50,                            // Default. Container padding in px
-      "minGap": 20                              // Default. Min gap between images
     },
 
     // Grid algorithm options
@@ -2104,6 +2104,10 @@ All available parameters with example values:
     "focus": {
       "scalePercent": 0.8,                      // Default. 0-1 as fraction, 1-100 as percent
       "zIndex": 1000                            // Default
+    },
+    "navigation": {
+      "keyboard": true,                         // Default. Set false to disable keyboard nav
+      "swipe": true                             // Default. Set false to disable swipe gestures
     }
   },
 
