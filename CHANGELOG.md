@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.4] - 2026-03-01
+
+### Added
+- **`ui.showNavButtons`**: Optional prev/next `‹ ›` navigation buttons that appear when an image is focused and hide on unfocus. Follows the same pattern as `showImageCounter`. Custom elements supported via `prevButtonElement` / `nextButtonElement`. Clicks use `stopPropagation()` to prevent accidental unfocus.
+- **`ui.showFocusOutline`**: Controls the gallery container's focus ring. Default `false` suppresses the browser's `:focus` outline and shows a subtle accent-coloured inset outline only while an image is focused. Set to `true` for a light blue inset ring. Style via `.fbn-ic-gallery.fbn-ic-has-focus { outline: ... }`.
+- **Configurator**: Show Nav Buttons and Show Focus Outline checkboxes added to the UI section.
+- **Tests**: 9 Playwright tests for nav buttons (enabled + disabled fixtures).
+- **Docs**: `PARAMETERS.md` updated with new `ui` rows and a focus outline customisation section.
+
 ## [0.9.3] - 2026-03-01
 
 ### Added
