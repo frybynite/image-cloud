@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.3] - 2026-03-01
+
+### Added
+- **`ui` top-level config key**: Promoted `rendering.ui` to a top-level `ui` namespace. Old `rendering.ui` still works with a deprecation warning for backwards compatibility.
+- **Configurator**: New UI accordion section (above Config) with Show Loading Spinner and Show Image Counter checkboxes.
+
+### Removed
+- **`rendering.responsive`** namespace — was entirely unimplemented stubs (`breakpoints.tablet`, `breakpoints.desktop`, `mobileDetection`); removed from types, defaults, adapter, and docs. The `rendering` key is now fully gone from the config.
+- **`UIRenderingConfig`** type — replaced by `UIConfig` in the public API.
+
+### Changed
+- `UIRenderingConfig` renamed to `UIConfig` in exported types.
+
 ## [0.9.2] - 2026-03-01
 
 ### Added
