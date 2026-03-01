@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.2] - 2026-03-01
+
+### Added
+- **`interaction.navigation.keyboard`**: New boolean flag (default: `true`) to enable/disable arrow key and Escape keyboard navigation per gallery instance. Keyboard events are now scoped to the container element (requires clicking the gallery to focus it first) rather than the global `document`, so multiple galleries on the same page operate independently.
+- **`interaction.navigation.swipe`**: New boolean flag (default: `true`) to enable/disable touch swipe gesture navigation per gallery instance. Useful when the gallery is embedded in a scrollable container where swipes should scroll rather than navigate.
+- **Configurator**: Navigation group added to the Interaction section with Keyboard Navigation and Swipe Gestures checkboxes.
+- **Example**: `examples/keyboard-navigation-demo.html` — side-by-side demo showing per-container keyboard navigation enabled vs disabled.
+- **Tests**: 3 new Playwright tests in `test/e2e/navigation-disabled.spec.ts`; updated existing keyboard tests to focus container before key presses.
+
+### Changed
+- Gallery containers now have `tabindex="0"` applied automatically, making them keyboard-focusable.
+
+### Removed
+- **`animation.performance`** config namespace (`useGPU`, `reduceMotion`) — was never implemented; GPU acceleration is unconditionally applied via CSS.
+- **`animation.queue.maxConcurrent`** — was never implemented; removed from types and defaults.
+- **`getBounceCSSEasing()`** — unused exported function removed from `PathAnimator`.
+- **`layout.spacing.minGap`** — was defined but never read by any layout; removed from types, defaults, adapter, and docs.
+
+### Fixed
+- `HoneycombPlacementLayout` is now exported from the public API (was missing, inconsistent with other layout classes).
+- `interaction-disable-dragging` test fixture used wrong property name (`disableDragging` → `dragging: false`).
+
 ## [0.9.1] - 2026-03-01
 
 ### Added
