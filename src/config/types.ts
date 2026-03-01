@@ -422,7 +422,6 @@ export interface AnimationEasingConfig {
 export interface AnimationQueueConfig {
   enabled: boolean;
   interval: number;
-  maxConcurrent?: number;
 }
 
 export interface AnimationPerformanceConfig {
@@ -513,6 +512,7 @@ export interface InteractionConfig {
   focus: FocusInteractionConfig;
   navigation?: NavigationInteractionConfig;
   gestures?: GestureInteractionConfig;
+  disableDragging?: boolean;
 }
 
 // ============================================================================

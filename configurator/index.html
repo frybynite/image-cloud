@@ -2158,6 +2158,11 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Disable Dragging -->
+                        <div class="control-row">
+                            <input type="checkbox" class="control-checkbox" id="interaction-disableDragging">
+                            <label class="control-label" data-label="Disable Image Dragging" data-path="interaction.disableDragging" data-desc-key="interaction.disableDragging" style="flex: 0 0 auto;">Disable Image Dragging</label>
+                        </div>
                     </div>
                 </div>
 
@@ -4135,6 +4140,7 @@
             if (scalePercent !== undefined) focus.scalePercent = scalePercent;
             if (zIndex !== undefined) focus.zIndex = zIndex;
             if (Object.keys(focus).length > 0) interaction.focus = focus;
+            if (document.getElementById('interaction-disableDragging')?.checked) interaction.disableDragging = true;
             if (Object.keys(interaction).length > 0) config.interaction = interaction;
 
             // Styling - build from stylingState

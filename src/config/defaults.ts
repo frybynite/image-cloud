@@ -237,7 +237,6 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     queue: Object.freeze({
       enabled: true,  // When false, all images display simultaneously
       interval: 150,  // ms between processing queue items (when enabled)
-      maxConcurrent: undefined  // STUB: Not implemented yet
     }),
     performance: Object.freeze({
       useGPU: undefined,  // STUB: Not implemented yet
@@ -278,7 +277,8 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     gestures: Object.freeze({
       pinchToZoom: undefined,  // STUB: Not implemented yet
       doubleTapToFocus: undefined  // STUB: Not implemented yet
-    })
+    }),
+    disableDragging: false
   }),
 
   // Pattern-based rendering configuration

@@ -244,6 +244,49 @@ test.describe('User Interactions', () => {
 
   });
 
+  test.describe('Disable Dragging', () => {
+
+    test('images are draggable by default', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+
+      const draggable = await page.evaluate(() => {
+        const imgs = document.querySelectorAll('#imageCloud img');
+        return Array.from(imgs).map((img) => (img as HTMLImageElement).draggable);
+      });
+
+      expect(draggable.length).toBeGreaterThan(0);
+      draggable.forEach((d) => expect(d).toBe(true));
+    });
+
+    test('disableDragging: true sets draggable=false on all images', async ({ page }) => {
+      await page.goto('/test/fixtures/interaction-disable-dragging.html');
+      await waitForGalleryInit(page);
+
+      const draggable = await page.evaluate(() => {
+        const imgs = document.querySelectorAll('#imageCloud img');
+        return Array.from(imgs).map((img) => (img as HTMLImageElement).draggable);
+      });
+
+      expect(draggable.length).toBeGreaterThan(0);
+      draggable.forEach((d) => expect(d).toBe(false));
+    });
+
+    test('disableDragging: false leaves images draggable', async ({ page }) => {
+      await page.goto('/test/fixtures/interactions.html');
+      await waitForGalleryInit(page);
+
+      const draggable = await page.evaluate(() => {
+        const imgs = document.querySelectorAll('#imageCloud img');
+        return Array.from(imgs).map((img) => (img as HTMLImageElement).draggable);
+      });
+
+      expect(draggable.length).toBeGreaterThan(0);
+      draggable.forEach((d) => expect(d).toBe(true));
+    });
+
+  });
+
   test.describe('Cross-Animation', () => {
 
     test('clicking different image triggers cross-animation', async ({ page }) => {

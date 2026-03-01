@@ -280,6 +280,7 @@
       "_title": "Focus/zoom behavior when clicking images",
       "scalePercent": "Size of focused image relative to container (default: 0.8)",
       "zIndex": "Stack order of focused image (default: 1000)"
-    }
+    },
+    "disableDragging": "Prevent browser's default image drag behavior (default: false)"
   }
 }

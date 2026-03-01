@@ -718,6 +718,9 @@ export class ImageCloud {
       // NOTE: img.src is set AFTER onload handler to ensure handler catches cached images
       img.referrerPolicy = 'no-referrer';
       img.classList.add('fbn-ic-image');
+      if (this.fullConfig.interaction.disableDragging) {
+        img.draggable = false;
+      }
       img.dataset.imageId = String(index);
       img.dataset.createdFlag = 'true';  // Debug flag
 
