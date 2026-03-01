@@ -11,7 +11,7 @@ import type {
   LayoutConfig,
   AnimationConfig,
   InteractionConfig,
-  RenderingConfig,
+  UIConfig,
   ImageConfig
 } from './types';
 
@@ -79,8 +79,9 @@ export class LegacyOptionsAdapter {
       newOptions.interaction = this.convertZoomToInteraction(legacyConfig.zoom);
     }
 
-    // Convert rendering configuration
-    newOptions.rendering = this.convertRendering(oldOptions);
+    // Convert rendering/ui configuration
+    const uiResult = this.convertUI(oldOptions);
+    if (uiResult.ui) newOptions.ui = uiResult.ui;
 
     // Convert debug flag to new config.debug namespace
     if (legacyConfig?.debugLogging !== undefined) {
@@ -243,22 +244,21 @@ export class LegacyOptionsAdapter {
   }
 
   /**
-   * Convert rendering configuration (breakpoints + ui)
+   * Convert rendering/ui configuration
    */
-  private static convertRendering(oldOptions: OldOptions): Partial<RenderingConfig> {
-    const rendering: Partial<RenderingConfig> = {};
+  private static convertUI(oldOptions: OldOptions): Partial<{ ui: Partial<UIConfig> }> {
     const legacyConfig = (oldOptions as any).config;
 
-    // Convert UI configuration
     if (legacyConfig?.ui) {
-      this.warn('rendering', 'Top-level ui configuration is deprecated. Use "rendering.ui" instead.');
-
-      rendering.ui = {
-        showLoadingSpinner: legacyConfig.ui.showLoadingSpinner ?? false
+      this.warn('rendering', 'Top-level config.ui is deprecated. Use top-level ui instead.');
+      return {
+        ui: {
+          showLoadingSpinner: legacyConfig.ui.showLoadingSpinner ?? false
+        }
       };
     }
 
-    return rendering;
+    return {};
   }
 
   /**
