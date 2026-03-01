@@ -259,7 +259,7 @@ export class ImageCloud {
   }
 
   private setupUI(): void {
-    const uiConfig = this.fullConfig.rendering.ui;
+    const uiConfig = this.fullConfig.ui;
 
     // Loading element
     if (uiConfig.showLoadingSpinner) {
@@ -937,7 +937,7 @@ export class ImageCloud {
   }
 
   private showLoading(show: boolean): void {
-    if (!this.fullConfig.rendering.ui.showLoadingSpinner || !this.loadingEl) return;
+    if (!this.fullConfig.ui.showLoadingSpinner || !this.loadingEl) return;
     if (show) {
       this.loadingEl.classList.remove('fbn-ic-hidden');
     } else {
@@ -958,7 +958,7 @@ export class ImageCloud {
   }
 
   private updateCounter(index: number): void {
-    if (!this.fullConfig.rendering.ui.showImageCounter || !this.counterEl) return;
+    if (!this.fullConfig.ui.showImageCounter || !this.counterEl) return;
     this.counterEl.textContent = `${index + 1} of ${this.imageElements.length}`;
     this.counterEl.classList.remove('fbn-ic-hidden');
   }

@@ -39,7 +39,7 @@ export type {
   StaticJsonSource,
   GoogleDriveFolderSource,
   GoogleDriveFilesSource,
-  UIRenderingConfig,
+  UIConfig,
   ImageLayout,
   ContainerBounds,
   ResponsiveHeight,
