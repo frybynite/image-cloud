@@ -27,7 +27,7 @@ test.describe('Loading Spinner', () => {
         const gallery = (window as any).gallery;
         return {
           hasLoadingEl: !!document.querySelector('.fbn-ic-loading'),
-          configShowSpinner: gallery?.fullConfig?.rendering?.ui?.showLoadingSpinner
+          configShowSpinner: gallery?.fullConfig?.ui?.showLoadingSpinner
         };
       });
 
