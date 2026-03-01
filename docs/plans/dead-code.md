@@ -13,11 +13,8 @@ These are declared in `src/config/types.ts` and `src/config/defaults.ts` but nev
 | Parameter | Notes |
 |---|---|
 | `interaction.navigation.mouseWheel` | Stub — never referenced |
-| `rendering.responsive.breakpoints.tablet` | Stub — breakpoints handled by LayoutEngine logic, not this config |
-| `rendering.responsive.breakpoints.desktop` | Stub — same as above |
-| `rendering.responsive.mobileDetection` | Stub — never called |
 
-**Options:** Remove the remaining stub namespace (`rendering.responsive`) or keep with a documented "reserved" status. `interaction.navigation.mouseWheel` can be removed or reserved for a future implementation.
+**Options:** Remove `interaction.navigation.mouseWheel` or reserve for a future implementation. (`rendering.responsive` fully removed.)
 
 ---
 
@@ -29,5 +26,5 @@ These are declared in `src/config/types.ts` and `src/config/defaults.ts` but nev
 
 ## Recommended Actions
 
-1. **Remove stub parameters** — strip out `interaction.navigation.mouseWheel` and the `rendering.responsive` stub fields from types, defaults, and any config merging logic, unless there is a concrete plan to implement them. (`animation.performance`, `animation.queue.maxConcurrent`, and `interaction.gestures` already removed. `interaction.navigation.keyboard` and `interaction.navigation.swipe` are now implemented and documented.)
+1. **Remove `interaction.navigation.mouseWheel`** — stub, never referenced. (`rendering.responsive`, `animation.performance`, `animation.queue.maxConcurrent`, and `interaction.gestures` already removed. `interaction.navigation.keyboard` and `.swipe` are now implemented.)
 2. **Fix configurator `debugCenters`** field path mapping.

@@ -506,15 +506,6 @@ export interface InteractionConfig {
 // Rendering Configuration
 // ============================================================================
 
-export interface ResponsiveRenderingConfig {
-  breakpoints: {
-    mobile: number;
-    tablet?: number;
-    desktop?: number;
-  };
-  mobileDetection: () => boolean;
-}
-
 export interface UIRenderingConfig {
   showLoadingSpinner: boolean;
   showImageCounter?: boolean;
@@ -524,7 +515,6 @@ export interface UIRenderingConfig {
 }
 
 export interface RenderingConfig {
-  responsive: ResponsiveRenderingConfig;
   ui: UIRenderingConfig;
 }
 

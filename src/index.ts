@@ -40,7 +40,6 @@ export type {
   GoogleDriveFolderSource,
   GoogleDriveFilesSource,
   UIRenderingConfig,
-  ResponsiveRenderingConfig,
   ImageLayout,
   ContainerBounds,
   ResponsiveHeight,

@@ -264,17 +264,6 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
 
   // Pattern-based rendering configuration
   rendering: Object.freeze({
-    responsive: Object.freeze({
-      breakpoints: Object.freeze({
-        mobile: 768,
-        tablet: undefined,  // STUB: Not implemented yet
-        desktop: undefined  // STUB: Not implemented yet
-      }),
-      mobileDetection: () => {
-        if (typeof window === 'undefined') return false;
-        return window.innerWidth <= 768;
-      }
-    }),
     ui: Object.freeze({
       showLoadingSpinner: false,
       showImageCounter: false
@@ -648,20 +637,6 @@ export function mergeConfig(
       ...DEFAULT_CONFIG.rendering,
       ...userConfig.rendering
     } as any;
-
-    // Deep merge responsive config
-    if (userConfig.rendering.responsive) {
-      merged.rendering.responsive = {
-        ...DEFAULT_CONFIG.rendering.responsive,
-        ...userConfig.rendering.responsive,
-        breakpoints: userConfig.rendering.responsive.breakpoints
-          ? { ...DEFAULT_CONFIG.rendering.responsive.breakpoints, ...userConfig.rendering.responsive.breakpoints }
-          : DEFAULT_CONFIG.rendering.responsive.breakpoints,
-        mobileDetection: userConfig.rendering.responsive.mobileDetection
-          ? (userConfig.rendering.responsive.mobileDetection as () => boolean)
-          : DEFAULT_CONFIG.rendering.responsive.mobileDetection
-      };
-    }
 
     // Deep merge ui config
     if (userConfig.rendering.ui) {

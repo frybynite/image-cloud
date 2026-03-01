@@ -249,21 +249,6 @@ export class LegacyOptionsAdapter {
     const rendering: Partial<RenderingConfig> = {};
     const legacyConfig = (oldOptions as any).config;
 
-    // Convert responsive configuration
-    if (legacyConfig?.breakpoints || legacyConfig?.isMobile) {
-      this.warn('rendering', 'Top-level breakpoints and isMobile are deprecated. Use "rendering.responsive" instead.');
-
-      rendering.responsive = {
-        breakpoints: {
-          mobile: legacyConfig?.breakpoints?.mobile ?? 768
-        },
-        mobileDetection: legacyConfig?.isMobile || (() => {
-          if (typeof window === 'undefined') return false;
-          return window.innerWidth <= 768;
-        })
-      };
-    }
-
     // Convert UI configuration
     if (legacyConfig?.ui) {
       this.warn('rendering', 'Top-level ui configuration is deprecated. Use "rendering.ui" instead.');

@@ -400,17 +400,7 @@ interface FilterConfig {
 
 ```typescript
 interface RenderingConfig {
-  responsive: ResponsiveRenderingConfig;
   ui: UIRenderingConfig;
-}
-
-interface ResponsiveRenderingConfig {
-  breakpoints: {
-    mobile: number;    // Default: 768px
-    tablet?: number;
-    desktop?: number;
-  };
-  mobileDetection?: () => boolean;
 }
 
 interface UIRenderingConfig {
