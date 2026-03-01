@@ -238,10 +238,6 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
       enabled: true,  // When false, all images display simultaneously
       interval: 150,  // ms between processing queue items (when enabled)
     }),
-    performance: Object.freeze({
-      useGPU: undefined,  // STUB: Not implemented yet
-      reduceMotion: undefined  // STUB: Not implemented yet
-    }),
     entry: Object.freeze({
       start: Object.freeze({
         position: 'nearest-edge' as const,  // Default to nearest edge (current behavior)
@@ -270,15 +266,15 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
       animationDuration: undefined  // Use default animation duration
     }),
     navigation: Object.freeze({
-      keyboard: undefined,  // STUB: Not implemented yet
-      swipe: undefined,  // STUB: Not implemented yet
+      keyboard: true,
+      swipe: true,
       mouseWheel: undefined  // STUB: Not implemented yet
     }),
     gestures: Object.freeze({
       pinchToZoom: undefined,  // STUB: Not implemented yet
       doubleTapToFocus: undefined  // STUB: Not implemented yet
     }),
-    disableDragging: false
+    dragging: true
   }),
 
   // Pattern-based rendering configuration
@@ -595,14 +591,6 @@ export function mergeConfig(
       merged.animation.queue = {
         ...DEFAULT_CONFIG.animation.queue,
         ...userConfig.animation.queue
-      };
-    }
-
-    // Deep merge performance config
-    if (userConfig.animation.performance) {
-      merged.animation.performance = {
-        ...DEFAULT_CONFIG.animation.performance,
-        ...userConfig.animation.performance
       };
     }
 
