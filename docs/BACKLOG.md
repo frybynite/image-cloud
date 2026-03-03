@@ -16,16 +16,9 @@ Future enhancements and feature ideas for Image Cloud.
 
 ## Planned
 
-### Simplify Initialization Process
-Reduce boilerplate and complexity for clients getting started with the library.
-
-**Ideas:**
-- Single-line initialization with sensible defaults
-- Auto-detect container element
-- Shorthand config options for common use cases
-- Factory functions for common configurations (e.g., `ImageCloud.fromUrls([...])`)
-- Reduce required nesting in config object
-- Better error messages for missing/invalid config
+### ~~Simplify Initialization Process~~ ✅ v0.10.0
+- `imageCloud()` factory function for single-expression initialization
+- Actionable error messages for missing container, no loaders, and missing `data-config`
 
 ---
 
