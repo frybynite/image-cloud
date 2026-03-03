@@ -68,7 +68,7 @@ function autoInitialize(): void {
           return;
         }
       } else {
-        console.error(`ImageCloud: Missing configuration for #${element.id}. Add data-config='{...}' attribute.`);
+        console.error(`ImageCloud: Missing configuration for #${element.id}. Add data-config='{...}' attribute.\n  Example: data-config='{"images":["https://..."]}'`);
         return;
       }
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Getting started with Image Cloud — single-expression initialization using the imageCloud() factory function">
+    <title>Image Cloud - Getting Started</title>
+    <!-- Required: Image Cloud CSS for gallery layout, animations, and zoom -->
+    <link rel="stylesheet" href="/dist/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05060F;
+        }
+        #myGallery {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "@frybynite/image-cloud": "/dist/image-cloud.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Required: Container element whose id matches the 'container' option -->
+    <div id="myGallery" role="main" aria-label="Image cloud gallery"></div>
+
+    <script type="module">
+        import { imageCloud } from '@frybynite/image-cloud';
+
+        // Single-expression initialization — no separate init() call needed
+        const cloud = await imageCloud({
+            container: 'myGallery',
+            images: [
+                'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop'
+            ]
+        });
+    </script>
+    <script src="view-source-popup.js"></script>
+</body>
+</html>

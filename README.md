@@ -53,29 +53,28 @@ Replace `@latest` with a specific version (e.g., `@0.5.1`) to pin to that releas
 ### TypeScript/JavaScript (Programmatic API)
 
 ```typescript
-import { ImageCloud } from '@frybynite/image-cloud';
+import { imageCloud } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
 
-const cloud = new ImageCloud({
+// Single-expression initialization — imageCloud() constructs and calls init() for you
+const cloud = await imageCloud({
   container: 'myCloud',
-  loaders: [{
-    static: {
-      sources: [{
-        urls: [
-          'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
-          'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
-          'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600'
-        ]
-      }]
-    }
-  }],
+  images: [
+    'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
+    'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
+    'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600'
+  ],
   layout: {
     algorithm: 'radial'
   }
 });
-
-await cloud.init();
 ```
+
+> For advanced lifecycle control (e.g. deferred init, re-use), the `ImageCloud` class is also exported and still works as before:
+> ```typescript
+> const cloud = new ImageCloud({ container: 'myCloud', images: [...] });
+> await cloud.init();
+> ```
 
 ### HTML (Auto-initialization)
 

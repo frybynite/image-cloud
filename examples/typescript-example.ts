@@ -5,8 +5,20 @@
  * Install: npm install @frybynite/image-cloud
  */
 
-import { ImageCloud, type ImageCloudOptions } from '@frybynite/image-cloud';
+import { imageCloud, ImageCloud, type ImageCloudOptions } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
+
+// Example 0: Simplest usage — single-expression initialization via factory function
+async function factoryExample() {
+    const cloud = await imageCloud({
+        container: 'cloud',
+        images: [
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+            'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800'
+        ]
+    });
+    // cloud is ready to use immediately
+}
 
 // Example 1: Basic usage with static images (NEW FORMAT)
 function basicExample() {

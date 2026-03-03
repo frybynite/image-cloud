@@ -180,7 +180,7 @@ export class ImageCloud {
     const shared = this.fullConfig.config.loaders ?? {};
 
     if (!entries || entries.length === 0) {
-      throw new Error('No loaders configured. Provide `images`, `loaders`, or both.');
+      throw new Error('No loaders configured. Provide `images`, `loaders`, or both.\n  Example: imageCloud({ container: \'id\', images: [\'https://...\'] })');
     }
 
     const childLoaders = entries.map(entry => this.createLoaderFromEntry(entry, shared));
@@ -237,7 +237,7 @@ export class ImageCloud {
       } else {
         this.containerEl = document.getElementById(this.containerId!);
         if (!this.containerEl) {
-          throw new Error(`Container #${this.containerId} not found`);
+          throw new Error(`Container "#${this.containerId}" not found. Ensure an element with id="${this.containerId}" exists in the DOM before calling imageCloud().`);
         }
       }
 
@@ -274,7 +274,7 @@ export class ImageCloud {
       await this.loadImages();
 
     } catch (error) {
-      console.error('Gallery initialization failed:', error);
+      console.error(`ImageCloud initialization failed (container: "${this.containerId ?? 'element'}"):`, error);
       if (this.errorEl && error instanceof Error) {
         this.showError('Gallery failed to initialize: ' + error.message);
       }

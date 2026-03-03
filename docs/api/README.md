@@ -20,9 +20,12 @@ npm install @frybynite/image-cloud
 ## Basic Import
 
 ```typescript
-// Main class
-import { ImageCloud } from '@frybynite/image-cloud';
+// Factory function (recommended)
+import { imageCloud } from '@frybynite/image-cloud';
 import '@frybynite/image-cloud/style.css';
+
+// Main class (for advanced lifecycle control)
+import { ImageCloud } from '@frybynite/image-cloud';
 
 // Types (for TypeScript)
 import type { ImageCloudOptions, ImageLayout } from '@frybynite/image-cloud';
@@ -31,9 +34,10 @@ import type { ImageCloudOptions, ImageLayout } from '@frybynite/image-cloud';
 ## Minimal Example
 
 ```typescript
-import { ImageCloud } from '@frybynite/image-cloud';
+import { imageCloud } from '@frybynite/image-cloud';
 
-const cloud = new ImageCloud({
+// Single-expression initialization
+const cloud = await imageCloud({
   container: 'myCloud',
   images: ['image1.jpg', 'image2.jpg']
 });

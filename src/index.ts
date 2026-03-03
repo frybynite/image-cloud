@@ -13,6 +13,15 @@ export { ImageCloud } from './ImageCloud';
 // Backwards compatibility alias
 export { ImageCloud as ImageGallery } from './ImageCloud';
 
+// Factory function — recommended entry point for most users
+import { ImageCloud as _ImageCloud } from './ImageCloud';
+import type { ImageCloudOptions } from './config/types';
+export async function imageCloud(options: ImageCloudOptions): Promise<_ImageCloud> {
+  const instance = new _ImageCloud(options);
+  await instance.init();
+  return instance;
+}
+
 // Type exports
 export type {
   ImageCloudOptions,

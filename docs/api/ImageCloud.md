@@ -1,6 +1,30 @@
 # ImageCloud Class
 
-The main entry point for creating image cloud galleries.
+The core class for creating image cloud galleries. For most use cases, prefer the [`imageCloud()` factory function](#imagecloud-factory-function) which handles construction and initialization in one expression.
+
+## imageCloud() Factory Function
+
+The recommended entry point for most users.
+
+```typescript
+import { imageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/style.css';
+
+const cloud = await imageCloud({
+  container: 'gallery',
+  images: ['img1.jpg', 'img2.jpg']
+});
+```
+
+**Signature:** `async function imageCloud(options: ImageCloudOptions): Promise<ImageCloud>`
+
+Constructs an `ImageCloud` instance and calls `init()` internally. Returns the initialized instance.
+
+---
+
+## ImageCloud Class
+
+Use the class directly when you need deferred initialization or explicit lifecycle control.
 
 ## Import
 

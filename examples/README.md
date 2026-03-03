@@ -6,6 +6,11 @@ This directory contains various examples demonstrating different ways to use the
 
 ### Basic Usage
 
+#### Getting Started (`getting-started-example.html`)
+Minimal example using the `imageCloud()` factory for single-expression initialization.
+- Uses the `imageCloud()` factory — no separate `init()` call needed
+- `images` shorthand for supplying URLs directly
+
 #### ESM Example (`esm-example.html`)
 Modern ES module usage in the browser.
 - Uses ES6 modules (`<script type="module">`)

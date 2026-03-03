@@ -2,6 +2,35 @@
 
 The Image Cloud library offers a flexible configuration system to customize every aspect of the gallery, from image loading to animation dynamics.
 
+## Quick Start
+
+The recommended entry point is the `imageCloud()` factory function, which constructs the instance and calls `init()` in a single expression:
+
+```typescript
+import { imageCloud } from '@frybynite/image-cloud';
+import '@frybynite/image-cloud/style.css';
+
+const cloud = await imageCloud({
+  container: 'myGallery',
+  images: [
+    'https://example.com/photo1.jpg',
+    'https://example.com/photo2.jpg',
+    'https://example.com/photo3.jpg'
+  ]
+});
+```
+
+The `ImageCloud` class is still exported for power users who need direct lifecycle control:
+
+```typescript
+import { ImageCloud } from '@frybynite/image-cloud';
+
+const cloud = new ImageCloud({ container: 'myGallery', images: [...] });
+await cloud.init();
+```
+
+---
+
 ## Table of Contents
 
 - [Framework Wrappers](#framework-wrappers)
