@@ -581,4 +581,149 @@ test.describe('Error Handling', () => {
 
   });
 
+  test.describe('Destroy Cleanup', () => {
+
+    test('destroy removes image elements from container', async ({ page }) => {
+      await page.goto('/test/fixtures/error-handling.html');
+
+      await page.evaluate(async () => {
+        // @ts-ignore
+        window.gallery = new window.ImageCloud({
+          container: 'imageCloud',
+          loaders: [{ static: {
+              sources: [{ urls: [
+                  '/test/fixtures/images/image1.jpg',
+                  '/test/fixtures/images/image2.jpg',
+                  '/test/fixtures/images/image3.jpg'
+                ] }],
+              validateUrls: false
+            }
+          }],
+          animation: { duration: 50, queue: { enabled: true, interval: 10 } }
+        });
+        // @ts-ignore
+        await window.gallery.init();
+      });
+
+      // Wait for images to appear
+      await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
+      await page.waitForTimeout(500);
+
+      const beforeCount = await getImageCount(page);
+      expect(beforeCount).toBeGreaterThan(0);
+
+      // Destroy the gallery
+      await page.evaluate(() => {
+        // @ts-ignore
+        window.gallery.destroy();
+      });
+
+      // All image elements should be removed
+      const afterCount = await getImageCount(page);
+      expect(afterCount).toBe(0);
+    });
+
+    test('destroy before init does not throw', async ({ page }) => {
+      await page.goto('/test/fixtures/error-handling.html');
+
+      const error = await page.evaluate(() => {
+        try {
+          // @ts-ignore
+          const gallery = new window.ImageCloud({
+            container: 'imageCloud',
+            loaders: [{ static: {
+                sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
+                validateUrls: false
+              }
+            }]
+          });
+          // Destroy before calling init
+          gallery.destroy();
+          return null;
+        } catch (e) {
+          return (e as Error).message;
+        }
+      });
+
+      expect(error).toBeNull();
+    });
+
+    test('container can be reused after destroy', async ({ page }) => {
+      await page.goto('/test/fixtures/error-handling.html');
+
+      const error = await page.evaluate(async () => {
+        try {
+          // @ts-ignore
+          const gallery1 = new window.ImageCloud({
+            container: 'imageCloud',
+            loaders: [{ static: {
+                sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
+                validateUrls: false
+              }
+            }],
+            animation: { duration: 50 }
+          });
+          await gallery1.init();
+          gallery1.destroy();
+
+          // Reuse the same container for a new gallery
+          // @ts-ignore
+          const gallery2 = new window.ImageCloud({
+            container: 'imageCloud',
+            loaders: [{ static: {
+                sources: [{ urls: ['/test/fixtures/images/image2.jpg'] }],
+                validateUrls: false
+              }
+            }],
+            animation: { duration: 50 }
+          });
+          await gallery2.init();
+          gallery2.destroy();
+          return null;
+        } catch (e) {
+          return (e as Error).message;
+        }
+      });
+
+      expect(error).toBeNull();
+    });
+
+  });
+
+  test.describe('Single Image Edge Cases', () => {
+
+    const SINGLE_IMAGE = '/test/fixtures/images/image1.jpg';
+    const LAYOUTS = ['radial', 'random', 'grid', 'spiral', 'cluster', 'wave', 'honeycomb'] as const;
+
+    for (const algorithm of LAYOUTS) {
+      test(`${algorithm} layout initializes with a single image`, async ({ page }) => {
+        await page.goto('/test/fixtures/error-handling.html');
+
+        const error = await page.evaluate(async (algo: string) => {
+          try {
+            // @ts-ignore
+            const gallery = new window.ImageCloud({
+              container: 'imageCloud',
+              loaders: [{ static: {
+                  sources: [{ urls: ['/test/fixtures/images/image1.jpg'] }],
+                  validateUrls: false
+                }
+              }],
+              layout: { algorithm: algo },
+              animation: { duration: 50 }
+            });
+            await gallery.init();
+            gallery.destroy();
+            return null;
+          } catch (e) {
+            return (e as Error).message;
+          }
+        }, algorithm);
+
+        expect(error).toBeNull();
+      });
+    }
+
+  });
+
 });

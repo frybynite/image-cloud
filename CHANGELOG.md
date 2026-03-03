@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.6] - 2026-03-03
+
+### Added
+- **Tests: `ImageFilter` unit tests** — 30 new unit tests covering default extensions, case insensitivity, query-string stripping, edge cases (no extension, empty string, multiple dots, URL fragments), custom extensions, and defensive-copy semantics of `getAllowedExtensions()`.
+- **Tests: `requiresJSAnimation` unit tests** — 5 new unit tests verifying all 5 path types (bounce/elastic/wave → `true`, linear/arc → `false`).
+- **Tests: `destroy()` cleanup** — 3 new e2e tests confirming images are removed from the DOM after `destroy()`, that `destroy()` before `init()` is safe, and that a container can be reused after destroy.
+- **Tests: single-image edge cases** — all 7 layout algorithms verified to initialize without error when given exactly 1 image.
+
+### Fixed
+- **Radial layout center-position test** — loosened tolerance from 20% to 25% of viewport size; the 20% threshold was narrower than the layout's actual adaptive sizing can produce, causing intermittent failures.
+
 ## [0.9.5] - 2026-03-01
 
 ### Fixed
