@@ -12,24 +12,11 @@ async function forceClickImage(page: Page, imageIndex: number, containerId = 'im
   }, { containerId, imageIndex });
 }
 
-// Helper to perform a swipe gesture using Playwright's locator drag
-async function performSwipe(page: Page, deltaX: number, containerId = 'imageCloud') {
-  const gallery = page.locator(`#${containerId}`);
-  const box = await gallery.boundingBox();
-  if (!box) return;
-
-  const startX = box.x + box.width / 2;
-  const startY = box.y + box.height / 2;
-  const endX = startX + deltaX;
-
-  // Use mouse drag to simulate touch (works in test environment)
-  await page.mouse.move(startX, startY);
-  await page.mouse.down();
-  await page.mouse.move(endX, startY, { steps: 5 });
-  await page.mouse.up();
-}
-
-// Alternative helper that dispatches touch events with proper structure
+// Helper to perform a horizontal swipe gesture using real Touch/TouchEvent APIs.
+// Requires hasTouch: true in the test context (set via test.use at describe level).
+// A 50ms delay is inserted between touchstart and touchmove/touchend so that the
+// SwipeEngine's velocity calculation stays below the velocity threshold — ensuring
+// only the distance threshold determines navigation.
 async function performTouchSwipe(page: Page, deltaX: number, containerId = 'imageCloud') {
   const gallery = page.locator(`#${containerId}`);
   const box = await gallery.boundingBox();
@@ -39,52 +26,31 @@ async function performTouchSwipe(page: Page, deltaX: number, containerId = 'imag
   const startY = box.y + box.height / 2;
   const endX = startX + deltaX;
 
-  // Dispatch simulated touch events
-  await page.evaluate(({ containerId, startX, startY, endX }) => {
+  await page.evaluate(async ({ containerId, startX, startY, endX }) => {
     const gallery = document.querySelector(`#${containerId}`) as HTMLElement;
     if (!gallery) return;
 
-    // Create a minimal touch-like object
-    const createTouch = (x: number, y: number) => ({
-      identifier: 0,
-      target: gallery,
-      clientX: x,
-      clientY: y,
-      pageX: x,
-      pageY: y,
-      screenX: x,
-      screenY: y,
-      radiusX: 1,
-      radiusY: 1,
-      rotationAngle: 0,
-      force: 1
-    });
+    const makeTouch = (x: number, y: number) =>
+      new Touch({ identifier: 1, target: gallery, clientX: x, clientY: y, pageX: x, pageY: y });
 
-    // Create fake TouchList-like array
-    const createTouchList = (touches: any[]) => {
-      const list = touches as any;
-      list.item = (i: number) => touches[i];
-      list.length = touches.length;
-      return list;
+    const dispatch = (type: string, x: number, y: number, active: boolean) => {
+      const touch = makeTouch(x, y);
+      gallery.dispatchEvent(new TouchEvent(type, {
+        bubbles: true, cancelable: true,
+        touches: active ? [touch] : [],
+        targetTouches: active ? [touch] : [],
+        changedTouches: [touch],
+      }));
     };
 
-    const dispatchTouchEvent = (type: string, x: number, y: number, includeTouches: boolean) => {
-      const touch = createTouch(x, y);
-      const event = document.createEvent('Event') as any;
-      event.initEvent(type, true, true);
-      event.touches = includeTouches ? createTouchList([touch]) : createTouchList([]);
-      event.targetTouches = includeTouches ? createTouchList([touch]) : createTouchList([]);
-      event.changedTouches = createTouchList([touch]);
-      gallery.dispatchEvent(event);
-    };
-
-    dispatchTouchEvent('touchstart', startX, startY, true);
-    dispatchTouchEvent('touchmove', endX, startY, true);
-    dispatchTouchEvent('touchend', endX, startY, false);
+    dispatch('touchstart', startX, startY, true);
+    await new Promise(r => setTimeout(r, 50));
+    dispatch('touchmove', endX, startY, true);
+    dispatch('touchend', endX, startY, false);
   }, { containerId, startX, startY, endX });
 }
 
-// Helper to perform a vertical swipe gesture
+// Helper to perform a vertical swipe gesture using real Touch/TouchEvent APIs.
 async function performVerticalSwipe(page: Page, deltaY: number, containerId = 'imageCloud') {
   const gallery = page.locator(`#${containerId}`);
   const box = await gallery.boundingBox();
@@ -94,58 +60,38 @@ async function performVerticalSwipe(page: Page, deltaY: number, containerId = 'i
   const startY = box.y + box.height / 2;
   const endY = startY + deltaY;
 
-  await page.evaluate(({ containerId, startX, startY, endY }) => {
+  await page.evaluate(async ({ containerId, startX, startY, endY }) => {
     const gallery = document.querySelector(`#${containerId}`) as HTMLElement;
     if (!gallery) return;
 
-    const createTouch = (x: number, y: number) => ({
-      identifier: 0,
-      target: gallery,
-      clientX: x,
-      clientY: y,
-      pageX: x,
-      pageY: y,
-      screenX: x,
-      screenY: y,
-      radiusX: 1,
-      radiusY: 1,
-      rotationAngle: 0,
-      force: 1
-    });
+    const makeTouch = (x: number, y: number) =>
+      new Touch({ identifier: 1, target: gallery, clientX: x, clientY: y, pageX: x, pageY: y });
 
-    const createTouchList = (touches: any[]) => {
-      const list = touches as any;
-      list.item = (i: number) => touches[i];
-      list.length = touches.length;
-      return list;
+    const dispatch = (type: string, x: number, y: number, active: boolean) => {
+      const touch = makeTouch(x, y);
+      gallery.dispatchEvent(new TouchEvent(type, {
+        bubbles: true, cancelable: true,
+        touches: active ? [touch] : [],
+        targetTouches: active ? [touch] : [],
+        changedTouches: [touch],
+      }));
     };
 
-    const dispatchTouchEvent = (type: string, x: number, y: number, includeTouches: boolean) => {
-      const touch = createTouch(x, y);
-      const event = document.createEvent('Event') as any;
-      event.initEvent(type, true, true);
-      event.touches = includeTouches ? createTouchList([touch]) : createTouchList([]);
-      event.targetTouches = includeTouches ? createTouchList([touch]) : createTouchList([]);
-      event.changedTouches = createTouchList([touch]);
-      gallery.dispatchEvent(event);
-    };
-
-    dispatchTouchEvent('touchstart', startX, startY, true);
-    dispatchTouchEvent('touchmove', startX, endY, true);
-    dispatchTouchEvent('touchend', startX, endY, false);
+    dispatch('touchstart', startX, startY, true);
+    await new Promise(r => setTimeout(r, 50));
+    dispatch('touchmove', startX, endY, true);
+    dispatch('touchend', startX, endY, false);
   }, { containerId, startX, startY, endY });
 }
 
-// Note: Touch event simulation in Playwright is unreliable.
-// These tests verify the swipe engine is wired up correctly, but actual swipe
-// behavior should be verified manually on touch devices.
-
 test.describe('Swipe Gesture Navigation', () => {
+
+  // Enable touch emulation so Touch/TouchEvent constructors are available in page.evaluate
+  test.use({ hasTouch: true });
 
   test.describe('Basic Swipe Navigation', () => {
 
-    // Skipped: Touch simulation doesn't reliably trigger navigation in Playwright
-    test.skip('swipe left on focused image navigates to next image', async ({ page }) => {
+    test('swipe left on focused image navigates to next image', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
       await waitForGalleryInit(page);
       await waitForAnimation(page, 500);
@@ -164,8 +110,7 @@ test.describe('Swipe Gesture Navigation', () => {
       expect(await isImageFocused(page, 1)).toBe(true);
     });
 
-    // Skipped: Touch simulation doesn't reliably trigger navigation in Playwright
-    test.skip('swipe right on focused image navigates to previous image', async ({ page }) => {
+    test('swipe right on focused image navigates to previous image', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
       await waitForGalleryInit(page);
       await waitForAnimation(page, 500);
@@ -206,8 +151,7 @@ test.describe('Swipe Gesture Navigation', () => {
 
   test.describe('Swipe Threshold', () => {
 
-    // Skipped: Touch simulation causes side effects that unfocus the image
-    test.skip('small swipe does not navigate (under threshold)', async ({ page }) => {
+    test('small swipe does not navigate (under threshold)', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
       await waitForGalleryInit(page);
       await waitForAnimation(page, 500);
@@ -229,8 +173,7 @@ test.describe('Swipe Gesture Navigation', () => {
 
   test.describe('Wrap Around', () => {
 
-    // Skipped: Touch simulation doesn't reliably trigger navigation in Playwright
-    test.skip('swipe right on first image wraps to last image', async ({ page }) => {
+    test('swipe right on first image wraps to last image', async ({ page }) => {
       await page.goto('/test/fixtures/interactions.html');
       await waitForGalleryInit(page);
       await waitForAnimation(page, 500);

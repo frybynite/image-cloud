@@ -100,8 +100,16 @@ test.describe('Static Loader - URLs Shorthand & JSON Source', () => {
 
       const firstImage = page.locator('#imageCloud img').first();
 
-      await firstImage.click();
-      await page.waitForTimeout(300);
+      await firstImage.click({ force: true });
+
+      // Wait until image is focused
+      await page.waitForFunction(() => {
+        const imgs = document.querySelectorAll('#imageCloud img');
+        for (const img of imgs) {
+          if (parseInt(window.getComputedStyle(img as HTMLElement).zIndex) >= 1000) return true;
+        }
+        return false;
+      }, { timeout: 2000 });
 
       await page.keyboard.press('Escape');
       await page.waitForTimeout(300);

@@ -72,12 +72,15 @@
   },
   "keywords": [
     "image-gallery",
-    "typescript",
+    "image-cloud",
+    "gallery",
     "animation",
+    "layouts",
     "zoom",
     "interactive",
-    "radial-layout",
-    "google-drive"
+    "typescript",
+    "radial",
+    "honeycomb"
   ],
   "author": "frybynite",
   "license": "MIT",
@@ -88,7 +91,7 @@
   "bugs": {
     "url": "https://github.com/frybynite/image-cloud/issues"
   },
-  "homepage": "https://github.com/frybynite/image-cloud#readme",
+  "homepage": "https://frybynite.github.io/image-cloud/",
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",

@@ -3,7 +3,7 @@
  * Centralized settings for animation, layout, and API configuration
  */
 
-import type { ImageCloudConfig, ImageCloudOptions, DeepPartial, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, HoneycombAlgorithmConfig, RadialAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig, IdleWiggleConfig, IdlePulseConfig, IdleBlinkConfig, IdleSpinConfig, IdleAnimationConfig } from './types';
+import type { ImageCloudConfig, ImageCloudOptions, ImageStylingConfig, ImageStyleState, ShadowPreset, WaveAlgorithmConfig, HoneycombAlgorithmConfig, RadialAlgorithmConfig, BouncePathConfig, ElasticPathConfig, WavePathConfig, BouncePreset, ElasticPreset, WavePathPreset, EntryPathConfig, EntryRotationConfig, EntryScaleConfig, ImageConfig, ImageSizingConfig, ImageRotationConfig, ImageVarianceConfig, ResponsiveBreakpoints, SharedLoaderConfig, ConfigSection, LoaderEntry, DebugConfig, IdleWiggleConfig, IdlePulseConfig, IdleBlinkConfig, IdleSpinConfig, IdleAnimationConfig } from './types';
 
 /**
  * Shadow presets for image styling
@@ -424,66 +424,10 @@ function deepMergeImageConfig(
   return merged;
 }
 
-/**
- * Convert legacy layout.rotation config to new image.rotation format
- * This provides backward compatibility with the old API
- */
-function convertLegacyRotationConfig(userConfig: DeepPartial<ImageCloudConfig>): Partial<ImageConfig> | undefined {
-  const legacyRotation = (userConfig.layout as any)?.rotation;
-  if (!legacyRotation) return undefined;
-
-  // Legacy format: { enabled: boolean, range: { min, max } }
-  if ('enabled' in legacyRotation) {
-    return {
-      rotation: {
-        mode: legacyRotation.enabled ? 'random' : 'none',
-        range: legacyRotation.range
-      }
-    };
-  }
-
-  return undefined;
-}
-
-/**
- * Convert legacy layout.sizing.variance config to new image.sizing.variance format
- */
-function convertLegacyVarianceConfig(userConfig: DeepPartial<ImageCloudConfig>): Partial<ImageConfig> | undefined {
-  const legacyVariance = (userConfig.layout as any)?.sizing?.variance;
-  if (!legacyVariance) return undefined;
-
-  return {
-    sizing: {
-      mode: 'adaptive',  // Legacy variance config implies adaptive mode
-      variance: legacyVariance
-    }
-  };
-}
-
 export function mergeConfig(
   userConfig: ImageCloudOptions = {}
 ): ImageCloudConfig {
-  // Convert legacy configs to new format
-  const legacyRotation = convertLegacyRotationConfig(userConfig as any);
-  const legacyVariance = convertLegacyVarianceConfig(userConfig as any);
-
-  // Combine user image config with converted legacy configs
-  // User's explicit image config takes precedence over legacy conversions
-  let combinedImageConfig: Partial<ImageConfig> | undefined = userConfig.image as Partial<ImageConfig> | undefined;
-  if (legacyRotation || legacyVariance) {
-    combinedImageConfig = {
-      ...(legacyVariance || {}),
-      ...(legacyRotation || {}),
-      ...combinedImageConfig
-    };
-    // Deep merge the rotation config if both exist
-    if (combinedImageConfig.rotation && legacyRotation?.rotation && userConfig.image?.rotation) {
-      combinedImageConfig.rotation = {
-        ...legacyRotation.rotation,
-        ...(userConfig.image as any).rotation
-      };
-    }
-  }
+  const combinedImageConfig: Partial<ImageConfig> | undefined = userConfig.image as Partial<ImageConfig> | undefined;
 
   // Build loaders array: images shorthand prepended, then explicit loaders
   const loaders = [...(userConfig.loaders ?? [])];
@@ -631,14 +575,8 @@ export function mergeConfig(
 
   }
 
-  // Merge ui config (with backwards compat for old rendering.ui)
-  const legacyUi = (userConfig as any).rendering?.ui;
-  if (legacyUi) {
-    console.warn('[ImageCloud] rendering.ui is deprecated. Use top-level ui instead.');
-  }
   merged.ui = {
     ...DEFAULT_CONFIG.ui,
-    ...legacyUi,
     ...userConfig.ui
   };
 

@@ -2,6 +2,14 @@
 
 Future enhancements and feature ideas for Image Cloud.
 
+---
+
+## Pre-Release
+
+Items to address before releasing v1.0. See [prerelease-review.md](prerelease-review.md) for the full list.
+
+---
+
 ## Active Issues
 
 - [ ] Radial layout has some extra border on the edges that we could take out.
@@ -10,21 +18,6 @@ Future enhancements and feature ideas for Image Cloud.
 ---
 
 ## Planned
-
-### Publish docs to GitHub Pages with MkDocs
-- `mkdocs.yml` already created locally (nav configured, Material theme, search)
-- `pip3 install mkdocs-material` works; local preview confirmed at `http://127.0.0.1:8001`
-
-**Remaining tasks:**
-- [x] Add `docs/index.md` as the homepage
-- [x] Pin MkDocs + Material versions in `requirements.txt`
-- [x] Decide on fate of `docs/plans/` — excluded from MkDocs nav (internal use only)
-- [x] Update `.github/workflows/publish-pages.yml` — switched to `mkdocs build`, added pip install, artifact now uses `site/`
-- [x] Set `site_url` in `mkdocs.yml` to `https://frybynite.github.io/image-cloud/`
-- [x] `configurator/` and `examples/` copied into `site/` post-build so they remain published
-- [ ] Test full CI pipeline end-to-end after changes
-
----
 
 ### ~~Simplify Initialization Process~~ ✅ v0.10.0
 - `imageCloud()` factory function for single-expression initialization
@@ -57,6 +50,7 @@ Future enhancements and feature ideas for Image Cloud.
 
 ## Completed
 
+- [x] Publish docs to GitHub Pages with MkDocs — Material theme, full nav, configurator/examples published alongside, CI pipeline verified (v0.10.1)
 - [x] Swipe gestures: Testing in test/fixtures/interactions.html in mobile mode, sometimes swipes get images out of order, centering becomes a problem
 - [x] Swipe gestures: Swipes inside an iframe don't work consistently
 - [x] Consolidate debug parameters under `config.debug` namespace — unified `config.debug.enabled`, `config.debug.centers`, `config.debug.loaders`. Old paths (`debug`, `layout.debugCenters`, `config.loaders.debugLogging`) removed (breaking change). Per-loader `debugLogging` retained as override. `debugRadials` removed entirely.

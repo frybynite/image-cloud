@@ -5,7 +5,7 @@ test.describe('Auto-Initialization', () => {
 
   test.describe('HTML Attribute Configuration', () => {
 
-    test('initializes from data-image-gallery attribute', async ({ page }) => {
+    test('initializes from data-image-cloud attribute', async ({ page }) => {
       await page.goto('/test/fixtures/auto-init.html');
       await waitForGalleryInit(page);
 
@@ -16,7 +16,7 @@ test.describe('Auto-Initialization', () => {
       expect(count).toBe(2);
     });
 
-    test('parses JSON from data-gallery-config', async ({ page }) => {
+    test('parses JSON from data-config', async ({ page }) => {
       await page.goto('/test/fixtures/auto-init.html');
       await waitForGalleryInit(page);
 

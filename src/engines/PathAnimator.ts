@@ -356,8 +356,8 @@ export function animatePath(options: PathAnimationOptions): void {
   const popConfig = scaleConfig?.pop || { overshoot: 1.2, bounces: 1 };
   const needsScaleAnimation = animateScale || isPopMode;
 
-  // For linear/arc paths WITHOUT rotation or scale animation, use CSS transitions (handled elsewhere)
-  if ((pathType === 'linear' || pathType === 'arc') && !needsRotationAnimation && !needsScaleAnimation) {
+  // For linear paths WITHOUT rotation or scale animation, use CSS transitions (handled elsewhere)
+  if (pathType === 'linear' && !needsRotationAnimation && !needsScaleAnimation) {
     if (onComplete) onComplete();
     return;
   }

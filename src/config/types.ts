@@ -226,15 +226,6 @@ export interface LayoutSpacingConfig {
   padding: number;
 }
 
-// Legacy interface kept for backward compatibility in LayoutEngine
-export interface LegacyLayoutRotationConfig {
-  enabled: boolean;
-  range: {
-    min: number;
-    max: number;
-  };
-}
-
 // ============================================================================
 // Algorithm-Specific Configuration
 // ============================================================================
@@ -307,7 +298,7 @@ export interface LayoutConfig {
 // ============================================================================
 
 // Entry Path Types
-export type EntryPathType = 'linear' | 'arc' | 'bounce' | 'elastic' | 'wave';
+export type EntryPathType = 'linear' | 'bounce' | 'elastic' | 'wave';
 
 export interface BouncePathConfig {
   overshoot: number;        // 0.1-0.3, how far past target (default: 0.15)
@@ -533,9 +524,6 @@ export interface ImageCloudConfig {
   styling?: ImageStylingConfig;
 }
 
-// Backwards compatibility alias
-export type GalleryConfig = ImageCloudConfig;
-
 export interface ImageCloudOptions {
   container?: string | HTMLElement;
   images?: string[];
@@ -546,71 +534,7 @@ export interface ImageCloudOptions {
   animation?: Partial<AnimationConfig>;
   interaction?: Partial<InteractionConfig>;
   ui?: Partial<UIConfig>;
-  /** @deprecated Use `ui` instead of `rendering.ui` */
-  rendering?: { ui?: Partial<UIConfig> };
   styling?: Partial<ImageStylingConfig>;
-}
-
-// Backwards compatibility alias
-export type ImageGalleryOptions = ImageCloudOptions;
-
-// ============================================================================
-// Legacy Configuration Types (for backward compatibility)
-// ============================================================================
-
-export interface LegacyLayoutConfig {
-  baseImageSize?: number;
-  rotationRange?: { min: number; max: number };
-  type?: 'random' | 'radial';
-  sizeVarianceMin?: number;
-  sizeVarianceMax?: number;
-  responsiveHeights?: ResponsiveHeight[];
-  padding?: number;
-  minSpacing?: number;
-  minRotation?: number;
-  maxRotation?: number;
-}
-
-export interface LegacyAnimationConfig {
-  duration?: number;
-  queueInterval?: number;
-  easing?: string;
-  bounceEasing?: string;
-}
-
-export interface LegacyZoomConfig {
-  focusScale?: number;
-  mobileScale?: number;     // Deprecated: use scaleTo/scalePercent instead
-  focusZIndex?: number;
-}
-
-export interface LegacyConfig {
-  layout?: LegacyLayoutConfig;
-  animation?: LegacyAnimationConfig;
-  zoom?: LegacyZoomConfig;
-  googleDrive?: {
-    apiKey?: string;
-    apiEndpoint?: string;
-    imageExtensions?: string[];
-  };
-  breakpoints?: {
-    mobile?: number;
-    tablet?: number;
-    desktop?: number;
-  };
-  isMobile?: () => boolean;
-  ui?: {
-    showLoadingSpinner?: boolean;
-  };
-}
-
-export interface LegacyImageGalleryOptions {
-  containerId?: string;
-  loaderType?: 'googleDrive' | 'static';
-  folderUrl?: string;
-  googleDrive?: {
-    apiKey?: string;
-  };
 }
 
 // ============================================================================

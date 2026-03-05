@@ -10,9 +10,6 @@ import './styles/image-cloud.css';
 // Main class export
 export { ImageCloud } from './ImageCloud';
 
-// Backwards compatibility alias
-export { ImageCloud as ImageGallery } from './ImageCloud';
-
 // Factory function — recommended entry point for most users
 import { ImageCloud as _ImageCloud } from './ImageCloud';
 import type { ImageCloudOptions } from './config/types';
@@ -25,9 +22,7 @@ export async function imageCloud(options: ImageCloudOptions): Promise<_ImageClou
 // Type exports
 export type {
   ImageCloudOptions,
-  ImageGalleryOptions, // Backwards compatibility alias
   ImageCloudConfig,
-  GalleryConfig,
   AnimationConfig,
   LayoutConfig,
   LayoutAlgorithm,
@@ -66,7 +61,33 @@ export type {
   BouncePreset,
   ElasticPreset,
   WavePathPreset,
+  EntryAnimationConfig,
+  EntryRotationConfig,
+  EntryScaleConfig,
+  // Idle animation types
+  IdleAnimationConfig,
+  IdleWiggleConfig,
+  IdlePulseConfig,
+  IdleBlinkConfig,
+  IdleSpinConfig,
+  // Image config types
+  ImageConfig,
+  ImageSizingConfig,
+  ImageRotationConfig,
+  // Layout algorithm config types
+  RadialAlgorithmConfig,
+  WaveAlgorithmConfig,
+  HoneycombAlgorithmConfig,
+  // Interaction & UI types
+  InteractionConfig,
   // Styling types
+  ImageStylingConfig,
+  ImageStyleState,
+  FilterConfig,
+  BorderConfig,
+  OutlineConfig,
+  DropShadowConfig,
+  ClipPathConfig,
   BorderStyle
 } from './config/types';
 

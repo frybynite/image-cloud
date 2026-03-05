@@ -684,7 +684,7 @@ export class ImageCloud {
             startScale
           });
         } else {
-          // Use CSS transition for linear/arc paths without rotation animation
+          // Use CSS transition for linear paths without rotation animation
           const finalTransform = img.dataset.finalTransform || '';
           img.style.transform = finalTransform;
         }

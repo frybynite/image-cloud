@@ -57,31 +57,34 @@ test.describe('Navigation Config Flags', () => {
     await waitForAnimation(page, 500);
 
     await page.locator('#imageCloud img').first().click({ force: true });
-    await waitForAnimation(page, 300);
 
-    const idBefore = await page.evaluate(() => {
+    // Wait until an image is focused (zIndex >= 1000)
+    const idBefore = await page.waitForFunction(() => {
       const imgs = document.querySelectorAll('#imageCloud img');
       for (const img of imgs) {
         if (parseInt(window.getComputedStyle(img as HTMLElement).zIndex) >= 1000) {
-          return (img as HTMLElement).dataset.imageId;
+          return (img as HTMLElement).dataset.imageId ?? null;
         }
       }
       return null;
-    });
+    }, { timeout: 2000 }).then(h => h.jsonValue());
+
+    expect(idBefore).not.toBeNull();
 
     await page.locator('#imageCloud').focus();
     await page.keyboard.press('ArrowRight');
-    await waitForAnimation(page, 300);
 
-    const idAfter = await page.evaluate(() => {
+    // Wait until a DIFFERENT image is focused
+    const idAfter = await page.waitForFunction((before) => {
       const imgs = document.querySelectorAll('#imageCloud img');
       for (const img of imgs) {
-        if (parseInt(window.getComputedStyle(img as HTMLElement).zIndex) >= 1000) {
-          return (img as HTMLElement).dataset.imageId;
+        const id = (img as HTMLElement).dataset.imageId;
+        if (parseInt(window.getComputedStyle(img as HTMLElement).zIndex) >= 1000 && id !== before) {
+          return id;
         }
       }
       return null;
-    });
+    }, idBefore, { timeout: 2000 }).then(h => h.jsonValue());
 
     expect(idAfter).not.toBeNull();
     expect(idAfter).not.toBe(idBefore);
@@ -98,15 +101,16 @@ test.describe('Navigation Config Flags', () => {
 
     // Click an image to focus it — this should still work
     await page.locator('#imageCloud img').first().click({ force: true });
-    await waitForAnimation(page, 300);
 
-    const focused = await page.evaluate(() => {
+    // Wait until an image is actually focused rather than using a fixed timeout
+    const focused = await page.waitForFunction(() => {
       const imgs = document.querySelectorAll('#imageCloud img');
       for (const img of imgs) {
         if (parseInt(window.getComputedStyle(img as HTMLElement).zIndex) >= 1000) return true;
       }
       return false;
-    });
+    }, { timeout: 2000 }).then(h => h.jsonValue());
+
     expect(focused).toBe(true);
   });
 

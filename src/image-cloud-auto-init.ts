@@ -33,8 +33,7 @@ function autoInitialize(): void {
   }
 
   const initGalleries = () => {
-    // Find all elements marked with data-image-cloud or data-image-gallery (legacy)
-    const containers = document.querySelectorAll('[data-image-cloud], [data-image-gallery]');
+    const containers = document.querySelectorAll('[data-image-cloud]');
 
     if (containers.length === 0) {
       // Quietly return if no galleries found (normal case for some pages)
@@ -51,9 +50,7 @@ function autoInitialize(): void {
         return;
       }
 
-      // Check for JSON configuration
-      // Supports data-config (preferred) or data-gallery-config (legacy alias)
-      const jsonConfig = element.dataset.config || element.dataset.galleryConfig;
+      const jsonConfig = element.dataset.config;
       let options: ImageCloudOptions;
 
       if (jsonConfig) {
@@ -95,5 +92,3 @@ autoInitialize();
 // Also export for manual control if needed
 export { autoInitialize };
 export { ImageCloud } from './ImageCloud';
-// Backwards compatibility
-export { ImageCloud as ImageGallery } from './ImageCloud';
