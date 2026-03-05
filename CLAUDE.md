@@ -56,6 +56,7 @@ See `docs/parameters.md` for full configuration reference. Key config structure:
 ## Testing
 
 Tests use Playwright. Test files are in `test/` directory with config at `test/playwright.config.ts`.
+After running all tests, if one or more tests fail follow up by running each individually to eliminate issues with parallel runs.
 
 ## Examples
 
