@@ -1506,7 +1506,6 @@ Controls user interactions like clicking and zooming.
 | `dragging` | `boolean` | `true` | When `false`, sets `draggable="false"` on each image element, suppressing the browser's native click-drag behavior. |
 | `navigation.keyboard` | `boolean` | `true` | When `false`, disables arrow key (← →), Escape, and Enter/Space keyboard navigation. Navigation is scoped to the gallery container — click the container to give it focus first. |
 | `navigation.swipe` | `boolean` | `true` | When `false`, disables touch swipe gestures for navigating between focused images. Useful when the gallery is inside a scrollable container. |
-| `navigation.mouseWheel` | `boolean` | - | When `true`, enables mouse wheel scrolling to navigate between focused images. |
 
 **Focus Scaling Behavior:**
 
