@@ -57,6 +57,7 @@ await cloud.init();
 - [Entry Rotation Animation](#entry-rotation-animation)
 - [Entry Scale Animation](#entry-scale-animation)
 - [Idle Animation](#idle-animation)
+- [Event Callbacks (`on`)](#event-callbacks-on)
 - [Interaction Configuration](#interaction-configuration-interaction)
 - [UI Configuration](#ui-configuration-ui)
 - [Styling Configuration](#styling-configuration-styling)
@@ -1526,6 +1527,40 @@ interaction: {
   }
 }
 ```
+
+### Event Callbacks (`on`)
+
+React to image state changes via callback functions, similar to Swiper.js event hooks.
+
+```typescript
+imageCloud({
+  // ...
+  on: {
+    onImageHover:   ({ element, index, url, layout }) => { /* image entered hover state */ },
+    onImageUnhover: ({ element, index, url, layout }) => { /* image left hover state */ },
+    onImageFocus:   ({ element, index, url, layout }) => { /* image focused/zoomed in */ },
+    onImageUnfocus: ({ element, index, url, layout }) => { /* image unfocused/zoomed out */ },
+  }
+});
+```
+
+| Callback | Fired when |
+| :--- | :--- |
+| `onImageHover` | Cursor enters an image (`mouseenter`) |
+| `onImageUnhover` | Cursor leaves an image (`mouseleave`) |
+| `onImageFocus` | Image focus animation completes |
+| `onImageUnfocus` | Image unfocus animation completes |
+
+#### Context Object (`ImageStateContext`)
+
+All callbacks receive the same context object:
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `element` | `HTMLElement` | The image element. |
+| `index` | `number` | Zero-based index of this image in the gallery. |
+| `url` | `string` | Original URL of the image. |
+| `layout` | `ImageLayout` | Layout data (`x`, `y`, `rotation`, `scale`, `baseSize`). |
 
 ### UI Configuration (`ui`)
 

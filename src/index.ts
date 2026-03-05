@@ -70,6 +70,11 @@ export type {
   IdlePulseConfig,
   IdleBlinkConfig,
   IdleSpinConfig,
+  IdleCustomContext,
+  IdleCustomAnimationFn,
+  // State change hook types
+  ImageStateContext,
+  ImageCloudCallbacks,
   // Image config types
   ImageConfig,
   ImageSizingConfig,

@@ -524,6 +524,20 @@ export interface ImageCloudConfig {
   styling?: ImageStylingConfig;
 }
 
+export interface ImageStateContext {
+  element: HTMLElement;
+  index: number;
+  url: string;
+  layout: ImageLayout;
+}
+
+export interface ImageCloudCallbacks {
+  onImageHover?:   (ctx: ImageStateContext) => void;
+  onImageUnhover?: (ctx: ImageStateContext) => void;
+  onImageFocus?:   (ctx: ImageStateContext) => void;
+  onImageUnfocus?: (ctx: ImageStateContext) => void;
+}
+
 export interface ImageCloudOptions {
   container?: string | HTMLElement;
   images?: string[];
@@ -535,6 +549,7 @@ export interface ImageCloudOptions {
   interaction?: Partial<InteractionConfig>;
   ui?: Partial<UIConfig>;
   styling?: Partial<ImageStylingConfig>;
+  on?: ImageCloudCallbacks;
 }
 
 // ============================================================================

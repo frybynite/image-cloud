@@ -4,7 +4,7 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig, LoaderEntry, SharedLoaderConfig, StaticLoaderInnerConfig, GoogleDriveLoaderInnerConfig } from './config/types';
+import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig, LoaderEntry, SharedLoaderConfig, StaticLoaderInnerConfig, GoogleDriveLoaderInnerConfig, ImageCloudCallbacks, ImageStateContext } from './config/types';
 import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
@@ -52,6 +52,9 @@ export class ImageCloud {
   private imageLoader: ImageLoader;
   private imageFilter: ImageFilter;
 
+  // User callbacks
+  private callbacks: ImageCloudCallbacks;
+
   // DOM Elements
   private containerEl: HTMLElement | null;
   private loadingEl: HTMLElement | null;
@@ -76,6 +79,9 @@ export class ImageCloud {
       this.containerRef = null;
       this.containerId = options.container || 'imageCloud';
     }
+
+    // Store user callbacks
+    this.callbacks = options.on ?? {};
 
     // Internal state
     this.imagesLoaded = false;
@@ -134,6 +140,17 @@ export class ImageCloud {
       // If the cursor is still over this image, mouseenter won't re-fire — re-apply hover styles.
       // Defer to next frame so the browser updates :hover after the animation finishes.
       const img = el as HTMLImageElement;
+      const unfocusIdx = this.imageElements.indexOf(img);
+      if (this.callbacks.onImageUnfocus && unfocusIdx !== -1) {
+        const urls = this.imageLoader.imageURLs();
+        const ctx: ImageStateContext = {
+          element: img,
+          index: unfocusIdx,
+          url: urls[unfocusIdx] ?? '',
+          layout: this.imageLayouts[unfocusIdx]
+        };
+        this.callbacks.onImageUnfocus(ctx);
+      }
       requestAnimationFrame(() => {
         if (img.matches(':hover') && this.fullConfig.styling?.hover) {
           const idx = this.imageElements.indexOf(img);
@@ -633,7 +650,7 @@ export class ImageCloud {
       this.containerEl.appendChild(img);
       this.imageElements.push(img);
 
-      requestAnimationFrame(() => {
+      requestAnimationFrame(async () => {
         void img.offsetWidth; // Force reflow
         // Use configured default opacity, or 1 if not specified
         img.style.opacity = this.defaultStyles.opacity ?? '1';
@@ -838,6 +855,10 @@ export class ImageCloud {
           applyStylesToElementWithState(img, this.fullConfig.styling?.hover, imageHeight, cachedWidth);
           applyClassNameToElement(img, this.hoverClassName);
         }
+        if (this.callbacks.onImageHover) {
+          const ctx: ImageStateContext = { element: img, index, url, layout };
+          this.callbacks.onImageHover(ctx);
+        }
       });
 
       img.addEventListener('mouseleave', () => {
@@ -848,6 +869,10 @@ export class ImageCloud {
           applyStylesToElementWithState(img, this.fullConfig.styling?.default, imageHeight, cachedWidth);
           removeClassNameFromElement(img, this.hoverClassName);
           applyClassNameToElement(img, this.defaultClassName);
+        }
+        if (this.callbacks.onImageUnhover) {
+          const ctx: ImageStateContext = { element: img, index, url, layout };
+          this.callbacks.onImageUnhover(ctx);
         }
       });
 
@@ -997,6 +1022,16 @@ export class ImageCloud {
       }
       this.showNavButtons();
       this.showFocusIndicator();
+      if (this.callbacks.onImageFocus && this.currentFocusIndex !== null) {
+        const urls = this.imageLoader.imageURLs();
+        const ctx: ImageStateContext = {
+          element: imageElement,
+          index: this.currentFocusIndex,
+          url: urls[this.currentFocusIndex] ?? '',
+          layout: originalLayout
+        };
+        this.callbacks.onImageFocus(ctx);
+      }
     }
   }
 

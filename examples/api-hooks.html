@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cloud - API Hooks Demo</title>
+    <!-- Required: Image Cloud CSS -->
+    <link rel="stylesheet" href="../dist/style.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { text-align: center; margin-bottom: 8px; }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+            gap: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .demo-section {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .demo-section h2 {
+            margin: 0 0 6px 0;
+            font-size: 1.2rem;
+            color: #7f5af0;
+        }
+        .demo-section p {
+            margin: 0 0 14px 0;
+            color: #888;
+            font-size: 0.88rem;
+        }
+        .fbn-ic-gallery {
+            background: #0f0f23;
+            border-radius: 8px;
+        }
+        #gallery-hooks, #gallery-custom {
+            height: 480px;
+        }
+        .event-log {
+            margin-top: 12px;
+            background: #0f0f23;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            height: 120px;
+            overflow-y: auto;
+            color: #aaa;
+        }
+        .event-log .entry { color: #7f5af0; }
+        .event-log .hover { color: #2cb67d; }
+        .event-log .focus { color: #f4a261; }
+        .event-log .unfocus { color: #e07c68; }
+        .event-log .unhover { color: #5e8070; }
+        .tooltip {
+            position: fixed;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            display: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+<h1>API Hooks &amp; Custom Entry Animation</h1>
+<p class="subtitle">Demonstrates <code>on</code> event callbacks: <code>onImageHover</code>, <code>onImageUnhover</code>, <code>onImageFocus</code>, <code>onImageUnfocus</code></p>
+
+<div class="demo-grid">
+
+    <!-- State change hooks -->
+    <div class="demo-section">
+        <h2>State Change Hooks</h2>
+        <p>
+            All four callbacks logged in real time below. Click an image to focus it.
+        </p>
+        <div id="gallery-hooks" class="fbn-ic-gallery"></div>
+        <div class="event-log" id="log-hooks"></div>
+    </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Image Cloud library -->
+<script src="../dist/image-cloud.umd.js"></script>
+<script>
+const { imageCloud } = window.ImageCloud;
+
+// Shared sample images (picsum)
+const IMAGES = Array.from({ length: 12 }, (_, i) =>
+    `https://picsum.photos/seed/${i + 10}/400/300.jpg`
+);
+
+// ─── Demo 1: State Change Hooks ──────────────────────────────────────────────
+
+function addLog(logEl, cls, text) {
+    const line = document.createElement('div');
+    line.className = cls;
+    line.textContent = `${new Date().toLocaleTimeString('en', { hour12: false })}  ${text}`;
+    logEl.prepend(line);
+    // Keep last 30 lines
+    while (logEl.children.length > 30) logEl.removeChild(logEl.lastChild);
+}
+
+const logHooks = document.getElementById('log-hooks');
+const tooltip  = document.getElementById('tooltip');
+
+imageCloud({
+    container: 'gallery-hooks',
+    images: IMAGES,
+    layout: { algorithm: 'radial', spacing: { padding: 40 } },
+    image:  { sizing: { mode: 'adaptive', minSize: 80, maxSize: 200 } },
+    animation: {
+        duration: 400,
+        queue: { enabled: true, interval: 80 },
+        entry: {
+            start:  { position: 'nearest-edge' },
+            timing: { duration: 500 },
+            easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+        }
+    },
+    on: {
+        onImageHover({ element, index, url }) {
+            addLog(logHooks, 'hover', `hover  img #${index}`);
+            // Show tooltip with image number
+            tooltip.textContent = `Image #${index}`;
+            tooltip.style.display = 'block';
+            element.addEventListener('mousemove', function onMove(e) {
+                tooltip.style.left = (e.clientX + 14) + 'px';
+                tooltip.style.top  = (e.clientY + 14) + 'px';
+            }, { signal: element._abortCtrl?.signal });
+        },
+        onImageUnhover({ index }) {
+            addLog(logHooks, 'unhover', `unhover img #${index}`);
+            tooltip.style.display = 'none';
+        },
+        onImageFocus({ index, url }) {
+            addLog(logHooks, 'focus', `focus  img #${index}  ${url.slice(-20)}`);
+        },
+        onImageUnfocus({ index }) {
+            addLog(logHooks, 'unfocus', `unfocus img #${index}`);
+        }
+    }
+});
+
+
+</script>
+</body>
+</html>

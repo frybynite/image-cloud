@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hooks Example</title>
+    <link rel="stylesheet" href="../dist/style.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 6px 0;
+            font-size: 1.8rem;
+            color: #f0f6fc;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7d8590;
+            margin: 0 0 28px 0;
+            font-size: 0.9rem;
+        }
+
+        /* ── Gallery wrapper ───────────────────────── */
+        .gallery-wrap {
+            position: relative;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        #gallery {
+            width: 100%;
+            height: 700px;
+            position: relative;
+            background: #161b22;
+            border-radius: 16px;
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+
+        /* ── Hover label — lower-left ──────────────── */
+        #hover-label {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            background: rgba(13, 17, 23, 0.88);
+            color: #79c0ff;
+            font-family: monospace;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid #1f6feb;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 10;
+            max-width: 260px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #hover-label.visible { opacity: 1; }
+
+        /* ── Focus card — top-center ───────────────── */
+        #focus-card {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(13, 17, 23, 0.92);
+            border: 1px solid #388bfd;
+            border-radius: 10px;
+            padding: 10px 16px;
+            width: 340px;
+            opacity: 0;
+            transition: opacity 0.25s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #focus-card.visible { opacity: 1; }
+
+        #focus-card .fc-name {
+            font-family: monospace;
+            font-size: 0.78rem;
+            color: #79c0ff;
+            margin-bottom: 5px;
+        }
+
+        #focus-card .fc-text {
+            font-size: 0.82rem;
+            color: #c9d1d9;
+            line-height: 1.5;
+        }
+
+        /* Suppress gallery's custom focus indicator outline */
+        #gallery.fbn-ic-has-focus { outline: none; }
+
+        /* ── Instructions ──────────────────────────── */
+        .hint {
+            text-align: center;
+            color: #7d8590;
+            font-size: 0.8rem;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hooks Example</h1>
+    <p class="subtitle">Demonstrates use of hover and focus hooks</p>
+    <p class="subtitle">Hover an image to see its name &nbsp;·&nbsp; Click to focus and read about it</p>
+
+    <div class="gallery-wrap">
+        <!-- Overlay elements live inside the wrapper, overlapping the gallery -->
+        <div id="hover-label"></div>
+        <div id="focus-card">
+            <div class="fc-name" id="fc-name"></div>
+            <div class="fc-text" id="fc-text"></div>
+        </div>
+
+        <div id="gallery"></div>
+    </div>
+
+    <p class="hint">Click a focused image again (or press Escape) to return to the cloud</p>
+
+    <script type="module">
+        import { imageCloud } from '../dist/image-cloud.js';
+
+        // ── Image list ──────────────────────────────────────────────────────
+        const IMAGES = [
+            { seed: 10,  name: 'forest-coyote.jpg' },
+            { seed: 42,  name: 'sea-cave.jpg' },
+            { seed: 55,  name: 'office-tower-night.jpg' },
+            { seed: 67,  name: 'overwater-pier.jpg' },
+            { seed: 80,  name: 'sunset-silhouette.jpg' },
+            { seed: 91,  name: 'old-tool-shed.jpg' },
+            { seed: 104, name: 'flower-buds.jpg' },
+        ];
+
+        // Build URL list and a filename → URL lookup
+        const urls = IMAGES.map(({ seed }) =>
+            `https://picsum.photos/seed/${seed}/480/360.jpg`
+        );
+
+        // Map url → filename for use in callbacks
+        const urlToName = Object.fromEntries(
+            IMAGES.map(({ seed, name }) => [
+                `https://picsum.photos/seed/${seed}/480/360.jpg`,
+                name
+            ])
+        );
+
+        // ── Image summaries (based on actual image content) ─────────────────
+        const summaries = {
+            'forest-coyote.jpg':      'A coyote pauses on reddish soil and stares directly into the camera. Alert ears, wiry grey-brown coat. Behind it, a tangle of dark branches and conifers swallowed by shadow.',
+            'sea-cave.jpg':           'Shot from inside a coastal limestone cave, the arched opening frames a vivid blue-green cove. Rugged cliffs rise on the far shore under a cloudless Mediterranean sky.',
+            'office-tower-night.jpg': 'A glass-curtain office block photographed straight-on after dark. Dozens of floors glow amber and white — open-plan desks, conference rooms, a few lights already switched off.',
+            'overwater-pier.jpg':     'A long timber boardwalk runs straight to a thatched-roof pavilion standing over calm, pale turquoise water. The horizon is flat and hazy, the sky the colour of old paper.',
+            'sunset-silhouette.jpg':  'One person stands alone on an open hilltop, silhouetted black against a wide gradient sky — deep orange at the horizon blending up through amber to cobalt blue.',
+            'old-tool-shed.jpg':      'Inside a dim, cluttered workshop, an entire wall is hung with hand tools: axes, hammers, coils of rope, chains, and gloves. A narrow window on the left provides the only light.',
+            'flower-buds.jpg':        'A tight cluster of pale flower buds points skyward from a stem, surrounded by broad green leaves beaded with fresh raindrops. The background is a dark, blurred wash of foliage.',
+        };
+
+        // ── DOM refs ────────────────────────────────────────────────────────
+        const hoverLabel = document.getElementById('hover-label');
+        const focusCard  = document.getElementById('focus-card');
+        const fcName     = document.getElementById('fc-name');
+        const fcText     = document.getElementById('fc-text');
+
+        // ── Gallery ─────────────────────────────────────────────────────────
+        await imageCloud({
+            container: 'gallery',
+            images: urls,
+            layout: {
+                algorithm: 'honeycomb',
+                spacing: { padding: 30 },
+                honeycomb: { spacing: 4 }
+            },
+            image: {
+                sizing: { mode: 'adaptive', minSize: 90, maxSize: 220 },
+                rotation: { mode: 'none' }
+            },
+            animation: {
+                duration: 400,
+                queue: { enabled: true, interval: 60 },
+                entry: {
+                    start: { position: 'center' },
+                    timing: { duration: 500 },
+                    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }
+            },
+            interaction: {
+                focus: { scalePercent: 0.78, zIndex: 1000, animationDuration: 300 }
+            },
+            on: {
+                onImageHover({ url }) {
+                    const name = urlToName[url] ?? url.split('/').pop();
+                    hoverLabel.textContent = name;
+                    hoverLabel.classList.add('visible');
+                },
+                onImageUnhover() {
+                    hoverLabel.classList.remove('visible');
+                },
+                onImageFocus({ url }) {
+                    const name = urlToName[url] ?? url.split('/').pop();
+                    fcName.textContent = name;
+                    fcText.textContent = summaries[name] ?? 'No description available.';
+                    focusCard.classList.add('visible');
+                },
+                onImageUnfocus() {
+                    focusCard.classList.remove('visible');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
