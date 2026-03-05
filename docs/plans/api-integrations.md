@@ -297,6 +297,89 @@ time with no DOM changes. Eased `progress` would require a cubic-bezier solver (
 
 ---
 
+### 3. Layout Hooks 💬 needs discussion
+
+> **Status: needs design discussion before implementation.**
+
+The idea is to give developers hooks into the layout process — both to observe where
+images are being placed and potentially to influence placement.
+
+#### Open questions
+
+**What should be hookable?**
+
+The layout engine currently runs synchronously: `layoutEngine.generateLayout()` returns
+an array of `ImageLayout` objects all at once. There are a few natural interception points:
+
+1. **Before layout runs** — know the image count and container bounds before positions
+   are calculated. Could allow the developer to override layout config dynamically
+   (e.g. change algorithm based on image count or viewport size).
+
+2. **Per-image placement** — called for each image as its position is calculated.
+   Could allow overriding or nudging individual image positions.
+
+3. **After layout completes** — receive the full set of computed positions before
+   images are rendered. Could allow bulk modification (e.g. sort by position, shuffle,
+   pin specific images to fixed positions).
+
+**Should layout hooks be observational or transformative?**
+
+Unlike animation hooks (observational only), layout hooks may need to be
+*transformative* — the value of intercepting layout is often to change where images
+land, not just to know where they're going. This raises questions about:
+
+- Return type: `ImageLayout | void` (modify or pass through)?
+- Validation: what happens if a returned position is outside the container?
+- Consistency: does overriding one image's position affect others (e.g. collision)?
+
+**Where does a custom layout algorithm fit in?**
+
+The `PlacementLayout` interface already allows fully custom algorithms. Layout hooks
+may be redundant for developers who just want a different algorithm — they can already
+implement `PlacementLayout`. The hooks would serve a different need: tweaking or
+augmenting the *output* of a built-in algorithm without replacing it entirely.
+
+#### Possible API sketch (not finalised)
+
+```typescript
+// Observational — know what was computed
+onLayoutComplete?: (ctx: LayoutCompleteContext) => void;
+
+// Transformative — modify individual placements
+onImagePlaced?: (ctx: ImagePlacedContext) => Partial<ImageLayout> | void;
+```
+
+```typescript
+interface LayoutCompleteContext {
+  layouts:        ImageLayout[];      // full computed layout, read-only
+  containerBounds: ContainerBounds;
+  algorithm:      LayoutAlgorithm;
+  imageCount:     number;
+}
+
+interface ImagePlacedContext {
+  layout:          ImageLayout;       // computed placement for this image
+  index:           number;
+  totalImages:     number;
+  containerBounds: ContainerBounds;
+  algorithm:       LayoutAlgorithm;
+}
+```
+
+#### Questions to answer in discussion
+
+- Do we want observational hooks, transformative hooks, or both?
+- Should `onImagePlaced` be able to return a full `ImageLayout` override, or only
+  specific fields (position, rotation, scale)?
+- How do layout hooks interact with responsive resize — do they re-fire on every
+  container resize?
+- Is there a use case for an `onBeforeLayout` hook that can change config before
+  the algorithm runs?
+- Should layout hooks live in `on` (same as everything else) or somewhere separate
+  since they're about computation rather than user interaction?
+
+---
+
 ## Full `ImageCloudCallbacks` (target state)
 
 ```typescript
@@ -318,6 +401,10 @@ interface ImageCloudCallbacks {
   onEntryStart?:        (ctx: EntryStartContext)    => void;
   onEntryProgress?:     (ctx: EntryProgressContext) => void;
   onEntryComplete?:     (ctx: EntryCompleteContext) => void;
+
+  // Layout (needs design discussion)
+  onLayoutComplete?:    (ctx: LayoutCompleteContext) => void;
+  onImagePlaced?:       (ctx: ImagePlacedContext)    => Partial<ImageLayout> | void;
 }
 ```
 
