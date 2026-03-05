@@ -12,3 +12,4 @@ playwright/.cache/
 
 # Worktrees
 worktrees/
+site/

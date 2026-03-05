@@ -5,16 +5,26 @@ Future enhancements and feature ideas for Image Cloud.
 ## Active Issues
 
 - [ ] Radial layout has some extra border on the edges that we could take out.
-- [x] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly) — resolved by auto-creating loading elements inside the container (v0.3.3)
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Fix: After an image returns from focused state, hover styles are not re-applied if the cursor is already over the image — requires the user to move the mouse off and back on to trigger hover.
-- [x] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
-- [x] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`) — Confirmed: test remains skipped due to timing unreliability. Other spinner tests provide adequate coverage; `loading-spinner-slow.html` available for manual testing.
-- [x] Security: Set up Dependabot for dependency vulnerability scanning
-- [x] Security: Set up CodeQL for code security analysis
 ---
 
 ## Planned
+
+### Publish docs to GitHub Pages with MkDocs
+- `mkdocs.yml` already created locally (nav configured, Material theme, search)
+- `pip3 install mkdocs-material` works; local preview confirmed at `http://127.0.0.1:8001`
+
+**Remaining tasks:**
+- [x] Add `docs/index.md` as the homepage
+- [x] Pin MkDocs + Material versions in `requirements.txt`
+- [x] Decide on fate of `docs/plans/` — excluded from MkDocs nav (internal use only)
+- [x] Update `.github/workflows/publish-pages.yml` — switched to `mkdocs build`, added pip install, artifact now uses `site/`
+- [x] Set `site_url` in `mkdocs.yml` to `https://frybynite.github.io/image-cloud/`
+- [x] `configurator/` and `examples/` copied into `site/` post-build so they remain published
+- [ ] Test full CI pipeline end-to-end after changes
+
+---
 
 ### ~~Simplify Initialization Process~~ ✅ v0.10.0
 - `imageCloud()` factory function for single-expression initialization
@@ -34,7 +44,6 @@ Future enhancements and feature ideas for Image Cloud.
   - `zIndex` - bring hovered/focused images to front
   - `backdropFilter` - frosted glass effects behind images
   - `transformOrigin` - control where scale/rotate originates
-- Focus navigation buttons — optional prev/next UI buttons shown when navigation is active (image focused). Visible only during navigation, user-styleable via CSS, with a default built-in appearance. Configured via the `ui` section.
 - Auth/credential hooks for static loader fetch options (e.g., custom headers, bearer tokens for authenticated image endpoints — applies to JSON source and URL validation)
 - Additional layout algorithms (physics-based)
 - Lightbox mode
@@ -52,6 +61,11 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] Swipe gestures: Swipes inside an iframe don't work consistently
 - [x] Consolidate debug parameters under `config.debug` namespace — unified `config.debug.enabled`, `config.debug.centers`, `config.debug.loaders`. Old paths (`debug`, `layout.debugCenters`, `config.loaders.debugLogging`) removed (breaking change). Per-loader `debugLogging` retained as override. `debugRadials` removed entirely.
 - [x] Swipe gesture navigation - Left/right swipe gestures on touch devices navigate between focused images (SwipeEngine with drag feedback, threshold detection, horizontal angle filtering).
+- [x] Fix "Loading images..." text still visible after gallery loads (fbn-ic-hidden class not hiding element properly) — resolved by auto-creating loading elements inside the container (v0.3.3)
+- [x] Fix: Hitting Esc while an image is already animating out causes a secondary animation.
+- [x] Review skipped test: "spinner is visible during slow image loading" (`test/e2e/loading-spinner.spec.ts:41`) — Confirmed: test remains skipped due to timing unreliability. Other spinner tests provide adequate coverage; `loading-spinner-slow.html` available for manual testing.
+- [x] Security: Set up Dependabot for dependency vulnerability scanning
+- [x] Security: Set up CodeQL for code security analysis
 - [x] Packaging & Distribution Strategy - CDN deployment (unpkg/jsdelivr), simplified README examples, separate auto-init bundle.
 - [x] Fix image centering - images now correctly center on their layout positions (using pixel-based translate transforms).
 - [x] Replace random image placement with a more organized layout.
@@ -96,3 +110,4 @@ Future enhancements and feature ideas for Image Cloud.
 - [x] React component wrapper — `<ImageCloud>` component with props, ref forwarding, auto-cleanup. Ships as `@frybynite/image-cloud/react` subpath export.
 - [x] Vue 3 component wrapper — `<ImageCloud>` component using Composition API with deep watch for reinit. Ships as `@frybynite/image-cloud/vue` subpath export.
 - [x] Web Component wrapper — `<image-cloud>` custom element with `config`, `images`, `layout` attributes. Ships as `@frybynite/image-cloud/web-component` subpath export.
+- [x] Focus navigation buttons — optional prev/next UI buttons shown when an image is focused (`ui.showNavButtons`). Visible only during navigation, user-styleable via CSS. Configured via the `ui` section.

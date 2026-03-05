@@ -57,6 +57,7 @@ src/
 │   ├── SpiralPlacementLayout.ts
 │   ├── ClusterPlacementLayout.ts
 │   ├── WavePlacementLayout.ts
+│   ├── HoneycombPlacementLayout.ts
 │   └── RandomPlacementLayout.ts
 ├── loaders/
 │   ├── GoogleDriveLoader.ts
@@ -73,6 +74,40 @@ src/
 - CSS classes prefixed with `fbn-ic-`
 - ESM modules (type: "module" in package.json)
 - Vite for bundling (UMD and ESM outputs)
+
+## Documentation (MkDocs)
+
+The docs are built with [MkDocs](https://www.mkdocs.org/) using the [Material theme](https://squidfunk.github.io/mkdocs-material/). Source files are in `docs/`, config is in `mkdocs.yml`.
+
+### Prerequisites
+
+```bash
+pip3 install mkdocs-material
+```
+
+### Local preview
+
+```bash
+python3 -m mkdocs serve
+# Open http://127.0.0.1:8000/
+```
+
+MkDocs watches `docs/` and `mkdocs.yml` for changes and hot-reloads automatically.
+
+### Build
+
+```bash
+python3 -m mkdocs build   # outputs to site/
+```
+
+### Notes
+
+- `docs/plans/` is intentionally excluded from the nav (internal planning docs)
+- The published site is at `https://frybynite.github.io/image-cloud/`
+- The `configurator/` and `examples/` directories are published alongside the MkDocs site via the GitHub Pages workflow
+- Versions are pinned in `requirements.txt` (`mkdocs==1.6.1`, `mkdocs-material==9.7.3`) — MkDocs 2.0 is incompatible with Material for MkDocs
+
+---
 
 ## Contributing
 

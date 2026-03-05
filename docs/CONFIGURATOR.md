@@ -4,12 +4,13 @@ The Gallery Configurator is a visual tool for creating and customizing Image Clo
 
 ## Accessing the Configurator
 
+**Online**: [https://frybynite.github.io/image-cloud/configurator/](https://frybynite.github.io/image-cloud/configurator/)
+
+**Local**:
 ```bash
 npm run serve
 # Navigate to http://localhost:8080/configurator/
 ```
-
-Or use any static file server to serve the project directory.
 
 ## Features
 
@@ -58,48 +59,13 @@ You can then customize any setting from the preset starting point.
 
 ### Configuration Sections
 
-#### Layout
-
-- **Algorithm**: radial, grid, spiral, cluster, random
-- **Sizing**: Base height, variance (min/max)
-- **Adaptive Sizing**: Auto-size based on container (min/max, coverage, density)
-- **Rotation**: Enable/disable with degree range
-- **Spacing**: Padding and minimum gap
-- **Algorithm-Specific**: Options for grid (columns, jitter), spiral (type, direction), cluster (count, spread), radial (tightness), wave (rows, amplitude, frequency, synchronization, phase shift)
-
-#### Animation
-
-- **Duration**: General animation duration
-- **Queue**: Enable queued animations with interval
-- **Entry Animation**: Start position, offset, duration, stagger
-
-#### Interaction
-
-- **Focus Scale**: How much to zoom on focus (desktop and mobile)
-- **Unfocused Opacity**: Opacity of non-focused images
-- **Z-Index**: Z-index for focused images
-
-#### Styling
-
-Configure visual appearance for three states:
-
-**Default State**:
-- Border (width, color, radius)
-- Shadow (preset or custom)
-- Opacity
-- Filters (grayscale, blur, brightness, contrast, saturate, sepia, hue-rotate)
-- **Clip Path**: Predefined shapes (circle, square, hexagon, etc.) or custom CSS clip-path
-  - **Mode**: Choose between "Height-relative" (default, aspect-ratio aware) or "Percent" (responsive)
-  - Height-relative mode scales shapes based on image height for consistent sizing across different aspect ratios
-  - Clip-path animates smoothly during focus/unfocus transitions
-
-**Hover State**:
-- Shadow
-- Filters (grayscale, brightness)
-
-**Focused State**:
-- Shadow
-- Filters (grayscale)
+- **Layout** — Algorithm (radial, grid, spiral, cluster, wave, honeycomb, random), layout controls (coverage, density, scale decay), and spacing
+- **Image: Size & Rotation** — Sizing mode (adaptive, fixed, responsive), size bounds, variance, and rotation mode
+- **Image: Style** — Border, outline, radius, shadow, clip path, opacity, cursor, and filters — configured independently for Default, Hover, and Focused states
+- **Animation** — General duration, queue settings, entry animation (path, rotation, scale modes), and idle animation
+- **Interaction** — Focus scale and z-index, keyboard navigation, swipe gestures, and image dragging
+- **UI** — Show/hide loading spinner, image counter, nav buttons, and focus outline
+- **Config** — URL validation settings, allowed extensions, and debug options
 
 ## Using Generated Configuration
 

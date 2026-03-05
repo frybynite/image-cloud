@@ -4,7 +4,7 @@ Image Cloud supports multiple image sources through configurable loaders.
 
 ## Table of Contents
 
-- [Quick Start — `images` shorthand](#quick-start--images-shorthand)
+- [Quick Start — `images` shorthand](#quick-start-images-shorthand)
 - [Static Loader](#static-loader)
   - [Configuration Options](#static-loader-configuration-options)
   - [Source Types](#static-source-types)
@@ -24,9 +24,9 @@ Image Cloud supports multiple image sources through configurable loaders.
 The simplest way to load images — pass a top-level `images` array:
 
 ```javascript
-import { ImageCloud } from '@frybynite/image-cloud';
+import { imageCloud } from '@frybynite/image-cloud';
 
-const gallery = new ImageCloud({
+await imageCloud({
   container: 'imageCloud',
   images: [
     'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=800',
@@ -34,8 +34,6 @@ const gallery = new ImageCloud({
     'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=800'
   ]
 });
-
-await gallery.init();
 ```
 
 **Important:** The `images` shorthand is prepended as the first static loader entry. You can combine `images` with explicit `loaders` — the shorthand images come first.
@@ -121,7 +119,9 @@ The static loader can validate URLs before attempting to display them:
 ### Complete Static Loader Example
 
 ```javascript
-const gallery = new ImageCloud({
+import { imageCloud } from '@frybynite/image-cloud';
+
+await imageCloud({
   container: 'imageCloud',
   loaders: [{
     static: {
@@ -149,8 +149,6 @@ const gallery = new ImageCloud({
     }
   }
 });
-
-gallery.init();
 ```
 
 ---
@@ -251,7 +249,9 @@ Load specific files by URL or ID (identified by the `files` key):
 ### Complete Google Drive Example
 
 ```javascript
-const gallery = new ImageCloud({
+import { imageCloud } from '@frybynite/image-cloud';
+
+await imageCloud({
   container: 'imageCloud',
   loaders: [{
     googleDrive: {
@@ -265,8 +265,6 @@ const gallery = new ImageCloud({
     }
   }]
 });
-
-gallery.init();
 ```
 
 ### Domain Restrictions
@@ -286,7 +284,9 @@ Without this, you'll see CORS errors and the loader will fail.
 Use the `loaders` array with multiple entries to pull images from different sources into a single gallery. Composite behavior is implicit — no wrapper needed.
 
 ```javascript
-const gallery = new ImageCloud({
+import { imageCloud } from '@frybynite/image-cloud';
+
+await imageCloud({
   container: 'imageCloud',
   loaders: [
     {
@@ -302,8 +302,6 @@ const gallery = new ImageCloud({
     }
   ]
 });
-
-await gallery.init();
 ```
 
 All loaders are prepared in parallel. If one loader fails, others continue (failed loader contributes 0 images). URLs are combined in the order loaders appear in the array.
@@ -313,7 +311,9 @@ All loaders are prepared in parallel. If one loader fails, others continue (fail
 You can combine the `images` shorthand with explicit `loaders`:
 
 ```javascript
-const gallery = new ImageCloud({
+import { imageCloud } from '@frybynite/image-cloud';
+
+await imageCloud({
   container: 'imageCloud',
   images: ['https://example.com/photo1.jpg', 'https://example.com/photo2.jpg'],
   loaders: [{
@@ -334,7 +334,9 @@ The `images` URLs appear first, followed by images from the explicit loaders.
 Use `config.loaders` to set defaults that apply to all loaders. Individual loader entries can override these settings.
 
 ```javascript
-const gallery = new ImageCloud({
+import { imageCloud } from '@frybynite/image-cloud';
+
+await imageCloud({
   container: 'imageCloud',
   images: ['img1.jpg', 'img2.jpg'],
   config: {

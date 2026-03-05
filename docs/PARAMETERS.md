@@ -35,31 +35,32 @@ await cloud.init();
 
 - [Framework Wrappers](#framework-wrappers)
 - [Pattern-Based Configuration](#pattern-based-configuration)
-- [Loader Configuration](#1-loader-configuration)
+- [Loader Configuration](#loader-configuration)
   - [`images` Shorthand](#images-shorthand)
   - [Static Loader](#static-loader)
   - [Google Drive Loader](#google-drive-loader)
   - [Multiple Loaders](#multiple-loaders-composite)
   - [Shared Loader Config](#shared-loader-config-configloaders)
-- [Image Configuration](#2-image-configuration-image)
-- [Layout Configuration](#3-layout-configuration-layout)
+- [Image Configuration](#image-configuration-image)
+- [Layout Configuration](#layout-configuration-layout)
   - [Layout Algorithms](#layout-algorithms)
   - [Grid Algorithm](#grid-algorithm)
   - [Spiral Algorithm](#spiral-algorithm)
   - [Cluster Algorithm](#cluster-algorithm)
   - [Wave Algorithm](#wave-algorithm)
+  - [Honeycomb Algorithm](#honeycomb-algorithm)
   - [Radial Algorithm](#radial-algorithm)
   - [Random Algorithm](#random-algorithm)
-- [Animation Configuration](#4-animation-configuration-animation)
+- [Animation Configuration](#animation-configuration-animation)
 - [Entry Animation](#entry-animation)
 - [Entry Animation Paths](#entry-animation-paths)
 - [Entry Rotation Animation](#entry-rotation-animation)
 - [Entry Scale Animation](#entry-scale-animation)
 - [Idle Animation](#idle-animation)
-- [Interaction Configuration](#5-interaction-configuration-interaction)
-- [Rendering Configuration](#6-rendering-configuration-rendering)
+- [Interaction Configuration](#interaction-configuration-interaction)
 - [UI Configuration](#ui-configuration-ui)
-- [Styling Configuration](#7-styling-configuration-styling)
+- [Styling Configuration](#styling-configuration-styling)
+- [Debug Configuration](#debug-configuration-configdebug)
 - [Complete JSON Reference](#complete-json-reference)
 - [Complete Examples](#complete-examples)
 
@@ -190,23 +191,22 @@ The `<image-cloud>` element auto-registers on import. Use `element.getInstance()
 Initialize the gallery using the `ImageCloudOptions` structure.
 
 ```typescript
-const gallery = new ImageCloud({
+await imageCloud({
   container: 'my-gallery-id', // string ID or HTMLElement, defaults to 'imageCloud'
-  images: [...],              // shorthand: array of image URLs (uses static loader)
-  loaders: [...],             // array of loader entries
+  images: [...],               // shorthand: array of image URLs (uses static loader)
+  loaders: [...],              // array of loader entries
   config: {
-    loaders: {...},           // shared loader settings
-    debug: {                  // debug configuration
-      enabled: false,         // general logging
-      centers: false,         // center position markers
-      loaders: false          // loader debug output
+    loaders: {...},            // shared loader settings
+    debug: {                   // debug configuration
+      enabled: false,          // general logging
+      centers: false,          // center position markers
+      loaders: false           // loader debug output
     }
   },
   image: { ... },
   layout: { ... },
   animation: { ... },
   interaction: { ... },
-  rendering: { ... },
   ui: { ... }
 });
 ```
@@ -224,7 +224,7 @@ const gallery = new ImageCloud({ container: el });
 
 If omitted, defaults to the element with ID `'imageCloud'`.
 
-### 1. Loader Configuration
+### Loader Configuration
 
 Controls how images are fetched and validated. Loaders are configured via `images` (shorthand), `loaders` (array of loader entries), and `config.loaders` (shared settings).
 
@@ -362,7 +362,7 @@ config: {
 
 **Config merge order:** `config.loaders` (shared defaults) → individual loader entry overrides → final config passed to loader constructor.
 
-### 2. Image Configuration (`image`)
+### Image Configuration (`image`)
 
 Controls image-specific sizing and rotation behavior. This is the recommended way to configure image properties.
 
@@ -490,13 +490,13 @@ layout: {
 
 ---
 
-### 3. Layout Configuration (`layout`)
+### Layout Configuration (`layout`)
 
 Controls the positioning and sizing of images.
 
 ```typescript
 layout: {
-  algorithm: 'radial' | 'random' | 'grid' | 'spiral' | 'cluster' | 'wave',
+  algorithm: 'radial' | 'random' | 'grid' | 'spiral' | 'cluster' | 'wave' | 'honeycomb',
   targetCoverage?: number,         // 0-1, for auto-sizing (default: 0.6)
   densityFactor?: number,          // Controls spacing density (default: 1.0)
   scaleDecay?: number,             // 0-1, outer images smaller (default: 0)
@@ -517,7 +517,7 @@ layout: {
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'`, `'wave'` |
+| `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'`, `'wave'`, `'honeycomb'` |
 | `targetCoverage` | `number` | `0.6` | Target percentage of container to fill (0.0-1.0) when using adaptive sizing |
 | `densityFactor` | `number` | `1.0` | Multiplier for calculated sizes and spacing. In radial layouts, affects image size only; ring spacing is controlled by `layout.radial.tightness`. |
 | `scaleDecay` | `number` | `0` | Size reduction for outer images in spiral/radial layouts (0 = none, 1 = 50% smaller at edge) |
@@ -840,7 +840,7 @@ No algorithm-specific options. Uses base `sizing` and `rotation` config.
 | :--- | :--- | :--- | :--- |
 | `padding` | `number` | `50` | Padding from container edges (px). |
 
-### 4. Animation Configuration (`animation`)
+### Animation Configuration (`animation`)
 
 Controls entrance and interaction animations.
 
@@ -1493,7 +1493,7 @@ animation: {
 
 ---
 
-### 5. Interaction Configuration (`interaction`)
+### Interaction Configuration (`interaction`)
 
 Controls user interactions like clicking and zooming.
 
@@ -1501,9 +1501,11 @@ Controls user interactions like clicking and zooming.
 | :--- | :--- | :--- | :--- |
 | `focus.scalePercent` | `number` | `0.8` | Target size as percentage of container. Values 0-1 are fractions (0.8 = 80%), values > 1 are treated as percentages (80 = 80%). |
 | `focus.zIndex` | `number` | `1000` | Z-index of the focused image. |
+| `focus.animationDuration` | `number` | - | Override animation duration for focus/unfocus transitions (ms). Falls back to `animation.duration`. |
 | `dragging` | `boolean` | `true` | When `false`, sets `draggable="false"` on each image element, suppressing the browser's native click-drag behavior. |
 | `navigation.keyboard` | `boolean` | `true` | When `false`, disables arrow key (← →), Escape, and Enter/Space keyboard navigation. Navigation is scoped to the gallery container — click the container to give it focus first. |
 | `navigation.swipe` | `boolean` | `true` | When `false`, disables touch swipe gestures for navigating between focused images. Useful when the gallery is inside a scrollable container. |
+| `navigation.mouseWheel` | `boolean` | - | When `true`, enables mouse wheel scrolling to navigate between focused images. |
 
 **Focus Scaling Behavior:**
 
@@ -1524,14 +1526,6 @@ interaction: {
   }
 }
 ```
-
-### 6. Rendering Configuration (`rendering`)
-
-Controls responsiveness.
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `responsive.breakpoints`| `object` | `{ mobile: 768 }`| Breakpoint definitions. |
 
 ### UI Configuration (`ui`)
 
@@ -1571,7 +1565,7 @@ The default appearance uses the library's accent colour (`#6366f1`). You can als
 }
 ```
 
-### 7. Styling Configuration (`styling`)
+### Styling Configuration (`styling`)
 
 Controls the visual appearance of images in different states.
 
@@ -1614,6 +1608,10 @@ styling: {
 | `borderRight` | `Partial<BorderConfig>` | - | Right border override |
 | `borderBottom` | `Partial<BorderConfig>` | - | Bottom border override |
 | `borderLeft` | `Partial<BorderConfig>` | - | Left border override |
+| `borderRadiusTopLeft` | `number` | - | Top-left corner radius override (px) |
+| `borderRadiusTopRight` | `number` | - | Top-right corner radius override (px) |
+| `borderRadiusBottomRight` | `number` | - | Bottom-right corner radius override (px) |
+| `borderRadiusBottomLeft` | `number` | - | Bottom-left corner radius override (px) |
 | `shadow` | `ShadowPreset \| string` | `'none'` | Shadow preset or custom CSS shadow |
 | `filter` | `FilterConfig` | `{}` | CSS filter effects |
 | `opacity` | `number` | `1` | Image opacity (0-1) |
@@ -1786,7 +1784,7 @@ styling: {
 
 ---
 
-### 8. Debug Configuration (`config.debug`)
+### Debug Configuration (`config.debug`)
 
 Controls debug output and visual debugging aids. All debug options default to `false`.
 

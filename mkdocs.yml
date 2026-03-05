@@ -1,0 +1,29 @@
+site_name: Image Cloud
+site_description: Interactive image galleries with animated scattered layouts and zoom effects
+site_url: https://frybynite.github.io/image-cloud/
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Overview:
+    - Parameters: PARAMETERS.md
+    - Layouts: LAYOUTS.md
+    - Loaders: LOADERS.md
+    - Image Sizing: IMAGE_SIZING.md
+    - Configurator: CONFIGURATOR.md
+  - Developer Guide: DEVELOPER.md
+  - API Reference:
+    - Overview: api/README.md
+    - ImageCloud: api/ImageCloud.md
+    - Layouts: api/layouts.md
+    - Loaders: api/loaders.md
+    - Types: api/types.md
+  - Examples: EXAMPLES.md
+  - Backlog: BACKLOG.md
