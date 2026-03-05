@@ -257,7 +257,6 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     navigation: Object.freeze({
       keyboard: true,
       swipe: true,
-      mouseWheel: undefined  // STUB: Not implemented yet
     }),
     dragging: true
   }),

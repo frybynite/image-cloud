@@ -12,6 +12,7 @@ Items to address before releasing v1.0. See [prerelease-review.md](prerelease-re
 
 ## Active Issues
 
+- [ ] Fix: "applies rotation transforms" test fails in layout.spec.ts:38 — radial layout images may not be receiving rotation transforms
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [ ] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
 - [ ] Fix: After an image returns from focused state, hover styles are not re-applied if the cursor is already over the image — requires the user to move the mouse off and back on to trigger hover.
@@ -22,6 +23,37 @@ Items to address before releasing v1.0. See [prerelease-review.md](prerelease-re
 ### ~~Simplify Initialization Process~~ ✅ v0.10.0
 - `imageCloud()` factory function for single-expression initialization
 - Actionable error messages for missing container, no loaders, and missing `data-config`
+
+---
+
+## Future Major Version (v2.0)
+
+### Loader Config Simplification (Breaking Change)
+
+**Key idea:** Flatten the nested `{ type: 'X', X: { config } }` loader structure into a clean discriminated union `{ type: 'X', ...config }`. Array notation replaces the explicit `composite` type.
+
+**Before:**
+```javascript
+loader: { type: 'static', static: { urls: ['url1', 'url2'] } }
+loader: { type: 'googleDrive', googleDrive: { apiKey: 'KEY', sources: [...] } }
+loader: { type: 'composite', composite: { loaders: [...] } }
+```
+
+**After:**
+```javascript
+loader: { type: 'static', urls: ['url1', 'url2'] }
+loader: { type: 'googleDrive', apiKey: 'KEY', sources: [...] }
+loader: [{ type: 'static', urls: [...] }, { type: 'googleDrive', apiKey: 'KEY', sources: [...] }]
+```
+
+**Optional top-level shorthand:** `new ImageCloud({ container: 'id', urls: [...] })` — no loader config at all.
+
+**Benefit:** Eliminates redundant type-name-as-key nesting, enables proper TypeScript discriminated union narrowing (no more `config.static!` non-null assertions), cleans up defaults to only carry config for the active loader type.
+
+**Files affected:** `src/config/types.ts`, `src/config/defaults.ts`, `src/ImageCloud.ts`, `src/loaders/StaticImageLoader.ts`, `src/loaders/GoogleDriveLoader.ts`, `src/index.ts`, `docs/LOADERS.md`, `docs/parameters.md`, `examples/*.html`, `configurator/index.html`, `test/fixtures/*.html`.
+
+**Note:** Deliberately deferred — clean break with no backward compatibility shim, targeting a v2.0 release. Full spec preserved in git history (`docs/plans/loader-redesign.md`).
+
 
 ---
 

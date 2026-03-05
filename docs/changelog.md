@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.10.3] - 2026-03-05
+
+### Changed
+- Removed `mouseWheel` stub from public API (`NavigationInteractionConfig` in `types.ts` and `defaults.ts`) — unimplemented and never functional
+- Removed `navigation.mouseWheel` from `docs/parameters.md`
+
+### Docs
+- Deleted 21 completed/superseded planning documents from `docs/plans/` (directory now empty)
+- Added `docs/architecture.md` — engine system overview, loader pattern, design principles, stability policy
+- Added v2.0 loader config simplification proposal to `docs/backlog.md`
+- Added pre-existing "applies rotation transforms" test failure to active issues in `docs/backlog.md`
+
+---
+
 ## [0.10.2] - 2026-03-05
 
 ### Fixed

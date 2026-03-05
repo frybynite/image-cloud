@@ -484,7 +484,6 @@ export interface FocusInteractionConfig {
 export interface NavigationInteractionConfig {
   keyboard?: boolean;
   swipe?: boolean;
-  mouseWheel?: boolean;
 }
 
 export interface InteractionConfig {
