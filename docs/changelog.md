@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.10.1] - 2026-03-04
+
+### Changed
+- Updated documentation; publish with mkdocs
+- Set up MkDocs with Material theme for GitHub Pages publishing
+- Renamed all docs files to lowercase; moved CHANGELOG.md into docs/
+- Reviewed and updated CONFIGURATOR.md, LAYOUTS.md, LOADERS.md, PARAMETERS.md against code
+- Added docs/index.md homepage, docs/examples.md, docs/changelog.md to nav
+- Updated publish-pages.yml to build with mkdocs; copies configurator/, examples/, dist/ into site/
+- Added requirements.txt pinning mkdocs and mkdocs-material versions
+- Updated README.md with GitHub Pages links, honeycomb layout, swipe gestures
+
+---
+
 ## [0.10.0] - 2026-03-03
 
 ### Added
