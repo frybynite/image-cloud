@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.10.2] - 2026-03-05
+
+### Fixed
+- Fixed and enabled 4 permanently-skipped swipe gesture tests (`test.skip` → active)
+- Touch simulation now uses real `Touch`/`TouchEvent` constructors (Chrome) with `createEvent('Event')` fallback for WebKit where `new Touch()` is an illegal constructor
+- Added `test.use({ hasTouch: true })` to enable touch APIs in Chromium test contexts
+- Added 50ms delay between `touchstart` and `touchmove` to keep swipe velocity below SwipeEngine threshold, so only distance determines navigation in tests
+- Replaced DOM-position-based image lookups with `dataset.imageId`-based lookups to eliminate non-determinism from async image load order under parallel test execution
+- Cleared pre-release review doc (both items resolved: skipped swipe tests and hover-after-unfocus bug)
+
+---
+
 ## [0.10.1] - 2026-03-04
 
 ### Changed
