@@ -79,12 +79,13 @@ const cloud = await imageCloud({
 
 ## Documentation
 
-- **[Parameters](PARAMETERS.md)** — Complete configuration reference
-- **[Layouts](LAYOUTS.md)** — Layout algorithms (radial, grid, spiral, cluster, random, wave)
-- **[Loaders](LOADERS.md)** — Image sources (static URLs, JSON endpoints, Google Drive)
-- **[Image Sizing](IMAGE_SIZING.md)** — Base sizes, variance, responsive/adaptive behavior
+- **[Parameters](parameters.md)** — Complete configuration reference
+- **[Layouts](layouts.md)** — Layout algorithms (radial, grid, spiral, cluster, random, wave)
+- **[Loaders](loaders.md)** — Image sources (static URLs, JSON endpoints, Google Drive)
+- **[Image Sizing](image_sizing.md)** — Base sizes, variance, responsive/adaptive behavior
 - **[API Reference](api/README.md)** — TypeScript API documentation
-- **[Developer Guide](DEVELOPER.md)** — Build scripts, testing, project structure
+- **[Developer Guide](developer.md)** — Build scripts, testing, project structure
+- **[Changelog](changelog.md)** — Release history
 
 ## Interactions
 

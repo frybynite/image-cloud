@@ -44,7 +44,7 @@ npm run preview      # Preview production build
 
 ## Configuration
 
-See `docs/PARAMETERS.md` for full configuration reference. Key config structure:
+See `docs/parameters.md` for full configuration reference. Key config structure:
 
 ## Code Style
 
@@ -71,4 +71,4 @@ Put `examples/` folder, keep a reference to the key ones in the 'index.html'
   - update configurator labels, values, help text.
   - configurator help text should include defaults
 - Planning: all planning docs should be created in docs/plans/ directory, NOT the .claude/plans directory. Give them a relevant name.
-- When releasing a new version, update CHANGELOG.md (newest entries at top).
+- When releasing a new version, update docs/changelog.md (newest entries at top).

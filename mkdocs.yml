@@ -13,17 +13,18 @@ theme:
 nav:
   - Home: index.md
   - Overview:
-    - Parameters: PARAMETERS.md
-    - Layouts: LAYOUTS.md
-    - Loaders: LOADERS.md
-    - Image Sizing: IMAGE_SIZING.md
-    - Configurator: CONFIGURATOR.md
-  - Developer Guide: DEVELOPER.md
+    - Parameters: parameters.md
+    - Layouts: layouts.md
+    - Loaders: loaders.md
+    - Image Sizing: image_sizing.md
+    - Configurator: configurator.md
+  - Developer Guide: developer.md
   - API Reference:
     - Overview: api/README.md
     - ImageCloud: api/ImageCloud.md
     - Layouts: api/layouts.md
     - Loaders: api/loaders.md
     - Types: api/types.md
-  - Examples: EXAMPLES.md
-  - Backlog: BACKLOG.md
+  - Examples: examples.md
+  - Changelog: changelog.md
+  - Backlog: backlog.md

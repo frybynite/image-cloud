@@ -33,7 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **`ui.showFocusOutline`**: Controls the gallery container's focus ring. Default `false` suppresses the browser's `:focus` outline and shows a subtle accent-coloured inset outline only while an image is focused. Set to `true` for a light blue inset ring. Style via `.fbn-ic-gallery.fbn-ic-has-focus { outline: ... }`.
 - **Configurator**: Show Nav Buttons and Show Focus Outline checkboxes added to the UI section.
 - **Tests**: 9 Playwright tests for nav buttons (enabled + disabled fixtures).
-- **Docs**: `PARAMETERS.md` updated with new `ui` rows and a focus outline customisation section.
+- **Docs**: `parameters.md` updated with new `ui` rows and a focus outline customisation section.
 
 ### Fixed
 - **Hover styles after unfocus**: When an image unfocuses and returns under the cursor, `mouseenter` does not re-fire (cursor never left). A `requestAnimationFrame` callback in `onUnfocusComplete` now re-applies hover styling if the cursor is still over the element.
@@ -82,7 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **`interaction.disableDragging`**: New boolean option (default: `false`) that sets `draggable="false"` on each image element, suppressing the browser's native click-drag ghost-image behavior.
 - **Configurator**: Single checkbox in the Interaction section (matching the debug checkbox style) — auto-refreshes the gallery on change and only emits the property when checked.
 - **Tests**: 3 new Playwright tests in `test/e2e/interaction.spec.ts` covering default, enabled, and explicit-false cases, with a dedicated fixture `test/fixtures/interaction-disable-dragging.html`.
-- **Docs**: `interaction.disableDragging` row added to `PARAMETERS.md` and tooltip added to `field-descriptions.json`.
+- **Docs**: `interaction.disableDragging` row added to `parameters.md` and tooltip added to `field-descriptions.json`.
 
 ## [0.9.0] - 2026-02-26
 
@@ -98,7 +98,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **Idle + Focus integration**: Idle animation pauses immediately when an image is clicked/focused; resumes with a fresh animation after the unfocus animation fully completes.
 - **Blink opacity**: Blink `'on'` opacity reads from the element's computed style, honoring configured default and hover opacity values.
 - **Configurator**: Idle Animation section added inside the Animation accordion (Type, Start Delay, and type-specific sub-controls).
-- **Docs**: `animation.idle` section added to `PARAMETERS.md` and `field-descriptions.json`.
+- **Docs**: `animation.idle` section added to `parameters.md` and `field-descriptions.json`.
 - **Tests**: 12 new Playwright tests in `test/e2e/idle-animations.spec.ts`.
 
 ## [0.8.3] - 2026-02-25
@@ -107,9 +107,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **`examples/layout-algorithms.html`**: Added interactive tightness slider to Radial Layout section, matching the pattern of other layouts.
 
 ### Fixed
-- **`docs/LAYOUTS.md`**: Added `RadialAlgorithmConfig` documentation block for the Radial layout (type, default, range, visual characteristics).
-- **`docs/CONFIGURATOR.md`**: Updated algorithm-specific options list to include radial (tightness) and wave controls.
-- **`docs/BACKLOG.md`**: Cleaned up completed honeycomb item from ideas; refined radial ring-fill idea to reflect that tightness was implemented.
+- **`docs/layouts.md`**: Added `RadialAlgorithmConfig` documentation block for the Radial layout (type, default, range, visual characteristics).
+- **`docs/configurator.md`**: Updated algorithm-specific options list to include radial (tightness) and wave controls.
+- **`docs/backlog.md`**: Cleaned up completed honeycomb item from ideas; refined radial ring-fill idea to reflect that tightness was implemented.
 
 ## [0.8.2] - 2026-02-25
 
@@ -176,8 +176,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **Clip-Path Mode Labels**: Simplified mode labels from "Percent (Responsive)" and "Height-Relative (Consistent)" to "Percent" and "Height-relative".
 
 ### Documentation
-- Updated PARAMETERS.md with detailed clip-path modes, examples, and animation behavior.
-- Updated CONFIGURATOR.md with clip-path feature documentation.
+- Updated parameters.md with detailed clip-path modes, examples, and animation behavior.
+- Updated configurator.md with clip-path feature documentation.
 - Updated types.md with ClipPathConfig interface and mode descriptions.
 
 ## [0.7.4] - 2026-02-23
@@ -302,7 +302,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Optional peer dependencies for React (>=18) and Vue (>=3.3)
 - Example HTML files for each wrapper (`examples/react-example.html`, `vue-example.html`, `web-component-example.html`)
 - Playwright e2e tests for Web Component (5 tests across chromium/mobile)
-- Framework Wrappers section in PARAMETERS.md documentation
+- Framework Wrappers section in parameters.md documentation
 
 ## [0.4.2] - 2026-02-14
 
@@ -330,7 +330,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Changed
 - Internal field `generator` renamed to `placementLayout` in LayoutEngine
 - Internal method `initGenerator()` renamed to `initLayout()` in LayoutEngine
-- Rename `docs/GENERATORS.md` to `docs/LAYOUTS.md`
+- Rename `docs/GENERATORS.md` to `docs/layouts.md`
 - Rename `docs/api/generators.md` to `docs/api/layouts.md`
 - Updated all documentation references to use "layouts" terminology
 
@@ -379,7 +379,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Breaking Changes
 
-- Redesign loader configuration API — loaders are now configured via a new structure (see [LOADERS.md](docs/LOADERS.md))
+- Redesign loader configuration API — loaders are now configured via a new structure (see [loaders.md](loaders.md))
 
 ### Other
 

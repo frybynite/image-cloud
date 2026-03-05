@@ -10,9 +10,9 @@ A TypeScript library for creating interactive image clouds with animated scatter
 ## Features
 
 - ✨ Animated image layouts with smooth transitions
-- 🎯 Multiple layout algorithms (radial, grid, spiral, cluster, wave, random)
+- 🎯 Multiple layout algorithms (radial, grid, spiral, cluster, wave, honeycomb, random)
 - 🎬 Rich entry animations (bounce, elastic, wave paths; spin, wobble rotations)
-- 🔍 Zoom/focus interactions with keyboard navigation
+- 🔍 Zoom/focus interactions with keyboard, swipe, and mouse wheel navigation
 - 🎨 State-based image styling (borders, shadows, filters for default/hover/focused)
 - 📱 Responsive design with adaptive sizing
 - 🖼️ Multiple image sources (static URLs, JSON endpoints, Google Drive, composite loaders)
@@ -106,13 +106,13 @@ const cloud = await imageCloud({
 
 ## Getting Started
 
-For detailed configuration, see the documentation in the `docs/` folder:
+Full documentation is available at **[frybynite.github.io/image-cloud](https://frybynite.github.io/image-cloud/)**
 
-1. **[Loaders](docs/LOADERS.md)** — Configure image sources (static URLs, JSON endpoints, local paths, Google Drive folders)
-2. **[Layouts](docs/LAYOUTS.md)** — Choose and customize layout algorithms (radial, grid, spiral, cluster, random, wave)
-3. **[Image Sizing](docs/IMAGE_SIZING.md)** — Control base sizes, variance, and responsive/adaptive behavior
-4. **[Full Parameter Reference](docs/PARAMETERS.md)** — Complete configuration options for animation, interaction, styling, and more
-5. **[API Reference](docs/api/README.md)** — TypeScript API documentation for the ImageCloud class, types, loaders, and layouts
+- **[Loaders](https://frybynite.github.io/image-cloud/loaders/)** — Configure image sources (static URLs, JSON endpoints, Google Drive)
+- **[Layouts](https://frybynite.github.io/image-cloud/layouts/)** — Layout algorithms (radial, grid, spiral, cluster, wave, honeycomb, random)
+- **[Image Sizing](https://frybynite.github.io/image-cloud/image_sizing/)** — Base sizes, variance, and responsive/adaptive behavior
+- **[Parameters](https://frybynite.github.io/image-cloud/parameters/)** — Complete configuration reference
+- **[API Reference](https://frybynite.github.io/image-cloud/api/)** — TypeScript API documentation
 
 ### Using the Configurator
 
@@ -138,6 +138,10 @@ The Configurator lets you visually adjust all settings and exports a ready-to-us
 - **Enter / Space**: Focus hovered image
 - **Escape**: Unfocus current image
 
+### Touch
+
+- **Swipe left / right**: Navigate between focused images
+
 ### Window
 
 - **Resize**: Responsive layout adjustment (debounced)
@@ -151,29 +155,31 @@ The Configurator lets you visually adjust all settings and exports a ready-to-us
 
 ## Examples
 
-Check out the `examples/` directory for various usage patterns:
-- `esm-example.html` - Modern ES module usage
-- `cdn-umd-example.html` - Traditional script tag / CDN usage
-- `auto-init-example.html` - HTML data attribute initialization
-- `static-loader-example.html` - Static image URLs
-- `static-urls-shorthand-example.html` - Simplest static loader: direct URL array shorthand
-- `static-json-source-example.html` - Load images from a JSON endpoint
-- `google-drive-loader-example.html` - Google Drive folder source
-- `layout-algorithms.html` - Compare all layout algorithms
-- `entry-animations.html` - Entry animation styles
-- `image-style-demo.html` - Borders, shadows, and filters
-- `typescript-example.ts` - TypeScript with React and Vue
-- See `examples/README.md` for detailed instructions
+Live examples are published at [frybynite.github.io/image-cloud/examples/](https://frybynite.github.io/image-cloud/examples/):
+
+- [Static URLs Shorthand](https://frybynite.github.io/image-cloud/examples/static-urls-shorthand-example.html) - Simplest setup: direct URL array
+- [Static Loader](https://frybynite.github.io/image-cloud/examples/static-loader-example.html) - Static image URLs
+- [Static JSON Source](https://frybynite.github.io/image-cloud/examples/static-json-source-example.html) - Load images from a JSON endpoint
+- [Google Drive](https://frybynite.github.io/image-cloud/examples/google-drive-loader-example.html) - Google Drive folder source
+- [Auto-Init](https://frybynite.github.io/image-cloud/examples/auto-init-example.html) - Zero-JS setup using data attributes
+- [ESM Module](https://frybynite.github.io/image-cloud/examples/esm-example.html) - ES module usage
+- [CDN/UMD](https://frybynite.github.io/image-cloud/examples/cdn-umd-example.html) - CDN script tag usage
+- [Iframe Embed](https://frybynite.github.io/image-cloud/examples/iframe-example.html) - Embedded in an iframe
+- [Layout Algorithms](https://frybynite.github.io/image-cloud/examples/layout-algorithms.html) - Compare all layout algorithms
+- [Entry Animations](https://frybynite.github.io/image-cloud/examples/entry-animations.html) - Entry animation styles
+- [Keyboard Navigation](https://frybynite.github.io/image-cloud/examples/keyboard-navigation-demo.html) - Per-container keyboard navigation
+- [Image Style Demo](https://frybynite.github.io/image-cloud/examples/image-style-demo.html) - Borders, shadows, and filters
+- [Detailed Styling](https://frybynite.github.io/image-cloud/examples/styling/index.html) - In-depth styling examples
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for a full list of changes across all versions.
+See [Changelog](https://frybynite.github.io/image-cloud/changelog/) for a full list of changes across all versions.
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-See [docs/DEVELOPER.md](docs/DEVELOPER.md) for build scripts, testing, and project structure.
+See the [Developer Guide](https://frybynite.github.io/image-cloud/developer/) for build scripts, testing, and project structure.
 
 ## License
 
