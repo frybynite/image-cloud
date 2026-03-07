@@ -523,6 +523,127 @@ export interface ImageCloudConfig {
   styling?: ImageStylingConfig;
 }
 
+export interface ImageStateContext {
+  element: HTMLElement;
+  index: number;
+  url: string;
+  layout: ImageLayout;
+}
+
+// ============================================================================
+// Loading Hook Context Types
+// ============================================================================
+
+export interface BeforeLoadContext {
+  url: string;
+  index: number;
+  totalImages: number;
+}
+
+export interface BeforeLoadResult {
+  url?: string;
+  fetch?: RequestInit;
+}
+
+export interface ImageLoadedContext {
+  element: HTMLImageElement;
+  url: string;
+  index: number;
+  totalImages: number;
+  loadTime: number;  // ms from src set to onload
+}
+
+export interface ImageErrorContext {
+  url: string;
+  index: number;
+  totalImages: number;
+}
+
+export interface LoadProgressContext {
+  loaded: number;   // images successfully loaded so far
+  failed: number;   // images that errored so far
+  total: number;    // total expected
+  percent: number;  // (loaded + failed) / total * 100
+}
+
+export interface GalleryReadyContext {
+  totalImages: number;
+  failedImages: number;
+  loadDuration: number;  // ms from first src set to last image displayed
+}
+
+// ============================================================================
+// Entry Animation Hook Context Types
+// ============================================================================
+
+export interface EntryAnimPoint {
+  x: number;
+  y: number;
+  rotation: number;
+  scale: number;
+}
+
+export interface EntryStartContext {
+  element:     HTMLElement;
+  index:       number;
+  totalImages: number;
+  layout:      ImageLayout;
+  from:        EntryAnimPoint;
+  to:          EntryAnimPoint;
+  startTime:   number;   // performance.now()
+  duration:    number;   // ms
+}
+
+export interface EntryProgressContext extends EntryStartContext {
+  progress:    number;   // 0.0 → 1.0, linear time fraction
+  rawProgress: number;   // same as progress (easing is implicit in current position)
+  elapsed:     number;   // ms since startTime
+  current:     EntryAnimPoint;
+}
+
+export interface EntryCompleteContext {
+  element:   HTMLElement;
+  index:     number;
+  layout:    ImageLayout;
+  startTime: number;
+  endTime:   number;
+  duration:  number;
+}
+
+// ============================================================================
+// Layout Hook Context Types
+// ============================================================================
+
+export interface LayoutCompleteContext {
+  layouts:         ImageLayout[];      // full computed layout (read-only — do not mutate)
+  containerBounds: ContainerBounds;
+  algorithm:       LayoutAlgorithm;
+  imageCount:      number;
+}
+
+export interface ImageCloudCallbacks {
+  // State change hooks
+  onImageHover?:      (ctx: ImageStateContext)      => void;
+  onImageUnhover?:    (ctx: ImageStateContext)      => void;
+  onImageFocus?:      (ctx: ImageStateContext)      => void;
+  onImageUnfocus?:    (ctx: ImageStateContext)      => void;
+
+  // Loading lifecycle hooks
+  onBeforeImageLoad?: (ctx: BeforeLoadContext)      => BeforeLoadResult | void | Promise<BeforeLoadResult | void>;
+  onImageLoaded?:     (ctx: ImageLoadedContext)     => void;
+  onImageError?:      (ctx: ImageErrorContext)      => void;
+  onLoadProgress?:    (ctx: LoadProgressContext)    => void;
+  onGalleryReady?:    (ctx: GalleryReadyContext)    => void;
+
+  // Layout hook
+  onLayoutComplete?:  (ctx: LayoutCompleteContext)  => void;
+
+  // Entry animation hooks
+  onEntryStart?:      (ctx: EntryStartContext)    => void;
+  onEntryProgress?:   (ctx: EntryProgressContext) => void;
+  onEntryComplete?:   (ctx: EntryCompleteContext) => void;
+}
+
 export interface ImageCloudOptions {
   container?: string | HTMLElement;
   images?: string[];
@@ -534,6 +655,7 @@ export interface ImageCloudOptions {
   interaction?: Partial<InteractionConfig>;
   ui?: Partial<UIConfig>;
   styling?: Partial<ImageStylingConfig>;
+  on?: ImageCloudCallbacks;
 }
 
 // ============================================================================

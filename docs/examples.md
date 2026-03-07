@@ -20,6 +20,8 @@ Live examples are published alongside the docs. Source files are in the `example
 | [Per-Container Keyboard Navigation](https://frybynite.github.io/image-cloud/examples/keyboard-navigation-demo.html) | Keyboard navigation enabled vs disabled per container |
 | [Image Style Demo](https://frybynite.github.io/image-cloud/examples/image-style-demo.html) | Borders, shadows, filters, and hover/focus effects |
 | [Detailed Style Examples](https://frybynite.github.io/image-cloud/examples/styling/index.html) | In-depth examples for each styling property |
+| [Hooks Example](https://frybynite.github.io/image-cloud/examples/hooks-example.html) | Real-world hook UI: filename label on hover, description card on focus, loading progress bar, layout chip, and ready toast |
+| [API Hooks](https://frybynite.github.io/image-cloud/examples/api-hooks.html) | All `on` callbacks logged in real time: state change, loading lifecycle, entry animation, layout, and `onBeforeImageLoad` URL transform |
 
 ## Code Examples
 

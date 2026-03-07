@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hooks Example</title>
+    <link rel="stylesheet" href="../dist/style.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 6px 0;
+            font-size: 1.8rem;
+            color: #f0f6fc;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7d8590;
+            margin: 0 0 28px 0;
+            font-size: 0.9rem;
+        }
+
+        /* ── Gallery wrapper ───────────────────────── */
+        .gallery-wrap {
+            position: relative;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        #gallery {
+            width: 100%;
+            height: 1000px;
+            position: relative;
+            background: #161b22;
+            border-radius: 16px;
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+
+        /* ── Hover label — lower-left ──────────────── */
+        #hover-label {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            background: rgba(13, 17, 23, 0.88);
+            color: #79c0ff;
+            font-family: monospace;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid #1f6feb;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 10;
+            max-width: 260px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #hover-label.visible { opacity: 1; }
+
+        /* ── Focus card — top-center ───────────────── */
+        #focus-card {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(13, 17, 23, 0.92);
+            border: 1px solid #388bfd;
+            border-radius: 10px;
+            padding: 10px 16px;
+            width: 340px;
+            opacity: 0;
+            transition: opacity 0.25s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #focus-card.visible { opacity: 1; }
+
+        #focus-card .fc-name {
+            font-family: monospace;
+            font-size: 0.78rem;
+            color: #79c0ff;
+            margin-bottom: 5px;
+        }
+
+        #focus-card .fc-text {
+            font-size: 0.82rem;
+            color: #c9d1d9;
+            line-height: 1.5;
+        }
+
+        /* Suppress gallery's custom focus indicator outline */
+        #gallery.fbn-ic-has-focus { outline: none; }
+
+        /* ── Layout chip — top-right ───────────────── */
+        #layout-chip {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(13, 17, 23, 0.88);
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-family: monospace;
+            font-size: 0.76rem;
+            color: #7d8590;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s, border-color 0.15s, color 0.15s;
+            user-select: none;
+        }
+        #layout-chip.visible { opacity: 1; }
+        #layout-chip:hover { border-color: #388bfd; color: #79c0ff; }
+
+        /* ── Load progress bar — bottom of gallery ─── */
+        #load-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: #388bfd;
+            border-radius: 0 0 0 16px;
+            z-index: 10;
+            pointer-events: none;
+            transition: width 0.15s ease, opacity 0.5s;
+        }
+
+        /* ── Ready toast — bottom-right ────────────── */
+        #ready-toast {
+            position: absolute;
+            bottom: 14px;
+            right: 14px;
+            background: rgba(13, 17, 23, 0.88);
+            border: 1px solid #2ea043;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-family: monospace;
+            font-size: 0.76rem;
+            color: #56d364;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        #ready-toast.visible { opacity: 1; }
+
+        /* ── Instructions ──────────────────────────── */
+        .hint {
+            text-align: center;
+            color: #7d8590;
+            font-size: 0.8rem;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hooks Example</h1>
+    <p class="subtitle">Demonstrates hover, focus, loading, and layout hooks</p>
+    <p class="subtitle">Hover an image to see its name &nbsp;·&nbsp; Click to focus and read about it</p>
+
+    <div class="gallery-wrap">
+        <!-- Overlay elements live inside the wrapper, overlapping the gallery -->
+        <div id="hover-label"></div>
+        <div id="focus-card">
+            <div class="fc-name" id="fc-name"></div>
+            <div class="fc-text" id="fc-text"></div>
+        </div>
+        <div id="layout-chip"></div>
+        <div id="load-progress"></div>
+        <div id="ready-toast"></div>
+
+        <div id="gallery"></div>
+    </div>
+
+    <p class="hint">Click a focused image again (or press Escape) to return to the cloud &nbsp;·&nbsp; Click the chip (top-right) to dismiss it</p>
+
+    <script type="module">
+        import { imageCloud } from '../dist/image-cloud.js';
+
+        // ── Image list ──────────────────────────────────────────────────────
+        const IMAGES = [
+            { seed: 10,  name: 'forest-coyote.jpg' },
+            { seed: 42,  name: 'sea-cave.jpg' },
+            { seed: 55,  name: 'office-tower-night.jpg' },
+            { seed: 67,  name: 'overwater-pier.jpg' },
+            { seed: 80,  name: 'sunset-silhouette.jpg' },
+            { seed: 91,  name: 'old-tool-shed.jpg' },
+            { seed: 104, name: 'flower-buds.jpg' },
+            { seed: 15,  name: 'rusted-plymouth.jpg' },
+            { seed: 20,  name: 'phone-on-table.jpg' },
+            { seed: 25,  name: 'laptop-desk.jpg' },
+            { seed: 30,  name: 'ebike-mountain.jpg' },
+            { seed: 35,  name: 'split-farmland.jpg' },
+            { seed: 45,  name: 'above-the-clouds.jpg' },
+            { seed: 50,  name: 'bridge-at-night.jpg' },
+            { seed: 60,  name: 'misty-pines.jpg' },
+            { seed: 70,  name: 'hilltop-boots.jpg' },
+            { seed: 85,  name: 'truck-cab-rest.jpg' },
+            { seed: 95,  name: 'highway-interchange.jpg' },
+            { seed: 110, name: 'sepia-beach.jpg' },
+        ];
+
+        // Build URL list and a filename → URL lookup
+        const urls = IMAGES.map(({ seed }) =>
+            `https://picsum.photos/seed/${seed}/480/360.jpg`
+        );
+
+        // Map url → filename for use in callbacks
+        const urlToName = Object.fromEntries(
+            IMAGES.map(({ seed, name }) => [
+                `https://picsum.photos/seed/${seed}/480/360.jpg`,
+                name
+            ])
+        );
+
+        // ── Image summaries (based on actual image content) ─────────────────
+        const summaries = {
+            'forest-coyote.jpg':      'A coyote pauses on reddish soil and stares directly into the camera. Alert ears, wiry grey-brown coat. Behind it, a tangle of dark branches and conifers swallowed by shadow.',
+            'sea-cave.jpg':           'Shot from inside a coastal limestone cave, the arched opening frames a vivid blue-green cove. Rugged cliffs rise on the far shore under a cloudless Mediterranean sky.',
+            'office-tower-night.jpg': 'A glass-curtain office block photographed straight-on after dark. Dozens of floors glow amber and white — open-plan desks, conference rooms, a few lights already switched off.',
+            'overwater-pier.jpg':     'A long timber boardwalk runs straight to a thatched-roof pavilion standing over calm, pale turquoise water. The horizon is flat and hazy, the sky the colour of old paper.',
+            'sunset-silhouette.jpg':  'One person stands alone on an open hilltop, silhouetted black against a wide gradient sky — deep orange at the horizon blending up through amber to cobalt blue.',
+            'old-tool-shed.jpg':      'Inside a dim, cluttered workshop, an entire wall is hung with hand tools: axes, hammers, coils of rope, chains, and gloves. A narrow window on the left provides the only light.',
+            'flower-buds.jpg':        'A tight cluster of pale flower buds points skyward from a stem, surrounded by broad green leaves beaded with fresh raindrops. The background is a dark, blurred wash of foliage.',
+            'rusted-plymouth.jpg':    'A moody close-up of a decaying Plymouth hood badge, the chrome script barely legible through rust and grime. A cracked windscreen and dark background give the image an almost cinematic weight.',
+            'phone-on-table.jpg':     'A slim aluminium smartphone lies face-down on a wooden table, the Lightning port and speaker grille sharp in the foreground. A blurred hand reaches toward it from the out-of-focus background.',
+            'laptop-desk.jpg':        'Overhead shot of a person holding an iPhone while seated at a wooden cafe table with an open MacBook. A coffee cup and notebook sit just within frame, the laptop screen a rectangle of darkness.',
+            'ebike-mountain.jpg':     'A young woman sits astride a white cargo e-bike on an empty road, glancing down at the controls. Behind her, a mountain range turns amber in the last light of day.',
+            'split-farmland.jpg':     'A wide, flat horizon divides the frame almost perfectly: the left half bare brown ploughed earth, the right half vivid green winter wheat. An overcast sky blurs into both equally.',
+            'above-the-clouds.jpg':   'Aerial view looking out over a continuous sea of white cloud, thin enough to show a mountain peak breaking through on the left. The sky above fades from pale peach to cool blue.',
+            'bridge-at-night.jpg':    'Looking straight up at the illuminated tower of a massive suspension bridge, cables radiating outward against a dramatic purple and slate sky. City lights glow faintly along the water below.',
+            'misty-pines.jpg':        'A bank of dense white fog rolls through a mountain valley, leaving only the dark silhouettes of a few tall conifers visible. The rocky cliff face above emerges from the mist at the top of frame.',
+            'hilltop-boots.jpg':      'Framed from the knees down, a hiker in denim jeans and laced leather boots stands on a rocky summit cairn. The sky behind is a flat, featureless grey — no horizon, just void.',
+            'truck-cab-rest.jpg':     'A young man in a white t-shirt and dark bucket hat leans forward over the steering wheel of a vintage truck, eyes closed. Warm afternoon light through the window catches the worn green interior.',
+            'highway-interchange.jpg':'Aerial shot of a highway cloverleaf interchange set against arid brown scrubland, with a vivid turquoise river reservoir cutting diagonally across the upper half of the frame.',
+            'sepia-beach.jpg':        'A wide, sepia-toned beach scene with dozens of tiny figures scattered along the shoreline and in the surf. A lifeguard tower stands mid-right; hazy buildings and hills recede into a blown-out sky.',
+        };
+
+        // ── DOM refs ────────────────────────────────────────────────────────
+        const hoverLabel  = document.getElementById('hover-label');
+        const focusCard   = document.getElementById('focus-card');
+        const fcName      = document.getElementById('fc-name');
+        const fcText      = document.getElementById('fc-text');
+        const layoutChip  = document.getElementById('layout-chip');
+        const loadProgress = document.getElementById('load-progress');
+        const readyToast  = document.getElementById('ready-toast');
+
+        layoutChip.addEventListener('click', () => layoutChip.classList.remove('visible'));
+
+        // ── Gallery ─────────────────────────────────────────────────────────
+        await imageCloud({
+            container: 'gallery',
+            images: urls,
+            layout: {
+                algorithm: 'honeycomb',
+                spacing: { padding: 30 },
+                honeycomb: { spacing: 4 }
+            },
+            image: {
+                sizing: { mode: 'adaptive', minSize: 90, maxSize: 220 },
+                rotation: { mode: 'none' }
+            },
+            animation: {
+                duration: 400,
+                queue: { enabled: true, interval: 60 },
+                entry: {
+                    start: { position: 'center' },
+                    timing: { duration: 500 },
+                    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }
+            },
+            interaction: {
+                focus: { scalePercent: 0.78, zIndex: 1000, animationDuration: 300 }
+            },
+            on: {
+                onImageHover({ url }) {
+                    const name = urlToName[url] ?? url.split('/').pop();
+                    hoverLabel.textContent = name;
+                    hoverLabel.classList.add('visible');
+                },
+                onImageUnhover() {
+                    hoverLabel.classList.remove('visible');
+                },
+                onImageFocus({ url }) {
+                    const name = urlToName[url] ?? url.split('/').pop();
+                    fcName.textContent = name;
+                    fcText.textContent = summaries[name] ?? 'No description available.';
+                    focusCard.classList.add('visible');
+                },
+                onImageUnfocus() {
+                    focusCard.classList.remove('visible');
+                },
+
+                // ── Loading & layout hooks ───────────────────────────────────
+                onLayoutComplete({ algorithm, imageCount }) {
+                    layoutChip.textContent = `${algorithm} · ${imageCount} image${imageCount === 1 ? '' : 's'}`;
+                    layoutChip.classList.add('visible');
+                },
+                onLoadProgress({ percent }) {
+                    loadProgress.style.width = percent.toFixed(1) + '%';
+                },
+                onGalleryReady({ totalImages, failedImages, loadDuration }) {
+                    loadProgress.style.opacity = '0';
+                    const loaded = totalImages - failedImages;
+                    readyToast.textContent = `${loaded} image${loaded === 1 ? '' : 's'} · ${Math.round(loadDuration)}ms`;
+                    readyToast.classList.add('visible');
+                    setTimeout(() => readyToast.classList.remove('visible'), 2500);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

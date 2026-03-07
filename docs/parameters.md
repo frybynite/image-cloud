@@ -57,6 +57,7 @@ await cloud.init();
 - [Entry Rotation Animation](#entry-rotation-animation)
 - [Entry Scale Animation](#entry-scale-animation)
 - [Idle Animation](#idle-animation)
+- [Event Callbacks (`on`)](#event-callbacks-on)
 - [Interaction Configuration](#interaction-configuration-interaction)
 - [UI Configuration](#ui-configuration-ui)
 - [Styling Configuration](#styling-configuration-styling)
@@ -1525,6 +1526,249 @@ interaction: {
   }
 }
 ```
+
+### Event Callbacks (`on`)
+
+React to image lifecycle events via callback functions, similar to Swiper.js event hooks. All hooks are observational — they receive context and can drive side effects, but do not affect library behaviour unless explicitly designed to do so (e.g. `onBeforeImageLoad`).
+
+```typescript
+imageCloud({
+  // ...
+  on: {
+    // State change
+    onImageHover:      ({ element, index, url, layout }) => { /* cursor entered image */ },
+    onImageUnhover:    ({ element, index, url, layout }) => { /* cursor left image */ },
+    onImageFocus:      ({ element, index, url, layout }) => { /* image focused/zoomed in */ },
+    onImageUnfocus:    ({ element, index, url, layout }) => { /* image unfocused/zoomed out */ },
+
+    // Loading lifecycle
+    onBeforeImageLoad: ({ url, index, totalImages }) => { /* return URL override or fetch options */ },
+    onImageLoaded:     ({ element, url, index, totalImages, loadTime }) => { /* image loaded */ },
+    onImageError:      ({ url, index, totalImages }) => { /* image failed to load */ },
+    onLoadProgress:    ({ loaded, failed, total, percent }) => { /* per-image progress */ },
+    onGalleryReady:    ({ totalImages, failedImages, loadDuration }) => { /* all images displayed */ },
+
+    // Entry animation lifecycle
+    onEntryStart:    ({ element, index, from, to, duration }) => { /* animation begins */ },
+    onEntryProgress: ({ index, progress, elapsed, current }) => { /* per-rAF frame (JS paths only) */ },
+    onEntryComplete: ({ index, startTime, endTime, duration }) => { /* animation ends */ },
+
+    // Layout
+    onLayoutComplete: ({ layouts, containerBounds, algorithm, imageCount }) => { /* layout computed */ },
+  }
+});
+```
+
+---
+
+#### State Change Hooks
+
+| Callback | Fired when |
+| :--- | :--- |
+| `onImageHover` | Cursor enters an image (`mouseenter`) |
+| `onImageUnhover` | Cursor leaves an image (`mouseleave`) |
+| `onImageFocus` | Image focus animation completes |
+| `onImageUnfocus` | Image unfocus animation completes |
+
+All four receive an `ImageStateContext`:
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `element` | `HTMLElement` | The image element. |
+| `index` | `number` | Zero-based index of this image in the gallery. |
+| `url` | `string` | Original URL of the image. |
+| `layout` | `ImageLayout` | Layout data (`x`, `y`, `rotation`, `scale`, `baseSize`). |
+
+---
+
+#### Loading Lifecycle Hooks
+
+##### `onBeforeImageLoad`
+
+Intercepts each image before its `src` is set. Return a URL override, full `fetch()` options, or nothing.
+
+```typescript
+onBeforeImageLoad?: (ctx: BeforeLoadContext) =>
+  BeforeLoadResult | void | Promise<BeforeLoadResult | void>;
+```
+
+`BeforeLoadContext`:
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `url` | `string` | Original URL from the loader. |
+| `index` | `number` | Zero-based index of this image. |
+| `totalImages` | `number` | Total image count. |
+
+`BeforeLoadResult` (all fields optional):
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `url` | `string` | Override the image URL. |
+| `fetch` | `RequestInit` | Full `fetch()` options — headers, credentials, cache, etc. |
+
+**Mode A — URL-only** (return `{ url }`, no `fetch` key): The library sets `img.src = result.url`. Standard browser-cached `<img>` load — zero extra overhead.
+
+```javascript
+// CDN size param
+onBeforeImageLoad: ({ url }) => ({ url: url + '?w=400&q=80' })
+
+// Proxy
+onBeforeImageLoad: ({ url }) => ({ url: `/proxy?src=${encodeURIComponent(url)}` })
+```
+
+**Mode B — Fetch mode** (return a `fetch` key): The library calls `fetch(url, result.fetch)`, converts the response to a blob URL, sets `img.src`, then revokes the blob after load. Bypasses browser image cache; requires CORS.
+
+```javascript
+// Bearer token auth
+onBeforeImageLoad: () => ({
+  fetch: { headers: { Authorization: `Bearer ${getToken()}` } }
+})
+
+// Async — refresh expired JWT before each load
+onBeforeImageLoad: async () => {
+  const token = await authClient.getValidToken();
+  return { fetch: { headers: { Authorization: `Bearer ${token}` } } };
+}
+```
+
+---
+
+##### `onImageLoaded`
+
+Fires after each image successfully loads (before it enters the display queue).
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `element` | `HTMLImageElement` | The image element (dimensions available). |
+| `url` | `string` | Original URL. |
+| `index` | `number` | Zero-based index. |
+| `totalImages` | `number` | Total image count. |
+| `loadTime` | `number` | ms from `src` assignment to `onload`. |
+
+---
+
+##### `onImageError`
+
+Fires when an image fails to load.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `url` | `string` | URL that failed. |
+| `index` | `number` | Zero-based index. |
+| `totalImages` | `number` | Total image count. |
+
+---
+
+##### `onLoadProgress`
+
+Fires after each image either loads or errors — useful for progress bars.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `loaded` | `number` | Images successfully loaded so far. |
+| `failed` | `number` | Images that errored so far. |
+| `total` | `number` | Total expected images. |
+| `percent` | `number` | `(loaded + failed) / total * 100` |
+
+---
+
+##### `onGalleryReady`
+
+Fires once, after all images have been displayed (or errored) and the display queue is empty.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `totalImages` | `number` | Total image count. |
+| `failedImages` | `number` | Count of images that failed to load. |
+| `loadDuration` | `number` | ms from first `src` assignment to last image displayed. |
+
+---
+
+#### Entry Animation Hooks
+
+Per-frame lifecycle hooks for entry animations. Hooks are observational — the image always lands at its layout position regardless of what the hook does. `onEntryProgress` fires every rAF frame for JS-animated paths (`bounce`, `elastic`, `wave`) and is not fired for CSS-transitioned paths (`linear` without rotation/scale animation, since the browser compositor owns the interpolation).
+
+| Callback | Fired when |
+| :--- | :--- |
+| `onEntryStart` | Animation begins (all path types) |
+| `onEntryProgress` | Each rAF tick during JS-animated paths only |
+| `onEntryComplete` | Animation finishes (all path types) |
+
+##### `onEntryStart`
+
+`EntryAnimPoint` (used in `from`, `to`, and `current`):
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `x` | `number` | Horizontal position (px). |
+| `y` | `number` | Vertical position (px). |
+| `rotation` | `number` | Rotation in degrees. |
+| `scale` | `number` | Scale multiplier. |
+
+`EntryStartContext`:
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `element` | `HTMLElement` | The image element. |
+| `index` | `number` | Zero-based gallery index. |
+| `totalImages` | `number` | Total image count in this render. |
+| `layout` | `ImageLayout` | Computed layout for this image. |
+| `from` | `EntryAnimPoint` | Start position/rotation/scale. |
+| `to` | `EntryAnimPoint` | Final position/rotation/scale (matches `layout`). |
+| `startTime` | `number` | `performance.now()` at animation start. |
+| `duration` | `number` | Total animation duration (ms). |
+
+##### `onEntryProgress`
+
+Fired every rAF frame for JS-animated paths. Extends `EntryStartContext` with:
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `progress` | `number` | Linear time fraction `0.0 → 1.0`. |
+| `rawProgress` | `number` | Same as `progress`. |
+| `elapsed` | `number` | ms since `startTime`. |
+| `current` | `EntryAnimPoint` | Current interpolated position/rotation/scale. |
+
+##### `onEntryComplete`
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `element` | `HTMLElement` | The image element. |
+| `index` | `number` | Zero-based gallery index. |
+| `layout` | `ImageLayout` | Final layout. |
+| `startTime` | `number` | `performance.now()` at animation start. |
+| `endTime` | `number` | `performance.now()` at animation end. |
+| `duration` | `number` | Total animation duration (ms). |
+
+---
+
+#### Layout Hook
+
+##### `onLayoutComplete`
+
+Fires once per gallery render, after the layout algorithm has computed all image positions and before images begin loading. Re-fires on responsive resize if the image height breakpoint changes.
+
+```typescript
+onLayoutComplete?: (ctx: LayoutCompleteContext) => void;
+```
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `layouts` | `ImageLayout[]` | Shallow copy of the full computed layout. Do not mutate. |
+| `containerBounds` | `ContainerBounds` | Container width and height at layout time. |
+| `algorithm` | `LayoutAlgorithm` | The algorithm that produced this layout (e.g. `'radial'`). |
+| `imageCount` | `number` | Number of images laid out. |
+
+```javascript
+// Example: log all image positions after layout
+onLayoutComplete({ layouts, algorithm, imageCount }) {
+  console.log(`${algorithm} layout: ${imageCount} images`);
+  layouts.forEach((l, i) => console.log(`  #${i}: (${Math.round(l.x)}, ${Math.round(l.y)})`));
+}
+```
+
+---
 
 ### UI Configuration (`ui`)
 

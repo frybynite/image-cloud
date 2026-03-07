@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cloud - API Hooks Demo</title>
+    <!-- Required: Image Cloud CSS -->
+    <link rel="stylesheet" href="../dist/style.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { text-align: center; margin-bottom: 8px; }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+            gap: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .demo-section {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .demo-section h2 {
+            margin: 0 0 6px 0;
+            font-size: 1.2rem;
+            color: #7f5af0;
+        }
+        .demo-section p {
+            margin: 0 0 14px 0;
+            color: #888;
+            font-size: 0.88rem;
+        }
+        .fbn-ic-gallery {
+            background: #0f0f23;
+            border-radius: 8px;
+        }
+        #gallery-hooks, #gallery-loading, #gallery-url, #gallery-entry, #gallery-layout {
+            height: 400px;
+        }
+        .event-log {
+            margin-top: 12px;
+            background: #0f0f23;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            height: 120px;
+            overflow-y: auto;
+            color: #aaa;
+        }
+        .event-log .entry { color: #7f5af0; }
+        .event-log .hover { color: #2cb67d; }
+        .event-log .focus { color: #f4a261; }
+        .event-log .unfocus { color: #e07c68; }
+        .event-log .unhover { color: #5e8070; }
+        .event-log .loaded { color: #4ecdc4; }
+        .event-log .error { color: #e07c68; }
+        .event-log .progress { color: #888; }
+        .event-log .ready { color: #ffe66d; font-weight: bold; }
+        .progress-bar-wrap {
+            margin-top: 8px;
+            background: #0f0f23;
+            border-radius: 4px;
+            height: 6px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #7f5af0;
+            transition: width 0.2s ease;
+            border-radius: 4px;
+        }
+        .tooltip {
+            position: fixed;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            display: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+<h1>API Hooks Demo</h1>
+<p class="subtitle">Demonstrates <code>on</code> event callbacks for state changes and loading lifecycle</p>
+
+<div class="demo-grid">
+
+    <!-- State change hooks -->
+    <div class="demo-section">
+        <h2>State Change Hooks</h2>
+        <p>
+            <code>onImageHover</code>, <code>onImageUnhover</code>, <code>onImageFocus</code>, <code>onImageUnfocus</code> — logged in real time. Click an image to focus it.
+        </p>
+        <div id="gallery-hooks" class="fbn-ic-gallery"></div>
+        <div class="event-log" id="log-hooks"></div>
+    </div>
+
+    <!-- Loading lifecycle hooks -->
+    <div class="demo-section">
+        <h2>Loading Lifecycle Hooks</h2>
+        <p>
+            <code>onImageLoaded</code>, <code>onImageError</code>, <code>onLoadProgress</code>, <code>onGalleryReady</code> — progress bar driven by <code>onLoadProgress</code>.
+        </p>
+        <div id="gallery-loading" class="fbn-ic-gallery"></div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="event-log" id="log-loading"></div>
+    </div>
+
+    <!-- Entry animation hooks -->
+    <div class="demo-section">
+        <h2>Entry Animation Hooks</h2>
+        <p>
+            <code>onEntryStart</code>, <code>onEntryProgress</code> (per-rAF, JS paths only), <code>onEntryComplete</code>. Using a <strong>bounce</strong> path so <code>onEntryProgress</code> fires.
+        </p>
+        <div id="gallery-entry" class="fbn-ic-gallery"></div>
+        <div class="event-log" id="log-entry"></div>
+    </div>
+
+    <!-- onLayoutComplete -->
+    <div class="demo-section">
+        <h2>onLayoutComplete</h2>
+        <p>
+            Fires after positions are computed, before images load. Log shows algorithm + bounding box of the layout.
+        </p>
+        <div id="gallery-layout" class="fbn-ic-gallery"></div>
+        <div class="event-log" id="log-layout"></div>
+    </div>
+
+    <!-- onBeforeImageLoad: URL transform -->
+    <div class="demo-section">
+        <h2>onBeforeImageLoad — URL Transform</h2>
+        <p>
+            Each image URL is rewritten to request a grayscale version via a query param. Uses <strong>Mode A</strong> (URL-only, zero fetch overhead).
+        </p>
+        <div id="gallery-url" class="fbn-ic-gallery"></div>
+        <div class="event-log" id="log-url"></div>
+    </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Image Cloud library -->
+<script src="../dist/image-cloud.umd.js"></script>
+<script>
+const { imageCloud } = window.ImageCloud;
+
+// Shared sample images (picsum)
+const IMAGES = Array.from({ length: 12 }, (_, i) =>
+    `https://picsum.photos/seed/${i + 10}/400/300.jpg`
+);
+
+// ─── Demo 1: State Change Hooks ──────────────────────────────────────────────
+
+function addLog(logEl, cls, text) {
+    const line = document.createElement('div');
+    line.className = cls;
+    line.textContent = `${new Date().toLocaleTimeString('en', { hour12: false })}  ${text}`;
+    logEl.prepend(line);
+    // Keep last 30 lines
+    while (logEl.children.length > 30) logEl.removeChild(logEl.lastChild);
+}
+
+const logHooks = document.getElementById('log-hooks');
+const tooltip  = document.getElementById('tooltip');
+
+imageCloud({
+    container: 'gallery-hooks',
+    images: IMAGES,
+    layout: { algorithm: 'radial', spacing: { padding: 40 } },
+    image:  { sizing: { mode: 'adaptive', minSize: 80, maxSize: 200 } },
+    animation: {
+        duration: 400,
+        queue: { enabled: true, interval: 80 },
+        entry: {
+            start:  { position: 'nearest-edge' },
+            timing: { duration: 500 },
+            easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+        }
+    },
+    on: {
+        onImageHover({ element, index }) {
+            addLog(logHooks, 'hover', `hover    img #${index}`);
+            tooltip.textContent = `Image #${index}`;
+            tooltip.style.display = 'block';
+            element.addEventListener('mousemove', function onMove(e) {
+                tooltip.style.left = (e.clientX + 14) + 'px';
+                tooltip.style.top  = (e.clientY + 14) + 'px';
+            });
+        },
+        onImageUnhover({ index }) {
+            addLog(logHooks, 'unhover', `unhover  img #${index}`);
+            tooltip.style.display = 'none';
+        },
+        onImageFocus({ index }) {
+            addLog(logHooks, 'focus', `focus    img #${index}`);
+        },
+        onImageUnfocus({ index }) {
+            addLog(logHooks, 'unfocus', `unfocus  img #${index}`);
+        }
+    }
+});
+
+// ─── Demo 2: Loading Lifecycle Hooks ─────────────────────────────────────────
+
+const logLoading   = document.getElementById('log-loading');
+const progressBar  = document.getElementById('progress-bar');
+
+imageCloud({
+    container: 'gallery-loading',
+    images: IMAGES,
+    layout: { algorithm: 'cluster', spacing: { padding: 40 } },
+    image:  { sizing: { mode: 'adaptive', minSize: 80, maxSize: 200 } },
+    animation: {
+        duration: 400,
+        queue: { enabled: true, interval: 80 },
+        entry: { start: { position: 'bottom' }, timing: { duration: 500 }, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' }
+    },
+    on: {
+        onImageLoaded({ index, loadTime }) {
+            addLog(logLoading, 'loaded', `loaded   img #${index}  (${Math.round(loadTime)}ms)`);
+        },
+        onImageError({ index, url }) {
+            addLog(logLoading, 'error', `error    img #${index}  ${url.slice(-20)}`);
+        },
+        onLoadProgress({ loaded, failed, total, percent }) {
+            progressBar.style.width = percent.toFixed(1) + '%';
+            addLog(logLoading, 'progress', `progress ${loaded + failed}/${total}  (${Math.round(percent)}%)`);
+        },
+        onGalleryReady({ totalImages, failedImages, loadDuration }) {
+            addLog(logLoading, 'ready',
+                `ready    ${totalImages - failedImages}/${totalImages} images  in ${Math.round(loadDuration)}ms`);
+        }
+    }
+});
+
+// ─── Demo 3: Entry Animation Hooks ───────────────────────────────────────────
+
+const logEntry = document.getElementById('log-entry');
+let progressCallCount = 0;
+
+imageCloud({
+    container: 'gallery-entry',
+    images: IMAGES,
+    layout: { algorithm: 'random', spacing: { padding: 40 } },
+    image:  { sizing: { mode: 'adaptive', minSize: 80, maxSize: 200 } },
+    animation: {
+        duration: 400,
+        queue: { enabled: true, interval: 80 },
+        entry: {
+            start:  { position: 'nearest-edge' },
+            timing: { duration: 600 },
+            easing: 'ease-out',
+            path:   { type: 'bounce', bouncePreset: 'playful' },
+        }
+    },
+    on: {
+        onEntryStart({ index, duration }) {
+            addLog(logEntry, 'loaded', `start    img #${index}  (${duration}ms)`);
+        },
+        onEntryProgress({ index, progress }) {
+            // Throttle: only log every 10th call per image to avoid flooding
+            progressCallCount++;
+            if (progressCallCount % 10 === 0) {
+                addLog(logEntry, 'progress', `progress img #${index}  ${(progress * 100).toFixed(0)}%`);
+            }
+        },
+        onEntryComplete({ index, startTime, endTime }) {
+            addLog(logEntry, 'ready', `complete img #${index}  (${Math.round(endTime - startTime)}ms)`);
+        }
+    }
+});
+
+// ─── Demo 4: onLayoutComplete ────────────────────────────────────────────────
+
+const logLayout = document.getElementById('log-layout');
+
+imageCloud({
+    container: 'gallery-layout',
+    images: IMAGES,
+    layout: { algorithm: 'spiral', spacing: { padding: 40 } },
+    image:  { sizing: { mode: 'adaptive', minSize: 80, maxSize: 180 } },
+    animation: { duration: 400, queue: { enabled: true, interval: 80 } },
+    on: {
+        onLayoutComplete({ layouts, algorithm, imageCount, containerBounds }) {
+            const xs = layouts.map(l => l.x);
+            const ys = layouts.map(l => l.y);
+            const minX = Math.round(Math.min(...xs)), maxX = Math.round(Math.max(...xs));
+            const minY = Math.round(Math.min(...ys)), maxY = Math.round(Math.max(...ys));
+            addLog(logLayout, 'ready',
+                `${algorithm}  ${imageCount} images  container ${containerBounds.width}×${containerBounds.height}`);
+            addLog(logLayout, 'progress',
+                `x: ${minX}–${maxX}  y: ${minY}–${maxY}`);
+        }
+    }
+});
+
+// ─── Demo 5: onBeforeImageLoad — URL transform ───────────────────────────────
+
+const logUrl = document.getElementById('log-url');
+
+imageCloud({
+    container: 'gallery-url',
+    images: IMAGES,
+    layout: { algorithm: 'grid', spacing: { padding: 20 } },
+    image:  { sizing: { mode: 'adaptive', minSize: 60, maxSize: 180 } },
+    animation: {
+        duration: 400,
+        queue: { enabled: true, interval: 60 },
+        entry: { start: { position: 'nearest-edge' }, timing: { duration: 400 }, easing: 'ease-out' }
+    },
+    on: {
+        onBeforeImageLoad({ url, index }) {
+            // Picsum supports ?grayscale to return a greyscale image — pure URL transform, no fetch overhead
+            const transformed = url + '?grayscale';
+            addLog(logUrl, 'loaded', `#${index}  → ${transformed.slice(-30)}`);
+            return { url: transformed };
+        }
+    }
+});
+
+
+</script>
+</body>
+</html>

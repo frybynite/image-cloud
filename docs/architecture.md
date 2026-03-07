@@ -128,6 +128,7 @@ All CSS classes are prefixed `fbn-ic-` (e.g., `fbn-ic-gallery`, `fbn-ic-image`, 
 - `ImageCloud` class constructor and `destroy()`
 - `imageCloud()` factory function
 - All configuration types exported from `src/index.ts`
+- `ImageCloudOptions.on` callbacks — all hooks in `ImageCloudCallbacks` (state change, loading lifecycle, entry animation, layout)
 - `ImageLoader` interface (for custom loader implementations)
 - Subpath exports: `@frybynite/image-cloud/react`, `/vue`, `/web-component`, `/auto-init`
 

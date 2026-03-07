@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>API Hooks Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="imageCloud"></div>
+  <script type="module">
+    import { ImageCloud } from '/dist/image-cloud.js';
+
+    // Track callback invocations for test assertions
+    window.callbackLog = [];
+    window.loadingLog = [];
+    window.entryLog = [];
+    window.layoutLog = [];
+
+    window.gallery = new ImageCloud({
+      container: 'imageCloud',
+      loaders: [{
+        static: {
+          sources: [{
+            urls: [
+              '/test/fixtures/images/image1.jpg',
+              '/test/fixtures/images/image2.jpg',
+              '/test/fixtures/images/image3.jpg'
+            ]
+          }],
+          validateUrls: false
+        }
+      }],
+      interaction: {
+        focus: { scalePercent: 0.8, zIndex: 1000, animationDuration: 100 }
+      },
+      animation: {
+        duration: 200,
+        queue: { enabled: true, interval: 50 }
+      },
+      on: {
+        onImageHover(ctx) {
+          window.callbackLog.push({ event: 'hover', index: ctx.index, url: ctx.url });
+        },
+        onImageUnhover(ctx) {
+          window.callbackLog.push({ event: 'unhover', index: ctx.index });
+        },
+        onImageFocus(ctx) {
+          window.callbackLog.push({ event: 'focus', index: ctx.index });
+        },
+        onImageUnfocus(ctx) {
+          window.callbackLog.push({ event: 'unfocus', index: ctx.index });
+        },
+        onBeforeImageLoad(ctx) {
+          window.loadingLog.push({ event: 'beforeLoad', index: ctx.index, url: ctx.url, totalImages: ctx.totalImages });
+          // No return — URL is unchanged
+        },
+        onImageLoaded(ctx) {
+          window.loadingLog.push({ event: 'loaded', index: ctx.index, url: ctx.url, totalImages: ctx.totalImages, loadTime: ctx.loadTime });
+        },
+        onImageError(ctx) {
+          window.loadingLog.push({ event: 'error', index: ctx.index, url: ctx.url, totalImages: ctx.totalImages });
+        },
+        onLoadProgress(ctx) {
+          window.loadingLog.push({ event: 'progress', loaded: ctx.loaded, failed: ctx.failed, total: ctx.total, percent: ctx.percent });
+        },
+        onGalleryReady(ctx) {
+          window.loadingLog.push({ event: 'ready', totalImages: ctx.totalImages, failedImages: ctx.failedImages, loadDuration: ctx.loadDuration });
+        },
+        onEntryStart(ctx) {
+          window.entryLog.push({ event: 'entryStart', index: ctx.index, totalImages: ctx.totalImages, duration: ctx.duration });
+        },
+        onEntryComplete(ctx) {
+          window.entryLog.push({ event: 'entryComplete', index: ctx.index, elapsed: ctx.endTime - ctx.startTime });
+        },
+        onLayoutComplete(ctx) {
+          window.layoutLog = [{
+            event:      'layoutComplete',
+            imageCount: ctx.imageCount,
+            algorithm:  ctx.algorithm,
+            layoutsLen: ctx.layouts.length,
+            hasContainerBounds: typeof ctx.containerBounds === 'object',
+          }];
+        }
+      }
+    });
+
+    window.gallery.init().catch(error => {
+      console.error('Gallery initialization failed:', error);
+    });
+  </script>
+</body>
+</html>

@@ -32,6 +32,13 @@ export interface Point {
   y: number;
 }
 
+export interface EntryCurrentState {
+  x: number;
+  y: number;
+  rotation: number;
+  scale: number;
+}
+
 export interface PathAnimationOptions {
   element: HTMLElement;
   startPosition: Point;
@@ -43,6 +50,7 @@ export interface PathAnimationOptions {
   rotation: number;           // Final rotation
   scale: number;              // Final scale
   onComplete?: () => void;
+  onProgress?: (t: number, elapsed: number, current: EntryCurrentState) => void;
   // Rotation animation options
   rotationConfig?: EntryRotationConfig;
   startRotation?: number;     // Starting rotation (if different from final)
@@ -336,6 +344,7 @@ export function animatePath(options: PathAnimationOptions): void {
     rotation: finalRotation,
     scale: finalScale,
     onComplete,
+    onProgress,
     rotationConfig,
     startRotation,
     scaleConfig,
@@ -436,6 +445,16 @@ export function animatePath(options: PathAnimationOptions): void {
       `translate(${centerOffsetX}px, ${centerOffsetY}px) ` +
       `translate(${translateX}px, ${translateY}px) ` +
       `rotate(${currentRotation}deg) scale(${currentScale})`;
+
+    // Fire onProgress for in-progress frames
+    if (onProgress && t < 1) {
+      onProgress(t, elapsed, {
+        x: position.x,
+        y: position.y,
+        rotation: currentRotation,
+        scale: currentScale,
+      });
+    }
 
     if (t < 1) {
       requestAnimationFrame(tick);

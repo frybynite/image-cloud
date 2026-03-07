@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased] — api-integrations branch
+
+### Added
+
+**Event Callbacks (`on`)** — comprehensive lifecycle hook system covering all major image events:
+
+- **State change hooks** (existing, now documented alongside new hooks): `onImageHover`, `onImageUnhover`, `onImageFocus`, `onImageUnfocus`
+- **Loading lifecycle hooks**: `onBeforeImageLoad`, `onImageLoaded`, `onImageError`, `onLoadProgress`, `onGalleryReady`
+  - `onBeforeImageLoad` supports two modes: URL-only transform (zero overhead) and fetch mode (full `RequestInit` for auth headers, custom cache, credentials)
+  - `onGalleryReady` provides total load duration
+- **Entry animation hooks**: `onEntryStart`, `onEntryProgress` (per-rAF, JS paths only), `onEntryComplete`
+  - `onEntryProgress` fires on `bounce`, `elastic`, and `wave` paths; not on CSS-transitioned `linear` paths
+- **Layout hook**: `onLayoutComplete` — fires after layout algorithm runs, before images load; provides full `ImageLayout[]`, container bounds, and algorithm name
+
+**New exports**: `BeforeLoadContext`, `BeforeLoadResult`, `ImageLoadedContext`, `ImageErrorContext`, `LoadProgressContext`, `GalleryReadyContext`, `EntryAnimPoint`, `EntryStartContext`, `EntryProgressContext`, `EntryCompleteContext`, `LayoutCompleteContext`
+
+**Examples**:
+- `examples/api-hooks.html` — 5-panel technical reference demo with live event logs for every hook group
+- `examples/hooks-example.html` — extended with loading progress bar (`onLoadProgress`), ready toast (`onGalleryReady`), and dismissable layout chip (`onLayoutComplete`)
+
+---
+
 ## [0.10.3] - 2026-03-05
 
 ### Changed
