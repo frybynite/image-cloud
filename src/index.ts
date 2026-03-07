@@ -75,6 +75,20 @@ export type {
   // State change hook types
   ImageStateContext,
   ImageCloudCallbacks,
+  // Loading hook types
+  BeforeLoadContext,
+  BeforeLoadResult,
+  ImageLoadedContext,
+  ImageErrorContext,
+  LoadProgressContext,
+  GalleryReadyContext,
+  // Layout hook types
+  LayoutCompleteContext,
+  // Entry animation hook types
+  EntryAnimPoint,
+  EntryStartContext,
+  EntryProgressContext,
+  EntryCompleteContext,
   // Image config types
   ImageConfig,
   ImageSizingConfig,

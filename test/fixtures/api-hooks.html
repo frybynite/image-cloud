@@ -15,6 +15,9 @@
 
     // Track callback invocations for test assertions
     window.callbackLog = [];
+    window.loadingLog = [];
+    window.entryLog = [];
+    window.layoutLog = [];
 
     window.gallery = new ImageCloud({
       container: 'imageCloud',
@@ -49,6 +52,37 @@
         },
         onImageUnfocus(ctx) {
           window.callbackLog.push({ event: 'unfocus', index: ctx.index });
+        },
+        onBeforeImageLoad(ctx) {
+          window.loadingLog.push({ event: 'beforeLoad', index: ctx.index, url: ctx.url, totalImages: ctx.totalImages });
+          // No return — URL is unchanged
+        },
+        onImageLoaded(ctx) {
+          window.loadingLog.push({ event: 'loaded', index: ctx.index, url: ctx.url, totalImages: ctx.totalImages, loadTime: ctx.loadTime });
+        },
+        onImageError(ctx) {
+          window.loadingLog.push({ event: 'error', index: ctx.index, url: ctx.url, totalImages: ctx.totalImages });
+        },
+        onLoadProgress(ctx) {
+          window.loadingLog.push({ event: 'progress', loaded: ctx.loaded, failed: ctx.failed, total: ctx.total, percent: ctx.percent });
+        },
+        onGalleryReady(ctx) {
+          window.loadingLog.push({ event: 'ready', totalImages: ctx.totalImages, failedImages: ctx.failedImages, loadDuration: ctx.loadDuration });
+        },
+        onEntryStart(ctx) {
+          window.entryLog.push({ event: 'entryStart', index: ctx.index, totalImages: ctx.totalImages, duration: ctx.duration });
+        },
+        onEntryComplete(ctx) {
+          window.entryLog.push({ event: 'entryComplete', index: ctx.index, elapsed: ctx.endTime - ctx.startTime });
+        },
+        onLayoutComplete(ctx) {
+          window.layoutLog = [{
+            event:      'layoutComplete',
+            imageCount: ctx.imageCount,
+            algorithm:  ctx.algorithm,
+            layoutsLen: ctx.layouts.length,
+            hasContainerBounds: typeof ctx.containerBounds === 'object',
+          }];
         }
       }
     });

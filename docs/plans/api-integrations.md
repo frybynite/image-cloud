@@ -65,7 +65,7 @@ interface ImageStateContext {
 
 ---
 
-### 1. Loading Hooks 🔄 in progress
+### 1. Loading Hooks ✅ — delivered
 
 #### Lifecycle callbacks
 
@@ -215,7 +215,7 @@ the loader — the loader never sees it.
 
 ---
 
-### 2. Entry Animation Hooks 🔄 in progress
+### 2. Entry Animation Hooks ✅ — delivered
 
 Per-frame lifecycle hooks for entry animations. Observational only — the image always
 lands at its layout position regardless of what the hook does.
@@ -297,7 +297,7 @@ time with no DOM changes. Eased `progress` would require a cubic-bezier solver (
 
 ---
 
-### 3. Layout Hooks 💬 needs discussion
+### 3. Layout Hooks ✅ — delivered (observational only)
 
 > **Status: needs design discussion before implementation.**
 
@@ -380,43 +380,47 @@ interface ImagePlacedContext {
 
 ---
 
-## Full `ImageCloudCallbacks` (target state)
+## Full `ImageCloudCallbacks` (delivered)
 
 ```typescript
 interface ImageCloudCallbacks {
-  // State change (delivered)
+  // State change
   onImageHover?:        (ctx: ImageStateContext)    => void;
   onImageUnhover?:      (ctx: ImageStateContext)    => void;
   onImageFocus?:        (ctx: ImageStateContext)    => void;
   onImageUnfocus?:      (ctx: ImageStateContext)    => void;
 
-  // Loading lifecycle (planned)
+  // Loading lifecycle
   onBeforeImageLoad?:   (ctx: BeforeLoadContext)    => BeforeLoadResult | void | Promise<BeforeLoadResult | void>;
   onImageLoaded?:       (ctx: ImageLoadedContext)   => void;
   onImageError?:        (ctx: ImageErrorContext)    => void;
   onLoadProgress?:      (ctx: LoadProgressContext)  => void;
   onGalleryReady?:      (ctx: GalleryReadyContext)  => void;
 
-  // Entry animation lifecycle (planned)
+  // Entry animation lifecycle
   onEntryStart?:        (ctx: EntryStartContext)    => void;
   onEntryProgress?:     (ctx: EntryProgressContext) => void;
   onEntryComplete?:     (ctx: EntryCompleteContext) => void;
 
-  // Layout (needs design discussion)
+  // Layout (observational only — transformative hooks deferred)
   onLayoutComplete?:    (ctx: LayoutCompleteContext) => void;
-  onImagePlaced?:       (ctx: ImagePlacedContext)    => Partial<ImageLayout> | void;
 }
 ```
 
 ---
 
-## Files to Modify (remaining work)
+## Files Modified
 
 | File | Change |
 |------|--------|
-| `src/config/types.ts` | Add all new context/result types; extend `ImageCloudCallbacks` |
-| `src/ImageCloud.ts` | Fire loading hooks; call `onBeforeImageLoad` before each `img.src`; implement fetch-mode with blob URL + revoke; fire entry hooks; optionally migrate CSS path to WAAPI |
-| `src/engines/PathAnimator.ts` | Accept callbacks; fire `onEntryProgress` in rAF loop |
-| `src/index.ts` | Export all new types |
-| `docs/parameters.md` | Document loading hooks and entry animation hooks |
-| `examples/api-hooks.html` | Update demo panel for new hooks |
+| `src/config/types.ts` | All new context/result types; extended `ImageCloudCallbacks` |
+| `src/ImageCloud.ts` | Loading hooks; `onBeforeImageLoad` with fetch+blob mode; entry hooks; layout hook |
+| `src/engines/PathAnimator.ts` | `onProgress` callback; fires per rAF tick |
+| `src/index.ts` | All new types exported |
+| `docs/parameters.md` | Full documentation for all hooks |
+| `docs/examples.md` | Updated example descriptions |
+| `examples/api-hooks.html` | 5-panel demo: state change, loading, entry, layout, URL transform |
+| `examples/hooks-example.html` | Real-world demo extended with progress bar, layout chip, ready toast |
+| `test/e2e/api-hooks.spec.ts` | 30 tests across all hook groups |
+| `test/fixtures/api-hooks.html` | Extended with all loading and entry hook logging |
+| `test/fixtures/api-hooks-bounce.html` | New: bounce-path fixture for `onEntryProgress` tests |

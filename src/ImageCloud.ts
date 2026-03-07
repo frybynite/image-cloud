@@ -4,7 +4,7 @@
  * Manages initialization and coordination of the interactive image cloud
  */
 
-import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig, LoaderEntry, SharedLoaderConfig, StaticLoaderInnerConfig, GoogleDriveLoaderInnerConfig, ImageCloudCallbacks, ImageStateContext } from './config/types';
+import type { ImageCloudOptions, ImageCloudConfig, ImageLayout, ContainerBounds, ImageLoader, EntryAnimationConfig, LoaderEntry, SharedLoaderConfig, StaticLoaderInnerConfig, GoogleDriveLoaderInnerConfig, ImageCloudCallbacks, ImageStateContext, BeforeLoadContext, BeforeLoadResult, ImageLoadedContext, ImageErrorContext, LoadProgressContext, GalleryReadyContext, EntryStartContext, EntryProgressContext, EntryCompleteContext, LayoutCompleteContext } from './config/types';
 import { mergeConfig, DEFAULT_CONFIG } from './config/defaults';
 import { AnimationEngine } from './engines/AnimationEngine';
 import { EntryAnimationEngine } from './engines/EntryAnimationEngine';
@@ -640,8 +640,41 @@ export class ImageCloud {
     const layouts = this.layoutEngine.generateLayout(imageUrls.length, containerBounds, { fixedHeight: imageHeight } as any);
     this.imageLayouts = layouts;
 
+    if (this.callbacks.onLayoutComplete) {
+      const ctx: LayoutCompleteContext = {
+        layouts:         [...layouts],  // shallow copy — caller should not mutate
+        containerBounds: { ...containerBounds },
+        algorithm:       this.fullConfig.layout.algorithm,
+        imageCount:      imageUrls.length,
+      };
+      this.callbacks.onLayoutComplete(ctx);
+    }
+
     this.displayQueue = [];
     let processedCount = 0;
+    let loadedCount = 0;
+    let failedCount = 0;
+    let firstSrcSetTime = 0;
+    let galleryReadyFired = false;
+    const srcSetTimes = new Map<number, number>();
+
+    const fireGalleryReady = () => {
+      if (galleryReadyFired || currentGeneration !== this.loadGeneration) return;
+      if (!this.callbacks.onGalleryReady) return;
+      galleryReadyFired = true;
+      const ctx: GalleryReadyContext = {
+        totalImages: imageUrls.length,
+        failedImages: failedCount,
+        loadDuration: firstSrcSetTime > 0 ? performance.now() - firstSrcSetTime : 0,
+      };
+      this.callbacks.onGalleryReady(ctx);
+    };
+
+    const checkGalleryReady = () => {
+      if (processedCount >= imageUrls.length && this.displayQueue.length === 0) {
+        fireGalleryReady();
+      }
+    };
 
     // Helper to display a single image with animation
     const displayImage = (img: HTMLImageElement) => {
@@ -655,59 +688,118 @@ export class ImageCloud {
         // Use configured default opacity, or 1 if not specified
         img.style.opacity = this.defaultStyles.opacity ?? '1';
 
+        const imgIndex = parseInt(img.dataset.imageId || '0');
+        const layout = this.imageLayouts[imgIndex];
+        const timing = this.entryAnimationEngine.getTiming();
+        const entryStartTime = performance.now();
+
+        // Parse animation data (always available since img.onload stores it unconditionally)
+        const fromX        = parseFloat(img.dataset.startX   || '0');
+        const fromY        = parseFloat(img.dataset.startY   || '0');
+        const toX          = parseFloat(img.dataset.endX     || '0');
+        const toY          = parseFloat(img.dataset.endY     || '0');
+        const toRotation   = parseFloat(img.dataset.rotation || '0');
+        const toScale      = parseFloat(img.dataset.scale    || '1');
+        const fromRotation = parseFloat(img.dataset.startRotation || img.dataset.rotation || '0');
+        const fromScale    = parseFloat(img.dataset.startScale    || img.dataset.scale    || '1');
+        const imageWidth   = parseFloat(img.dataset.imageWidth  || '0');
+        const imageHeight  = parseFloat(img.dataset.imageHeight || '0');
+
+        // Fire onEntryStart
+        if (this.callbacks.onEntryStart && layout) {
+          const ctx: EntryStartContext = {
+            element:     img,
+            index:       imgIndex,
+            totalImages: this.imageLayouts.length,
+            layout,
+            from: { x: fromX, y: fromY, rotation: fromRotation, scale: fromScale },
+            to:   { x: toX,   y: toY,   rotation: toRotation,   scale: toScale   },
+            startTime: entryStartTime,
+            duration:  timing.duration,
+          };
+          this.callbacks.onEntryStart(ctx);
+        }
+
         // Check if we need JS animation for path type, rotation, or scale
-        const needsJSAnimation = img.dataset.startX &&
-          (this.entryAnimationEngine.requiresJSAnimation() ||
-           this.entryAnimationEngine.requiresJSRotation() ||
-           this.entryAnimationEngine.requiresJSScale() ||
-           img.dataset.startRotation !== img.dataset.rotation ||
-           img.dataset.startScale !== img.dataset.scale);
+        const needsJSAnimation =
+          this.entryAnimationEngine.requiresJSAnimation() ||
+          this.entryAnimationEngine.requiresJSRotation() ||
+          this.entryAnimationEngine.requiresJSScale() ||
+          img.dataset.startRotation !== img.dataset.rotation ||
+          img.dataset.startScale    !== img.dataset.scale;
 
         if (needsJSAnimation) {
           // Use animatePath for bounce, elastic, wave paths or rotation/scale animation
-          const startPosition = {
-            x: parseFloat(img.dataset.startX!),
-            y: parseFloat(img.dataset.startY!)
-          };
-          const endPosition = {
-            x: parseFloat(img.dataset.endX!),
-            y: parseFloat(img.dataset.endY!)
-          };
-          const imageWidth = parseFloat(img.dataset.imageWidth!);
-          const imageHeight = parseFloat(img.dataset.imageHeight!);
-          const rotation = parseFloat(img.dataset.rotation!);
-          const scale = parseFloat(img.dataset.scale!);
-          const startRotation = img.dataset.startRotation
-            ? parseFloat(img.dataset.startRotation)
-            : rotation;
-          const startScale = img.dataset.startScale
-            ? parseFloat(img.dataset.startScale)
-            : scale;
-          const timing = this.entryAnimationEngine.getTiming();
-
           animatePath({
-            element: img,
-            startPosition,
-            endPosition,
-            pathConfig: this.entryAnimationEngine.getPathConfig(),
-            duration: timing.duration,
+            element:       img,
+            startPosition: { x: fromX, y: fromY },
+            endPosition:   { x: toX,   y: toY   },
+            pathConfig:    this.entryAnimationEngine.getPathConfig(),
+            duration:      timing.duration,
             imageWidth,
             imageHeight,
-            rotation,
-            scale,
+            rotation:      toRotation,
+            scale:         toScale,
             rotationConfig: this.entryAnimationEngine.getRotationConfig(),
-            startRotation,
-            scaleConfig: this.entryAnimationEngine.getScaleConfig(),
-            startScale
+            startRotation:  fromRotation,
+            scaleConfig:    this.entryAnimationEngine.getScaleConfig(),
+            startScale:     fromScale,
+            onProgress: this.callbacks.onEntryProgress && layout ? (t, elapsed, current) => {
+              const ctx: EntryProgressContext = {
+                element:     img,
+                index:       imgIndex,
+                totalImages: this.imageLayouts.length,
+                layout,
+                from: { x: fromX, y: fromY, rotation: fromRotation, scale: fromScale },
+                to:   { x: toX,   y: toY,   rotation: toRotation,   scale: toScale   },
+                startTime:   entryStartTime,
+                duration:    timing.duration,
+                progress:    t,
+                rawProgress: t,
+                elapsed,
+                current,
+              };
+              this.callbacks.onEntryProgress!(ctx);
+            } : undefined,
+            onComplete: layout ? () => {
+              if (this.callbacks.onEntryComplete) {
+                const ctx: EntryCompleteContext = {
+                  element:   img,
+                  index:     imgIndex,
+                  layout,
+                  startTime: entryStartTime,
+                  endTime:   performance.now(),
+                  duration:  timing.duration,
+                };
+                this.callbacks.onEntryComplete(ctx);
+              }
+            } : undefined,
           });
         } else {
           // Use CSS transition for linear paths without rotation animation
           const finalTransform = img.dataset.finalTransform || '';
           img.style.transform = finalTransform;
+
+          // Fire onEntryComplete when the transform transition ends
+          if (this.callbacks.onEntryComplete && layout) {
+            const handleTransitionEnd = (e: TransitionEvent) => {
+              if (e.propertyName !== 'transform') return;
+              img.removeEventListener('transitionend', handleTransitionEnd);
+              const ctx: EntryCompleteContext = {
+                element:   img,
+                index:     imgIndex,
+                layout,
+                startTime: entryStartTime,
+                endTime:   performance.now(),
+                duration:  timing.duration,
+              };
+              this.callbacks.onEntryComplete!(ctx);
+            };
+            img.addEventListener('transitionend', handleTransitionEnd);
+          }
         }
 
         // Debug: log final state for first few images
-        const imgIndex = parseInt(img.dataset.imageId || '0');
         if (this.fullConfig.config.debug?.enabled && imgIndex < 3) {
           const finalTransform = img.dataset.finalTransform || '';
           console.log(`Image ${imgIndex} final state:`, {
@@ -730,6 +822,7 @@ export class ImageCloud {
       });
 
       processedCount++;
+      checkGalleryReady();
     };
 
     const startQueueProcessing = () => {
@@ -773,6 +866,7 @@ export class ImageCloud {
             clearInterval(this.queueInterval);
             this.queueInterval = null;
           }
+          fireGalleryReady();
         }
       }, this.fullConfig.animation.queue.interval);
     };
@@ -960,34 +1054,101 @@ export class ImageCloud {
         img.style.transform = startTransform;
         img.dataset.finalTransform = finalTransform;
 
-        // Store animation data for JS-animated paths (bounce, elastic, wave)
-        // or when rotation/scale animation is needed
-        const needsJSAnimation = this.entryAnimationEngine.requiresJSAnimation() ||
-          this.entryAnimationEngine.requiresJSRotation() ||
-          this.entryAnimationEngine.requiresJSScale() ||
-          startRotation !== layout.rotation ||
-          startScale !== layout.scale;
+        // Always store animation data so entry hooks and displayImage can access it
+        img.dataset.startX = String(startPosition.x);
+        img.dataset.startY = String(startPosition.y);
+        img.dataset.endX = String(finalPosition.x);
+        img.dataset.endY = String(finalPosition.y);
+        img.dataset.imageWidth = String(renderedWidth);
+        img.dataset.imageHeight = String(imageHeight);
+        img.dataset.rotation = String(layout.rotation);
+        img.dataset.scale = String(layout.scale);
+        img.dataset.startRotation = String(startRotation);
+        img.dataset.startScale = String(startScale);
 
-        if (needsJSAnimation) {
-          img.dataset.startX = String(startPosition.x);
-          img.dataset.startY = String(startPosition.y);
-          img.dataset.endX = String(finalPosition.x);
-          img.dataset.endY = String(finalPosition.y);
-          img.dataset.imageWidth = String(renderedWidth);
-          img.dataset.imageHeight = String(imageHeight);
-          img.dataset.rotation = String(layout.rotation);
-          img.dataset.scale = String(layout.scale);
-          img.dataset.startRotation = String(startRotation);
-          img.dataset.startScale = String(startScale);
+        loadedCount++;
+        if (this.callbacks.onImageLoaded) {
+          const ctx: ImageLoadedContext = {
+            element: img,
+            url,
+            index,
+            totalImages: imageUrls.length,
+            loadTime: performance.now() - (srcSetTimes.get(index) ?? performance.now()),
+          };
+          this.callbacks.onImageLoaded(ctx);
+        }
+        if (this.callbacks.onLoadProgress) {
+          const ctx: LoadProgressContext = {
+            loaded: loadedCount,
+            failed: failedCount,
+            total: imageUrls.length,
+            percent: (loadedCount + failedCount) / imageUrls.length * 100,
+          };
+          this.callbacks.onLoadProgress(ctx);
         }
 
         this.displayQueue.push(img);
       };
 
-      img.onerror = () => processedCount++;
+      const handleImageError = () => {
+        if (currentGeneration !== this.loadGeneration) return;
+        failedCount++;
+        if (this.callbacks.onImageError) {
+          const ctx: ImageErrorContext = { url, index, totalImages: imageUrls.length };
+          this.callbacks.onImageError(ctx);
+        }
+        if (this.callbacks.onLoadProgress) {
+          const ctx: LoadProgressContext = {
+            loaded: loadedCount,
+            failed: failedCount,
+            total: imageUrls.length,
+            percent: (loadedCount + failedCount) / imageUrls.length * 100,
+          };
+          this.callbacks.onLoadProgress(ctx);
+        }
+        processedCount++;
+        checkGalleryReady();
+      };
 
-      // Set src AFTER onload handler to ensure it catches cached images
-      img.src = url;
+      img.onerror = () => handleImageError();
+
+      // Set src AFTER onload handler to ensure it catches cached images.
+      // Wrapped in async IIFE to support onBeforeImageLoad (which may be async).
+      (async () => {
+        let effectiveUrl = url;
+
+        if (this.callbacks.onBeforeImageLoad) {
+          const beforeCtx: BeforeLoadContext = { url, index, totalImages: imageUrls.length };
+          const result: BeforeLoadResult | void = await this.callbacks.onBeforeImageLoad(beforeCtx);
+          if (result) {
+            if (result.fetch !== undefined) {
+              // Fetch mode: retrieve image via fetch() and create a blob URL
+              const fetchUrl = result.url ?? url;
+              try {
+                const response = await fetch(fetchUrl, result.fetch);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                effectiveUrl = blobUrl;
+                // Wrap onload to revoke blob URL after the image is decoded
+                const origOnload = img.onload;
+                img.onload = (e) => {
+                  URL.revokeObjectURL(blobUrl);
+                  (origOnload as ((e: Event) => void) | null)?.call(img, e);
+                };
+              } catch {
+                handleImageError();
+                return;
+              }
+            } else if (result.url) {
+              effectiveUrl = result.url;
+            }
+          }
+        }
+
+        if (firstSrcSetTime === 0) firstSrcSetTime = performance.now();
+        srcSetTimes.set(index, performance.now());
+        img.src = effectiveUrl;
+      })();
     });
   }
 
