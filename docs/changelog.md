@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.11.1] - 2026-03-08
+
+### Changed
+
+- Reorganized `parameters.md` with improved section order: Loaders → Layouts → Image Size & Style → Animations → Event Callbacks → Interaction → UI → Debug
+- Renamed "Pattern-Based Configuration" to "Structure Overview"
+- Moved Styling into the Image Size & Style section
+- Promoted layout algorithms to subsections of Layouts (no longer top-level)
+- Grouped all entry animation subsections under Animations
+- Added reference to `layouts.md` from the Layouts section
+- Added layout screenshot images to `layouts.md` for all 7 algorithms
+- Added `scripts/screenshot-layouts.mjs` utility for generating layout screenshots
+
+---
+
 ## [0.11.0] - 2026-03-07
 
 ### Added
