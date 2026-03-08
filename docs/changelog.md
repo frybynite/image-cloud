@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.11.2] - 2026-03-08
+
+### Fixed
+
+- Updated `test-published` dependencies: `@frybynite/image-cloud` to `^0.11.1` and `vite` to `^7.0.0`
+
+---
+
 ## [0.11.1] - 2026-03-08
 
 ### Changed
