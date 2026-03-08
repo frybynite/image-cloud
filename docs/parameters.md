@@ -34,34 +34,37 @@ await cloud.init();
 ## Table of Contents
 
 - [Framework Wrappers](#framework-wrappers)
-- [Pattern-Based Configuration](#pattern-based-configuration)
-- [Loader Configuration](#loader-configuration)
+- [Structure Overview](#structure-overview)
+- [Loaders](#loaders)
   - [`images` Shorthand](#images-shorthand)
   - [Static Loader](#static-loader)
   - [Google Drive Loader](#google-drive-loader)
-  - [Multiple Loaders](#multiple-loaders-composite)
-  - [Shared Loader Config](#shared-loader-config-configloaders)
-- [Image Configuration](#image-configuration-image)
-- [Layout Configuration](#layout-configuration-layout)
-  - [Layout Algorithms](#layout-algorithms)
-  - [Grid Algorithm](#grid-algorithm)
-  - [Spiral Algorithm](#spiral-algorithm)
-  - [Cluster Algorithm](#cluster-algorithm)
-  - [Wave Algorithm](#wave-algorithm)
-  - [Honeycomb Algorithm](#honeycomb-algorithm)
-  - [Radial Algorithm](#radial-algorithm)
-  - [Random Algorithm](#random-algorithm)
-- [Animation Configuration](#animation-configuration-animation)
-- [Entry Animation](#entry-animation)
-- [Entry Animation Paths](#entry-animation-paths)
-- [Entry Rotation Animation](#entry-rotation-animation)
-- [Entry Scale Animation](#entry-scale-animation)
-- [Idle Animation](#idle-animation)
-- [Event Callbacks (`on`)](#event-callbacks-on)
-- [Interaction Configuration](#interaction-configuration-interaction)
-- [UI Configuration](#ui-configuration-ui)
-- [Styling Configuration](#styling-configuration-styling)
-- [Debug Configuration](#debug-configuration-configdebug)
+  - [Multiple Loaders](#multiple-loaders)
+  - [Shared Loader Config](#shared-loader-config)
+- [Layouts](#layouts)
+  - [Base Options](#base-options)
+  - [Spacing](#spacing)
+  - [Grid](#grid)
+  - [Spiral](#spiral)
+  - [Cluster](#cluster)
+  - [Wave](#wave)
+  - [Honeycomb](#honeycomb)
+  - [Radial](#radial)
+  - [Random](#random)
+- [Image Size & Style](#image-size-style)
+  - [Sizing](#sizing)
+  - [Rotation](#rotation)
+  - [Styling](#styling)
+- [Animations](#animations)
+  - [Entry Animation](#entry-animation)
+  - [Entry Paths](#entry-paths)
+  - [Entry Rotation](#entry-rotation)
+  - [Entry Scale](#entry-scale)
+  - [Idle Animation](#idle-animation)
+- [Event Callbacks](#event-callbacks)
+- [Interaction](#interaction)
+- [UI](#ui)
+- [Debug](#debug)
 - [Complete JSON Reference](#complete-json-reference)
 - [Complete Examples](#complete-examples)
 
@@ -187,9 +190,7 @@ The `<image-cloud>` element auto-registers on import. Use `element.getInstance()
 
 ---
 
-## Pattern-Based Configuration
-
-Initialize the gallery using the `ImageCloudOptions` structure.
+## Structure Overview
 
 ```typescript
 await imageCloud({
@@ -199,16 +200,18 @@ await imageCloud({
   config: {
     loaders: {...},            // shared loader settings
     debug: {                   // debug configuration
-      enabled: false,          // general logging
-      centers: false,          // center position markers
-      loaders: false           // loader debug output
+      enabled: false,
+      centers: false,
+      loaders: false
     }
   },
   image: { ... },
   layout: { ... },
   animation: { ... },
+  on: { ... },
   interaction: { ... },
-  ui: { ... }
+  ui: { ... },
+  styling: { ... }
 });
 ```
 
@@ -225,11 +228,13 @@ const gallery = new ImageCloud({ container: el });
 
 If omitted, defaults to the element with ID `'imageCloud'`.
 
-### Loader Configuration
+---
+
+## Loaders
 
 Controls how images are fetched and validated. Loaders are configured via `images` (shorthand), `loaders` (array of loader entries), and `config.loaders` (shared settings).
 
-#### `images` Shorthand
+### `images` Shorthand
 
 The simplest way to load images — a top-level array of URLs:
 
@@ -246,7 +251,7 @@ const gallery = new ImageCloud({
 
 The `images` shorthand is prepended as the first static loader entry. You can combine `images` with explicit `loaders` — the shorthand images come first.
 
-#### Static Loader
+### Static Loader
 
 Load images from direct URLs, local file paths, or JSON endpoints. Configured as `{ static: {...} }` within the `loaders` array.
 
@@ -282,7 +287,7 @@ loaders: [{
 - Endpoint must return JSON with shape `{ "images": ["url1", "url2", ...] }`
 - Fetched URLs are processed through the standard validation pipeline
 
-#### Google Drive Loader
+### Google Drive Loader
 
 Load images from public Google Drive folders. Configured as `{ googleDrive: {...} }` within the `loaders` array.
 
@@ -309,7 +314,7 @@ loaders: [{
 *   **Folder:** `{ folders: string[], recursive?: boolean }` — Load all images from folder(s)
 *   **Files:** `{ files: string[] }` — Load specific files by URL or ID
 
-#### Multiple Loaders (Composite)
+### Multiple Loaders
 
 Use the `loaders` array with multiple entries to pull images from different sources. Composite behavior is implicit — no wrapper needed.
 
@@ -337,7 +342,7 @@ const gallery = new ImageCloud({
 - If one loader fails, others continue (failed loader contributes 0 images)
 - URLs are combined in the order loaders appear in the array
 
-#### Shared Loader Config (`config.loaders`)
+### Shared Loader Config
 
 Use `config.loaders` to set defaults that apply to all loaders. Individual loader entries can override these settings.
 
@@ -363,137 +368,13 @@ config: {
 
 **Config merge order:** `config.loaders` (shared defaults) → individual loader entry overrides → final config passed to loader constructor.
 
-### Image Configuration (`image`)
-
-Controls image-specific sizing and rotation behavior. This is the recommended way to configure image properties.
-
-```typescript
-image: {
-  sizing: {
-    mode: 'fixed' | 'responsive' | 'adaptive',  // Required: sizing mode
-
-    // Fixed mode: single height for all viewports
-    // Responsive mode: per-breakpoint heights
-    height?: number | {            // Required for fixed/responsive modes
-      mobile?: number,             // Height for mobile (< 767px)
-      tablet?: number,             // Height for tablet (768-1199px)
-      screen?: number              // Height for desktop (>= 1200px)
-    },
-
-    // Adaptive mode only:
-    minSize?: number,              // default: 50
-    maxSize?: number,              // default: 400
-
-    // All modes:
-    variance?: {
-      min: number,                 // 0.25-1 (e.g., 0.8)
-      max: number                  // 1-1.75 (e.g., 1.2)
-    }
-  },
-  rotation: {
-    mode: 'none' | 'random' | 'tangent',  // default: 'none'
-    range?: {
-      min: number,                 // Negative degrees (-180 to 0)
-      max: number                  // Positive degrees (0 to 180)
-    }
-  }
-}
-```
-
-#### Image Sizing (`image.sizing`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `mode` | `'fixed' \| 'responsive' \| 'adaptive'` | `'adaptive'` | **Required.** Sizing mode selection. |
-| `height` | `number \| FixedModeHeight` | - | Fixed/responsive mode: explicit image height(s). |
-| `minSize` | `number` | `50` | Adaptive mode only: minimum image height. |
-| `maxSize` | `number` | `400` | Adaptive mode only: maximum image height. |
-| `variance.min` | `number` | `1.0` | Minimum size multiplier (0.25-1). |
-| `variance.max` | `number` | `1.0` | Maximum size multiplier (1-1.75). |
-
-**Sizing Modes:**
-
-| Mode | Description | Height Property |
-|------|-------------|-----------------|
-| `adaptive` | Auto-calculates based on container and image count (default) | Uses `minSize`/`maxSize` |
-| `fixed` | Single explicit height for all viewports | `height: number` |
-| `responsive` | Different heights per viewport breakpoint | `height: { mobile, tablet, screen }` |
-
-**Fixed Mode - Single Height:**
-```typescript
-image: {
-  sizing: {
-    mode: 'fixed',
-    height: 150      // All viewports use 150px
-  }
-}
-```
-
-**Responsive Mode - Per-Breakpoint Heights:**
-```typescript
-image: {
-  sizing: {
-    mode: 'responsive',
-    height: {
-      mobile: 100,   // < 767px viewport width
-      tablet: 150,   // 768-1199px viewport width
-      screen: 200    // >= 1200px viewport width
-    }
-  }
-}
-```
-
-**Adaptive Mode (default):**
-```typescript
-image: {
-  sizing: {
-    mode: 'adaptive',  // Auto-calculates based on container and image count
-    minSize: 50,       // Minimum image height
-    maxSize: 400       // Maximum image height
-  }
-}
-```
-
-#### Image Rotation (`image.rotation`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `mode` | `'none' \| 'random' \| 'tangent'` | `'none'` | Rotation mode. |
-| `range.min` | `number` | `-15` | Minimum rotation degrees (-180 to 0). |
-| `range.max` | `number` | `15` | Maximum rotation degrees (0 to 180). |
-
-**Rotation Modes:**
-
-| Mode | Description | Applicable Layouts |
-|------|-------------|-------------------|
-| `none` | No rotation (default) | All |
-| `random` | Random rotation within range | All |
-| `tangent` | Align to curve tangent | Wave, Spiral |
-
-**Example - Classic scattered photos:**
-```typescript
-image: {
-  rotation: { mode: 'random', range: { min: -15, max: 15 } },
-  sizing: { variance: { min: 0.9, max: 1.1 } }
-}
-```
-
-**Example - Spiral with tangent rotation:**
-```typescript
-image: {
-  rotation: { mode: 'tangent' }
-},
-layout: {
-  algorithm: 'spiral',
-  scaleDecay: 0.5
-}
-```
-
 ---
 
-### Layout Configuration (`layout`)
+## Layouts
 
-Controls the positioning and sizing of images.
+Controls the positioning and sizing of images. For an in-depth discussion of each algorithm's design and characteristics, see [layouts.md](layouts.md).
+
+### Base Options
 
 ```typescript
 layout: {
@@ -514,8 +395,6 @@ layout: {
 }
 ```
 
-#### Base Layout Options
-
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `algorithm` | `string` | `'radial'` | Layout algorithm: `'radial'`, `'random'`, `'grid'`, `'spiral'`, `'cluster'`, `'wave'`, `'honeycomb'` |
@@ -526,11 +405,15 @@ layout: {
 | `responsive.tablet.maxWidth` | `number` | `1199` | Maximum viewport width for tablet breakpoint (screen is > tablet) |
 | `spacing` | `LayoutSpacingConfig` | *See below* | Configuration for margins and gaps. |
 
+### Spacing
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `padding` | `number` | `50` | Padding from container edges (px). |
+
 ---
 
-## Layout Algorithms
-
-### Grid Algorithm
+### Grid
 
 Clean rows and columns with optional stagger and jitter for organic feel.
 
@@ -581,7 +464,7 @@ When both `columns` and `rows` are fixed numbers and the image count exceeds `co
 
 ---
 
-### Spiral Algorithm
+### Spiral
 
 Images placed along a spiral path emanating from the center.
 
@@ -605,7 +488,7 @@ layout: {
 | `tightness` | `number` | `1.0` | How tightly wound (higher = tighter) |
 | `startAngle` | `number` | `0` | Starting angle offset in radians |
 
-> **Note:** `scaleDecay` is now configured at `layout.scaleDecay` level, not within `spiral`.
+> **Note:** `scaleDecay` is configured at `layout.scaleDecay` level, not within `spiral`.
 
 **Spiral Types:**
 - `'golden'` - Fibonacci/sunflower pattern, optimal distribution
@@ -620,7 +503,7 @@ layout: {
 
 ---
 
-### Cluster Algorithm
+### Cluster
 
 Organic groupings like photos scattered on a table.
 
@@ -659,7 +542,7 @@ layout: {
 
 ---
 
-### Wave Algorithm
+### Wave
 
 Images positioned along flowing sine wave curves with extensive configuration.
 
@@ -760,7 +643,7 @@ layout: {
 
 ---
 
-### Honeycomb Algorithm
+### Honeycomb
 
 Places images in hexagonal rings filling outward clockwise from center-top.
 
@@ -785,7 +668,7 @@ Places images in hexagonal rings filling outward clockwise from center-top.
 
 ---
 
-### Radial Algorithm
+### Radial
 
 Concentric rings emanating from center (built-in).
 
@@ -807,15 +690,13 @@ config: {
 - Automatic ring calculation based on image count
 - Great for hero/featured content
 
-**Radial-specific parameters:**
-
 | Parameter | Type | Default | Range | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | `radial.tightness` | `number` | `1.0` | `0.3` to `2.0` | Controls how tightly rings are packed. Higher values bring rings closer together; lower values spread them further apart. Controls ring spacing only — image size is controlled separately by `densityFactor`. |
 
 ---
 
-### Random Algorithm
+### Random
 
 Randomly scattered images with no structure (built-in).
 
@@ -835,13 +716,354 @@ No algorithm-specific options. Uses base `sizing` and `rotation` config.
 
 ---
 
-#### Spacing (`layout.spacing`)
+## Image Size & Style
+
+### Sizing
+
+Controls image sizing behavior.
+
+```typescript
+image: {
+  sizing: {
+    mode: 'fixed' | 'responsive' | 'adaptive',  // Required: sizing mode
+
+    // Fixed mode: single height for all viewports
+    // Responsive mode: per-breakpoint heights
+    height?: number | {            // Required for fixed/responsive modes
+      mobile?: number,             // Height for mobile (< 767px)
+      tablet?: number,             // Height for tablet (768-1199px)
+      screen?: number              // Height for desktop (>= 1200px)
+    },
+
+    // Adaptive mode only:
+    minSize?: number,              // default: 50
+    maxSize?: number,              // default: 400
+
+    // All modes:
+    variance?: {
+      min: number,                 // 0.25-1 (e.g., 0.8)
+      max: number                  // 1-1.75 (e.g., 1.2)
+    }
+  }
+}
+```
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `padding` | `number` | `50` | Padding from container edges (px). |
+| `mode` | `'fixed' \| 'responsive' \| 'adaptive'` | `'adaptive'` | **Required.** Sizing mode selection. |
+| `height` | `number \| FixedModeHeight` | - | Fixed/responsive mode: explicit image height(s). |
+| `minSize` | `number` | `50` | Adaptive mode only: minimum image height. |
+| `maxSize` | `number` | `400` | Adaptive mode only: maximum image height. |
+| `variance.min` | `number` | `1.0` | Minimum size multiplier (0.25-1). |
+| `variance.max` | `number` | `1.0` | Maximum size multiplier (1-1.75). |
 
-### Animation Configuration (`animation`)
+**Sizing Modes:**
+
+| Mode | Description | Height Property |
+|------|-------------|-----------------|
+| `adaptive` | Auto-calculates based on container and image count (default) | Uses `minSize`/`maxSize` |
+| `fixed` | Single explicit height for all viewports | `height: number` |
+| `responsive` | Different heights per viewport breakpoint | `height: { mobile, tablet, screen }` |
+
+**Adaptive Mode (default):**
+```typescript
+image: {
+  sizing: {
+    mode: 'adaptive',  // Auto-calculates based on container and image count
+    minSize: 50,       // Minimum image height
+    maxSize: 400       // Maximum image height
+  }
+}
+```
+
+**Fixed Mode - Single Height:**
+```typescript
+image: {
+  sizing: {
+    mode: 'fixed',
+    height: 150      // All viewports use 150px
+  }
+}
+```
+
+**Responsive Mode - Per-Breakpoint Heights:**
+```typescript
+image: {
+  sizing: {
+    mode: 'responsive',
+    height: {
+      mobile: 100,   // < 767px viewport width
+      tablet: 150,   // 768-1199px viewport width
+      screen: 200    // >= 1200px viewport width
+    }
+  }
+}
+```
+
+### Rotation
+
+Controls image rotation behavior.
+
+```typescript
+image: {
+  rotation: {
+    mode: 'none' | 'random' | 'tangent',  // default: 'none'
+    range?: {
+      min: number,                 // Negative degrees (-180 to 0)
+      max: number                  // Positive degrees (0 to 180)
+    }
+  }
+}
+```
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `mode` | `'none' \| 'random' \| 'tangent'` | `'none'` | Rotation mode. |
+| `range.min` | `number` | `-15` | Minimum rotation degrees (-180 to 0). |
+| `range.max` | `number` | `15` | Maximum rotation degrees (0 to 180). |
+
+**Rotation Modes:**
+
+| Mode | Description | Applicable Layouts |
+|------|-------------|-------------------|
+| `none` | No rotation (default) | All |
+| `random` | Random rotation within range | All |
+| `tangent` | Align to curve tangent | Wave, Spiral |
+
+**Example - Classic scattered photos:**
+```typescript
+image: {
+  rotation: { mode: 'random', range: { min: -15, max: 15 } },
+  sizing: { variance: { min: 0.9, max: 1.1 } }
+}
+```
+
+**Example - Spiral with tangent rotation:**
+```typescript
+image: {
+  rotation: { mode: 'tangent' }
+},
+layout: {
+  algorithm: 'spiral',
+  scaleDecay: 0.5
+}
+```
+
+### Styling
+
+Controls the visual appearance of images in different states.
+
+```typescript
+styling: {
+  default: {
+    border: { width: 0, color: '#000', radius: 0, style: 'solid' },
+    shadow: 'none',             // 'none' | 'sm' | 'md' | 'lg' | 'glow' or custom CSS
+    opacity: 1,
+    cursor: 'pointer',
+    filter: { },
+    outline: { width: 0, color: '#000', style: 'solid', offset: 0 }
+  },
+  hover: {
+    shadow: 'none'              // Applied on mouse hover
+  },
+  focused: {
+    shadow: 'none'              // Applied when image is clicked/focused
+  }
+}
+```
+
+#### Style States
+
+| State | Description |
+|-------|-------------|
+| `default` | Base styling applied to all images |
+| `hover` | Inherits from default, applied on mouse hover |
+| `focused` | Inherits from default, applied when image is clicked/zoomed |
+
+> **Note:** All properties from `ImageStyleState` are available for all three states. When a property is not explicitly set in `hover` or `focused`, it inherits the value from `default`. This allows you to override only the specific properties you want to change for each state.
+
+#### Image Style Properties
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `className` | `string \| string[]` | - | CSS class names to apply |
+| `border` | `BorderConfig` | *See below* | Border styling (shorthand for all sides) |
+| `borderTop` | `Partial<BorderConfig>` | - | Top border override |
+| `borderRight` | `Partial<BorderConfig>` | - | Right border override |
+| `borderBottom` | `Partial<BorderConfig>` | - | Bottom border override |
+| `borderLeft` | `Partial<BorderConfig>` | - | Left border override |
+| `borderRadiusTopLeft` | `number` | - | Top-left corner radius override (px) |
+| `borderRadiusTopRight` | `number` | - | Top-right corner radius override (px) |
+| `borderRadiusBottomRight` | `number` | - | Bottom-right corner radius override (px) |
+| `borderRadiusBottomLeft` | `number` | - | Bottom-left corner radius override (px) |
+| `shadow` | `ShadowPreset \| string` | `'none'` | Shadow preset or custom CSS shadow |
+| `filter` | `FilterConfig` | `{}` | CSS filter effects |
+| `opacity` | `number` | `1` | Image opacity (0-1) |
+| `cursor` | `string` | `'pointer'` | CSS cursor value |
+| `outline` | `OutlineConfig` | *See below* | Outline styling |
+| `objectFit` | `string` | - | CSS object-fit value |
+| `aspectRatio` | `string` | - | CSS aspect-ratio (e.g., '16/9') |
+| `clipPath` | `ClipPathShape \| string \| ClipPathConfig` | `undefined` | Crop image to a predefined shape or custom CSS clip-path. Can be a string (shape name or custom CSS), or a config object with `shape` and `mode` properties. |
+
+#### Clip-Path
+
+The `clipPath` property accepts three formats:
+
+1. **Predefined shape name** (string): `'circle'`, `'square'`, `'triangle'`, `'pentagon'`, `'hexagon'`, `'octagon'`, `'diamond'`
+2. **Custom clip-path** (string): CSS clip-path syntax like `'polygon(...)'` or `'inset(...)'`
+3. **Configuration object** (for advanced control):
+   ```typescript
+   {
+     shape: ClipPathShape,      // Predefined shape name
+     mode: 'percent' | 'height-relative'  // Scaling mode
+   }
+   ```
+
+**Clip-Path Modes:**
+
+**Height-Relative (Consistent)** - Aspect-ratio aware (default)
+- Scales the shape based on the image height, then centers it horizontally
+- Maintains consistent visual sizing across images with different aspect ratios
+- Ideal for portrait images where percentage mode may appear off-center
+- The shape size is calculated as: `scaleFactor = imageHeight / referenceHeight (100px)`
+
+**Percent (Responsive)** - stretches to image size
+- Uses percentage-based coordinates that scale responsively with the image dimensions
+- Shape maintains the same visual proportion regardless of image size
+- Works well when images have varied aspect ratios
+
+**Predefined Shapes:**
+
+| Shape | Use Case |
+|-------|----------|
+| `'circle'` | Circular crops, user avatars |
+| `'square'` | Standard square thumbnails |
+| `'triangle'` | Directional or badge designs |
+| `'pentagon'` | Star-like geometric layouts |
+| `'hexagon'` | Honeycomb layouts, unique patterns |
+| `'octagon'` | Stop-sign or badge shapes |
+| `'diamond'` | Rotated square, gemstone effect |
+
+**Simple predefined shape (uses default "percent" mode):**
+```javascript
+styling: {
+  default: { clipPath: 'hexagon' }
+}
+```
+
+**Height-relative mode for consistent aspect-ratio-aware shapes:**
+```javascript
+styling: {
+  default: {
+    clipPath: {
+      shape: 'hexagon',
+      mode: 'height-relative'
+    }
+  }
+}
+```
+
+**Custom clip-path (always uses percent mode):**
+- `'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'` - Trapezoid
+- `'inset(10% 20% 30% 40%)'` - Rectangular inset
+- `'circle(40%)'` - Circle with specific radius
+
+**Animated clip-path transitions:**
+Clip-path smoothly animates during focus/unfocus transitions. The animation updates continuously as image dimensions change, ensuring the shape stays perfectly centered.
+
+**Note:** `overflow: hidden` is automatically applied when `clipPath` is used to ensure clean boundaries.
+
+#### Border
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `width` | `number` | `0` | Border width in pixels |
+| `color` | `string` | `'#000'` | Border color (CSS color) |
+| `radius` | `number` | `0` | Border radius in pixels |
+| `style` | `BorderStyle` | `'solid'` | Border line style (see table below) |
+
+**Border Style Options** (ordered by practicality):
+
+| Style | Description |
+|-------|-------------|
+| `'solid'` | Continuous line (default) |
+| `'dashed'` | Series of dashes |
+| `'dotted'` | Series of dots |
+| `'double'` | Two parallel lines |
+| `'none'` | No border |
+| `'groove'` | 3D carved into page effect |
+| `'ridge'` | 3D raised from page effect |
+| `'inset'` | 3D embedded look |
+| `'outset'` | 3D raised look |
+| `'hidden'` | Same as none (for table border conflict resolution) |
+
+#### Shadow Presets
+
+| Preset | CSS Value | Description |
+|--------|-----------|-------------|
+| `'none'` | `none` | No shadow |
+| `'sm'` | `0 2px 4px rgba(0,0,0,0.1)` | Small subtle shadow |
+| `'md'` | `0 4px 16px rgba(0,0,0,0.4)` | Medium shadow (default) |
+| `'lg'` | `0 8px 32px rgba(0,0,0,0.5)` | Large prominent shadow |
+| `'glow'` | `0 0 30px rgba(255,255,255,0.6)` | White glow effect |
+
+You can also pass a custom CSS box-shadow string instead of a preset.
+
+#### Filter
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `grayscale` | `number` | - | Grayscale filter (0-1) |
+| `blur` | `number` | - | Blur in pixels |
+| `brightness` | `number` | - | Brightness multiplier (1 = normal) |
+| `contrast` | `number` | - | Contrast multiplier (1 = normal) |
+| `saturate` | `number` | - | Saturation multiplier (1 = normal) |
+| `opacity` | `number` | - | Filter opacity (0-1) |
+| `sepia` | `number` | - | Sepia filter (0-1) |
+| `hueRotate` | `number` | - | Hue rotation in degrees |
+| `invert` | `number` | - | Invert filter (0-1) |
+| `dropShadow` | `DropShadowConfig \| string` | - | Drop shadow effect |
+
+#### Outline
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `width` | `number` | `0` | Outline width in pixels |
+| `color` | `string` | `'#000'` | Outline color |
+| `style` | `string` | `'solid'` | Outline style: `'solid'`, `'dashed'`, `'dotted'`, `'none'` |
+| `offset` | `number` | `0` | Outline offset in pixels |
+
+**Example - Vintage photo effect:**
+```typescript
+styling: {
+  default: {
+    border: { width: 8, color: '#f5f5dc', radius: 0 },
+    shadow: 'lg',
+    filter: { sepia: 0.3, contrast: 1.1 }
+  },
+  hover: {
+    filter: { sepia: 0, contrast: 1 }  // Remove effect on hover
+  }
+}
+```
+
+**Example - Polaroid style:**
+```typescript
+styling: {
+  default: {
+    border: { width: 0, radius: 4 },
+    borderBottom: { width: 40, color: 'white' },
+    borderTop: { width: 10, color: 'white' },
+    borderLeft: { width: 10, color: 'white' },
+    borderRight: { width: 10, color: 'white' },
+    shadow: 'md'
+  }
+}
+```
+
+---
+
+## Animations
 
 Controls entrance and interaction animations.
 
@@ -858,11 +1080,9 @@ Controls entrance and interaction animations.
 
 ---
 
-## Entry Animation
+### Entry Animation
 
 Controls how images animate into the gallery when it first loads. Supports 8 different start positions and layout-aware smart defaults.
-
-### Configuration Structure
 
 ```typescript
 animation: {
@@ -883,8 +1103,6 @@ animation: {
 }
 ```
 
-### Parameters
-
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `start.position` | `string` | `'nearest-edge'` | Starting position for images |
@@ -894,7 +1112,7 @@ animation: {
 | `timing.duration` | `number` | `600` | Animation duration in milliseconds |
 | `easing` | `string` | `cubic-bezier(0.25, 1, 0.5, 1)` | CSS easing function |
 
-### Start Position Options
+**Start Position Options:**
 
 | Position | Description | Best For |
 |----------|-------------|----------|
@@ -907,7 +1125,7 @@ animation: {
 | `random-edge` | Each image enters from a random edge | Chaotic, energetic feel |
 | `circular` | Images enter from positions on a circle | Dramatic reveal, convergence |
 
-### Layout-Aware Smart Defaults
+**Layout-Aware Smart Defaults:**
 
 When you don't specify `start.position`, the library automatically chooses the best default based on your layout algorithm:
 
@@ -919,9 +1137,9 @@ When you don't specify `start.position`, the library automatically chooses the b
 | `cluster` | `nearest-edge` | Organic grouping feel, images "find" their cluster |
 | `random` | `nearest-edge` | Classic scattered photo effect |
 
-### Examples
+**Examples:**
 
-**Default behavior (no config needed):**
+Default behavior (no config needed):
 ```typescript
 // Uses layout-aware defaults automatically
 const gallery = new ImageCloud({
@@ -931,7 +1149,7 @@ const gallery = new ImageCloud({
 });
 ```
 
-**Center burst:**
+Center burst:
 ```typescript
 animation: {
   entry: {
@@ -941,7 +1159,7 @@ animation: {
 }
 ```
 
-**Cascade from top (great for grids):**
+Cascade from top (great for grids):
 ```typescript
 animation: {
   entry: {
@@ -952,7 +1170,7 @@ animation: {
 }
 ```
 
-**Circular entrance with even distribution:**
+Circular entrance with even distribution:
 ```typescript
 animation: {
   entry: {
@@ -968,7 +1186,7 @@ animation: {
 }
 ```
 
-**Circular entrance with percentage radius:**
+Circular entrance with percentage radius:
 ```typescript
 animation: {
   entry: {
@@ -984,7 +1202,7 @@ animation: {
 }
 ```
 
-**Slow dramatic entrance from bottom:**
+Slow dramatic entrance from bottom:
 ```typescript
 animation: {
   entry: {
@@ -995,7 +1213,7 @@ animation: {
 }
 ```
 
-**Random edge for chaotic effect:**
+Random edge for chaotic effect:
 ```typescript
 animation: {
   entry: {
@@ -1007,11 +1225,9 @@ animation: {
 
 ---
 
-## Entry Animation Paths
+### Entry Paths
 
 Controls the trajectory that images follow during their entry animation. By default, images travel in a straight line (linear). Advanced path types add dynamic motion effects.
-
-### Configuration Structure
 
 ```typescript
 animation: {
@@ -1028,8 +1244,6 @@ animation: {
 }
 ```
 
-### Path Types
-
 | Type | Description | Best For |
 |------|-------------|----------|
 | `linear` | Straight line from start to end (default) | Clean, professional animations |
@@ -1037,7 +1251,7 @@ animation: {
 | `elastic` | Spring-like oscillation at end | Organic, natural feel |
 | `wave` | Sinusoidal serpentine path | Dreamy, floating atmosphere |
 
-### Bounce Path
+**Bounce Path:**
 
 Images travel past their target position, then settle back. Creates an energetic, playful feel.
 
@@ -1053,15 +1267,12 @@ path: {
 }
 ```
 
-**Presets:**
-
 | Preset | Overshoot | Bounces | Feel |
 |--------|-----------|---------|------|
 | `energetic` | 0.25 | 2 | High energy, attention-grabbing |
 | `playful` | 0.15 | 1 | Balanced, friendly |
 | `subtle` | 0.08 | 1 | Minimal, professional |
 
-**Example - Energetic bounce:**
 ```typescript
 animation: {
   entry: {
@@ -1072,7 +1283,7 @@ animation: {
 }
 ```
 
-### Elastic Path
+**Elastic Path:**
 
 Images arrive at their target and oscillate like a spring before settling. Creates an organic, physical feel.
 
@@ -1089,8 +1300,6 @@ path: {
 }
 ```
 
-**Presets:**
-
 | Preset | Stiffness | Damping | Oscillations | Feel |
 |--------|-----------|---------|--------------|------|
 | `gentle` | 150 | 30 | 2 | Soft, subtle spring |
@@ -1098,7 +1307,6 @@ path: {
 | `wobbly` | 180 | 12 | 5 | Jelly-like, playful |
 | `snappy` | 400 | 25 | 2 | Quick, responsive |
 
-**Example - Wobbly elastic:**
 ```typescript
 animation: {
   entry: {
@@ -1109,7 +1317,7 @@ animation: {
 }
 ```
 
-### Wave Path
+**Wave Path:**
 
 Images follow a sinusoidal serpentine path from start to end. Creates a dreamy, floating atmosphere.
 
@@ -1127,8 +1335,6 @@ path: {
 }
 ```
 
-**Presets:**
-
 | Preset | Amplitude | Frequency | Decay | Feel |
 |--------|-----------|-----------|-------|------|
 | `gentle` | 30 | 1.5 | yes | Soft, subtle wave |
@@ -1136,7 +1342,6 @@ path: {
 | `serpentine` | 60 | 3 | no | Dramatic snake path |
 | `flutter` | 20 | 4 | yes | Light, quick oscillation |
 
-**Example - Serpentine wave:**
 ```typescript
 animation: {
   entry: {
@@ -1146,8 +1351,6 @@ animation: {
   }
 }
 ```
-
-### Combining with Start Positions
 
 Path types work with all start positions:
 
@@ -1177,8 +1380,7 @@ animation: {
 }
 ```
 
-### Performance Notes
-
+**Performance Notes:**
 - **Linear/Arc**: Uses CSS transitions (most efficient)
 - **Bounce/Elastic/Wave**: Uses JavaScript animation (requestAnimationFrame)
 - All paths are optimized for smooth 60fps animation
@@ -1186,11 +1388,9 @@ animation: {
 
 ---
 
-## Entry Rotation Animation
+### Entry Rotation
 
 Controls how images rotate during their entry animation. By default, images maintain their final rotation throughout the animation. Entry rotation modes add dynamic rotation effects as images fly in.
-
-### Configuration Structure
 
 ```typescript
 animation: {
@@ -1207,8 +1407,6 @@ animation: {
 }
 ```
 
-### Parameters
-
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `mode` | `string` | `'none'` | Rotation animation mode |
@@ -1218,8 +1416,6 @@ animation: {
 | `wobble.amplitude` | `number` | `15` | Maximum wobble angle in degrees |
 | `wobble.frequency` | `number` | `3` | Number of wobble oscillations during animation |
 
-### Rotation Modes
-
 | Mode | Description | Best For |
 |------|-------------|----------|
 | `none` | No rotation change (default) | Clean, professional animations |
@@ -1228,7 +1424,7 @@ animation: {
 | `random` | Random starting rotation | Organic, varied feel |
 | `wobble` | Oscillating rotation during entry | Bouncy, spring-like motion |
 
-### Spin Mode
+**Spin Mode:**
 
 Images rotate a specified number of times as they enter. Great for energetic interfaces.
 
@@ -1240,13 +1436,9 @@ rotation: {
 }
 ```
 
-**Direction options:**
-- `'clockwise'` - Spin clockwise (default)
-- `'counterclockwise'` - Spin counter-clockwise
-- `'auto'` - Direction based on entry angle
-- `'random'` - Random direction per image
+Direction options: `'clockwise'` (default), `'counterclockwise'`, `'auto'` (based on entry angle), `'random'`
 
-### Settle Mode
+**Settle Mode:**
 
 Images start at a tilted angle and settle to their final rotation. Creates a natural "photos falling on table" effect.
 
@@ -1265,7 +1457,7 @@ rotation: {
 }
 ```
 
-### Random Mode
+**Random Mode:**
 
 Each image starts at a random rotation angle within ±30° of its final position.
 
@@ -1275,7 +1467,7 @@ rotation: {
 }
 ```
 
-### Wobble Mode
+**Wobble Mode:**
 
 Images oscillate back and forth as they enter, settling at their final rotation. Works best with bounce, elastic, or wave path types.
 
@@ -1289,9 +1481,9 @@ rotation: {
 }
 ```
 
-### Examples
+**Examples:**
 
-**Spinning entry from top:**
+Spinning entry from top:
 ```typescript
 animation: {
   entry: {
@@ -1307,7 +1499,7 @@ animation: {
 }
 ```
 
-**Tumbling photos effect:**
+Tumbling photos effect:
 ```typescript
 animation: {
   entry: {
@@ -1321,7 +1513,7 @@ animation: {
 }
 ```
 
-**Wobbly elastic entry:**
+Wobbly elastic entry:
 ```typescript
 animation: {
   entry: {
@@ -1336,19 +1528,16 @@ animation: {
 }
 ```
 
-### Performance Notes
-
+**Performance Notes:**
 - **none/settle/spin/random**: Rotation is interpolated alongside position (efficient)
 - **wobble**: Requires JavaScript animation per frame (slightly more CPU)
 - For galleries with 50+ images, consider simpler rotation modes
 
 ---
 
-## Entry Scale Animation
+### Entry Scale
 
 Controls how images scale during their entry animation. By default, images maintain their final scale throughout the animation (except for 'center' start position which scales from 0). Entry scale modes add dynamic scaling effects as images fly in.
-
-### Configuration Structure
 
 ```typescript
 animation: {
@@ -1364,8 +1553,6 @@ animation: {
 }
 ```
 
-### Parameters
-
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `mode` | `string` | `'none'` | Scale animation mode |
@@ -1375,8 +1562,6 @@ animation: {
 | `pop.overshoot` | `number` | `1.2` | How much to overshoot final scale (1.05-1.5) |
 | `pop.bounces` | `number` | `1` | Number of bounces before settling (1-3) |
 
-### Scale Modes
-
 | Mode | Description | Best For |
 |------|-------------|----------|
 | `none` | No scale change (default) | Clean, professional animations |
@@ -1385,10 +1570,7 @@ animation: {
 | `pop` | Overshoot then settle back | Bouncy, playful effect |
 | `random` | Random start scale in range | Organic, varied feel |
 
-### Grow Mode
-
-Images start at a smaller scale and grow to their final size. Creates a "pop in" effect.
-
+**Grow Mode:**
 ```typescript
 scale: {
   mode: 'grow',
@@ -1396,10 +1578,7 @@ scale: {
 }
 ```
 
-### Shrink Mode
-
-Images start at a larger scale and shrink to their final size. Creates a "compression" effect.
-
+**Shrink Mode:**
 ```typescript
 scale: {
   mode: 'shrink',
@@ -1407,7 +1586,7 @@ scale: {
 }
 ```
 
-### Pop Mode
+**Pop Mode:**
 
 Images reach their final size, overshoot slightly, then bounce back to settle. Works great with bounce or elastic paths.
 
@@ -1421,10 +1600,7 @@ scale: {
 }
 ```
 
-### Random Mode
-
-Each image starts at a random scale within the configured range, creating an organic, varied feel.
-
+**Random Mode:**
 ```typescript
 scale: {
   mode: 'random',
@@ -1435,9 +1611,9 @@ scale: {
 }
 ```
 
-### Examples
+**Examples:**
 
-**Growing pop-in effect:**
+Growing pop-in effect:
 ```typescript
 animation: {
   entry: {
@@ -1451,7 +1627,7 @@ animation: {
 }
 ```
 
-**Bouncy pop effect:**
+Bouncy pop effect:
 ```typescript
 animation: {
   entry: {
@@ -1466,7 +1642,7 @@ animation: {
 }
 ```
 
-**Combined rotation and scale:**
+Combined rotation and scale:
 ```typescript
 animation: {
   entry: {
@@ -1485,8 +1661,7 @@ animation: {
 }
 ```
 
-### Performance Notes
-
+**Performance Notes:**
 - **none/grow/shrink/random**: Scale is interpolated alongside position (efficient)
 - **pop**: Requires JavaScript animation per frame (slightly more CPU)
 - Combining scale with rotation and path animations works well but uses more CPU
@@ -1494,40 +1669,118 @@ animation: {
 
 ---
 
-### Interaction Configuration (`interaction`)
+### Idle Animation
 
-Controls user interactions like clicking and zooming.
+Adds continuous ambient animations to gallery images while they are idle (not focused). Animations automatically pause when an image is clicked/focused and resume after the unfocus animation fully completes.
 
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `focus.scalePercent` | `number` | `0.8` | Target size as percentage of container. Values 0-1 are fractions (0.8 = 80%), values > 1 are treated as percentages (80 = 80%). |
-| `focus.zIndex` | `number` | `1000` | Z-index of the focused image. |
-| `focus.animationDuration` | `number` | - | Override animation duration for focus/unfocus transitions (ms). Falls back to `animation.duration`. |
-| `dragging` | `boolean` | `true` | When `false`, sets `draggable="false"` on each image element, suppressing the browser's native click-drag behavior. |
-| `navigation.keyboard` | `boolean` | `true` | When `false`, disables arrow key (← →), Escape, and Enter/Space keyboard navigation. Navigation is scoped to the gallery container — click the container to give it focus first. |
-| `navigation.swipe` | `boolean` | `true` | When `false`, disables touch swipe gestures for navigating between focused images. Useful when the gallery is inside a scrollable container. |
-
-**Focus Scaling Behavior:**
-
-The focused image scales to fill a percentage of the container. The image maintains its aspect ratio and is constrained by both dimensions to ensure it fits within the container bounds.
+Uses the Web Animations API with `composite: 'add'`, so idle animations layer on top of existing transforms without interfering with entry, focus, or hover effects.
 
 ```typescript
-// Scale to 80% of container (default)
-interaction: {
-  focus: {
-    scalePercent: 0.8
-  }
-}
-
-// Using percentage notation (equivalent to 0.75)
-interaction: {
-  focus: {
-    scalePercent: 75
+animation: {
+  idle: {
+    type: 'wiggle',       // 'none' | 'wiggle' | 'pulse' | 'blink' | 'spin' | 'custom'
+    startDelay: 600,      // ms before idle starts (default: entry animation duration)
+    wiggle: { ... },      // wiggle-specific options
+    pulse: { ... },       // pulse-specific options
+    blink: { ... },       // blink-specific options
+    spin: { ... },        // spin-specific options
+    custom: (ctx) => ..., // custom animation function
   }
 }
 ```
 
-### Event Callbacks (`on`)
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.type` | `'none' \| 'wiggle' \| 'pulse' \| 'blink' \| 'spin' \| 'custom'` | `'none'` | Type of idle animation. |
+| `idle.startDelay` | `number` | entry duration | Milliseconds to wait after an image appears before starting idle animation. |
+
+**Wiggle** — images gently rock back and forth:
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.wiggle.maxAngle` | `number` | `5` | Maximum rotation angle in degrees (range: 1–30). |
+| `idle.wiggle.speed` | `number` | `2000` | Duration of one wiggle cycle in ms (range: 500–8000). |
+| `idle.wiggle.sync` | `'random' \| 'together'` | `'random'` | Phase synchronisation across images. |
+
+**Pulse** — images gently scale up and down:
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.pulse.minScale` | `number` | `0.95` | Minimum scale factor during pulse (range: 0.5–1.0). |
+| `idle.pulse.maxScale` | `number` | `1.05` | Maximum scale factor during pulse (range: 1.0–2.0). |
+| `idle.pulse.speed` | `number` | `2400` | Duration of one pulse cycle in ms (range: 500–8000). |
+| `idle.pulse.sync` | `'random' \| 'together'` | `'random'` | Phase synchronisation across images. |
+
+**Blink** — images flash on and off:
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.blink.onRatio` | `number` | `0.7` | Fraction of the cycle the image is visible (range: 0.1–0.99). |
+| `idle.blink.speed` | `number` | `3000` | Duration of one blink cycle in ms (range: 500–10000). |
+| `idle.blink.style` | `'snap' \| 'fade'` | `'snap'` | Transition style: `snap` for instant cut, `fade` for gradual fade. |
+
+**Spin** — images continuously rotate:
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `idle.spin.speed` | `number` | `4000` | Duration of one full revolution in ms (range: 500–20000). |
+| `idle.spin.direction` | `'clockwise' \| 'counterclockwise'` | `'clockwise'` | Rotation direction. |
+
+**Custom** — user-provided animation:
+
+```typescript
+idle: {
+  type: 'custom',
+  custom: ({ element, index, totalImages }) => {
+    // Return a Web Animations API Animation object:
+    return element.animate([
+      { transform: 'rotate(0deg)' },
+      { transform: 'rotate(360deg)' }
+    ], { duration: 3000, iterations: Infinity });
+
+    // Or return a teardown function:
+    // const interval = setInterval(() => { /* ... */ }, 100);
+    // return () => clearInterval(interval);
+  }
+}
+```
+
+**Examples:**
+
+Gentle wiggle with random phases:
+```javascript
+animation: {
+  idle: {
+    type: 'wiggle',
+    wiggle: { maxAngle: 5, speed: 2000, sync: 'random' }
+  }
+}
+```
+
+Breathing pulse (all together):
+```javascript
+animation: {
+  idle: {
+    type: 'pulse',
+    pulse: { minScale: 0.97, maxScale: 1.03, speed: 3000, sync: 'together' }
+  }
+}
+```
+
+Slow clockwise spin:
+```javascript
+animation: {
+  idle: {
+    type: 'spin',
+    startDelay: 600,
+    spin: { speed: 8000, direction: 'clockwise' }
+  }
+}
+```
+
+---
+
+## Event Callbacks
 
 React to image lifecycle events via callback functions, similar to Swiper.js event hooks. All hooks are observational — they receive context and can drive side effects, but do not affect library behaviour unless explicitly designed to do so (e.g. `onBeforeImageLoad`).
 
@@ -1559,9 +1812,7 @@ imageCloud({
 });
 ```
 
----
-
-#### State Change Hooks
+### State Change Hooks
 
 | Callback | Fired when |
 | :--- | :--- |
@@ -1579,11 +1830,9 @@ All four receive an `ImageStateContext`:
 | `url` | `string` | Original URL of the image. |
 | `layout` | `ImageLayout` | Layout data (`x`, `y`, `rotation`, `scale`, `baseSize`). |
 
----
+### Loading Lifecycle Hooks
 
-#### Loading Lifecycle Hooks
-
-##### `onBeforeImageLoad`
+#### `onBeforeImageLoad`
 
 Intercepts each image before its `src` is set. Return a URL override, full `fetch()` options, or nothing.
 
@@ -1632,9 +1881,7 @@ onBeforeImageLoad: async () => {
 }
 ```
 
----
-
-##### `onImageLoaded`
+#### `onImageLoaded`
 
 Fires after each image successfully loads (before it enters the display queue).
 
@@ -1646,9 +1893,7 @@ Fires after each image successfully loads (before it enters the display queue).
 | `totalImages` | `number` | Total image count. |
 | `loadTime` | `number` | ms from `src` assignment to `onload`. |
 
----
-
-##### `onImageError`
+#### `onImageError`
 
 Fires when an image fails to load.
 
@@ -1658,9 +1903,7 @@ Fires when an image fails to load.
 | `index` | `number` | Zero-based index. |
 | `totalImages` | `number` | Total image count. |
 
----
-
-##### `onLoadProgress`
+#### `onLoadProgress`
 
 Fires after each image either loads or errors — useful for progress bars.
 
@@ -1671,9 +1914,7 @@ Fires after each image either loads or errors — useful for progress bars.
 | `total` | `number` | Total expected images. |
 | `percent` | `number` | `(loaded + failed) / total * 100` |
 
----
-
-##### `onGalleryReady`
+#### `onGalleryReady`
 
 Fires once, after all images have been displayed (or errored) and the display queue is empty.
 
@@ -1683,9 +1924,7 @@ Fires once, after all images have been displayed (or errored) and the display qu
 | `failedImages` | `number` | Count of images that failed to load. |
 | `loadDuration` | `number` | ms from first `src` assignment to last image displayed. |
 
----
-
-#### Entry Animation Hooks
+### Entry Animation Hooks
 
 Per-frame lifecycle hooks for entry animations. Hooks are observational — the image always lands at its layout position regardless of what the hook does. `onEntryProgress` fires every rAF frame for JS-animated paths (`bounce`, `elastic`, `wave`) and is not fired for CSS-transitioned paths (`linear` without rotation/scale animation, since the browser compositor owns the interpolation).
 
@@ -1694,8 +1933,6 @@ Per-frame lifecycle hooks for entry animations. Hooks are observational — the 
 | `onEntryStart` | Animation begins (all path types) |
 | `onEntryProgress` | Each rAF tick during JS-animated paths only |
 | `onEntryComplete` | Animation finishes (all path types) |
-
-##### `onEntryStart`
 
 `EntryAnimPoint` (used in `from`, `to`, and `current`):
 
@@ -1719,9 +1956,7 @@ Per-frame lifecycle hooks for entry animations. Hooks are observational — the 
 | `startTime` | `number` | `performance.now()` at animation start. |
 | `duration` | `number` | Total animation duration (ms). |
 
-##### `onEntryProgress`
-
-Fired every rAF frame for JS-animated paths. Extends `EntryStartContext` with:
+`onEntryProgress` extends `EntryStartContext` with:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -1730,7 +1965,7 @@ Fired every rAF frame for JS-animated paths. Extends `EntryStartContext` with:
 | `elapsed` | `number` | ms since `startTime`. |
 | `current` | `EntryAnimPoint` | Current interpolated position/rotation/scale. |
 
-##### `onEntryComplete`
+`onEntryComplete`:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -1741,11 +1976,9 @@ Fired every rAF frame for JS-animated paths. Extends `EntryStartContext` with:
 | `endTime` | `number` | `performance.now()` at animation end. |
 | `duration` | `number` | Total animation duration (ms). |
 
----
+### Layout Hook
 
-#### Layout Hook
-
-##### `onLayoutComplete`
+#### `onLayoutComplete`
 
 Fires once per gallery render, after the layout algorithm has computed all image positions and before images begin loading. Re-fires on responsive resize if the image height breakpoint changes.
 
@@ -1770,7 +2003,42 @@ onLayoutComplete({ layouts, algorithm, imageCount }) {
 
 ---
 
-### UI Configuration (`ui`)
+## Interaction
+
+Controls user interactions like clicking and zooming.
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `focus.scalePercent` | `number` | `0.8` | Target size as percentage of container. Values 0-1 are fractions (0.8 = 80%), values > 1 are treated as percentages (80 = 80%). |
+| `focus.zIndex` | `number` | `1000` | Z-index of the focused image. |
+| `focus.animationDuration` | `number` | - | Override animation duration for focus/unfocus transitions (ms). Falls back to `animation.duration`. |
+| `dragging` | `boolean` | `true` | When `false`, sets `draggable="false"` on each image element, suppressing the browser's native click-drag behavior. |
+| `navigation.keyboard` | `boolean` | `true` | When `false`, disables arrow key (← →), Escape, and Enter/Space keyboard navigation. Navigation is scoped to the gallery container — click the container to give it focus first. |
+| `navigation.swipe` | `boolean` | `true` | When `false`, disables touch swipe gestures for navigating between focused images. Useful when the gallery is inside a scrollable container. |
+
+**Focus Scaling Behavior:**
+
+The focused image scales to fill a percentage of the container. The image maintains its aspect ratio and is constrained by both dimensions to ensure it fits within the container bounds.
+
+```typescript
+// Scale to 80% of container (default)
+interaction: {
+  focus: {
+    scalePercent: 0.8
+  }
+}
+
+// Using percentage notation (equivalent to 0.75)
+interaction: {
+  focus: {
+    scalePercent: 75
+  }
+}
+```
+
+---
+
+## UI
 
 Controls UI elements shown during loading and interaction.
 
@@ -1786,7 +2054,7 @@ Controls UI elements shown during loading and interaction.
 | `ui.nextButtonElement` | `string \| HTMLElement` | `undefined` | Custom next button. If omitted, a default › button is auto-created at right-center of container. |
 | `ui.showFocusOutline` | `boolean` | `false` | Controls the focus ring on the gallery container. When `false` (default), the browser's `:focus` outline is suppressed and a subtle accent outline appears only while an image is focused (indicating keyboard navigation is active). When `true`, the browser default `:focus` outline is always shown. |
 
-#### Customising the focus outline
+**Customising the focus outline:**
 
 When `showFocusOutline: false` (default), the library adds `fbn-ic-suppress-outline` to the container permanently and toggles `fbn-ic-has-focus` while an image is focused. Override the active outline via CSS:
 
@@ -1808,226 +2076,9 @@ The default appearance uses the library's accent colour (`#6366f1`). You can als
 }
 ```
 
-### Styling Configuration (`styling`)
-
-Controls the visual appearance of images in different states.
-
-```typescript
-styling: {
-  default: {
-    border: { width: 0, color: '#000', radius: 0, style: 'solid' },
-    shadow: 'none',             // 'none' | 'sm' | 'md' | 'lg' | 'glow' or custom CSS
-    opacity: 1,
-    cursor: 'pointer',
-    filter: { },
-    outline: { width: 0, color: '#000', style: 'solid', offset: 0 }
-  },
-  hover: {
-    shadow: 'none'              // Applied on mouse hover
-  },
-  focused: {
-    shadow: 'none'              // Applied when image is clicked/focused
-  }
-}
-```
-
-#### Style States
-
-| State | Description |
-|-------|-------------|
-| `default` | Base styling applied to all images |
-| `hover` | Inherits from default, applied on mouse hover |
-| `focused` | Inherits from default, applied when image is clicked/zoomed |
-
-> **Note:** All properties from `ImageStyleState` are available for all three states. When a property is not explicitly set in `hover` or `focused`, it inherits the value from `default`. This allows you to override only the specific properties you want to change for each state.
-
-#### Image Style Properties (`ImageStyleState`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `className` | `string \| string[]` | - | CSS class names to apply |
-| `border` | `BorderConfig` | *See below* | Border styling (shorthand for all sides) |
-| `borderTop` | `Partial<BorderConfig>` | - | Top border override |
-| `borderRight` | `Partial<BorderConfig>` | - | Right border override |
-| `borderBottom` | `Partial<BorderConfig>` | - | Bottom border override |
-| `borderLeft` | `Partial<BorderConfig>` | - | Left border override |
-| `borderRadiusTopLeft` | `number` | - | Top-left corner radius override (px) |
-| `borderRadiusTopRight` | `number` | - | Top-right corner radius override (px) |
-| `borderRadiusBottomRight` | `number` | - | Bottom-right corner radius override (px) |
-| `borderRadiusBottomLeft` | `number` | - | Bottom-left corner radius override (px) |
-| `shadow` | `ShadowPreset \| string` | `'none'` | Shadow preset or custom CSS shadow |
-| `filter` | `FilterConfig` | `{}` | CSS filter effects |
-| `opacity` | `number` | `1` | Image opacity (0-1) |
-| `cursor` | `string` | `'pointer'` | CSS cursor value |
-| `outline` | `OutlineConfig` | *See below* | Outline styling |
-| `objectFit` | `string` | - | CSS object-fit value |
-| `aspectRatio` | `string` | - | CSS aspect-ratio (e.g., '16/9') |
-| `clipPath` | `ClipPathShape \| string \| ClipPathConfig` | `undefined` | Crop image to a predefined shape or custom CSS clip-path. Can be a string (shape name or custom CSS), or a config object with `shape` and `mode` properties. |
-
-#### Clip-Path Configuration
-
-The `clipPath` property accepts three formats:
-
-1. **Predefined shape name** (string): `'circle'`, `'square'`, `'triangle'`, `'pentagon'`, `'hexagon'`, `'octagon'`, `'diamond'`
-2. **Custom clip-path** (string): CSS clip-path syntax like `'polygon(...)'` or `'inset(...)'`
-3. **Configuration object** (for advanced control):
-   ```typescript
-   {
-     shape: ClipPathShape,      // Predefined shape name
-     mode: 'percent' | 'height-relative'  // Scaling mode
-   }
-   ```
-
-#### Clip-Path Modes
-
-**Height-Relative (Consistent)** - Aspect-ratio aware (default)
-- Scales the shape based on the image height, then centers it horizontally
-- Maintains consistent visual sizing across images with different aspect ratios
-- Ideal for portrait images where percentage mode may appear off-center
-- The shape size is calculated as: `scaleFactor = imageHeight / referenceHeight (100px)`
-
-**Percent (Responsive)** - stretches to image size
-- Uses percentage-based coordinates that scale responsively with the image dimensions
-- Shape maintains the same visual proportion regardless of image size
-- Works well when images have varied aspect ratios
-
-
-#### Clip-Path Shapes
-
-Predefined shapes use the selected mode for scaling:
-
-| Shape | Use Case |
-|-------|----------|
-| `'circle'` | Circular crops, user avatars |
-| `'square'` | Standard square thumbnails |
-| `'triangle'` | Directional or badge designs |
-| `'pentagon'` | Star-like geometric layouts |
-| `'hexagon'` | Honeycomb layouts, unique patterns |
-| `'octagon'` | Stop-sign or badge shapes |
-| `'diamond'` | Rotated square, gemstone effect |
-
-#### Usage Examples
-
-**Simple predefined shape (uses default "percent" mode):**
-```javascript
-styling: {
-  default: { clipPath: 'hexagon' }
-}
-```
-
-**Height-relative mode for consistent aspect-ratio-aware shapes:**
-```javascript
-styling: {
-  default: {
-    clipPath: {
-      shape: 'hexagon',
-      mode: 'height-relative'
-    }
-  }
-}
-```
-
-**Custom clip-path (always uses percent mode):**
-- `'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'` - Trapezoid
-- `'inset(10% 20% 30% 40%)'` - Rectangular inset
-- `'circle(40%)'` - Circle with specific radius
-
-**Animated clip-path transitions:**
-Clip-path smoothly animates during focus/unfocus transitions. The animation updates continuously as image dimensions change, ensuring the shape stays perfectly centered.
-
-**Note:** `overflow: hidden` is automatically applied when `clipPath` is used to ensure clean boundaries.
-
-#### Border Configuration (`BorderConfig`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `width` | `number` | `0` | Border width in pixels |
-| `color` | `string` | `'#000'` | Border color (CSS color) |
-| `radius` | `number` | `0` | Border radius in pixels |
-| `style` | `BorderStyle` | `'solid'` | Border line style (see table below) |
-
-**Border Style Options** (ordered by practicality):
-
-| Style | Description |
-|-------|-------------|
-| `'solid'` | Continuous line (default) |
-| `'dashed'` | Series of dashes |
-| `'dotted'` | Series of dots |
-| `'double'` | Two parallel lines |
-| `'none'` | No border |
-| `'groove'` | 3D carved into page effect |
-| `'ridge'` | 3D raised from page effect |
-| `'inset'` | 3D embedded look |
-| `'outset'` | 3D raised look |
-| `'hidden'` | Same as none (for table border conflict resolution) |
-
-#### Shadow Presets
-
-| Preset | CSS Value | Description |
-|--------|-----------|-------------|
-| `'none'` | `none` | No shadow |
-| `'sm'` | `0 2px 4px rgba(0,0,0,0.1)` | Small subtle shadow |
-| `'md'` | `0 4px 16px rgba(0,0,0,0.4)` | Medium shadow (default) |
-| `'lg'` | `0 8px 32px rgba(0,0,0,0.5)` | Large prominent shadow |
-| `'glow'` | `0 0 30px rgba(255,255,255,0.6)` | White glow effect |
-
-You can also pass a custom CSS box-shadow string instead of a preset.
-
-#### Filter Configuration (`FilterConfig`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `grayscale` | `number` | - | Grayscale filter (0-1) |
-| `blur` | `number` | - | Blur in pixels |
-| `brightness` | `number` | - | Brightness multiplier (1 = normal) |
-| `contrast` | `number` | - | Contrast multiplier (1 = normal) |
-| `saturate` | `number` | - | Saturation multiplier (1 = normal) |
-| `opacity` | `number` | - | Filter opacity (0-1) |
-| `sepia` | `number` | - | Sepia filter (0-1) |
-| `hueRotate` | `number` | - | Hue rotation in degrees |
-| `invert` | `number` | - | Invert filter (0-1) |
-| `dropShadow` | `DropShadowConfig \| string` | - | Drop shadow effect |
-
-#### Outline Configuration (`OutlineConfig`)
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `width` | `number` | `0` | Outline width in pixels |
-| `color` | `string` | `'#000'` | Outline color |
-| `style` | `string` | `'solid'` | Outline style: `'solid'`, `'dashed'`, `'dotted'`, `'none'` |
-| `offset` | `number` | `0` | Outline offset in pixels |
-
-**Example - Vintage photo effect:**
-```typescript
-styling: {
-  default: {
-    border: { width: 8, color: '#f5f5dc', radius: 0 },
-    shadow: 'lg',
-    filter: { sepia: 0.3, contrast: 1.1 }
-  },
-  hover: {
-    filter: { sepia: 0, contrast: 1 }  // Remove effect on hover
-  }
-}
-```
-
-**Example - Polaroid style:**
-```typescript
-styling: {
-  default: {
-    border: { width: 0, radius: 4 },
-    borderBottom: { width: 40, color: 'white' },
-    borderTop: { width: 10, color: 'white' },
-    borderLeft: { width: 10, color: 'white' },
-    borderRight: { width: 10, color: 'white' },
-    shadow: 'md'
-  }
-}
-```
-
 ---
 
-### Debug Configuration (`config.debug`)
+## Debug
 
 Controls debug output and visual debugging aids. All debug options default to `false`.
 
@@ -2048,123 +2099,6 @@ config: {
 | `config.debug.loaders` | `boolean` | `false` | Enable debug output for image loaders. |
 
 **Note:** The old paths (`debug`, `layout.debugCenters`, `config.loaders.debugLogging`) have been removed. Use `config.debug.*` instead.
-
----
-
-## Idle Animation
-
-Adds continuous ambient animations to gallery images while they are idle (not focused). Animations automatically pause when an image is clicked/focused and resume after the unfocus animation fully completes.
-
-Uses the Web Animations API with `composite: 'add'`, so idle animations layer on top of existing transforms without interfering with entry, focus, or hover effects.
-
-### Configuration
-
-```typescript
-animation: {
-  idle: {
-    type: 'wiggle',       // 'none' | 'wiggle' | 'pulse' | 'blink' | 'spin' | 'custom'
-    startDelay: 600,      // ms before idle starts (default: entry animation duration)
-    wiggle: { ... },      // wiggle-specific options
-    pulse: { ... },       // pulse-specific options
-    blink: { ... },       // blink-specific options
-    spin: { ... },        // spin-specific options
-    custom: (ctx) => ..., // custom animation function
-  }
-}
-```
-
-### Parameters
-
-#### Top-level
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `idle.type` | `'none' \| 'wiggle' \| 'pulse' \| 'blink' \| 'spin' \| 'custom'` | `'none'` | Type of idle animation. |
-| `idle.startDelay` | `number` | entry duration | Milliseconds to wait after an image appears before starting idle animation. |
-
-#### Wiggle — images gently rock back and forth
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `idle.wiggle.maxAngle` | `number` | `5` | Maximum rotation angle in degrees (range: 1–30). |
-| `idle.wiggle.speed` | `number` | `2000` | Duration of one wiggle cycle in ms (range: 500–8000). |
-| `idle.wiggle.sync` | `'random' \| 'together'` | `'random'` | Phase synchronisation across images. |
-
-#### Pulse — images gently scale up and down
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `idle.pulse.minScale` | `number` | `0.95` | Minimum scale factor during pulse (range: 0.5–1.0). |
-| `idle.pulse.maxScale` | `number` | `1.05` | Maximum scale factor during pulse (range: 1.0–2.0). |
-| `idle.pulse.speed` | `number` | `2400` | Duration of one pulse cycle in ms (range: 500–8000). |
-| `idle.pulse.sync` | `'random' \| 'together'` | `'random'` | Phase synchronisation across images. |
-
-#### Blink — images flash on and off
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `idle.blink.onRatio` | `number` | `0.7` | Fraction of the cycle the image is visible (range: 0.1–0.99). |
-| `idle.blink.speed` | `number` | `3000` | Duration of one blink cycle in ms (range: 500–10000). |
-| `idle.blink.style` | `'snap' \| 'fade'` | `'snap'` | Transition style: `snap` for instant cut, `fade` for gradual fade. |
-
-#### Spin — images continuously rotate
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `idle.spin.speed` | `number` | `4000` | Duration of one full revolution in ms (range: 500–20000). |
-| `idle.spin.direction` | `'clockwise' \| 'counterclockwise'` | `'clockwise'` | Rotation direction. |
-
-#### Custom — user-provided animation
-
-```typescript
-idle: {
-  type: 'custom',
-  custom: ({ element, index, totalImages }) => {
-    // Return a Web Animations API Animation object:
-    return element.animate([
-      { transform: 'rotate(0deg)' },
-      { transform: 'rotate(360deg)' }
-    ], { duration: 3000, iterations: Infinity });
-
-    // Or return a teardown function:
-    // const interval = setInterval(() => { /* ... */ }, 100);
-    // return () => clearInterval(interval);
-  }
-}
-```
-
-### Examples
-
-**Gentle wiggle with random phases:**
-```javascript
-animation: {
-  idle: {
-    type: 'wiggle',
-    wiggle: { maxAngle: 5, speed: 2000, sync: 'random' }
-  }
-}
-```
-
-**Breathing pulse (all together):**
-```javascript
-animation: {
-  idle: {
-    type: 'pulse',
-    pulse: { minScale: 0.97, maxScale: 1.03, speed: 3000, sync: 'together' }
-  }
-}
-```
-
-**Slow clockwise spin:**
-```javascript
-animation: {
-  idle: {
-    type: 'spin',
-    startDelay: 600,
-    spin: { speed: 8000, direction: 'clockwise' }
-  }
-}
-```
 
 ---
 
@@ -2413,14 +2347,6 @@ All available parameters with example values:
     "navigation": {
       "keyboard": true,                         // Default. Set false to disable keyboard nav
       "swipe": true                             // Default. Set false to disable swipe gestures
-    }
-  },
-
-  "rendering": {
-    "responsive": {
-      "breakpoints": {
-        "mobile": 768                           // Default
-      }
     }
   },
 
@@ -2744,191 +2670,3 @@ const gallery = new ImageCloud({
   }
 });
 ```
-
-### Entry Animation: Circular Entrance
-
-```typescript
-const gallery = new ImageCloud({
-  container: 'my-gallery',
-  images: [...],
-  image: {
-    sizing: { mode: 'fixed', height: 90 }
-  },
-  layout: {
-    algorithm: 'radial'
-  },
-  animation: {
-    entry: {
-      start: {
-        position: 'circular',
-        circular: {
-          radius: '120%',        // 120% of container diagonal
-          distribution: 'even'   // Evenly distributed on circle
-        }
-      },
-      timing: { duration: 1000 }
-    }
-  }
-});
-```
-
-### Entry Animation: JSON Format
-
-```jsonc
-{
-  "container": "imageCloud",
-  "images": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"],
-  "layout": {
-    "algorithm": "spiral",
-    "sizing": { "base": 100 }
-  },
-  "animation": {
-    "entry": {
-      "start": {
-        "position": "center"
-      },
-      "timing": {
-        "duration": 600
-      },
-      "easing": "cubic-bezier(0.25, 1, 0.5, 1)"
-    }
-  }
-}
-```
-
-### Flowing Wave Layout
-
-```typescript
-const gallery = new ImageCloud({
-  container: 'my-gallery',
-  images: [...],
-  image: {
-    sizing: { mode: 'fixed', height: 120 },
-    rotation: { mode: 'tangent' }  // Images tilt along wave curve
-  },
-  layout: {
-    algorithm: 'wave',
-    wave: {
-      rows: 4,
-      amplitude: 100,
-      frequency: 2.5,
-      synchronization: 'offset'
-    }
-  },
-  animation: {
-    entry: {
-      start: { position: 'left' },  // Enter from left for flow effect
-      timing: { duration: 800 }
-    }
-  }
-});
-```
-
-### Alternating Wave Pattern
-
-```typescript
-const gallery = new ImageCloud({
-  container: 'my-gallery',
-  images: [...],
-  image: {
-    sizing: { mode: 'fixed', height: 90 },
-    rotation: { mode: 'tangent' }  // Images follow wave curve
-  },
-  layout: {
-    algorithm: 'wave',
-    wave: {
-      rows: 5,
-      amplitude: 120,
-      frequency: 3,
-      synchronization: 'alternating'  // Woven pattern
-    }
-  }
-});
-```
-
----
-
-## Migration Guide
-
-If you are upgrading from an older version, the sizing configuration structure has changed.
-
-### Key Changes
-
-| Old Location | New Location | Notes |
-|--------------|--------------|-------|
-| `image.sizing.baseHeight` | `image.sizing.height` | Use with `mode: 'fixed'` |
-| `image.sizing.scaleDecay` | `layout.scaleDecay` | Moved to layout level |
-| `layout.sizing.responsive[]` | `layout.responsive{}` | Changed from array to object |
-| `layout.sizing.adaptive` | `image.sizing.minSize/maxSize` | Part of image.sizing |
-| `layout.sizing.base` | `image.sizing.height` | Use with `mode: 'fixed'` |
-
-### Before (Old Config)
-
-```typescript
-{
-  image: {
-    sizing: {
-      baseHeight: 150,
-      scaleDecay: 0.5,
-      variance: { min: 0.8, max: 1.2 }
-    }
-  },
-  layout: {
-    algorithm: 'spiral',
-    sizing: {
-      base: 200,
-      responsive: [
-        { minWidth: 1200, height: 225 },
-        { minWidth: 768, height: 180 },
-        { minWidth: 0, height: 100 }
-      ],
-      adaptive: {
-        enabled: true,
-        minSize: 50,
-        maxSize: 400
-      }
-    }
-  }
-}
-```
-
-### After (New Config)
-
-```typescript
-{
-  image: {
-    sizing: {
-      mode: 'responsive',      // 'fixed', 'responsive', or 'adaptive'
-      height: {                // for responsive mode (per-breakpoint)
-        mobile: 100,           // < 767px
-        tablet: 180,           // 768-1199px
-        screen: 225            // >= 1200px
-      },
-      // For fixed mode (single height):
-      // mode: 'fixed',
-      // height: 150,
-      // For adaptive mode (auto-calculate):
-      // mode: 'adaptive',
-      // minSize: 50,
-      // maxSize: 400,
-      variance: { min: 0.8, max: 1.2 }
-    }
-  },
-  layout: {
-    algorithm: 'spiral',
-    scaleDecay: 0.5,           // moved from image.sizing
-    responsive: {              // changed from array to object
-      mobile: { maxWidth: 767 },
-      tablet: { maxWidth: 1199 }
-    }
-  }
-}
-```
-
-### Sizing Mode Selection
-
-The new `mode` property explicitly controls sizing behavior:
-
-- **`mode: 'adaptive'`**: Auto-calculates sizes based on container and image count, constrained by `minSize` and `maxSize` (default)
-- **`mode: 'fixed'`**: Uses a single `height` value for all viewports
-- **`mode: 'responsive'`**: Uses per-breakpoint heights via `height: { mobile, tablet, screen }`

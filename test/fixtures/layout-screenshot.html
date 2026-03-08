@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Screenshot</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0f0e17; width: 800px; height: 500px; overflow: hidden; }
+    #gallery {
+      width: 800px;
+      height: 500px;
+      position: relative;
+      background: #0f0e17;
+    }
+  </style>
+</head>
+<body>
+  <div id="gallery"></div>
+  <script type="module">
+    import { ImageCloud } from '/dist/image-cloud.js';
+    window.ImageCloud = ImageCloud;
+    window._ready = true;
+  </script>
+</body>
+</html>

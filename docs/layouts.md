@@ -5,6 +5,8 @@
 ### Radial
 Concentric rings emanating from center. Images placed in elliptical rings at increasing radii.
 
+![Radial layout example](images/layout-radial.png)
+
 **Configuration options:**
 ```typescript
 layout: {
@@ -26,6 +28,8 @@ layout: {
 
 ### Spiral
 Golden ratio spiral emanating outward. Images placed along a logarithmic spiral using the golden angle (~137.5°) for optimal distribution.
+
+![Spiral layout example](images/layout-spiral.png)
 
 **Configuration options:**
 ```typescript
@@ -51,6 +55,8 @@ layout: {
 
 ### Grid
 Clean rows and columns with optional stagger.
+
+![Grid layout example](images/layout-grid.png)
 
 **Configuration options:**
 ```typescript
@@ -88,6 +94,8 @@ When both `columns` and `rows` are fixed and image count exceeds available cells
 ### Cluster
 Organic clumps with natural spacing. Images grouped into clusters positioned around the container.
 
+![Cluster layout example](images/layout-cluster.png)
+
 **Configuration options:**
 ```typescript
 layout: {
@@ -113,6 +121,8 @@ layout: {
 
 ### Wave
 Images positioned along flowing sine wave curves across multiple rows.
+
+![Wave layout example](images/layout-wave.png)
 
 **Configuration options:**
 ```typescript
@@ -145,6 +155,8 @@ layout: {
 ### Honeycomb
 Images arranged in hexagonal rings filling outward from center. Automatically applies a hexagon clip path to images.
 
+![Honeycomb layout example](images/layout-honeycomb.png)
+
 **Configuration options:**
 ```typescript
 layout: {
@@ -165,6 +177,8 @@ layout: {
 
 ### Random
 Scattered placement with no structure.
+
+![Random layout example](images/layout-random.png)
 
 No algorithm-specific configuration. Respects shared layout options (`spacing.padding`, etc.) and image options (`rotation`, `sizing.variance`).
 
