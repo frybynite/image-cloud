@@ -43,8 +43,7 @@ src/
 ├── auto-init.ts         # Auto-initialization from data attributes
 ├── config/
 │   ├── types.ts         # TypeScript interfaces
-│   ├── defaults.ts      # Default configuration
-│   └── adapter.ts       # Legacy config adapter
+│   └── defaults.ts      # Default configuration
 ├── engines/
 │   ├── LayoutEngine.ts  # Position calculations
 │   ├── AnimationEngine.ts
