@@ -4,18 +4,6 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 
 ---
 
-## 🟡 Should Fix Before 1.0
-
-- [ ] **Radial layout has extra border on the edges** — small visual defect in a key layout
-
-- [x] **README: Remove pre-1.0 breaking-changes warning banner**
-
----
-
-## 🔵 Consider / Nice to Have
-
----
-
 ## ✅ Already in Good Shape
 
 - Zero TypeScript errors — strict mode, `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns` all enabled
@@ -30,3 +18,4 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 - CDN distribution configured (jsDelivr + unpkg)
 - Interactive configurator published to GitHub Pages
 - Accessibility: `role="region"` + `aria-label` on container, `alt` text on images, `aria-live` focus announcements, nav buttons keyboard-accessible
+- `CONTRIBUTING.md` added for open-source contributors
