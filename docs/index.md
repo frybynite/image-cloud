@@ -75,6 +75,89 @@ const cloud = await imageCloud({
 <script type="module" src="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/image-cloud-auto-init.js"></script>
 ```
 
+### React
+
+```bash
+npm install @frybynite/image-cloud react react-dom
+```
+
+```tsx
+import { ImageCloud } from '@frybynite/image-cloud/react';
+import '@frybynite/image-cloud/style.css';
+
+function App() {
+  return (
+    <ImageCloud
+      style={{ width: '100%', height: '80vh' }}
+      loaders={[{
+        static: {
+          sources: [{
+            urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
+          }]
+        }
+      }]}
+      layout={{ algorithm: 'radial' }}
+    />
+  );
+}
+```
+
+Props are the same as `ImageCloudOptions` (minus `container`) plus `className` and `style`. Use a ref to access the underlying instance:
+
+```tsx
+const ref = useRef<ImageCloudRef>(null);
+// ref.current.instance — the core ImageCloud instance
+```
+
+### Vue 3
+
+```bash
+npm install @frybynite/image-cloud vue
+```
+
+```vue
+<script setup>
+import { ImageCloud } from '@frybynite/image-cloud/vue';
+import '@frybynite/image-cloud/style.css';
+
+const options = {
+  loaders: [{
+    static: {
+      sources: [{
+        urls: ['img1.jpg', 'img2.jpg', 'img3.jpg']
+      }]
+    }
+  }],
+  layout: { algorithm: 'radial' }
+};
+</script>
+
+<template>
+  <ImageCloud :options="options" style="width: 100%; height: 80vh" />
+</template>
+```
+
+Pass configuration via the `options` prop. Changes to `options` trigger automatic reinit.
+
+### Web Component
+
+```bash
+npm install @frybynite/image-cloud
+```
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+<script type="module">
+  import '@frybynite/image-cloud/web-component';
+</script>
+
+<image-cloud
+  style="width: 100%; height: 80vh; display: block"
+  images='["img1.jpg", "img2.jpg", "img3.jpg"]'
+  layout="radial"
+></image-cloud>
+```
+
 ## Documentation
 
 - **[Parameters](parameters.md)** — Complete configuration reference
