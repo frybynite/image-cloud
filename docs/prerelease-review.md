@@ -14,9 +14,6 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 
 ## 🔵 Consider / Nice to Have
 
-- [ ] **No `CONTRIBUTING.md`**
-  Important signal for an open-source 1.0. Should cover: dev setup, running tests, PR process, issue reporting. The existing `developer.md` has build info but is written for internal context, not contributors.
-
 ---
 
 ## ✅ Already in Good Shape
