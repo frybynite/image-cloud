@@ -428,6 +428,17 @@ export class ImageCloud {
     return el;
   }
 
+  private getImageAlt(url: string, index: number): string {
+    try {
+      const pathname = new URL(url).pathname;
+      const filename = pathname.split('/').pop() ?? '';
+      const name = filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ').trim();
+      return name.length > 0 ? name : `Image ${index + 1}`;
+    } catch {
+      return `Image ${index + 1}`;
+    }
+  }
+
   private setupEventListeners(): void {
     // Keyboard navigation — scoped to container, guarded by config flag
     if (this.fullConfig.interaction.navigation?.keyboard !== false) {
@@ -928,6 +939,7 @@ export class ImageCloud {
       // NOTE: img.src is set AFTER onload handler to ensure handler catches cached images
       img.referrerPolicy = 'no-referrer';
       img.classList.add('fbn-ic-image');
+      img.alt = this.getImageAlt(url, index);
       if (this.fullConfig.interaction.dragging === false) {
         img.draggable = false;
       }
