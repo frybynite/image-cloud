@@ -1189,6 +1189,7 @@ export class ImageCloud {
       this.swipeEngine?.disable();
       this.hideCounter();
       this.hideNavButtons();
+      if (this.ariaLiveEl) this.ariaLiveEl.textContent = '';
       this.hideFocusIndicator();
     } else {
       // Pause idle animation immediately before focus animation begins
@@ -1204,6 +1205,13 @@ export class ImageCloud {
         this.updateCounter(this.currentFocusIndex);
       }
       this.showNavButtons();
+      if (this.ariaLiveEl && this.currentFocusIndex !== null) {
+        const urls = this.imageLoader.imageURLs();
+        const url = urls[this.currentFocusIndex] ?? '';
+        const alt = this.getImageAlt(url, this.currentFocusIndex);
+        const total = this.imageLayouts.length;
+        this.ariaLiveEl.textContent = `Image ${this.currentFocusIndex + 1} of ${total}: ${alt}`;
+      }
       this.showFocusIndicator();
       if (this.callbacks.onImageFocus && this.currentFocusIndex !== null) {
         const urls = this.imageLoader.imageURLs();

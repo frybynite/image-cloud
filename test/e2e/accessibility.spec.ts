@@ -65,7 +65,7 @@ test.describe('Accessibility', () => {
 
       const firstImage = page.locator('#imageCloud img').first();
       await firstImage.click();
-      await page.waitForTimeout(400);
+      await expect(liveRegion).not.toHaveText('', { timeout: 2000 });
 
       const textAfter = await liveRegion.textContent();
       expect(textAfter).not.toBe(textBefore);
