@@ -60,6 +60,7 @@
     "clean": "rm -rf dist",
     "clean:all": "rm -rf dist build",
     "type-check": "tsc --noEmit",
+    "lint:compat": "eslint src/",
     "preview": "vite preview",
     "serve": "python3 -m http.server 8080",
     "pack": "npm run build && mkdir -p build/packages && npm pack && mv *.tgz build/packages/",
@@ -81,6 +82,15 @@
     "typescript",
     "radial",
     "honeycomb"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "browserslist": [
+    "Chrome >= 87",
+    "Firefox >= 78",
+    "Safari >= 14",
+    "Edge >= 88"
   ],
   "author": "frybynite",
   "license": "MIT",
@@ -112,7 +122,10 @@
     "@playwright/test": "^1.57.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/parser": "^8.57.1",
     "@vitejs/plugin-react": "^5.1.4",
+    "eslint": "^10.1.0",
+    "eslint-plugin-compat": "^7.0.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "typescript": "~5.9.3",
