@@ -45,7 +45,7 @@
       "rows": "Number of rows in the grid layout (default: auto)",
       "gap": "Space between grid cells in pixels (default: 10)",
       "stagger": "Offset every other row for a staggered pattern (default: none)",
-      "jitter": "Random offset applied to image positions (default: 0)",
+      "jitter": "Random offset applied to image positions, 0–1 where 1 = max cell offset (default: 0)",
       "overlap": "How much images can overlap each other (default: 0)",
       "fillDirection": "Order in which grid cells are filled (default: row)",
       "alignment": "Alignment of images within their cells (default: center)",

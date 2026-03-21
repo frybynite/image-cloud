@@ -1027,7 +1027,7 @@
                                     <label class="control-label" data-label="Jitter" data-path="grid.jitter" data-desc-key="layout.grid.jitter">Jitter</label>
                                     <div class="control-input">
                                         <span class="value-display">0</span>
-                                        <input type="range" id="grid-jitter" min="0" max="50" step="5" value="0" oninput="updateRangeDisplay(this)">
+                                        <input type="range" id="grid-jitter" min="0" max="1" step="0.05" value="0" oninput="updateRangeDisplay(this)">
                                     </div>
                                 </div>
                                 <div class="control-row">
@@ -3899,7 +3899,7 @@
                 const rows = getEnabledValue('enable-grid-rows', 'grid-rows', parseInt);
                 const gap = getEnabledValue('enable-grid-gap', 'grid-gap', parseInt);
                 const stagger = getEnabledValue('enable-grid-stagger', 'grid-stagger');
-                const jitter = getEnabledValue('enable-grid-jitter', 'grid-jitter', parseInt);
+                const jitter = getEnabledValue('enable-grid-jitter', 'grid-jitter', parseFloat);
                 const overlap = getEnabledValue('enable-grid-overlap', 'grid-overlap', parseFloat);
                 const fillDirection = getEnabledValue('enable-grid-fillDirection', 'grid-fillDirection');
                 const alignment = getEnabledValue('enable-grid-alignment', 'grid-alignment');
