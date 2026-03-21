@@ -16,13 +16,13 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 
 ## 🟠 Accessibility (Should Address for 1.0)
 
-- [ ] **Images have no accessible descriptions**
+- [x] **Images have no accessible descriptions**
   `<img>` elements are created without `alt` text and there is no `role` on images or the gallery container. Screen readers cannot navigate or describe gallery content. At minimum:
   - Container should have `role="region"` + `aria-label`
   - Images should have `role="img"` + `alt` (filename or index as fallback)
   - Focused image state should announce via `aria-live` or `aria-label` update
 
-- [ ] **Nav buttons have `tabindex="-1"` but are visually clickable**
+- [x] **Nav buttons have `tabindex="-1"` but are visually clickable**
   Prev/Next buttons cannot be tab-focused. Arrow keys work for keyboard nav, but the visible buttons are not keyboard-accessible — inconsistent UX.
 
 ---
