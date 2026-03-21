@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] - 2026-03-21
+
+### Overview
+
+First stable release. This version establishes a stable public API — all configuration options, event hooks, loader interfaces, and framework wrapper props are now considered stable and subject to semantic versioning.
+
+### Highlights
+
+- **Framework wrappers**: React, Vue 3, and Web Component wrappers with full lifecycle management (`init`, reactivity, `destroy`)
+- **7 layout algorithms**: scattered, grid, radial, cascade, stack, masonry, diagonal
+- **Image loaders**: static URL arrays, JSON endpoints, Google Drive folders
+- **Accessibility**: `role="region"`, `aria-label`, `aria-live` focus announcements, full keyboard navigation with tab and arrow keys, nav buttons
+- **Animation system**: CSS and JS-driven entrance animations (linear, arc, bounce, elastic, wave paths), idle animations (wiggle, blink, drift), configurable queue and duration
+- **Image styling**: clip-path shapes (circle, hexagon, diamond, and more), hover/focus states, border and outline, height-relative mode
+- **CDN distribution**: jsDelivr and unpkg, ESM and UMD builds, separate bundles per framework wrapper
+- **Zero runtime dependencies**
+- **954 tests** passing across Chromium, Firefox, and mobile viewports
+
+### Changes since 0.x
+
+- Removed debug artifacts from production bundle (`window.__gridOverflowDebug`, `window.DEBUG_CLIPPATH`, `img.dataset.onloadCalled`, `img.dataset.createdFlag`)
+- Added E2E tests for React and Vue wrappers
+- Added `SECURITY.md`, GitHub issue templates, `CONTRIBUTING.md`
+- README updated with framework quick start sections
+
+---
+
 ## [0.11.3] - 2026-03-08
 
 ### Fixed
