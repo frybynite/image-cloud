@@ -35,13 +35,13 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 - [ ] **Loader API design question (v2.0 deferred — revisit before committing to 1.0)**
   The nested `{ type: 'static', static: { urls: [...] } }` structure is explicitly planned for a breaking change in v2.0. Worth re-evaluating before locking it in: publishing 1.0 with a known-awkward API that will require migration is a long-term commitment. Options: fix it now, or clearly document the v2.0 migration path.
 
-- [ ] **No browser support matrix**
+- [x] **No browser support matrix**
   No documented statement of which browsers/versions are supported. Uses Web Animations API, CSS transforms, `IntersectionObserver`, `TouchEvent` — all modern, but users expect to know this for a stable 1.0. Add to README and/or docs.
 
-- [ ] **`docs/plans/api-integrations.md` is a completed plan still sitting in `docs/plans/`**
+- [x] **`docs/plans/api-integrations.md` is a completed plan still sitting in `docs/plans/`**
   All other planning docs were cleaned up in v0.10.3. This one is also done — delete it for consistency.
 
-- [ ] **No `engines` field in `package.json`**
+- [x] **No `engines` field in `package.json`**
   No declared Node version requirement. Minor, but best practice for published packages.
 
 ---
