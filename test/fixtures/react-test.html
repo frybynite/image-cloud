@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Wrapper Test</title>
+  <link rel="stylesheet" href="/dist/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    #root { width: 100%; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    import React, { useState } from 'react';
+    import { createRoot } from 'react-dom/client';
+    import { ImageCloud } from '/src/react/index.tsx';
+
+    const INITIAL_IMAGES = [
+      '/test/fixtures/images/image1.jpg',
+      '/test/fixtures/images/image2.jpg',
+      '/test/fixtures/images/image3.jpg',
+    ];
+
+    const cloudRef = React.createRef();
+    let setImages;
+
+    function App() {
+      const [images, setImgs] = useState(INITIAL_IMAGES);
+      setImages = setImgs;
+      return React.createElement(ImageCloud, {
+        ref: cloudRef,
+        style: { width: '100%', height: '100vh' },
+        images,
+        animation: { duration: 100, queue: { enabled: true, interval: 20 } },
+      });
+    }
+
+    const root = createRoot(document.getElementById('root'));
+    root.render(React.createElement(App));
+
+    window.cloudRef = cloudRef;
+    window.updateImages = (imgs) => setImages?.(imgs);
+    window.unmount = () => root.unmount();
+  </script>
+</body>
+</html>

@@ -942,7 +942,6 @@ export class ImageCloud {
         img.draggable = false;
       }
       img.dataset.imageId = String(index);
-      img.dataset.createdFlag = 'true';  // Debug flag
 
       const layout = layouts[index];
       img.style.position = 'absolute';
@@ -1006,12 +1005,6 @@ export class ImageCloud {
 
         const aspectRatio = img.naturalWidth / img.naturalHeight;
         const renderedWidth = imageHeight * aspectRatio;
-
-        // Debug: mark that onload was called
-        img.dataset.onloadCalled = 'true';
-        if ((window as any).DEBUG_CLIPPATH) {
-          console.log(`[onload #${index}] Called with imageHeight=${imageHeight}, renderedWidth=${renderedWidth}`);
-        }
 
         // Set explicit width so transform calculations are accurate
         img.style.width = `${renderedWidth}px`;

@@ -21,6 +21,9 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 - `CONTRIBUTING.md` added for open-source contributors
 - Zero TODO/FIXME/HACK comments in `src/` — clean source code
 - README polished — no pre-release warnings, full Quick Start, CDN links, full feature list, events/interactions, browser support, examples
+- `SECURITY.md` added — GitHub private vulnerability reporting, scope, response SLA
+- GitHub issue templates added — bug report, feature request, blank issues disabled
+- Debug artifacts removed from production bundle — `window.__gridOverflowDebug`, `img.dataset.onloadCalled`, `img.dataset.createdFlag`, `window.DEBUG_CLIPPATH` all removed from `src/`
 
 ---
 
@@ -31,22 +34,3 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 
 ---
 
-## 🟡 Should Do Before 1.0 Release
-
-- **SECURITY.md missing**: No security policy at repo root. Public npm packages should document how to report vulnerabilities responsibly. Minimal content: supported versions, how to report, expected response time.
-
-- **Debug artifacts leak into production bundle** (`src/` code, not guarded by `debug.enabled`):
-  - `window.__gridOverflowDebug = {...}` in `GridPlacementLayout.ts:130` — pollutes `window` object in every production deployment; tests in `layout-grid.spec.ts` read it directly from `window`
-  - `img.dataset.onloadCalled = 'true'` in `ImageCloud.ts:1011` — writes a debug attribute on every `<img>` element; tests in `height-relative-centering.spec.ts` rely on it
-  - `(window as any).DEBUG_CLIPPATH` check in `ImageCloud.ts:1012` — undocumented debug flag checked on every image load; test sets it via `page.evaluate`
-  - **Resolution options**: remove the window/DOM pollution and refactor the two tests that depend on them to use observable side-effects (layout positions, computed styles) instead; or guard under `config.debug.enabled` so they are stripped in production builds
-
-- **GitHub issue/PR templates missing**: `.github/ISSUE_TEMPLATE/` directory doesn't exist. For an open-source 1.0 release, standard bug report / feature request / PR templates reduce friction for contributors.
-
----
-
-## 🟢 Accepted Known Issues (Tracked in Backlog)
-
-These are known issues that won't block 1.0 but are tracked for follow-up:
-
-- **Radial layout extra border on edges** (`backlog.md`): Slight extra border visible on outer radial images. Visual-only, moved to backlog.

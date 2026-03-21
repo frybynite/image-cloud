@@ -35,8 +35,6 @@ async function initGalleryWithPortraitImage(
   await page.evaluate(
     async ({ urls, shape, columnsForLayout }: any) => {
       // @ts-ignore
-      window.DEBUG_CLIPPATH = true;
-      // @ts-ignore
       window.gallery = new window.ImageCloud({
         container: 'imageCloud',
         loaders: [{ static: { sources: [{ urls }], validateUrls: false } }],
@@ -61,15 +59,6 @@ async function initGalleryWithPortraitImage(
 
   await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
   await page.waitForTimeout(500);  // Wait for layout calculations
-
-  // Log any console messages
-  const logs = await page.evaluate(() => {
-    // @ts-ignore
-    return (window as any).__consoleLogs || [];
-  });
-  if (logs.length > 0) {
-    console.log('Console logs from page:', logs);
-  }
 }
 
 function parseClipPath(clipPathStr: string): number[] | null {
@@ -96,13 +85,6 @@ test.describe('Height-Relative Clip-Path Centering', () => {
     await initGalleryWithPortraitImage(page, 'hexagon', PORTRAIT_IMAGES, 1);
 
     const img = page.locator('#imageCloud img').first();
-
-    // Check if element was created in forEach, and if onload was called
-    const createdFlag = await img.evaluate(el => (el as any).dataset.createdFlag === 'true');
-    const onloadCalled = await img.evaluate(el => (el as any).dataset.onloadCalled === 'true');
-    const imageComplete = await img.evaluate(el => el.complete);
-    const naturalWidth = await img.evaluate(el => el.naturalWidth);
-    console.log(`Created flag: ${createdFlag}, Onload called: ${onloadCalled}, Image complete: ${imageComplete}, Natural width: ${naturalWidth}`);
 
     // Get image dimensions
     const imageWidth = await img.evaluate(el => el.offsetWidth);

@@ -9,10 +9,11 @@ A TypeScript library for creating interactive image clouds with animated scatter
 - ✨ Animated image layouts with smooth transitions
 - 🎯 Multiple layout algorithms (radial, grid, spiral, cluster, wave, honeycomb, random)
 - 🎬 Rich entry animations (bounce, elastic, wave paths; spin, wobble rotations)
-- 🔍 Zoom/focus interactions with keyboard, swipe, and mouse wheel navigation
+- 🔍 Zoom/focus interactions with keyboard, swipe, and click navigation
 - 🎨 State-based image styling (borders, shadows, filters for default/hover/focused)
 - 📱 Responsive design with adaptive sizing
 - 🖼️ Multiple image sources (static URLs, JSON endpoints, Google Drive, composite loaders)
+- ⚛️ Framework wrappers for React, Vue 3, and Web Components
 - 🛠️ Interactive configurator for visual configuration
 - 📦 Zero runtime dependencies
 - 🔷 Full TypeScript support
@@ -43,7 +44,7 @@ https://unpkg.com/@frybynite/image-cloud@latest/dist/image-cloud-auto-init.js   
 https://unpkg.com/@frybynite/image-cloud@latest/dist/style.css
 ```
 
-Replace `@latest` with a specific version (e.g., `@0.5.1`) to pin to that release.
+Replace `@latest` with a specific version (e.g., `@1.0.0`) to pin to that release.
 
 ## Quick Start
 
@@ -72,6 +73,72 @@ const cloud = await imageCloud({
 > const cloud = new ImageCloud({ container: 'myCloud', images: [...] });
 > await cloud.init();
 > ```
+
+### React
+
+```bash
+npm install @frybynite/image-cloud react react-dom
+```
+
+```tsx
+import { ImageCloud } from '@frybynite/image-cloud/react';
+import '@frybynite/image-cloud/style.css';
+
+function App() {
+  return (
+    <ImageCloud
+      style={{ width: '100%', height: '80vh' }}
+      images={[
+        'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
+        'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
+        'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600'
+      ]}
+      layout={{ algorithm: 'radial' }}
+    />
+  );
+}
+```
+
+### Vue 3
+
+```bash
+npm install @frybynite/image-cloud vue
+```
+
+```vue
+<script setup>
+import { ImageCloud } from '@frybynite/image-cloud/vue';
+import '@frybynite/image-cloud/style.css';
+
+const options = {
+  images: [
+    'https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600',
+    'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600',
+    'https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600'
+  ],
+  layout: { algorithm: 'radial' }
+};
+</script>
+
+<template>
+  <ImageCloud :options="options" style="width: 100%; height: 80vh" />
+</template>
+```
+
+### Web Component
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@frybynite/image-cloud@latest/dist/style.css">
+<script type="module">
+  import '@frybynite/image-cloud/web-component';
+</script>
+
+<image-cloud
+  style="display: block; width: 100%; height: 80vh"
+  images='["https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&w=600","https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=600","https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&w=600"]'
+  layout="radial"
+></image-cloud>
+```
 
 ### HTML (Auto-initialization)
 
@@ -108,6 +175,7 @@ Full documentation is available at **[frybynite.github.io/image-cloud](https://f
 - **[Loaders](https://frybynite.github.io/image-cloud/loaders/)** — Configure image sources (static URLs, JSON endpoints, Google Drive)
 - **[Layouts](https://frybynite.github.io/image-cloud/layouts/)** — Layout algorithms (radial, grid, spiral, cluster, wave, honeycomb, random)
 - **[Image Sizing](https://frybynite.github.io/image-cloud/image_sizing/)** — Base sizes, variance, and responsive/adaptive behavior
+- **[Framework Wrappers](https://frybynite.github.io/image-cloud/parameters/#framework-wrappers)** — React, Vue 3, and Web Component usage
 - **[Parameters](https://frybynite.github.io/image-cloud/parameters/)** — Complete configuration reference
 - **[API Reference](https://frybynite.github.io/image-cloud/api/)** — TypeScript API documentation
 

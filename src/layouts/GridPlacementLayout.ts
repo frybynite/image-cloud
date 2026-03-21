@@ -126,15 +126,6 @@ export class GridPlacementLayout implements PlacementLayout {
     const hasFixedGrid = gridConfig.columns !== 'auto' && gridConfig.rows !== 'auto';
     const isOverflowMode = hasFixedGrid && imageCount > cellCount;
 
-    if (typeof window !== 'undefined') {
-      (window as any).__gridOverflowDebug = {
-        gridConfigColumns: gridConfig.columns,
-        gridConfigRows: gridConfig.rows,
-        columns, rows, cellCount,
-        hasFixedGrid, imageCount, isOverflowMode
-      };
-    }
-
     // Track stack depth for each cell (used in overflow mode)
     const cellStackCount: number[] = isOverflowMode ? new Array(cellCount).fill(0) : [];
 
