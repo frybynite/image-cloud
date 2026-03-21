@@ -65,6 +65,7 @@ export class ImageCloud {
   private counterElAutoCreated: boolean;
   private prevButtonEl: HTMLElement | null;
   private nextButtonEl: HTMLElement | null;
+  private ariaLiveEl: HTMLElement | null = null;
   private prevButtonElAutoCreated: boolean;
   private nextButtonElAutoCreated: boolean;
 
@@ -261,6 +262,8 @@ export class ImageCloud {
       // Add gallery class for CSS scoping
       this.containerEl.classList.add('fbn-ic-gallery');
       this.containerEl.setAttribute('tabindex', '0');
+      this.containerEl.setAttribute('role', 'region');
+      this.containerEl.setAttribute('aria-label', 'Image gallery');
 
       // Initialize swipe engine for touch navigation (guarded by config flag)
       if (this.fullConfig.interaction.navigation?.swipe !== false) {
@@ -364,6 +367,13 @@ export class ImageCloud {
         this.navigateToNextImage();
       });
     }
+
+    // Create aria-live region for screen reader announcements
+    this.ariaLiveEl = document.createElement('div');
+    this.ariaLiveEl.setAttribute('aria-live', 'polite');
+    this.ariaLiveEl.setAttribute('aria-atomic', 'true');
+    this.ariaLiveEl.className = 'fbn-ic-sr-only';
+    this.containerEl!.appendChild(this.ariaLiveEl);
   }
 
   private resolveElement(ref: string | HTMLElement): HTMLElement | null {
