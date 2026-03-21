@@ -31,8 +31,6 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 - [ ] **No `CONTRIBUTING.md`**
   Important signal for an open-source 1.0. Should cover: dev setup, running tests, PR process, issue reporting. The existing `developer.md` has build info but is written for internal context, not contributors.
 
-- [ ] **Loader API design question (v2.0 deferred — revisit before committing to 1.0)**
-  The nested `{ type: 'static', static: { urls: [...] } }` structure is explicitly planned for a breaking change in v2.0. Worth re-evaluating before locking it in: publishing 1.0 with a known-awkward API that will require migration is a long-term commitment. Options: fix it now, or clearly document the v2.0 migration path.
 
 - [x] **No browser support matrix**
   No documented statement of which browsers/versions are supported. Uses Web Animations API, CSS transforms, `IntersectionObserver`, `TouchEvent` — all modern, but users expect to know this for a stable 1.0. Add to README and/or docs.
