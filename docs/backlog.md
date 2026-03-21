@@ -15,7 +15,7 @@ Items to address before releasing v1.0. See [prerelease-review.md](prerelease-re
 - [x] Fix: "applies rotation transforms" test fails in layout.spec.ts:38 — root cause was test fixture using wrong config path (`layout.rotation.enabled` instead of `image.rotation.mode: 'random'`). Library was correct; fixture updated.
 - [ ] Radial layout has some extra border on the edges that we could take out.
 - [x] Investigate: Grid jitter appears to produce more offset than expected - even small jitter values seem to have an outsized visual impact.
-- [ ] Fix: After an image returns from focused state, hover styles are not re-applied if the cursor is already over the image — requires the user to move the mouse off and back on to trigger hover.
+- [x] Fix: After an image returns from focused state, hover styles are not re-applied if the cursor is already over the image — requires the user to move the mouse off and back on to trigger hover.
 ---
 
 ## Planned

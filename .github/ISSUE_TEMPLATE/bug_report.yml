@@ -1,0 +1,76 @@
+name: Bug Report
+description: Something isn't working as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill out the sections below so we can reproduce and fix it quickly.
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: "e.g. 1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      multiple: true
+      options:
+        - npm / bundler (Vite, webpack, etc.)
+        - CDN / UMD script tag
+        - Auto-init (data-image-cloud)
+        - React wrapper
+        - Vue wrapper
+        - Web Component wrapper
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Browser(s)
+      multiple: true
+      options:
+        - Chrome / Edge
+        - Firefox
+        - Safari
+        - iOS Safari
+        - Chrome Android
+        - Other
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What did you expect to happen, and what actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Configure gallery with ...
+        2. Click ...
+        3. See ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration (if relevant)
+      description: Paste the config object you passed to `imageCloud()` or `data-config`.
+      render: json
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Screenshots, console errors, or anything else that might help.

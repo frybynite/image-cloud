@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://frybynite.github.io/image-cloud/
+    about: Check the docs first — parameters, layouts, loaders, and examples are all covered.
+  - name: Interactive Configurator
+    url: https://frybynite.github.io/image-cloud/configurator/index.html
+    about: Build and preview your configuration visually.
