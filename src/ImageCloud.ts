@@ -413,7 +413,6 @@ export class ImageCloud {
     el.className = 'fbn-ic-nav-btn fbn-ic-nav-btn-prev fbn-ic-hidden';
     el.textContent = '‹';
     el.setAttribute('aria-label', 'Previous image');
-    el.setAttribute('tabindex', '-1');
     this.containerEl!.appendChild(el);
     return el;
   }
@@ -423,7 +422,6 @@ export class ImageCloud {
     el.className = 'fbn-ic-nav-btn fbn-ic-nav-btn-next fbn-ic-hidden';
     el.textContent = '›';
     el.setAttribute('aria-label', 'Next image');
-    el.setAttribute('tabindex', '-1');
     this.containerEl!.appendChild(el);
     return el;
   }
