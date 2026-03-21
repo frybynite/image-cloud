@@ -101,8 +101,8 @@ test.describe('Accessibility', () => {
       await page.waitForTimeout(300);
 
       const prevBtn = page.locator('.fbn-ic-nav-btn-prev');
-      const tabindex = await prevBtn.getAttribute('tabindex');
-      expect(tabindex).not.toBe('-1');
+      await expect(prevBtn).toBeVisible();
+      await expect(prevBtn).not.toHaveAttribute('tabindex', '-1');
     });
 
     test('next button does not have tabindex="-1"', async ({ page }) => {
@@ -114,8 +114,8 @@ test.describe('Accessibility', () => {
       await page.waitForTimeout(300);
 
       const nextBtn = page.locator('.fbn-ic-nav-btn-next');
-      const tabindex = await nextBtn.getAttribute('tabindex');
-      expect(tabindex).not.toBe('-1');
+      await expect(nextBtn).toBeVisible();
+      await expect(nextBtn).not.toHaveAttribute('tabindex', '-1');
     });
   });
 

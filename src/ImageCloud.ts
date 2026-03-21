@@ -1204,9 +1204,7 @@ export class ImageCloud {
       }
       this.showNavButtons();
       if (this.ariaLiveEl && this.currentFocusIndex !== null) {
-        const urls = this.imageLoader.imageURLs();
-        const url = urls[this.currentFocusIndex] ?? '';
-        const alt = this.getImageAlt(url, this.currentFocusIndex);
+        const alt = imageElement.alt;
         const total = this.imageLayouts.length;
         this.ariaLiveEl.textContent = `Image ${this.currentFocusIndex + 1} of ${total}: ${alt}`;
       }
