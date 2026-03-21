@@ -8,7 +8,6 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 
 - [ ] **Radial layout has extra border on the edges** — small visual defect in a key layout
 
-- [x] **Grid jitter has outsized visual impact** — small jitter values produce more offset than users expect; fix the scaling or document the expected value range clearly
 
 - [ ] **README: Remove pre-1.0 breaking-changes warning banner**
 
