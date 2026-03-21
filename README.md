@@ -4,9 +4,6 @@
 
 A TypeScript library for creating interactive image clouds with animated scattered layouts and zoom effects. Supports multiple image sources (static URLs, JSON endpoints, Google Drive) and layout algorithms.
 
-> [!WARNING]
-> ⚠️ All minor versions of this library before 1.0 (e.g., 0.1, 0.2, ...) will include breaking changes during development. Please re-test every time before upgrading until we have published v1.0.
-
 ## Features
 
 - ✨ Animated image layouts with smooth transitions

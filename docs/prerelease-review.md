@@ -8,21 +8,7 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 
 - [ ] **Radial layout has extra border on the edges** — small visual defect in a key layout
 
-
-- [ ] **README: Remove pre-1.0 breaking-changes warning banner**
-
----
-
-## 🟠 Accessibility (Should Address for 1.0)
-
-- [x] **Images have no accessible descriptions**
-  `<img>` elements are created without `alt` text and there is no `role` on images or the gallery container. Screen readers cannot navigate or describe gallery content. At minimum:
-  - Container should have `role="region"` + `aria-label`
-  - Images should have `role="img"` + `alt` (filename or index as fallback)
-  - Focused image state should announce via `aria-live` or `aria-label` update
-
-- [x] **Nav buttons have `tabindex="-1"` but are visually clickable**
-  Prev/Next buttons cannot be tab-focused. Arrow keys work for keyboard nav, but the visible buttons are not keyboard-accessible — inconsistent UX.
+- [x] **README: Remove pre-1.0 breaking-changes warning banner**
 
 ---
 
@@ -31,22 +17,12 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 - [ ] **No `CONTRIBUTING.md`**
   Important signal for an open-source 1.0. Should cover: dev setup, running tests, PR process, issue reporting. The existing `developer.md` has build info but is written for internal context, not contributors.
 
-
-- [x] **No browser support matrix**
-  No documented statement of which browsers/versions are supported. Uses Web Animations API, CSS transforms, `IntersectionObserver`, `TouchEvent` — all modern, but users expect to know this for a stable 1.0. Add to README and/or docs.
-
-- [x] **`docs/plans/api-integrations.md` is a completed plan still sitting in `docs/plans/`**
-  All other planning docs were cleaned up in v0.10.3. This one is also done — delete it for consistency.
-
-- [x] **No `engines` field in `package.json`**
-  No declared Node version requirement. Minor, but best practice for published packages.
-
 ---
 
 ## ✅ Already in Good Shape
 
 - Zero TypeScript errors — strict mode, `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns` all enabled
-- 917/920 tests passing (99.7%) with comprehensive E2E and unit coverage
+- 933/938 tests passing (99.5%) with comprehensive E2E and unit coverage
 - Zero runtime dependencies — clean bundle
 - Full API documentation — `parameters.md` is thorough, `architecture.md` added
 - CI/CD — CodeQL analysis, Dependabot, npm provenance publish, tag/version verification
@@ -56,3 +32,4 @@ Items identified during a pre-1.0 readiness review. See [backlog.md](backlog.md)
 - `package.json` metadata complete — description, keywords, homepage, repository, bugs URL all set
 - CDN distribution configured (jsDelivr + unpkg)
 - Interactive configurator published to GitHub Pages
+- Accessibility: `role="region"` + `aria-label` on container, `alt` text on images, `aria-live` focus announcements, nav buttons keyboard-accessible
