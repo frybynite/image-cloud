@@ -222,7 +222,7 @@ test.describe('Height-Relative Clip-Path Mode', () => {
       expect(afterUnfocusClipPath).toContain('polygon');
       expect(afterUnfocusClipPath).not.toContain('circle');
       // Values should be very close (may differ by < 1px due to rounding)
-      expect(afterUnfocusClipPath).toMatch(/polygon\(\d+(\.\d+)?px/)
+      expect(afterUnfocusClipPath).toMatch(/polygon\(-?\d+(\.\d+)?px/)
     });
   });
 

@@ -18,8 +18,7 @@ test.describe('Gallery Initialization', () => {
     await page.goto('/test/fixtures/static-basic.html');
     await waitForGalleryInit(page);
 
-    // Wait a bit for all images to load (queue animation with 12 images)
-    await page.waitForTimeout(1500);
+    await page.waitForFunction(() => document.querySelectorAll('#imageCloud img').length >= 12, { timeout: 10000 });
 
     const imageCount = await getImageCount(page);
     expect(imageCount).toBe(12);

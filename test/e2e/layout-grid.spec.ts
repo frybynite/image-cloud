@@ -168,7 +168,7 @@ test.describe('Grid Layout Algorithm', () => {
       });
 
       await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
-      await page.waitForTimeout(300);
+      await page.waitForFunction(() => document.querySelectorAll('#imageCloud img').length >= 8, { timeout: 5000 });
 
       const count = await getImageCount(page);
       expect(count).toBe(8);
@@ -850,7 +850,7 @@ test.describe('Grid Layout Algorithm', () => {
       });
 
       await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
-      await page.waitForTimeout(500);
+      await page.waitForFunction(() => document.querySelectorAll('#imageCloud img').length >= 20, { timeout: 10000 });
 
       const count = await getImageCount(page);
       expect(count).toBe(20);

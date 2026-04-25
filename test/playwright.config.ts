@@ -26,6 +26,13 @@ export default defineConfig({
         '**/visual-regression.spec.ts',   // Visual tests control their own viewport sizes
         '**/configurator-*.spec.ts',      // Configurator is a desktop-only tool
         '**/api-hooks.spec.ts',           // Mouse-event callbacks not applicable on mobile
+        '**/layout.spec.ts',              // Layout tests check desktop-specific pixel positions
+        '**/layout-cluster.spec.ts',
+        '**/layout-grid.spec.ts',
+        '**/layout-honeycomb.spec.ts',
+        '**/layout-radial.spec.ts',
+        '**/layout-spiral.spec.ts',
+        '**/layout-wave.spec.ts',
       ],
     },
   ],
