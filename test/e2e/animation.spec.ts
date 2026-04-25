@@ -59,16 +59,72 @@ test.describe('Animation System', () => {
       await page.goto('/test/fixtures/animations.html');
       await waitForGalleryInit(page);
 
-      // Check that transition duration is applied
+      // Entry animation sets inline transition style with the configured duration
       const img = page.locator('#imageCloud img').first();
-      const transitionDuration = await img.evaluate((el) =>
-        window.getComputedStyle(el).transitionDuration
-      );
+      const transition = await img.evaluate((el: HTMLElement) => el.style.transition);
 
-      // Duration should be non-trivial (not 0s)
-      // Multiple durations may be returned for different properties (e.g., "0.6s, 0.8s")
-      expect(transitionDuration).not.toBe('0s');
-      expect(transitionDuration.length).toBeGreaterThan(0);
+      // animations.html sets animation.duration: 500
+      expect(transition).toContain('500ms');
+    });
+
+    test('deprecated entry timing duration is used as fallback with console warn', async ({ page }) => {
+      const warnings: string[] = [];
+      page.on('console', msg => {
+        if (msg.type() === 'warning') warnings.push(msg.text());
+      });
+
+      await page.goto('/test/fixtures/animation-deprecated-duration.html');
+      await waitForGalleryInit(page);
+
+      // Deprecated path should emit a console.warn
+      expect(warnings.some(w => w.includes('deprecated'))).toBe(true);
+
+      // Entry animation transition should use the deprecated value (1200ms)
+      const img = page.locator('#imageCloud img').first();
+      const transition = await img.evaluate((el: HTMLElement) => el.style.transition);
+      expect(transition).toContain('1200ms');
+    });
+
+    test('animation.duration wins over deprecated entry timing when both provided', async ({ page }) => {
+      const warnings: string[] = [];
+      page.on('console', msg => {
+        if (msg.type() === 'warning') warnings.push(msg.text());
+      });
+
+      await page.goto('/test/fixtures/animation-both-durations.html');
+      await waitForGalleryInit(page);
+
+      // No deprecation warn when base duration is explicitly provided
+      expect(warnings.some(w => w.includes('deprecated'))).toBe(false);
+
+      // Transition should use base duration (800ms), not entry timing (1200ms)
+      const img = page.locator('#imageCloud img').first();
+      const transition = await img.evaluate((el: HTMLElement) => el.style.transition);
+      expect(transition).toContain('800ms');
+      expect(transition).not.toContain('1200ms');
+    });
+
+    test('focus animation uses configured animationDuration', async ({ page }) => {
+      await page.goto('/test/fixtures/animation-focus-duration.html');
+      await waitForGalleryInit(page);
+      await waitForAnimation(page, 600); // wait for entry animations
+
+      // Click first image to trigger focus
+      await page.evaluate(() => {
+        const img = document.querySelector('#imageCloud img') as HTMLElement;
+        img?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+      });
+
+      // Check the Web Animations API duration on the focused image
+      const focusDuration = await page.evaluate(() => {
+        const img = document.querySelector('#imageCloud img') as HTMLElement;
+        const animations = img.getAnimations();
+        if (animations.length === 0) return null;
+        const effect = animations[0].effect as KeyframeEffect;
+        return effect.getTiming().duration;
+      });
+
+      expect(focusDuration).toBe(1200);
     });
 
     test('focus animation completes smoothly', async ({ page }) => {
