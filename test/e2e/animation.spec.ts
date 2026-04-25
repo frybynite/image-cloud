@@ -107,21 +107,28 @@ test.describe('Animation System', () => {
     test('focus animation uses configured animationDuration', async ({ page }) => {
       await page.goto('/test/fixtures/animation-focus-duration.html');
       await waitForGalleryInit(page);
-      await waitForAnimation(page, 600); // wait for entry animations
+      // Wait for all entry animations to fully complete (600ms default + 150ms queue buffer)
+      await waitForAnimation(page, 900);
 
-      // Click first image to trigger focus
+      // Click first image to trigger focus zoom animation
       await page.evaluate(() => {
         const img = document.querySelector('#imageCloud img') as HTMLElement;
         img?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
       });
 
-      // Check the Web Animations API duration on the focused image
+      // Small wait to ensure element.animate() has been called
+      await page.waitForTimeout(50);
+
+      // Find the Web Animation (numeric duration) created by ZoomEngine.animateWithDimensions
+      // CSS transitions return string durations; Web Animations return numbers
       const focusDuration = await page.evaluate(() => {
         const img = document.querySelector('#imageCloud img') as HTMLElement;
-        const animations = img.getAnimations();
-        if (animations.length === 0) return null;
-        const effect = animations[0].effect as KeyframeEffect;
-        return effect.getTiming().duration;
+        const webAnimation = img.getAnimations().find(a => {
+          const timing = (a.effect as KeyframeEffect)?.getTiming();
+          return typeof timing?.duration === 'number';
+        });
+        if (!webAnimation) return null;
+        return (webAnimation.effect as KeyframeEffect).getTiming().duration;
       });
 
       expect(focusDuration).toBe(1200);
