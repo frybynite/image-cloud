@@ -107,8 +107,8 @@ test.describe('Animation System', () => {
     test('focus animation uses configured animationDuration', async ({ page }) => {
       await page.goto('/test/fixtures/animation-focus-duration.html');
       await waitForGalleryInit(page);
-      // Wait for all entry animations to fully complete (600ms default + 150ms queue buffer)
-      await waitForAnimation(page, 900);
+      // Wait for all entry animations to fully complete (600ms default + 3 images × 150ms stagger)
+      await waitForAnimation(page, 1200);
 
       // Click first image to trigger focus zoom animation
       await page.evaluate(() => {
