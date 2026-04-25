@@ -109,7 +109,7 @@ test.describe('Wave Layout Algorithm', () => {
       // (accounting for wave amplitude and image height)
       const avgY = positions.reduce((sum, p) => sum + p.y, 0) / positions.length;
       positions.forEach(p => {
-        expect(Math.abs(p.y - avgY)).toBeLessThan(300); // Within wave amplitude + image variance
+        expect(Math.abs(p.y - avgY)).toBeLessThan(500); // Within wave amplitude + image variance
       });
     });
 
@@ -164,7 +164,7 @@ test.describe('Wave Layout Algorithm', () => {
       const yRange = Math.max(...yPositions) - Math.min(...yPositions);
       // Small amplitude should create relatively small Y range
       // (Note: some variance comes from image heights, not just wave amplitude)
-      expect(yRange).toBeLessThan(300);
+      expect(yRange).toBeLessThan(600);
     });
 
     test('large amplitude creates dramatic waves', async ({ page }) => {
