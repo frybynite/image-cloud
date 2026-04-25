@@ -43,7 +43,7 @@ jobs:
         run: npx playwright install --with-deps chromium webkit
 
       - name: Run tests
-        run: npx playwright test --config=test/playwright.config.ts --ignore=test/e2e/visual-regression.spec.ts
+        run: npx playwright test --config=test/playwright.config.ts --grep-invert "Visual Regression"
 
   test-visual:
     runs-on: macos-latest
