@@ -549,6 +549,28 @@ export function mergeConfig(
     }
   }
 
+  // Resolve effective animation duration (deprecation bridge for animation.entry.timing.duration)
+  const userProvidedBaseDuration = userConfig.animation?.duration !== undefined;
+  const userProvidedEntryTiming = userConfig.animation?.entry?.timing?.duration !== undefined;
+
+  if (!userProvidedBaseDuration && userProvidedEntryTiming) {
+    console.warn(
+      '[image-cloud] animation.entry.timing.duration is deprecated and will be removed in v1.2. ' +
+      'Use animation.duration instead.'
+    );
+    merged.animation.duration = userConfig.animation!.entry!.timing!.duration!;
+  } else if (!userProvidedBaseDuration) {
+    merged.animation.duration = 600;
+  }
+
+  // Sync resolved duration into entry timing so EntryAnimationEngine reads the correct value
+  if (merged.animation.entry) {
+    merged.animation.entry = {
+      ...merged.animation.entry,
+      timing: { duration: merged.animation.duration! }
+    };
+  }
+
   // Deep merge interaction config
   if (userConfig.interaction) {
     merged.interaction = {
