@@ -415,7 +415,7 @@ export interface AnimationQueueConfig {
 }
 
 export interface AnimationConfig {
-  duration: number;
+  duration?: number;   // Base animation duration (ms). Default: 600. Replaces deprecated animation.entry.timing.duration
   easing: AnimationEasingConfig;
   queue: AnimationQueueConfig;
   entry?: EntryAnimationConfig;
@@ -478,7 +478,7 @@ export interface IdleAnimationConfig {
 export interface FocusInteractionConfig {
   scalePercent: number;           // Percentage of container (0-1 as fraction, 1-100 as percent)
   zIndex: number;
-  animationDuration?: number;
+  animationDuration: number;   // Focus/unfocus animation duration (ms). Default: 600.
 }
 
 export interface NavigationInteractionConfig {

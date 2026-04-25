@@ -1069,7 +1069,7 @@ Controls entrance and interaction animations.
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `duration` | `number` | `600` | Base animation duration (ms). |
+| `duration` | `number` | `600` | Base entry animation duration (ms). Replaces deprecated `animation.entry.timing.duration`. |
 | `easing.default` | `string` | `cubic-bezier(...)` | CSS easing string for standard moves. |
 | `easing.bounce` | `string` | `cubic-bezier(...)` | CSS easing for entrance bounce. |
 | `easing.focus` | `string` | `cubic-bezier(...)` | CSS easing for zoom focus. |
@@ -1109,7 +1109,7 @@ animation: {
 | `start.offset` | `number` | `100` | Pixels beyond edge (for edge-based positions) |
 | `start.circular.radius` | `number \| string` | `'120%'` | Circle radius in pixels or % of container diagonal |
 | `start.circular.distribution` | `string` | `'even'` | `'even'` (evenly spaced) or `'random'` |
-| `timing.duration` | `number` | `600` | Animation duration in milliseconds |
+| `timing.duration` | `number` | `600` | **Deprecated.** Use `animation.duration` instead. Will be removed in v1.2. |
 | `easing` | `string` | `cubic-bezier(0.25, 1, 0.5, 1)` | CSS easing function |
 
 **Start Position Options:**
@@ -2011,7 +2011,7 @@ Controls user interactions like clicking and zooming.
 | :--- | :--- | :--- | :--- |
 | `focus.scalePercent` | `number` | `0.8` | Target size as percentage of container. Values 0-1 are fractions (0.8 = 80%), values > 1 are treated as percentages (80 = 80%). |
 | `focus.zIndex` | `number` | `1000` | Z-index of the focused image. |
-| `focus.animationDuration` | `number` | - | Override animation duration for focus/unfocus transitions (ms). Falls back to `animation.duration`. |
+| `focus.animationDuration` | `number` | `600` | Focus/unfocus zoom animation duration (ms). Independent from `animation.duration`. |
 | `dragging` | `boolean` | `true` | When `false`, sets `draggable="false"` on each image element, suppressing the browser's native click-drag behavior. |
 | `navigation.keyboard` | `boolean` | `true` | When `false`, disables arrow key (← →), Escape, and Enter/Space keyboard navigation. Navigation is scoped to the gallery container — click the container to give it focus first. |
 | `navigation.swipe` | `boolean` | `true` | When `false`, disables touch swipe gestures for navigating between focused images. Useful when the gallery is inside a scrollable container. |

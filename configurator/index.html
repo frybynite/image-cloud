@@ -1835,14 +1835,6 @@
                                 </div>
                             </div>
                             <div class="control-row">
-                                <input type="checkbox" class="control-checkbox" id="enable-entry-duration">
-                                <label class="control-label" data-label="Duration" data-path="timing.duration" data-desc-key="animation.entry.timing.duration">Duration</label>
-                                <div class="control-input">
-                                    <input type="number" id="entry-duration" value="600" min="100" max="2000" step="50">
-                                    <span class="value-display">ms</span>
-                                </div>
-                            </div>
-                            <div class="control-row">
                                 <input type="checkbox" class="control-checkbox" id="enable-entry-path">
                                 <label class="control-label" data-label="Path Type" data-path="path.type" data-desc-key="animation.entry.path.type">Path Type</label>
                                 <div class="control-input">
@@ -2147,6 +2139,14 @@
                                 <label class="control-label" data-label="Z-Index" data-path="zIndex" data-desc-key="interaction.focus.zIndex">Z-Index</label>
                                 <div class="control-input">
                                     <input type="number" id="focus-zIndex" value="1000" min="100" max="9999">
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <input type="checkbox" class="control-checkbox" id="enable-focus-animationDuration">
+                                <label class="control-label" data-label="Anim. Duration" data-path="animationDuration" data-desc-key="interaction.focus.animationDuration">Anim. Duration</label>
+                                <div class="control-input">
+                                    <input type="number" id="focus-animationDuration" value="600" min="100" max="2000" step="50">
+                                    <span class="value-display">ms</span>
                                 </div>
                             </div>
                         </div>
@@ -3995,11 +3995,6 @@
             if (offset !== undefined) entryStart.offset = offset;
             if (Object.keys(entryStart).length > 0) entry.start = entryStart;
 
-            const entryTiming = {};
-            const entryDuration = getEnabledValue('enable-entry-duration', 'entry-duration', parseInt);
-            if (entryDuration !== undefined) entryTiming.duration = entryDuration;
-            if (Object.keys(entryTiming).length > 0) entry.timing = entryTiming;
-
             // Path configuration
             const pathEnabled = document.getElementById('enable-entry-path').checked;
             if (pathEnabled) {
@@ -4161,6 +4156,8 @@
             const zIndex = getEnabledValue('enable-focus-zIndex', 'focus-zIndex', parseInt);
             if (scalePercent !== undefined) focus.scalePercent = scalePercent;
             if (zIndex !== undefined) focus.zIndex = zIndex;
+            const animationDuration = getEnabledValue('enable-focus-animationDuration', 'focus-animationDuration', parseInt);
+            if (animationDuration !== undefined) focus.animationDuration = animationDuration;
             if (Object.keys(focus).length > 0) interaction.focus = focus;
             const navigation = {};
             const keyboardEl = document.getElementById('interaction-keyboard');

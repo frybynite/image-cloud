@@ -23,6 +23,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- `animation.duration` now correctly controls entry animation duration (was previously ignored by the engine)
+- `interaction.focus.animationDuration` now has an explicit default of 600ms
+
+### Deprecated
+- `animation.entry.timing.duration` — use `animation.duration` instead. Will be removed in v1.2.
+
+### Added
+- `interaction.focus.animationDuration` is now configurable in the configurator
+
+---
+
 ## [1.0.3] - 2026-04-25
 
 ### Fixed

@@ -252,7 +252,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     focus: Object.freeze({
       scalePercent: 0.8,  // 80% of container height
       zIndex: 1000,
-      animationDuration: undefined  // Use default animation duration
+      animationDuration: 600  // Focus/unfocus animation duration (ms). Default: 600.
     }),
     navigation: Object.freeze({
       keyboard: true,
@@ -547,6 +547,28 @@ export function mergeConfig(
         ...userConfig.animation.idle
       };
     }
+  }
+
+  // Resolve effective animation duration (deprecation bridge for animation.entry.timing.duration)
+  const userProvidedBaseDuration = userConfig.animation?.duration !== undefined;
+  const userProvidedEntryTiming = userConfig.animation?.entry?.timing?.duration !== undefined;
+
+  if (!userProvidedBaseDuration && userProvidedEntryTiming) {
+    console.warn(
+      '[image-cloud] animation.entry.timing.duration is deprecated and will be removed in v1.2. ' +
+      'Use animation.duration instead.'
+    );
+    merged.animation.duration = userConfig.animation!.entry!.timing!.duration!;
+  } else if (!userProvidedBaseDuration) {
+    merged.animation.duration = 600;
+  }
+
+  // Sync resolved duration into entry timing so EntryAnimationEngine reads the correct value
+  if (merged.animation.entry) {
+    merged.animation.entry = {
+      ...merged.animation.entry,
+      timing: { ...merged.animation.entry.timing, duration: merged.animation.duration! }
+    };
   }
 
   // Deep merge interaction config
