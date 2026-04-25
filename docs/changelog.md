@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-04-25
+
+### Changed
+
+- Upgraded `vite` dev dependency (7.3.1 → 8.0.10)
+- Upgraded `@vitejs/plugin-react` dev dependency (5.1.4 → 6.0.1)
+
+---
+
 ## [1.0.3] - 2026-04-25
 
 ### Fixed
