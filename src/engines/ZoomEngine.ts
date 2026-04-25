@@ -353,7 +353,7 @@ export class ZoomEngine {
     this.animationEngine.cancelAllAnimations(element);
 
     // Get animation duration
-    const duration = this.config.animationDuration ?? 600;
+    const duration = this.config.animationDuration;
 
     // Apply focused styling (classes and z-index only)
     this.applyFocusedStyling(element, Z_INDEX.FOCUSING);
@@ -435,7 +435,7 @@ export class ZoomEngine {
     this.animationEngine.cancelAllAnimations(element);
 
     // Get animation duration
-    const duration = this.config.animationDuration ?? 600;
+    const duration = this.config.animationDuration;
 
     // Remove focused classes but keep z-index high during animation
     // (z-index will be reset after animation completes)

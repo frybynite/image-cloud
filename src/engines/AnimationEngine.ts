@@ -67,7 +67,7 @@ export class AnimationEngine {
     // Cancel any existing animation on this element
     this.cancelAllAnimations(element);
 
-    const animDuration = duration ?? this.config.duration;
+    const animDuration = duration ?? this.config.duration ?? 600;
     const animEasing = easing ?? this.config.easing.default;
 
     const fromTransform = this.buildTransformString(from);
@@ -231,7 +231,7 @@ export class AnimationEngine {
     easing: string | null = null
   ): Promise<void> {
     return new Promise((resolve) => {
-      const animDuration = duration ?? this.config.duration;
+      const animDuration = duration ?? this.config.duration ?? 600;
       const animEasing = easing ?? this.config.easing.default;
 
       // Apply transition
