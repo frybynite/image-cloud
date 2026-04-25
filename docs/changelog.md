@@ -4,13 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.5] - 2026-04-25
 
 ### Changed
 
 - Upgraded `typescript` dev dependency (5.9.3 → 6.0.3)
   - No source changes required — existing config already aligned with TS 6 defaults
-  - Note: `vite-plugin-dts` emits a cosmetic warning about bundled api-extractor using TS 5.8.2; build output is unaffected
+- Upgraded `@typescript-eslint/parser` (8.57.2 → 8.59.0) for TypeScript 6 peer dep compatibility
 
 ---
 
