@@ -40,7 +40,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run tests
-        run: npx playwright test
+        run: npx playwright test --config=test/playwright.config.ts
 
   publish:
     needs: [security, test]
