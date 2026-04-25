@@ -205,10 +205,6 @@
         "position": "Where images animate in from (default: nearest-edge)",
         "offset": "Distance from edge where animation begins (default: 100)"
       },
-      "timing": {
-        "_title": "Animation timing settings",
-        "duration": "Duration of entry animation (default: 600)"
-      },
       "path": {
         "_title": "Animation path settings",
         "type": "Animation trajectory: linear, bounce, elastic, wave (default: linear)",
@@ -284,7 +280,8 @@
     "focus": {
       "_title": "Focus/zoom behavior when clicking images",
       "scalePercent": "Size of focused image relative to container (default: 0.8)",
-      "zIndex": "Stack order of focused image (default: 1000)"
+      "zIndex": "Stack order of focused image (default: 1000)",
+      "animationDuration": "Duration of focus/unfocus zoom animation in milliseconds (default: 600)"
     },
     "navigation": {
       "_title": "Control which navigation methods are active",
