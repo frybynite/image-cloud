@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-04-25
+
+### Fixed
+- `animation.duration` now correctly controls entry animation duration (was previously ignored by the engine)
+- `interaction.focus.animationDuration` now has an explicit default of 600ms
+
+### Deprecated
+- `animation.entry.timing.duration` — use `animation.duration` instead. Will be removed in v1.2.
+
+### Added
+- `interaction.focus.animationDuration` is now configurable in the configurator
+
+---
+
 ## [1.0.5] - 2026-04-25
 
 ### Changed
@@ -20,20 +34,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 - Upgraded `vite` dev dependency (7.3.1 → 8.0.10)
 - Upgraded `@vitejs/plugin-react` dev dependency (5.1.4 → 6.0.1)
-
----
-
-## [Unreleased]
-
-### Fixed
-- `animation.duration` now correctly controls entry animation duration (was previously ignored by the engine)
-- `interaction.focus.animationDuration` now has an explicit default of 600ms
-
-### Deprecated
-- `animation.entry.timing.duration` — use `animation.duration` instead. Will be removed in v1.2.
-
-### Added
-- `interaction.focus.animationDuration` is now configurable in the configurator
 
 ---
 
