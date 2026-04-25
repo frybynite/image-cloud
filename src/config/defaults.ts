@@ -252,7 +252,7 @@ export const DEFAULT_CONFIG: ImageCloudConfig = Object.freeze({
     focus: Object.freeze({
       scalePercent: 0.8,  // 80% of container height
       zIndex: 1000,
-      animationDuration: undefined  // Use default animation duration
+      animationDuration: 600  // Focus/unfocus animation duration (ms). Default: 600.
     }),
     navigation: Object.freeze({
       keyboard: true,
