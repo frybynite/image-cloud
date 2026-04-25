@@ -567,7 +567,7 @@ export function mergeConfig(
   if (merged.animation.entry) {
     merged.animation.entry = {
       ...merged.animation.entry,
-      timing: { duration: merged.animation.duration! }
+      timing: { ...merged.animation.entry.timing, duration: merged.animation.duration! }
     };
   }
 
