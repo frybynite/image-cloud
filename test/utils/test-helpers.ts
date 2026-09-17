@@ -50,6 +50,51 @@ export async function waitForGallerySettled(
   );
 }
 
+/**
+ * Instrument the configurator so tests can wait for its debounced auto-apply instead of racing it.
+ * The configurator applies changes 300ms after the last input event, then destroys and rebuilds
+ * the gallery asynchronously — a fixed wait can read the old gallery. Call once after page load.
+ */
+export async function trackConfiguratorApplies(page: Page) {
+  await page.evaluate(() => {
+    const w = window as any;
+    if (w.__fbnApply) return;
+    const state = { inFlight: 0, lastEventAt: performance.now(), lastCompletedStartAt: 0 };
+    w.__fbnApply = state;
+    const onEvent = () => { state.lastEventAt = performance.now(); };
+    document.addEventListener('input', onEvent, true);
+    document.addEventListener('change', onEvent, true);
+    const original = w.applyChanges;
+    w.applyChanges = async function (...args: unknown[]) {
+      const startedAt = performance.now();
+      state.inFlight++;
+      try {
+        return await original.apply(this, args);
+      } finally {
+        state.inFlight--;
+        state.lastCompletedStartAt = Math.max(state.lastCompletedStartAt, startedAt);
+      }
+    };
+  });
+}
+
+/**
+ * Wait until the configurator has applied the latest form changes and rebuilt the gallery:
+ * an apply that started after the most recent input/change event has completed, nothing is
+ * in flight, and the rebuilt gallery has settled. Requires trackConfiguratorApplies().
+ */
+export async function waitForConfiguratorApplied(page: Page) {
+  await page.waitForFunction(
+    () => {
+      const s = (window as any).__fbnApply;
+      return s && s.inFlight === 0 && s.lastCompletedStartAt > s.lastEventAt;
+    },
+    undefined,
+    { polling: 50, timeout: 15000 }
+  );
+  await waitForGallerySettled(page);
+}
+
 export async function getImageCount(page: Page, containerId = 'imageCloud') {
   return page.locator(`#${containerId} img`).count();
 }

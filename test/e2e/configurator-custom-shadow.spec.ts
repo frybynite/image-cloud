@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { trackConfiguratorApplies, waitForConfiguratorApplied } from '../utils/test-helpers';
 
 test.describe('Configurator Custom Shadow', () => {
 
@@ -9,6 +10,7 @@ test.describe('Configurator Custom Shadow', () => {
     // Expand Image: Style section
     await page.click('text=Image: Style');
     await page.waitForTimeout(100);
+    await trackConfiguratorApplies(page);
   });
 
   test.describe('Custom Shadow Dropdown Option', () => {
@@ -83,7 +85,7 @@ test.describe('Configurator Custom Shadow', () => {
     test('changing x-offset updates gallery shadow', async ({ page }) => {
       await page.locator('#shadow-offset-x').fill('10');
       await page.locator('#shadow-offset-x').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const boxShadow = await image.evaluate((el) => window.getComputedStyle(el).boxShadow);
@@ -94,7 +96,7 @@ test.describe('Configurator Custom Shadow', () => {
     test('changing y-offset updates gallery shadow', async ({ page }) => {
       await page.locator('#shadow-offset-y').fill('20');
       await page.locator('#shadow-offset-y').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const boxShadow = await image.evaluate((el) => window.getComputedStyle(el).boxShadow);
@@ -106,7 +108,7 @@ test.describe('Configurator Custom Shadow', () => {
     test('changing blur updates gallery shadow', async ({ page }) => {
       await page.locator('#shadow-blur').fill('30');
       await page.locator('#shadow-blur').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const boxShadow = await image.evaluate((el) => window.getComputedStyle(el).boxShadow);
@@ -117,7 +119,7 @@ test.describe('Configurator Custom Shadow', () => {
     test('changing color updates gallery shadow', async ({ page }) => {
       await page.locator('#shadow-color').fill('#ff0000');
       await page.locator('#shadow-color').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const boxShadow = await image.evaluate((el) => window.getComputedStyle(el).boxShadow);
@@ -133,7 +135,7 @@ test.describe('Configurator Custom Shadow', () => {
       // Opacity slider uses 'input' event
       await page.locator('#shadow-opacity').fill('0.8');
       await page.locator('#shadow-opacity').dispatchEvent('input');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const boxShadow = await image.evaluate((el) => window.getComputedStyle(el).boxShadow);
@@ -230,7 +232,7 @@ test.describe('Configurator Custom Shadow', () => {
       await page.locator('#shadow-offset-y').fill('12');
       await page.locator('#shadow-blur').fill('25');
       await page.locator('#shadow-blur').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       // Check first image has the shadow
       const image = page.locator('.fbn-ic-image').first();
@@ -283,7 +285,7 @@ test.describe('Configurator Custom Shadow', () => {
       await page.locator('#shadow-offset-y').fill('20');
       await page.locator('#shadow-blur').fill('40');
       await page.locator('#shadow-blur').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       // Hover over an image
       const image = page.locator('.fbn-ic-image').first();
@@ -311,7 +313,7 @@ test.describe('Configurator Custom Shadow', () => {
       await page.locator('#shadow-offset-y').fill('15');
       await page.locator('#shadow-blur').fill('50');
       await page.locator('#shadow-blur').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
 
@@ -376,7 +378,7 @@ test.describe('Configurator Custom Shadow', () => {
       await page.locator('#shadow-color').dispatchEvent('change');
       await page.locator('#shadow-opacity').fill('0.8');
       await page.locator('#shadow-opacity').dispatchEvent('input');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       // Click an image to focus it
       const image = page.locator('.fbn-ic-image').first();
@@ -411,7 +413,7 @@ test.describe('Configurator Custom Shadow', () => {
       await page.locator('#shadow-offset-y').fill('0');
       await page.locator('#shadow-blur').fill('80');
       await page.locator('#shadow-blur').dispatchEvent('change');
-      await page.waitForTimeout(700);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
 
