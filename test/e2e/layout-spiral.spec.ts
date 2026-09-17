@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getImageCount } from '../utils/test-helpers';
+import { getImageCount, waitForGallerySettled } from '../utils/test-helpers';
 
 const TEST_IMAGES = [
   '/test/fixtures/images/image1.jpg',
@@ -38,8 +38,7 @@ async function initGallery(page: any, spiralConfig: object = {}) {
     await window.gallery.init();
   }, { urls: TEST_IMAGES, spiral: spiralConfig });
 
-  await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
-  await page.waitForTimeout(400);
+  await waitForGallerySettled(page, { expectedCount: TEST_IMAGES.length });
 }
 
 test.describe('Spiral Layout Algorithm', () => {
@@ -50,11 +49,14 @@ test.describe('Spiral Layout Algorithm', () => {
       await initGallery(page, { spiralType: 'golden' });
 
       const images = page.locator('#imageCloud img');
+      // Images are appended in load order, so sort by layout index (data-image-id), not DOM order
       const positions = await images.evaluateAll((imgs) =>
-        imgs.map((img) => {
-          const rect = img.getBoundingClientRect();
-          return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
-        })
+        [...imgs]
+          .sort((a, b) => Number((a as HTMLElement).dataset.imageId) - Number((b as HTMLElement).dataset.imageId))
+          .map((img) => {
+            const rect = img.getBoundingClientRect();
+            return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+          })
       );
 
       const viewport = page.viewportSize();
@@ -278,8 +280,7 @@ test.describe('Spiral Layout Algorithm', () => {
         await window.gallery.init();
       }, urls);
 
-      await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
-      await page.waitForTimeout(500);
+      await waitForGallerySettled(page, { expectedCount: 20 });
 
       const count = await getImageCount(page);
       expect(count).toBe(20);

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getImageCount } from '../utils/test-helpers';
+import { getImageCount, waitForGallerySettled } from '../utils/test-helpers';
 
 const TEST_IMAGES = [
   '/test/fixtures/images/image1.jpg',
@@ -43,8 +43,7 @@ async function initGallery(page: any, clusterConfig: object = {}, imageCount = 1
     await window.gallery.init();
   }, { urls, cluster: clusterConfig });
 
-  await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
-  await page.waitForTimeout(400);
+  await waitForGallerySettled(page, { expectedCount: urls.length });
 }
 
 test.describe('Cluster Layout Algorithm', () => {
