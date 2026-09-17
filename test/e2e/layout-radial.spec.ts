@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getImageCount } from '../utils/test-helpers';
+import { getImageCount, waitForGallerySettled } from '../utils/test-helpers';
 
 const TEST_IMAGES = [
   '/test/fixtures/images/image1.jpg',
@@ -37,8 +37,7 @@ async function initGallery(page: any, radialConfig: object = {}) {
     await window.gallery.init();
   }, { urls: TEST_IMAGES, radial: radialConfig });
 
-  await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
-  await page.waitForTimeout(400);
+  await waitForGallerySettled(page, { expectedCount: TEST_IMAGES.length });
 }
 
 function getDistancesFromCenter(positions: { x: number, y: number }[], centerX: number, centerY: number) {
@@ -185,8 +184,7 @@ test.describe('Radial Layout Algorithm', () => {
         await window.gallery.init();
       }, urls);
 
-      await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 10000 });
-      await page.waitForTimeout(500);
+      await waitForGallerySettled(page, { expectedCount: 20 });
       expect(await getImageCount(page)).toBe(20);
     });
 

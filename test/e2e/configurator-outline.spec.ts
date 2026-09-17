@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { trackConfiguratorApplies, waitForConfiguratorApplied } from '../utils/test-helpers';
 
 test.describe('Configurator Outline', () => {
 
@@ -9,6 +10,7 @@ test.describe('Configurator Outline', () => {
     // Expand Image: Style section
     await page.click('text=Image: Style');
     await page.waitForTimeout(100);
+    await trackConfiguratorApplies(page);
   });
 
   test.describe('Outline Controls Visibility', () => {
@@ -73,12 +75,16 @@ test.describe('Configurator Outline', () => {
       await page.locator('#enable-style-outline-width').check();
       await page.locator('#style-outline-width').fill('3');
       await page.locator('#style-outline-width').dispatchEvent('change');
-      await page.waitForTimeout(300);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
-      const outlineWidth = await image.evaluate((el) => window.getComputedStyle(el).outlineWidth);
+      const outline = await image.evaluate((el) => {
+        const cs = window.getComputedStyle(el);
+        return { width: cs.outlineWidth, style: cs.outlineStyle };
+      });
 
-      expect(outlineWidth).toBe('3px');
+      // Check style too: newer Chromium reports 3px (medium) even when outline-style is none
+      expect(outline).toEqual({ width: '3px', style: 'solid' });
     });
 
     test('changing outline color updates gallery', async ({ page }) => {
@@ -88,7 +94,7 @@ test.describe('Configurator Outline', () => {
       await page.locator('#enable-style-outline-color').check();
       await page.locator('#style-outline-color').fill('#ff0000');
       await page.locator('#style-outline-color').dispatchEvent('change');
-      await page.waitForTimeout(300);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const outlineColor = await image.evaluate((el) => window.getComputedStyle(el).outlineColor);
@@ -108,7 +114,7 @@ test.describe('Configurator Outline', () => {
       await page.locator('#enable-style-outline-offset').check();
       await page.locator('#style-outline-offset').fill('5');
       await page.locator('#style-outline-offset').dispatchEvent('change');
-      await page.waitForTimeout(300);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const outlineOffset = await image.evaluate((el) => window.getComputedStyle(el).outlineOffset);
@@ -123,7 +129,7 @@ test.describe('Configurator Outline', () => {
       await page.locator('#enable-style-outline-offset').check();
       await page.locator('#style-outline-offset').fill('-3');
       await page.locator('#style-outline-offset').dispatchEvent('change');
-      await page.waitForTimeout(300);
+      await waitForConfiguratorApplied(page);
 
       const image = page.locator('.fbn-ic-image').first();
       const outlineOffset = await image.evaluate((el) => window.getComputedStyle(el).outlineOffset);
@@ -196,7 +202,7 @@ test.describe('Configurator Outline', () => {
       await page.locator('#enable-style-outline-color').check();
       await page.locator('#style-outline-color').fill('#ff0000');
       await page.locator('#style-outline-color').dispatchEvent('change');
-      await page.waitForTimeout(300);
+      await waitForConfiguratorApplied(page);
 
       // Hover over an image
       const image = page.locator('.fbn-ic-image').first();
@@ -222,7 +228,7 @@ test.describe('Configurator Outline', () => {
       await page.locator('#enable-style-outline-color').check();
       await page.locator('#style-outline-color').fill('#0000ff');
       await page.locator('#style-outline-color').dispatchEvent('change');
-      await page.waitForTimeout(300);
+      await waitForConfiguratorApplied(page);
 
       // Click an image to focus it
       const image = page.locator('.fbn-ic-image').first();

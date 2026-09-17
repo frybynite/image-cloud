@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForGalleryInit, getImageCount } from '../utils/test-helpers';
+import { waitForGalleryInit, waitForGallerySettled, getImageCount } from '../utils/test-helpers';
 
 test.describe('Static Image Loader', () => {
 
@@ -7,10 +7,7 @@ test.describe('Static Image Loader', () => {
 
     test('loads images from URL array', async ({ page }) => {
       await page.goto('/test/fixtures/static-basic.html');
-      await waitForGalleryInit(page);
-
-      // Wait for all images to load (queue animation)
-      await page.waitForTimeout(1000);
+      await waitForGallerySettled(page, { expectedCount: 12 });
 
       const count = await getImageCount(page);
       expect(count).toBe(12);
@@ -18,10 +15,7 @@ test.describe('Static Image Loader', () => {
 
     test('images have correct src attributes', async ({ page }) => {
       await page.goto('/test/fixtures/static-basic.html');
-      await waitForGalleryInit(page);
-
-      // Wait for all images to load (queue animation)
-      await page.waitForTimeout(1000);
+      await waitForGallerySettled(page, { expectedCount: 12 });
 
       const images = page.locator('#imageCloud img');
       const srcs = await images.evaluateAll((imgs) =>
@@ -53,10 +47,7 @@ test.describe('Static Image Loader', () => {
 
     test('loads from mixed URL and path sources', async ({ page }) => {
       await page.goto('/test/fixtures/static-multiple.html');
-      await waitForGalleryInit(page);
-
-      // Wait for all images to load (queue animation with 12 images takes longer)
-      await page.waitForTimeout(2000);
+      await waitForGallerySettled(page, { expectedCount: 12 });
 
       const count = await getImageCount(page);
       // 3 from URLs + 9 from path (PDF filtered out) = 12 total
@@ -65,10 +56,7 @@ test.describe('Static Image Loader', () => {
 
     test('path sources resolve with basePath', async ({ page }) => {
       await page.goto('/test/fixtures/static-multiple.html');
-      await waitForGalleryInit(page);
-
-      // Wait for all images to load (queue animation with 12 images takes longer)
-      await page.waitForTimeout(2000);
+      await waitForGallerySettled(page, { expectedCount: 12 });
 
       const images = page.locator('#imageCloud img');
       const srcs = await images.evaluateAll((imgs) =>
@@ -83,10 +71,7 @@ test.describe('Static Image Loader', () => {
 
     test('filters out non-image files (PDF)', async ({ page }) => {
       await page.goto('/test/fixtures/static-multiple.html');
-      await waitForGalleryInit(page);
-
-      // Wait for all images to load (queue animation with 12 images takes longer)
-      await page.waitForTimeout(2000);
+      await waitForGallerySettled(page, { expectedCount: 12 });
 
       const images = page.locator('#imageCloud img');
       const srcs = await images.evaluateAll((imgs) =>

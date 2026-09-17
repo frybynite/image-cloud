@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForGalleryInit, getImageCount } from '../utils/test-helpers';
+import { waitForGalleryInit, waitForGallerySettled, getImageCount } from '../utils/test-helpers';
 
 test.describe('Grid Layout Algorithm', () => {
 
@@ -392,14 +392,16 @@ test.describe('Grid Layout Algorithm', () => {
           await window.gallery.init();
         });
 
-        await page.waitForSelector('#imageCloud img', { state: 'visible', timeout: 5000 });
-        await page.waitForTimeout(300);
+        await waitForGallerySettled(page, { expectedCount: 4 });
 
+        // Images are appended in load order, so sort by layout index (data-image-id), not DOM order
         return page.locator('#imageCloud img').evaluateAll((imgs) =>
-          imgs.map((img) => {
-            const rect = img.getBoundingClientRect();
-            return { x: Math.round(rect.x), y: Math.round(rect.y) };
-          })
+          [...imgs]
+            .sort((a, b) => Number((a as HTMLElement).dataset.imageId) - Number((b as HTMLElement).dataset.imageId))
+            .map((img) => {
+              const rect = img.getBoundingClientRect();
+              return { x: Math.round(rect.x), y: Math.round(rect.y) };
+            })
         );
       };
 
