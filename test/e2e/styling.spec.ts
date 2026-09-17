@@ -230,17 +230,22 @@ test.describe('Image Styling', () => {
 
       const image = page.locator('#imageCloud img').first();
 
-      // Get initial outline
-      const initialOutline = await image.evaluate((el) => window.getComputedStyle(el).outlineWidth);
-      expect(initialOutline).toBe('0px');
+      // Get initial outline — check style, not width: newer Chromium reports the
+      // initial `medium` (3px) computed outline-width even when outline-style is none
+      const initialOutlineStyle = await image.evaluate((el) => window.getComputedStyle(el).outlineStyle);
+      expect(initialOutlineStyle).toBe('none');
 
       // Hover over image
       await image.hover();
       await page.waitForTimeout(100);
 
       // Get hover outline
-      const hoverOutline = await image.evaluate((el) => window.getComputedStyle(el).outlineWidth);
-      expect(hoverOutline).toBe('3px');
+      const hoverOutline = await image.evaluate((el) => {
+        const cs = window.getComputedStyle(el);
+        return { width: cs.outlineWidth, style: cs.outlineStyle };
+      });
+      expect(hoverOutline.style).toBe('solid');
+      expect(hoverOutline.width).toBe('3px');
     });
 
     test('focused state applies outline', async ({ page }) => {
