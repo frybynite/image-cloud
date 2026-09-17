@@ -248,6 +248,56 @@ test.describe('Image Styling', () => {
       expect(hoverOutline.width).toBe('3px');
     });
 
+    test('hover outline is cleared on mouseleave', async ({ page }) => {
+      await initGallery(page, {
+        default: { outline: { width: 0 } },
+        hover: { outline: { width: 3, color: '#ff0000', style: 'solid' } }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+
+      await image.hover();
+      await page.waitForTimeout(100);
+      expect(await image.evaluate((el) => window.getComputedStyle(el).outlineStyle)).toBe('solid');
+
+      // Move mouse off the image
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(100);
+      expect(await image.evaluate((el) => el.matches(':hover'))).toBe(false);
+      expect(await image.evaluate((el) => window.getComputedStyle(el).outlineStyle)).toBe('none');
+    });
+
+    test('focused outline and border are cleared after unfocus with cursor away', async ({ page }) => {
+      await initGallery(page, {
+        default: { outline: { width: 0 } },
+        focused: {
+          outline: { width: 4, color: '#00ff00', style: 'solid' },
+          border: { width: 5, color: '#0000ff', style: 'solid' }
+        }
+      });
+
+      const image = page.locator('#imageCloud img').first();
+      await page.mouse.move(0, 0);
+
+      // Focus via JS dispatch so the cursor never enters the image
+      await image.evaluate((el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+      await page.waitForTimeout(1000);
+      const focused = await image.evaluate((el) => {
+        const cs = window.getComputedStyle(el);
+        return { outline: cs.outlineStyle, border: cs.borderTopWidth };
+      });
+      expect(focused).toEqual({ outline: 'solid', border: '5px' });
+
+      // Unfocus, cursor still away
+      await image.evaluate((el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+      await page.waitForTimeout(1500);
+      const after = await image.evaluate((el) => {
+        const cs = window.getComputedStyle(el);
+        return { outline: cs.outlineStyle, border: cs.borderTopWidth, focusedClass: el.classList.contains('fbn-ic-focused') };
+      });
+      expect(after).toEqual({ outline: 'none', border: '0px', focusedClass: false });
+    });
+
     test('focused state applies outline', async ({ page }) => {
       await initGallery(page, {
         default: { outline: { width: 0 } },

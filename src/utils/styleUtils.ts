@@ -199,9 +199,13 @@ export function buildStyleProperties(state: ImageStyleState | undefined, imageHe
     const style = state.outline.style ?? 'solid';
     const color = state.outline.color ?? '#000000';
     styles.outline = `${width}px ${style} ${color}`;
-    if (state.outline.offset !== undefined) {
-      styles.outlineOffset = `${state.outline.offset}px`;
-    }
+    styles.outlineOffset = state.outline.offset !== undefined ? `${state.outline.offset}px` : '';
+  } else {
+    // No outline for this state - clear inline values so a hover/focused outline
+    // doesn't persist on mouseleave/unfocus. Empty string (not 'none') so outlines
+    // from user CSS classes still apply.
+    styles.outline = '';
+    styles.outlineOffset = '';
   }
 
   // Object fit
