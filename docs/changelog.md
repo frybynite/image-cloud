@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-09-17
+
+### Fixed
+- Hover and focused outlines no longer persist after mouseleave or unfocus when the default state has no outline
+
+### Changed
+- Updated in-range dev dependencies (`@playwright/test` 1.63.0, `eslint` 10.10.0, `vite` 8.3.0, `react`/`react-dom` 19.3.0, `vue` 3.5.43, `@typescript-eslint/parser` 8.70.0, and others)
+
+---
+
 ## [1.1.0] - 2026-04-25
 
 ### Fixed
